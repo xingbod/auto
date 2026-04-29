@@ -65,7 +65,7 @@
     .paper-meta { margin: 8px 0 10px; padding: 9px 12px; border-radius: 14px; background: rgba(251,191,36,.10); border: 1px solid rgba(251,191,36,.28); color: #fff3c4; font-size: 15px; line-height: 1.36; }
     .paper-meta a { color: #fde68a; text-decoration: underline; }
     .corefig { margin: 14px 0 12px; padding: 12px; border-radius: 18px; background: rgba(0,0,0,.20); border: 1px solid rgba(255,255,255,.14); }
-    .corefig img { display: block; width: 100%; max-height: 150px; object-fit: contain; border-radius: 14px; background: #0b1020; }
+    .corefig img { display: block; width: 100%; max-height: 220px; object-fit: contain; border-radius: 14px; background: #fff; padding: 4px; }
     .corefig .cap { margin: 8px 2px 0; color: var(--muted); font-size: 14px; line-height: 1.42; }
 
     .warning { color: var(--red); }
@@ -79,7 +79,7 @@
       <div>
         <div class="tag">课程 slides · HTML 单文件</div>
         <h1>CNN 发展历程</h1>
-        <p class="title-meta">从感受野与 Neocognitron，到 LeNet、AlexNet、VGG、Inception、ResNet、DenseNet、MobileNet、EfficientNet 与 ConvNeXt：经典工作、作者背景、发表 venue、网络架构、论文核心图重绘示意与演化主线。</p>
+        <p class="title-meta">从感受野与 Neocognitron，到 LeNet、AlexNet、VGG、Inception、ResNet、DenseNet、MobileNet、EfficientNet 与 ConvNeXt：经典工作、作者背景、发表 venue、网络架构、论文论文原始核心图与演化主线。</p>
         <p class="muted small">操作：方向键 / 空格翻页，P 打印或导出 PDF。</p>
       </div>
     </div></section>
@@ -88,7 +88,7 @@
       <h2>授课目标：不只是“列模型”，而是看清发展逻辑</h2>
       <div class="grid2">
         <div class="box"><h3>三条主线</h3><ol><li>归纳偏置：局部连接、权值共享、平移等变。</li><li>可训练深度：数据、算力、初始化、归一化、残差连接。</li><li>效率与可部署：参数量、FLOPs、延迟、硬件友好。</li></ol></div>
-        <div class="box"><h3>每个经典工作关注</h3><ul><li>标题与年份</li><li>作者及简要介绍</li><li>核心思想与历史作用</li><li>发表 venue：期刊、会议、技术报告或 arXiv/ICLR/CVPR 等</li><li>网络架构：层级、模块、连接方式</li><li>核心示意图：基于论文关键图重绘，便于课堂讲解</li><li>为什么它启发了下一代 CNN</li></ul></div>
+        <div class="box"><h3>每个经典工作关注</h3><ul><li>标题与年份</li><li>作者及简要介绍</li><li>核心思想与历史作用</li><li>发表 venue：期刊、会议、技术报告或 arXiv/ICLR/CVPR 等</li><li>网络架构：层级、模块、连接方式</li><li>核心示意图：使用论文原图截取，便于课堂讲解</li><li>为什么它启发了下一代 CNN</li></ul></div>
       </div>
       <p class="quote">CNN 的历史不是单线“更深更大”，而是围绕表示能力、优化难度、计算效率之间的持续折中。</p>
     </div></section>
@@ -113,13 +113,13 @@
           <h3>工作</h3>
           <p><strong>Receptive fields, binocular interaction and functional architecture in the cat's visual cortex</strong>（Hubel & Wiesel, 1962）等系列研究。</p>
           <p><strong>作者简介：</strong>David H. Hubel 与 Torsten N. Wiesel 是神经生理学家，因研究视觉皮层信息处理获得 1981 年诺贝尔生理学或医学奖。</p>
-          <p class="paper-meta"><strong>发表：</strong>Journal of Physiology（1962，Hubel & Wiesel 视觉皮层系列论文；更早感受野工作见 Journal of Physiology 1959）。<br><strong>核心图：</strong>感受野、简单细胞/复杂细胞响应图；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>Journal of Physiology（1962，Hubel & Wiesel 视觉皮层系列论文；更早感受野工作见 Journal of Physiology 1959）。<br><strong>核心图：</strong>感受野、简单细胞/复杂细胞响应图；本页使用论文原图截取。</p>
         </div>
         <div class="box">
           <h3>对 CNN 的影响</h3>
           <ul><li>局部感受野：神经元只响应局部空间区域。</li><li>简单细胞/复杂细胞：边缘检测与位置容忍。</li><li>层级组合：低级边缘 → 局部形状 → 高级物体。</li></ul>
           <div class="arch"><span class="layer conv">局部边缘</span><span class="arrow">→</span><span class="layer pool">局部不变性</span><span class="arrow">→</span><span class="layer conv">层级组合</span><span class="arrow">→</span><span class="layer fc">物体识别</span></div>
-          <div class="corefig"><img src="assets/hubel-wiesel.svg" alt="论文核心图重绘：简单细胞/复杂细胞的感受野层级。"><div class="cap">论文核心图重绘：简单细胞/复杂细胞的感受野层级。</div></div>
+          <div class="corefig"><img src="assets/original-figures/hubel-wiesel.png" alt="论文核心原图：简单细胞/复杂细胞的感受野层级。"><div class="cap">论文核心原图：简单细胞/复杂细胞的感受野层级。</div></div>
         </div>
       </div>
       <p class="takeaway">脉络意义：CNN 把视觉皮层的“局部、共享、层级”转化为可微分、可训练的工程架构。</p>
@@ -132,13 +132,13 @@
           <p><strong>标题：</strong>Neocognitron: A self-organizing neural network model for a mechanism of pattern recognition unaffected by shift in position</p>
           <p><strong>作者：</strong>Kunihiko Fukushima</p>
           <p><strong>作者简介：</strong>日本计算神经科学与神经网络研究先驱，长期研究受视觉皮层启发的模式识别模型。</p>
-          <p class="paper-meta"><strong>发表：</strong>Biological Cybernetics, 1980。<br><strong>核心图：</strong>原论文 Neocognitron 层级结构图（S 层/C 层交替）；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>Biological Cybernetics, 1980。<br><strong>核心图：</strong>原论文 Neocognitron 层级结构图（S 层/C 层交替）；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>提出 S-cell 与 C-cell 交替结构，分别近似特征检测与位置容忍，是现代卷积层/池化层的早期原型。</p>
         </div>
         <div class="box">
           <h3>网络架构</h3>
           <div class="arch"><span class="layer">输入</span><span class="arrow">→</span><span class="layer conv">S1 特征检测</span><span class="arrow">→</span><span class="layer pool">C1 位移容忍</span><span class="arrow">→</span><span class="layer conv">S2</span><span class="arrow">→</span><span class="layer pool">C2</span><span class="arrow">→</span><span class="layer fc">分类</span></div>
-          <div class="corefig"><img src="assets/neocognitron.svg" alt="论文核心图重绘：Neocognitron 的 S/C 层交替结构。"><div class="cap">论文核心图重绘：Neocognitron 的 S/C 层交替结构。</div></div>
+          <div class="corefig"><img src="assets/original-figures/neocognitron.png" alt="论文核心原图：Neocognitron 的 S/C 层交替结构。"><div class="cap">论文核心原图：Neocognitron 的 S/C 层交替结构。</div></div>
           <ul><li>S 层：学习局部特征模板。</li><li>C 层：对邻域 S 响应进行汇聚，增强平移不变性。</li><li>训练主要是自组织/局部学习，不是现代端到端反向传播。</li></ul>
         </div>
       </div>
@@ -152,13 +152,13 @@
           <p><strong>标题：</strong>Backpropagation Applied to Handwritten Zip Code Recognition（1989）；Gradient-Based Learning Applied to Document Recognition（1998）</p>
           <p><strong>作者：</strong>Yann LeCun、Léon Bottou、Yoshua Bengio、Patrick Haffner 等</p>
           <p><strong>作者简介：</strong>LeCun 是深度学习与 CNN 代表人物，图灵奖得主；Bengio 同为深度学习图灵奖得主；Bottou 长期研究大规模优化与机器学习系统。</p>
-          <p class="paper-meta"><strong>发表：</strong>1989 工作发表于 Neural Computation；LeNet-5 系统论文发表于 Proceedings of the IEEE, 1998。<br><strong>核心图：</strong>LeNet-5 网络结构图（LeCun et al. 1998 Fig. 2）；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>1989 工作发表于 Neural Computation；LeNet-5 系统论文发表于 Proceedings of the IEEE, 1998。<br><strong>核心图：</strong>LeNet-5 网络结构图（LeCun et al. 1998 Fig. 2）；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>用反向传播端到端训练卷积网络，在手写数字、支票识别等任务上形成可部署系统。</p>
         </div>
         <div class="box">
           <h3>LeNet-5 架构</h3>
           <div class="arch"><span class="layer">32×32 输入</span><span class="arrow">→</span><span class="layer conv">C1: 6@5×5</span><span class="arrow">→</span><span class="layer pool">S2: avg pool</span><span class="arrow">→</span><span class="layer conv">C3: 16@5×5</span><span class="arrow">→</span><span class="layer pool">S4</span><span class="arrow">→</span><span class="layer conv">C5: 120</span><span class="arrow">→</span><span class="layer fc">F6: 84</span><span class="arrow">→</span><span class="layer fc">输出</span></div>
-          <div class="corefig"><img src="assets/lenet5.svg" alt="论文核心图重绘：LeNet-5 从输入到输出的完整层级。"><div class="cap">论文核心图重绘：LeNet-5 从输入到输出的完整层级。</div></div>
+          <div class="corefig"><img src="assets/original-figures/lenet5.png" alt="论文核心原图：LeNet-5 从输入到输出的完整层级。"><div class="cap">论文核心原图：LeNet-5 从输入到输出的完整层级。</div></div>
           <ul><li>局部连接 + 权值共享降低参数量。</li><li>池化带来小范围形变鲁棒性。</li><li>全连接层完成类别决策。</li></ul>
         </div>
       </div>
@@ -172,12 +172,12 @@
           <p><strong>标题：</strong>Phoneme Recognition Using Time-Delay Neural Networks（Waibel et al., 1989）等</p>
           <p><strong>作者：</strong>Alexander Waibel、Toshiyuki Hanazawa、Geoffrey Hinton 等</p>
           <p><strong>作者简介：</strong>Waibel 是语音识别与多模态交互专家；Hinton 是深度学习图灵奖得主，长期推动神经网络表示学习。</p>
-          <p class="paper-meta"><strong>发表：</strong>IEEE Transactions on Acoustics, Speech, and Signal Processing, 1989。<br><strong>核心图：</strong>TDNN 的时间延迟连接/共享窗口结构；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>IEEE Transactions on Acoustics, Speech, and Signal Processing, 1989。<br><strong>核心图：</strong>TDNN 的时间延迟连接/共享窗口结构；本页使用论文原图截取。</p>
         </div>
         <div class="box">
           <h3>架构思想</h3>
           <div class="arch"><span class="layer">时间序列输入</span><span class="arrow">→</span><span class="layer conv">共享时间窗滤波</span><span class="arrow">→</span><span class="layer conv">更高层时序组合</span><span class="arrow">→</span><span class="layer fc">音素/词分类</span></div>
-          <div class="corefig"><img src="assets/tdnn.svg" alt="论文核心图重绘：TDNN 时间窗共享与层级时序组合。"><div class="cap">论文核心图重绘：TDNN 时间窗共享与层级时序组合。</div></div>
+          <div class="corefig"><img src="assets/original-figures/tdnn.png" alt="论文核心原图：TDNN 时间窗共享与层级时序组合。"><div class="cap">论文核心原图：TDNN 时间窗共享与层级时序组合。</div></div>
           <ul><li>在时间维上使用共享权重，类似一维卷积。</li><li>说明“局部共享”不仅适用于图像，也适用于序列。</li></ul>
         </div>
       </div>
@@ -191,13 +191,13 @@
           <p><strong>标题：</strong>ImageNet Classification with Deep Convolutional Neural Networks</p>
           <p><strong>作者：</strong>Alex Krizhevsky、Ilya Sutskever、Geoffrey E. Hinton</p>
           <p><strong>作者简介：</strong>Krizhevsky 是深度学习工程先驱；Sutskever 后来成为 OpenAI 联合创始人与首席科学家；Hinton 是深度学习奠基人之一、图灵奖得主。</p>
-          <p class="paper-meta"><strong>发表：</strong>NeurIPS 2012。<br><strong>核心图：</strong>AlexNet 网络结构与双 GPU 分组训练图；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>NeurIPS 2012。<br><strong>核心图：</strong>AlexNet 网络结构与双 GPU 分组训练图；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>在 ImageNet 2012 大幅降低错误率，证明“大数据 + GPU + 深网络 + 非饱和激活”的组合可行。</p>
         </div>
         <div class="box">
           <h3>AlexNet 架构</h3>
           <div class="arch"><span class="layer">224×224</span><span class="arrow">→</span><span class="layer conv">11×11/s4, 96</span><span class="arrow">→</span><span class="layer pool">LRN+Pool</span><span class="arrow">→</span><span class="layer conv">5×5, 256</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">3×3, 384</span><span class="arrow">→</span><span class="layer conv">3×3, 384</span><span class="arrow">→</span><span class="layer conv">3×3, 256</span><span class="arrow">→</span><span class="layer fc">4096</span><span class="arrow">→</span><span class="layer fc">4096</span><span class="arrow">→</span><span class="layer fc">1000</span></div>
-          <div class="corefig"><img src="assets/alexnet.svg" alt="论文核心图重绘：AlexNet 5 个卷积层 + 3 个全连接层。"><div class="cap">论文核心图重绘：AlexNet 5 个卷积层 + 3 个全连接层。</div></div>
+          <div class="corefig"><img src="assets/original-figures/alexnet.png" alt="论文核心原图：AlexNet 5 个卷积层 + 3 个全连接层。"><div class="cap">论文核心原图：AlexNet 5 个卷积层 + 3 个全连接层。</div></div>
           <ul><li>ReLU 加速训练；Dropout 抑制过拟合。</li><li>数据增强与 GPU 并行训练关键。</li><li>早期使用 LRN，后续被 BatchNorm 等取代。</li></ul>
         </div>
       </div>
@@ -211,13 +211,13 @@
           <p><strong>标题：</strong>Visualizing and Understanding Convolutional Networks</p>
           <p><strong>作者：</strong>Matthew D. Zeiler、Rob Fergus</p>
           <p><strong>作者简介：</strong>Zeiler 是视觉深度学习研究者，后创办 Clarifai；Fergus 是 NYU/Meta AI 研究者，研究视觉表示学习。</p>
-          <p class="paper-meta"><strong>发表：</strong>ECCV 2014（早期版本为 arXiv 2013）。<br><strong>核心图：</strong>Deconvnet 可视化、特征层响应与结构改进示意；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>ECCV 2014（早期版本为 arXiv 2013）。<br><strong>核心图：</strong>Deconvnet 可视化、特征层响应与结构改进示意；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>通过反卷积可视化理解各层特征，发现 AlexNet 第一层步长和卷积核过大导致信息损失，并据此改进网络。</p>
         </div>
         <div class="box">
           <h3>ZFNet 架构相对 AlexNet</h3>
           <div class="arch"><span class="layer">224×224</span><span class="arrow">→</span><span class="layer conv">7×7/s2</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">5×5/s2</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">3×3 堆叠</span><span class="arrow">→</span><span class="layer fc">FC 分类</span></div>
-          <div class="corefig"><img src="assets/zfnet.svg" alt="论文核心图重绘：ZFNet 通过可视化反馈改进首层卷积。"><div class="cap">论文核心图重绘：ZFNet 通过可视化反馈改进首层卷积。</div></div>
+          <div class="corefig"><img src="assets/original-figures/zfnet.png" alt="论文核心原图：ZFNet 通过可视化反馈改进首层卷积。"><div class="cap">论文核心原图：ZFNet 通过可视化反馈改进首层卷积。</div></div>
           <ul><li>缩小首层卷积核：11×11 → 7×7。</li><li>减小首层步长：4 → 2。</li><li>强调可解释性可直接反馈架构设计。</li></ul>
         </div>
       </div>
@@ -231,13 +231,13 @@
           <p><strong>标题：</strong>Network in Network</p>
           <p><strong>作者：</strong>Min Lin、Qiang Chen、Shuicheng Yan</p>
           <p><strong>作者简介：</strong>Shuicheng Yan 长期研究计算机视觉与机器学习；该工作来自新加坡国立大学团队。</p>
-          <p class="paper-meta"><strong>发表：</strong>ICLR 2014（workshop/conference track 常见引用为 arXiv 2013/ICLR 2014）。<br><strong>核心图：</strong>mlpconv 层与全局平均池化；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>ICLR 2014（workshop/conference track 常见引用为 arXiv 2013/ICLR 2014）。<br><strong>核心图：</strong>mlpconv 层与全局平均池化；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>用 micro neural network 替代线性卷积滤波器，引入 1×1 卷积进行通道混合，并用全局平均池化减少全连接层。</p>
         </div>
         <div class="box">
           <h3>NIN 模块架构</h3>
           <div class="arch"><span class="layer conv">k×k Conv</span><span class="arrow">→</span><span class="layer conv">1×1 Conv</span><span class="arrow">→</span><span class="layer conv">1×1 Conv</span><span class="arrow">→</span><span class="layer pool">Global Avg Pool</span><span class="arrow">→</span><span class="layer fc">Softmax</span></div>
-          <div class="corefig"><img src="assets/nin.svg" alt="论文核心图重绘：mlpconv 与全局平均池化。"><div class="cap">论文核心图重绘：mlpconv 与全局平均池化。</div></div>
+          <div class="corefig"><img src="assets/original-figures/nin.png" alt="论文核心原图：mlpconv 与全局平均池化。"><div class="cap">论文核心原图：mlpconv 与全局平均池化。</div></div>
           <ul><li>1×1 卷积成为 Inception、ResNet bottleneck、MobileNet 等后续架构的基础组件。</li><li>全局平均池化让空间特征直接对应类别响应，减少参数与过拟合。</li></ul>
         </div>
       </div>
@@ -251,13 +251,13 @@
           <p><strong>标题：</strong>Very Deep Convolutional Networks for Large-Scale Image Recognition</p>
           <p><strong>作者：</strong>Karen Simonyan、Andrew Zisserman</p>
           <p><strong>作者简介：</strong>二者来自牛津大学 Visual Geometry Group；Zisserman 是计算机视觉领域代表学者，长期研究几何视觉、识别与视频理解。</p>
-          <p class="paper-meta"><strong>发表：</strong>ICLR 2015（arXiv 2014）。<br><strong>核心图：</strong>VGG 网络配置表 A-E 与 3×3 深层堆叠；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>ICLR 2015（arXiv 2014）。<br><strong>核心图：</strong>VGG 网络配置表 A-E 与 3×3 深层堆叠；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>证明使用统一的小卷积核 3×3、简单规则地加深网络，可以获得强表示和良好迁移能力。</p>
         </div>
         <div class="box">
           <h3>VGG-16 架构</h3>
           <div class="arch"><span class="layer">224×224</span><span class="arrow">→</span><span class="layer conv">2×[3×3,64]</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">2×[3×3,128]</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">3×[3×3,256]</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">3×[3×3,512]</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">3×[3×3,512]</span><span class="arrow">→</span><span class="layer fc">4096-4096-1000</span></div>
-          <div class="corefig"><img src="assets/vgg16.svg" alt="论文核心图重绘：VGG-16 规则化 3×3 深层堆叠。"><div class="cap">论文核心图重绘：VGG-16 规则化 3×3 深层堆叠。</div></div>
+          <div class="corefig"><img src="assets/original-figures/vgg16.png" alt="论文核心原图：VGG-16 规则化 3×3 深层堆叠。"><div class="cap">论文核心原图：VGG-16 规则化 3×3 深层堆叠。</div></div>
           <ul><li>两个 3×3 近似一个 5×5 感受野，三个 3×3 近似一个 7×7，但参数更少且非线性更多。</li><li>缺点：全连接层参数巨大，计算和存储成本高。</li></ul>
         </div>
       </div>
@@ -271,13 +271,13 @@
           <p><strong>标题：</strong>Going Deeper with Convolutions</p>
           <p><strong>作者：</strong>Christian Szegedy、Wei Liu、Yangqing Jia、Pierre Sermanet、Scott Reed、Dragomir Anguelov、Dumitru Erhan、Vincent Vanhoucke、Andrew Rabinovich 等</p>
           <p><strong>作者简介：</strong>Szegedy 是 Google Research 研究者，推动 Inception 系列；Yangqing Jia 是 Caffe 作者；团队来自 Google 与学术/工业视觉社区。</p>
-          <p class="paper-meta"><strong>发表：</strong>CVPR 2015。<br><strong>核心图：</strong>Inception module naive/with dimension reduction（论文 Fig. 2）；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>CVPR 2015。<br><strong>核心图：</strong>Inception module naive/with dimension reduction（论文 Fig. 2）；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>Inception 模块在同一层并行使用多种卷积尺度，并用 1×1 卷积做瓶颈降维。</p>
         </div>
         <div class="box">
           <h3>Inception v1 模块</h3>
           <div class="arch"><span class="layer">输入</span><span class="arrow">→</span><span class="layer conv">1×1</span><span class="layer conv">1×1→3×3</span><span class="layer conv">1×1→5×5</span><span class="layer pool">Pool→1×1</span><span class="arrow">→</span><span class="layer fc">Concat</span></div>
-          <div class="corefig"><img src="assets/inception.svg" alt="论文核心图重绘：Inception 多分支 + 1×1 降维。"><div class="cap">论文核心图重绘：Inception 多分支 + 1×1 降维。</div></div>
+          <div class="corefig"><img src="assets/original-figures/inception.png" alt="论文核心原图：Inception 多分支 + 1×1 降维。"><div class="cap">论文核心原图：Inception 多分支 + 1×1 降维。</div></div>
           <ul><li>多尺度：同时捕捉局部与较大感受野。</li><li>瓶颈：1×1 降低通道数，控制计算量。</li><li>辅助分类器：缓解深层梯度问题。</li></ul>
         </div>
       </div>
@@ -291,13 +291,13 @@
           <p><strong>标题：</strong>Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</p>
           <p><strong>作者：</strong>Sergey Ioffe、Christian Szegedy</p>
           <p><strong>作者简介：</strong>Ioffe 是 Google 研究者，研究机器学习与优化；Szegedy 同时是 Inception 系列核心作者。</p>
-          <p class="paper-meta"><strong>发表：</strong>ICML 2015。<br><strong>核心图：</strong>BN 对 mini-batch 激活做标准化并学习 γ/β 的流程；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>ICML 2015。<br><strong>核心图：</strong>BN 对 mini-batch 激活做标准化并学习 γ/β 的流程；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>在小批量维度归一化中间激活，允许更大学习率、加速收敛，并提供正则化效果。</p>
         </div>
         <div class="box">
           <h3>典型 Conv-BN-ReLU 模块</h3>
           <div class="arch"><span class="layer conv">Conv</span><span class="arrow">→</span><span class="layer">BatchNorm</span><span class="arrow">→</span><span class="layer">ReLU</span></div>
-          <div class="corefig"><img src="assets/batchnorm.svg" alt="论文核心图重绘：BatchNorm 对 mini-batch 激活归一化并学习缩放/平移。"><div class="cap">论文核心图重绘：BatchNorm 对 mini-batch 激活归一化并学习缩放/平移。</div></div>
+          <div class="corefig"><img src="assets/original-figures/batchnorm.png" alt="论文核心原图：BatchNorm 对 mini-batch 激活归一化并学习缩放/平移。"><div class="cap">论文核心原图：BatchNorm 对 mini-batch 激活归一化并学习缩放/平移。</div></div>
           <ul><li>成为 ResNet、Inception-v2/v3 等网络的标配。</li><li>把“训练技巧”提升为“架构基本层”。</li><li>推理时使用滑动平均统计量。</li></ul>
         </div>
       </div>
@@ -311,14 +311,14 @@
           <p><strong>标题：</strong>Deep Residual Learning for Image Recognition</p>
           <p><strong>作者：</strong>Kaiming He、Xiangyu Zhang、Shaoqing Ren、Jian Sun</p>
           <p><strong>作者简介：</strong>何恺明是计算机视觉代表学者，后在 FAIR/MIT 等机构研究视觉基础模型；孙剑是微软亚洲研究院杰出研究者；团队长期推动检测、分割和深度视觉基础组件。</p>
-          <p class="paper-meta"><strong>发表：</strong>CVPR 2016。<br><strong>核心图：</strong>残差学习单元与 identity shortcut（论文 Fig. 2/3）；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>CVPR 2016。<br><strong>核心图：</strong>残差学习单元与 identity shortcut（论文 Fig. 2/3）；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>学习残差 F(x)=H(x)-x，通过 identity shortcut 让极深网络易优化。</p>
         </div>
         <div class="box">
           <h3>残差块与 ResNet-50</h3>
           <div class="arch"><span class="layer">x</span><span class="arrow">→</span><span class="layer conv">1×1</span><span class="arrow">→</span><span class="layer conv">3×3</span><span class="arrow">→</span><span class="layer conv">1×1</span><span class="arrow">+</span><span class="layer skip">shortcut x</span><span class="arrow">→</span><span class="layer">ReLU</span></div>
           <div class="arch"><span class="layer">7×7 stem</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">conv2_x ×3</span><span class="arrow">→</span><span class="layer conv">conv3_x ×4</span><span class="arrow">→</span><span class="layer conv">conv4_x ×6</span><span class="arrow">→</span><span class="layer conv">conv5_x ×3</span><span class="arrow">→</span><span class="layer pool">GAP</span><span class="arrow">→</span><span class="layer fc">FC</span></div>
-          <div class="corefig"><img src="assets/resnet.svg" alt="论文核心图重绘：残差块通过 shortcut 学习 F(x)+x。"><div class="cap">论文核心图重绘：残差块通过 shortcut 学习 F(x)+x。</div></div>
+          <div class="corefig"><img src="assets/original-figures/resnet.png" alt="论文核心原图：残差块通过 shortcut 学习 F(x)+x。"><div class="cap">论文核心原图：残差块通过 shortcut 学习 F(x)+x。</div></div>
           <ul><li>34/50/101/152 层成为标准深度。</li><li>后续检测、分割、姿态估计长期使用 ResNet backbone。</li></ul>
         </div>
       </div>
@@ -332,13 +332,13 @@
           <p><strong>标题：</strong>Densely Connected Convolutional Networks</p>
           <p><strong>作者：</strong>Gao Huang、Zhuang Liu、Laurens van der Maaten、Kilian Q. Weinberger</p>
           <p><strong>作者简介：</strong>黄高来自清华/康奈尔研究背景，研究高效视觉网络；van der Maaten 是 t-SNE 作者之一；Weinberger 长期研究机器学习与表示学习。</p>
-          <p class="paper-meta"><strong>发表：</strong>CVPR 2017。<br><strong>核心图：</strong>Dense block 密集连接图（论文 Fig. 1/2）；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>CVPR 2017。<br><strong>核心图：</strong>Dense block 密集连接图（论文 Fig. 1/2）；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>每一层接收此前所有层的特征作为输入，显式增强特征复用和梯度流。</p>
         </div>
         <div class="box">
           <h3>Dense Block 架构</h3>
           <div class="arch"><span class="layer">x0</span><span class="arrow">→</span><span class="layer conv">H1</span><span class="arrow">concat</span><span class="layer conv">H2</span><span class="arrow">concat</span><span class="layer conv">H3</span><span class="arrow">concat</span><span class="layer pool">Transition: 1×1 + Pool</span></div>
-          <div class="corefig"><img src="assets/densenet.svg" alt="论文核心图重绘：Dense block 中每层连接到所有后续层。"><div class="cap">论文核心图重绘：Dense block 中每层连接到所有后续层。</div></div>
+          <div class="corefig"><img src="assets/original-figures/densenet.png" alt="论文核心原图：Dense block 中每层连接到所有后续层。"><div class="cap">论文核心原图：Dense block 中每层连接到所有后续层。</div></div>
           <ul><li>增长率 growth rate 控制每层新增通道。</li><li>相比单纯加深，参数效率更高。</li><li>代价是连接和显存访问更复杂。</li></ul>
         </div>
       </div>
@@ -352,13 +352,13 @@
           <p><strong>标题：</strong>Aggregated Residual Transformations for Deep Neural Networks</p>
           <p><strong>作者：</strong>Saining Xie、Ross Girshick、Piotr Dollár、Zhuowen Tu、Kaiming He</p>
           <p><strong>作者简介：</strong>Girshick 是 R-CNN 系列核心作者；Dollár 是视觉检测与特征学习专家；何恺明是 ResNet 作者之一。</p>
-          <p class="paper-meta"><strong>发表：</strong>CVPR 2017。<br><strong>核心图：</strong>split-transform-merge 与 grouped convolution 残差块；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>CVPR 2017。<br><strong>核心图：</strong>split-transform-merge 与 grouped convolution 残差块；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>提出 cardinality（分支/组数）是除深度、宽度之外的重要容量维度，用 grouped convolution 聚合多个残差变换。</p>
         </div>
         <div class="box">
           <h3>ResNeXt block</h3>
           <div class="arch"><span class="layer">x</span><span class="arrow">→</span><span class="layer conv">1×1</span><span class="arrow">→</span><span class="layer conv">3×3 grouped conv, C=32</span><span class="arrow">→</span><span class="layer conv">1×1</span><span class="arrow">+</span><span class="layer skip">shortcut</span></div>
-          <div class="corefig"><img src="assets/resnext.svg" alt="论文核心图重绘：ResNeXt split-transform-merge 与 grouped conv。"><div class="cap">论文核心图重绘：ResNeXt split-transform-merge 与 grouped conv。</div></div>
+          <div class="corefig"><img src="assets/original-figures/resnext.png" alt="论文核心原图：ResNeXt split-transform-merge 与 grouped conv。"><div class="cap">论文核心原图：ResNeXt split-transform-merge 与 grouped conv。</div></div>
           <ul><li>统一理解 Inception 多分支与 ResNet 残差。</li><li>组卷积让模型容量增加但计算可控。</li></ul>
         </div>
       </div>
@@ -372,13 +372,13 @@
           <p><strong>标题：</strong>Squeeze-and-Excitation Networks</p>
           <p><strong>作者：</strong>Jie Hu、Li Shen、Gang Sun</p>
           <p><strong>作者简介：</strong>该团队来自 Momenta 等机构；SENet 获得 ILSVRC 2017 分类任务冠军，推动注意力机制进入 CNN 主干设计。</p>
-          <p class="paper-meta"><strong>发表：</strong>CVPR 2018（ILSVRC 2017 winning entry）。<br><strong>核心图：</strong>Squeeze-and-Excitation block（论文 Fig. 1）；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>CVPR 2018（ILSVRC 2017 winning entry）。<br><strong>核心图：</strong>Squeeze-and-Excitation block（论文 Fig. 1）；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>通过全局信息自适应重标定通道权重，使网络学会“强调哪些通道”。</p>
         </div>
         <div class="box">
           <h3>SE 模块</h3>
           <div class="arch"><span class="layer conv">特征 U</span><span class="arrow">→</span><span class="layer pool">Squeeze: GAP</span><span class="arrow">→</span><span class="layer fc">FC r↓ + ReLU</span><span class="arrow">→</span><span class="layer fc">FC + Sigmoid</span><span class="arrow">→</span><span class="layer">Scale 通道</span></div>
-          <div class="corefig"><img src="assets/senet.svg" alt="论文核心图重绘：SE 模块 squeeze 全局信息并 excite 通道权重。"><div class="cap">论文核心图重绘：SE 模块 squeeze 全局信息并 excite 通道权重。</div></div>
+          <div class="corefig"><img src="assets/original-figures/senet.png" alt="论文核心原图：SE 模块 squeeze 全局信息并 excite 通道权重。"><div class="cap">论文核心原图：SE 模块 squeeze 全局信息并 excite 通道权重。</div></div>
           <ul><li>可插入 ResNet、Inception、ResNeXt 等模型。</li><li>参数/计算开销很小，但精度提升明显。</li></ul>
         </div>
       </div>
@@ -393,18 +393,18 @@
           <p><strong>标题：</strong>SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and &lt;0.5MB model size</p>
           <p><strong>作者：</strong>Forrest N. Iandola、Song Han、Matthew W. Moskewicz、Khalid Ashraf、William J. Dally、Kurt Keutzer</p>
           <p><strong>作者简介：</strong>Song Han 与 Dally 长期研究高效深度学习与硬件；Keutzer 研究并行计算和机器学习系统。</p>
-          <p class="paper-meta"><strong>发表：</strong>ICLR 2017。<br><strong>核心图：</strong>Fire module：squeeze 1×1 + expand 1×1/3×3；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>ICLR 2017。<br><strong>核心图：</strong>Fire module：squeeze 1×1 + expand 1×1/3×3；本页使用论文原图截取。</p>
           <div class="arch"><span class="layer conv">Squeeze 1×1</span><span class="arrow">→</span><span class="layer conv">Expand 1×1</span><span class="layer conv">Expand 3×3</span><span class="arrow">→</span><span class="layer fc">Concat</span></div>
-          <div class="corefig"><img src="assets/squeezenet.svg" alt="论文核心图重绘：SqueezeNet Fire module。"><div class="cap">论文核心图重绘：SqueezeNet Fire module。</div></div>
+          <div class="corefig"><img src="assets/original-figures/squeezenet.png" alt="论文核心原图：SqueezeNet Fire module。"><div class="cap">论文核心原图：SqueezeNet Fire module。</div></div>
         </div>
         <div class="box">
           <h3>MobileNet v1</h3>
           <p><strong>标题：</strong>MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications</p>
           <p><strong>作者：</strong>Andrew G. Howard、Menglong Zhu、Bo Chen、Dmitry Kalenichenko、Weijun Wang、Tobias Weyand、Marco Andreetto、Hartwig Adam</p>
           <p><strong>作者简介：</strong>Google 团队，聚焦移动端视觉模型与产品级部署。</p>
-          <p class="paper-meta"><strong>发表：</strong>arXiv technical report, 2017。<br><strong>核心图：</strong>标准卷积分解为 depthwise 与 pointwise convolution；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>arXiv technical report, 2017。<br><strong>核心图：</strong>标准卷积分解为 depthwise 与 pointwise convolution；本页使用论文原图截取。</p>
           <div class="arch"><span class="layer conv">Depthwise 3×3</span><span class="arrow">→</span><span class="layer conv">Pointwise 1×1</span><span class="arrow">→</span><span class="layer">BN/ReLU</span></div>
-          <div class="corefig"><img src="assets/mobilenet.svg" alt="论文核心图重绘：MobileNet depthwise separable convolution。"><div class="cap">论文核心图重绘：MobileNet depthwise separable convolution。</div></div>
+          <div class="corefig"><img src="assets/original-figures/mobilenet.png" alt="论文核心原图：MobileNet depthwise separable convolution。"><div class="cap">论文核心原图：MobileNet depthwise separable convolution。</div></div>
         </div>
       </div>
       <p class="takeaway">脉络意义：当 CNN 进入手机与嵌入式设备，评价标准从单一精度扩展为精度-参数-延迟-能耗。</p>
@@ -417,13 +417,13 @@
           <p><strong>标题：</strong>Xception: Deep Learning with Depthwise Separable Convolutions</p>
           <p><strong>作者：</strong>François Chollet</p>
           <p><strong>作者简介：</strong>Chollet 是 Keras 作者，长期推动深度学习软件生态和模型设计研究。</p>
-          <p class="paper-meta"><strong>发表：</strong>CVPR 2017。<br><strong>核心图：</strong>Xception entry/middle/exit flow 与 separable convolution；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>CVPR 2017。<br><strong>核心图：</strong>Xception entry/middle/exit flow 与 separable convolution；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>把 Inception 理解为通道相关性与空间相关性分解；使用 depthwise separable convolution 进一步解耦空间卷积和通道混合。</p>
         </div>
         <div class="box">
           <h3>Xception 模块</h3>
           <div class="arch"><span class="layer">输入</span><span class="arrow">→</span><span class="layer conv">Depthwise spatial conv</span><span class="arrow">→</span><span class="layer conv">Pointwise 1×1 conv</span><span class="arrow">→</span><span class="layer skip">Residual shortcut</span></div>
-          <div class="corefig"><img src="assets/xception.svg" alt="论文核心图重绘：Xception 将空间卷积与通道混合解耦。"><div class="cap">论文核心图重绘：Xception 将空间卷积与通道混合解耦。</div></div>
+          <div class="corefig"><img src="assets/original-figures/xception.png" alt="论文核心原图：Xception 将空间卷积与通道混合解耦。"><div class="cap">论文核心原图：Xception 将空间卷积与通道混合解耦。</div></div>
           <ul><li>与 MobileNet 共享高效卷积思想，但面向更强表示。</li><li>说明卷积可以被结构化分解以提升效率。</li></ul>
         </div>
       </div>
@@ -437,13 +437,13 @@
           <p><strong>标题：</strong>EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks</p>
           <p><strong>作者：</strong>Mingxing Tan、Quoc V. Le</p>
           <p><strong>作者简介：</strong>Tan 与 Le 来自 Google Brain；Quoc Le 长期研究 AutoML、神经架构搜索和大规模深度学习。</p>
-          <p class="paper-meta"><strong>发表：</strong>ICML 2019。<br><strong>核心图：</strong>MBConv 模块与 compound scaling（深度/宽度/分辨率）；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>ICML 2019。<br><strong>核心图：</strong>MBConv 模块与 compound scaling（深度/宽度/分辨率）；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>用 NAS 找到 EfficientNet-B0，再用 compound scaling 同时按比例缩放深度、宽度、输入分辨率。</p>
         </div>
         <div class="box">
           <h3>EfficientNet 架构</h3>
           <div class="arch"><span class="layer conv">Stem Conv</span><span class="arrow">→</span><span class="layer conv">MBConv1</span><span class="arrow">→</span><span class="layer conv">MBConv6 + SE</span><span class="arrow">→</span><span class="layer conv">多阶段重复</span><span class="arrow">→</span><span class="layer pool">GAP</span><span class="arrow">→</span><span class="layer fc">FC</span></div>
-          <div class="corefig"><img src="assets/efficientnet.svg" alt="论文核心图重绘：EfficientNet MBConv + SE 与复合缩放。"><div class="cap">论文核心图重绘：EfficientNet MBConv + SE 与复合缩放。</div></div>
+          <div class="corefig"><img src="assets/original-figures/efficientnet.png" alt="论文核心原图：EfficientNet MBConv + SE 与复合缩放。"><div class="cap">论文核心原图：EfficientNet MBConv + SE 与复合缩放。</div></div>
           <ul><li>MBConv：MobileNetV2 inverted residual + depthwise conv。</li><li>SE 模块提高通道自适应能力。</li><li>复合缩放：depth α^φ, width β^φ, resolution γ^φ。</li></ul>
         </div>
       </div>
@@ -457,13 +457,13 @@
           <p><strong>标题：</strong>A ConvNet for the 2020s</p>
           <p><strong>作者：</strong>Zhuang Liu、Hanzi Mao、Chao-Yuan Wu、Christoph Feichtenhofer、Trevor Darrell、Saining Xie</p>
           <p><strong>作者简介：</strong>团队来自 Meta AI/UC Berkeley 等机构；Saining Xie 也是 ResNeXt 作者之一，长期研究视觉架构。</p>
-          <p class="paper-meta"><strong>发表：</strong>CVPR 2022。<br><strong>核心图：</strong>ConvNeXt block 与从 ResNet 到现代 ConvNet 的设计改造；本页采用课堂重绘示意。</p>
+          <p class="paper-meta"><strong>发表：</strong>CVPR 2022。<br><strong>核心图：</strong>ConvNeXt block 与从 ResNet 到现代 ConvNet 的设计改造；本页使用论文原图截取。</p>
           <p><strong>核心贡献：</strong>借鉴 Swin Transformer 的训练与宏观设计，用现代化改造证明纯 CNN 仍可达到强竞争力。</p>
         </div>
         <div class="box">
           <h3>ConvNeXt block</h3>
           <div class="arch"><span class="layer conv">7×7 Depthwise Conv</span><span class="arrow">→</span><span class="layer">LayerNorm</span><span class="arrow">→</span><span class="layer conv">1×1 / Linear 扩张4×</span><span class="arrow">→</span><span class="layer">GELU</span><span class="arrow">→</span><span class="layer conv">1×1 / Linear 降维</span><span class="arrow">+</span><span class="layer skip">shortcut</span></div>
-          <div class="corefig"><img src="assets/convnext.svg" alt="论文核心图重绘：ConvNeXt block 的 7×7 depthwise conv、LN、倒瓶颈与残差。"><div class="cap">论文核心图重绘：ConvNeXt block 的 7×7 depthwise conv、LN、倒瓶颈与残差。</div></div>
+          <div class="corefig"><img src="assets/original-figures/convnext.png" alt="论文核心原图：ConvNeXt block 的 7×7 depthwise conv、LN、倒瓶颈与残差。"><div class="cap">论文核心原图：ConvNeXt block 的 7×7 depthwise conv、LN、倒瓶颈与残差。</div></div>
           <ul><li>更大卷积核、倒残差、LayerNorm、GELU、少激活函数。</li><li>把 CNN 与 Transformer 的设计语言拉近。</li></ul>
         </div>
       </div>
@@ -515,7 +515,7 @@
 
     <section class="slide"><div class="card">
       <h2>参考文献、发表 venue 与图示来源</h2>
-      <p class="small muted">注：slides 中的“核心示意图”为依据论文关键图/架构图重绘的课堂讲解版，避免直接复制论文版权图片；每页标注原始图的来源位置或图意。</p>
+      <p class="small muted">注：slides 中的“核心示意图”已替换为从论文/作者开放 PDF 中截取的原始图，供课堂教学辅助使用；每页标注对应论文图号或图意。</p>
       <ul class="small">
         <li>Hubel & Wiesel 视觉皮层系列论文：Journal of Physiology, 1959/1962；核心图示来源为视觉皮层简单/复杂细胞感受野实验图。</li>
         <li>Fukushima, K. (1980). Neocognitron. Biological Cybernetics；核心图示来源为 S/C 层级结构图。</li>
