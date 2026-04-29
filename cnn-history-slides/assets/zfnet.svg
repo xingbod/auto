@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="260" viewBox="0 0 1100 260">
+<defs><linearGradient id="bg" x1="0" x2="1"><stop offset="0" stop-color="#0b1020"/><stop offset="1" stop-color="#172445"/></linearGradient><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#aebbd4"/></marker></defs>
+<rect width="100%" height="100%" rx="22" fill="url(#bg)" stroke="rgba(255,255,255,.22)"/>
+<text x="40" y="44" fill="#eef4ff" font-size="26" font-family="Arial, Helvetica, sans-serif" font-weight="700">ZFNet visualization-driven redesign</text>
+<text x="40" y="74" fill="#aebbd4" font-size="18" font-family="Arial, Helvetica, sans-serif">参考 ECCV 2014 deconv 可视化与改进结构，课堂重绘</text>
+<rect x="40" y="120" width="176" height="76" rx="14" fill="#1f77b4" fill-opacity="0.24" stroke="#1f77b4" stroke-width="2"/>
+<text x="128.0" y="154" text-anchor="middle" fill="#eef4ff" font-size="16" font-family="Arial, Helvetica, sans-serif" font-weight="650">Input</text>
+<line x1="222" y1="158" x2="241" y2="158" stroke="#aebbd4" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="251" y="120" width="176" height="76" rx="14" fill="#2ca02c" fill-opacity="0.24" stroke="#2ca02c" stroke-width="2"/>
+<text x="339.0" y="154" text-anchor="middle" fill="#eef4ff" font-size="16" font-family="Arial, Helvetica, sans-serif" font-weight="650">7x7/s2 Conv</text>
+<line x1="433" y1="158" x2="452" y2="158" stroke="#aebbd4" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="462" y="120" width="176" height="76" rx="14" fill="#ff7f0e" fill-opacity="0.24" stroke="#ff7f0e" stroke-width="2"/>
+<text x="550.0" y="144" text-anchor="middle" fill="#eef4ff" font-size="16" font-family="Arial, Helvetica, sans-serif" font-weight="650">Deconv</text>
+<text x="550.0" y="164" text-anchor="middle" fill="#eef4ff" font-size="16" font-family="Arial, Helvetica, sans-serif" font-weight="650">visualizer</text>
+<line x1="644" y1="158" x2="663" y2="158" stroke="#aebbd4" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="673" y="120" width="176" height="76" rx="14" fill="#9467bd" fill-opacity="0.24" stroke="#9467bd" stroke-width="2"/>
+<text x="761.0" y="154" text-anchor="middle" fill="#eef4ff" font-size="16" font-family="Arial, Helvetica, sans-serif" font-weight="650">3x3 stack</text>
+<line x1="855" y1="158" x2="874" y2="158" stroke="#aebbd4" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="884" y="120" width="176" height="76" rx="14" fill="#17becf" fill-opacity="0.24" stroke="#17becf" stroke-width="2"/>
+<text x="972.0" y="154" text-anchor="middle" fill="#eef4ff" font-size="16" font-family="Arial, Helvetica, sans-serif" font-weight="650">FC classifier</text>
+<text x="40" y="232" fill="#fbbf24" font-size="16" font-family="Arial, Helvetica, sans-serif">论文核心图重绘示意</text>
+</svg>
