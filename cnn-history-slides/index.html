@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CNN 发展历程：经典工作与网络架构</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a33;
+      --panel2: #172445;
+      --text: #eef4ff;
+      --muted: #aebbd4;
+      --accent: #7dd3fc;
+      --accent2: #fbbf24;
+      --green: #86efac;
+      --pink: #f0abfc;
+      --red: #fca5a5;
+      --line: rgba(255,255,255,.16);
+      --shadow: 0 22px 70px rgba(0,0,0,.38);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+    body::before { content: ""; position: fixed; inset: 0; background: radial-gradient(circle at 12% 10%, rgba(125,211,252,.28), transparent 30%), radial-gradient(circle at 88% 18%, rgba(240,171,252,.20), transparent 28%), radial-gradient(circle at 62% 88%, rgba(251,191,36,.13), transparent 32%); pointer-events: none; }
+    .deck { height: 100vh; width: 100vw; position: relative; }
+    .slide { position: absolute; inset: 0; padding: 54px 72px 70px; display: none; overflow: auto; }
+    .slide.active { display: block; animation: fade .22s ease-out; }
+    @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .card { max-width: 1180px; min-height: calc(100vh - 124px); margin: 0 auto; padding: 44px 52px; background: linear-gradient(180deg, rgba(18,26,51,.94), rgba(14,20,39,.94)); border: 1px solid var(--line); border-radius: 28px; box-shadow: var(--shadow); }
+    .center { display: grid; place-items: center; text-align: center; }
+    h1 { font-size: clamp(42px, 6vw, 82px); line-height: 1.05; margin: 0 0 24px; letter-spacing: -0.04em; }
+    h2 { font-size: clamp(32px, 4vw, 52px); line-height: 1.08; margin: 0 0 24px; letter-spacing: -0.035em; }
+    h3 { font-size: 25px; margin: 22px 0 10px; color: var(--accent); }
+    p, li { font-size: 21px; line-height: 1.58; color: var(--text); }
+    ul, ol { margin-top: 10px; padding-left: 1.2em; }
+    .muted { color: var(--muted); }
+    .small { font-size: 16px; line-height: 1.45; }
+    .tag { display: inline-block; padding: 6px 11px; border-radius: 999px; border: 1px solid rgba(125,211,252,.35); color: var(--accent); background: rgba(125,211,252,.10); font-size: 15px; margin: 4px 5px 4px 0; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .box { background: rgba(255,255,255,.055); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; }
+    .box strong { color: var(--accent2); }
+    .quote { border-left: 5px solid var(--accent); padding: 10px 0 10px 20px; color: var(--muted); font-size: 21px; }
+    .timeline { position: relative; padding-left: 26px; }
+    .timeline::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 3px; background: linear-gradient(var(--accent), var(--accent2)); border-radius: 9px; }
+    .event { position: relative; margin: 0 0 14px; padding: 12px 16px; background: rgba(255,255,255,.055); border: 1px solid var(--line); border-radius: 16px; }
+    .event::before { content: ""; position: absolute; left: -26px; top: 20px; width: 14px; height: 14px; border-radius: 50%; background: var(--accent2); box-shadow: 0 0 0 5px rgba(251,191,36,.12); }
+    .year { color: var(--accent2); font-weight: 800; margin-right: 10px; }
+    .arch { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin: 12px 0; }
+    .layer { padding: 8px 10px; border-radius: 9px; background: rgba(125,211,252,.14); border: 1px solid rgba(125,211,252,.35); color: #dff7ff; font-size: 14px; white-space: nowrap; }
+    .layer.conv { background: rgba(125,211,252,.16); }
+    .layer.pool { background: rgba(134,239,172,.15); border-color: rgba(134,239,172,.38); }
+    .layer.fc { background: rgba(240,171,252,.14); border-color: rgba(240,171,252,.36); }
+    .layer.skip { background: rgba(251,191,36,.16); border-color: rgba(251,191,36,.40); }
+    .arrow { color: var(--muted); font-size: 17px; }
+    table { width: 100%; border-collapse: collapse; font-size: 17px; overflow: hidden; border-radius: 16px; }
+    th, td { border-bottom: 1px solid var(--line); padding: 12px 11px; vertical-align: top; text-align: left; }
+    th { color: var(--accent); background: rgba(125,211,252,.08); }
+    td { color: #edf3ff; }
+    .foot { position: fixed; left: 0; right: 0; bottom: 0; height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 26px; color: var(--muted); background: rgba(6,10,22,.62); backdrop-filter: blur(10px); border-top: 1px solid var(--line); font-size: 14px; }
+    .progress { position: fixed; left: 0; bottom: 44px; height: 4px; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .2s; }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; border: 1px solid var(--line); border-bottom-width: 3px; padding: 2px 7px; border-radius: 7px; background: rgba(255,255,255,.06); }
+    .title-meta { font-size: 22px; color: var(--muted); max-width: 880px; margin: 0 auto; }
+    .takeaway { color: var(--green); font-weight: 800; }
+    .warning { color: var(--red); }
+    @media print { html, body { overflow: visible; background: #fff; color: #000; } body::before, .foot, .progress { display: none; } .slide { display: block !important; position: relative; page-break-after: always; height: auto; min-height: 100vh; padding: 20px; } .card { box-shadow: none; background: #fff; color: #000; border: 1px solid #ccc; } p, li, td { color: #111; } .muted { color: #555; } }
+    @media (max-width: 900px) { .slide { padding: 28px 18px 60px; } .card { padding: 28px 24px; } .grid2, .grid3 { grid-template-columns: 1fr; } p, li { font-size: 18px; } }
+  </style>
+</head>
+<body>
+  <div class="deck" id="deck">
+    <section class="slide active"><div class="card center">
+      <div>
+        <div class="tag">课程 slides · HTML 单文件</div>
+        <h1>CNN 发展历程</h1>
+        <p class="title-meta">从感受野与 Neocognitron，到 LeNet、AlexNet、VGG、Inception、ResNet、DenseNet、MobileNet、EfficientNet 与 ConvNeXt：经典工作、作者背景、网络架构与演化主线。</p>
+        <p class="muted small">操作：方向键 / 空格翻页，P 打印或导出 PDF。</p>
+      </div>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>授课目标：不只是“列模型”，而是看清发展逻辑</h2>
+      <div class="grid2">
+        <div class="box"><h3>三条主线</h3><ol><li>归纳偏置：局部连接、权值共享、平移等变。</li><li>可训练深度：数据、算力、初始化、归一化、残差连接。</li><li>效率与可部署：参数量、FLOPs、延迟、硬件友好。</li></ol></div>
+        <div class="box"><h3>每个经典工作关注</h3><ul><li>标题与年份</li><li>作者及简要介绍</li><li>核心思想与历史作用</li><li>网络架构：层级、模块、连接方式</li><li>为什么它启发了下一代 CNN</li></ul></div>
+      </div>
+      <p class="quote">CNN 的历史不是单线“更深更大”，而是围绕表示能力、优化难度、计算效率之间的持续折中。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>CNN 发展时间线：从神经科学到工程系统</h2>
+      <div class="timeline">
+        <div class="event"><span class="year">1959–1968</span>Hubel & Wiesel 发现视觉皮层简单/复杂细胞；感受野与层级视觉表示成为 CNN 的神经科学灵感。</div>
+        <div class="event"><span class="year">1980</span>Fukushima 提出 Neocognitron：S/C 层交替，奠定卷积与池化思想雏形。</div>
+        <div class="event"><span class="year">1989–1998</span>LeCun 等用反向传播训练卷积网络，LeNet-5 成为早期工业化成功案例。</div>
+        <div class="event"><span class="year">2012</span>AlexNet 在 ImageNet 突破，深度 CNN 进入现代计算机视觉主舞台。</div>
+        <div class="event"><span class="year">2013–2015</span>ZFNet 可视化解释、VGG 统一 3×3 深层堆叠、GoogLeNet 用 Inception 多尺度稀疏近似。</div>
+        <div class="event"><span class="year">2015–2017</span>BatchNorm、ResNet、DenseNet、SENet 等解决深层训练与通道注意力。</div>
+        <div class="event"><span class="year">2017–2022</span>MobileNet/EfficientNet/ConvNeXt：从移动端效率到 CNN 与 Transformer 时代的再设计。</div>
+      </div>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>背景奠基：感受野与层级视觉系统</h2>
+      <div class="grid2">
+        <div>
+          <h3>工作</h3>
+          <p><strong>Receptive fields, binocular interaction and functional architecture in the cat's visual cortex</strong>（Hubel & Wiesel, 1962）等系列研究。</p>
+          <p><strong>作者简介：</strong>David H. Hubel 与 Torsten N. Wiesel 是神经生理学家，因研究视觉皮层信息处理获得 1981 年诺贝尔生理学或医学奖。</p>
+        </div>
+        <div class="box">
+          <h3>对 CNN 的影响</h3>
+          <ul><li>局部感受野：神经元只响应局部空间区域。</li><li>简单细胞/复杂细胞：边缘检测与位置容忍。</li><li>层级组合：低级边缘 → 局部形状 → 高级物体。</li></ul>
+          <div class="arch"><span class="layer conv">局部边缘</span><span class="arrow">→</span><span class="layer pool">局部不变性</span><span class="arrow">→</span><span class="layer conv">层级组合</span><span class="arrow">→</span><span class="layer fc">物体识别</span></div>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：CNN 把视觉皮层的“局部、共享、层级”转化为可微分、可训练的工程架构。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>1980：Neocognitron</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>Neocognitron: A self-organizing neural network model for a mechanism of pattern recognition unaffected by shift in position</p>
+          <p><strong>作者：</strong>Kunihiko Fukushima</p>
+          <p><strong>作者简介：</strong>日本计算神经科学与神经网络研究先驱，长期研究受视觉皮层启发的模式识别模型。</p>
+          <p><strong>核心贡献：</strong>提出 S-cell 与 C-cell 交替结构，分别近似特征检测与位置容忍，是现代卷积层/池化层的早期原型。</p>
+        </div>
+        <div class="box">
+          <h3>网络架构</h3>
+          <div class="arch"><span class="layer">输入</span><span class="arrow">→</span><span class="layer conv">S1 特征检测</span><span class="arrow">→</span><span class="layer pool">C1 位移容忍</span><span class="arrow">→</span><span class="layer conv">S2</span><span class="arrow">→</span><span class="layer pool">C2</span><span class="arrow">→</span><span class="layer fc">分类</span></div>
+          <ul><li>S 层：学习局部特征模板。</li><li>C 层：对邻域 S 响应进行汇聚，增强平移不变性。</li><li>训练主要是自组织/局部学习，不是现代端到端反向传播。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：结构思想领先，但缺少大数据、算力与反向传播训练体系。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>1989/1998：LeNet 系列与 LeNet-5</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>Backpropagation Applied to Handwritten Zip Code Recognition（1989）；Gradient-Based Learning Applied to Document Recognition（1998）</p>
+          <p><strong>作者：</strong>Yann LeCun、Léon Bottou、Yoshua Bengio、Patrick Haffner 等</p>
+          <p><strong>作者简介：</strong>LeCun 是深度学习与 CNN 代表人物，图灵奖得主；Bengio 同为深度学习图灵奖得主；Bottou 长期研究大规模优化与机器学习系统。</p>
+          <p><strong>核心贡献：</strong>用反向传播端到端训练卷积网络，在手写数字、支票识别等任务上形成可部署系统。</p>
+        </div>
+        <div class="box">
+          <h3>LeNet-5 架构</h3>
+          <div class="arch"><span class="layer">32×32 输入</span><span class="arrow">→</span><span class="layer conv">C1: 6@5×5</span><span class="arrow">→</span><span class="layer pool">S2: avg pool</span><span class="arrow">→</span><span class="layer conv">C3: 16@5×5</span><span class="arrow">→</span><span class="layer pool">S4</span><span class="arrow">→</span><span class="layer conv">C5: 120</span><span class="arrow">→</span><span class="layer fc">F6: 84</span><span class="arrow">→</span><span class="layer fc">输出</span></div>
+          <ul><li>局部连接 + 权值共享降低参数量。</li><li>池化带来小范围形变鲁棒性。</li><li>全连接层完成类别决策。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：CNN 第一次被证明可以端到端训练并解决真实工业问题。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>1995–1998：TDNN 与早期卷积思想扩展</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>Phoneme Recognition Using Time-Delay Neural Networks（Waibel et al., 1989）等</p>
+          <p><strong>作者：</strong>Alexander Waibel、Toshiyuki Hanazawa、Geoffrey Hinton 等</p>
+          <p><strong>作者简介：</strong>Waibel 是语音识别与多模态交互专家；Hinton 是深度学习图灵奖得主，长期推动神经网络表示学习。</p>
+        </div>
+        <div class="box">
+          <h3>架构思想</h3>
+          <div class="arch"><span class="layer">时间序列输入</span><span class="arrow">→</span><span class="layer conv">共享时间窗滤波</span><span class="arrow">→</span><span class="layer conv">更高层时序组合</span><span class="arrow">→</span><span class="layer fc">音素/词分类</span></div>
+          <ul><li>在时间维上使用共享权重，类似一维卷积。</li><li>说明“局部共享”不仅适用于图像，也适用于序列。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：卷积是一种可迁移的结构先验，可用于空间、时间和多维信号。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2012：AlexNet 引爆现代深度视觉</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>ImageNet Classification with Deep Convolutional Neural Networks</p>
+          <p><strong>作者：</strong>Alex Krizhevsky、Ilya Sutskever、Geoffrey E. Hinton</p>
+          <p><strong>作者简介：</strong>Krizhevsky 是深度学习工程先驱；Sutskever 后来成为 OpenAI 联合创始人与首席科学家；Hinton 是深度学习奠基人之一、图灵奖得主。</p>
+          <p><strong>核心贡献：</strong>在 ImageNet 2012 大幅降低错误率，证明“大数据 + GPU + 深网络 + 非饱和激活”的组合可行。</p>
+        </div>
+        <div class="box">
+          <h3>AlexNet 架构</h3>
+          <div class="arch"><span class="layer">224×224</span><span class="arrow">→</span><span class="layer conv">11×11/s4, 96</span><span class="arrow">→</span><span class="layer pool">LRN+Pool</span><span class="arrow">→</span><span class="layer conv">5×5, 256</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">3×3, 384</span><span class="arrow">→</span><span class="layer conv">3×3, 384</span><span class="arrow">→</span><span class="layer conv">3×3, 256</span><span class="arrow">→</span><span class="layer fc">4096</span><span class="arrow">→</span><span class="layer fc">4096</span><span class="arrow">→</span><span class="layer fc">1000</span></div>
+          <ul><li>ReLU 加速训练；Dropout 抑制过拟合。</li><li>数据增强与 GPU 并行训练关键。</li><li>早期使用 LRN，后续被 BatchNorm 等取代。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：CNN 从“特定任务模型”变成通用视觉骨干网络。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2013：ZFNet —— 可视化推动结构改进</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>Visualizing and Understanding Convolutional Networks</p>
+          <p><strong>作者：</strong>Matthew D. Zeiler、Rob Fergus</p>
+          <p><strong>作者简介：</strong>Zeiler 是视觉深度学习研究者，后创办 Clarifai；Fergus 是 NYU/Meta AI 研究者，研究视觉表示学习。</p>
+          <p><strong>核心贡献：</strong>通过反卷积可视化理解各层特征，发现 AlexNet 第一层步长和卷积核过大导致信息损失，并据此改进网络。</p>
+        </div>
+        <div class="box">
+          <h3>ZFNet 架构相对 AlexNet</h3>
+          <div class="arch"><span class="layer">224×224</span><span class="arrow">→</span><span class="layer conv">7×7/s2</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">5×5/s2</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">3×3 堆叠</span><span class="arrow">→</span><span class="layer fc">FC 分类</span></div>
+          <ul><li>缩小首层卷积核：11×11 → 7×7。</li><li>减小首层步长：4 → 2。</li><li>强调可解释性可直接反馈架构设计。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：CNN 研究开始从“堆模型”走向“理解模型行为后再设计”。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2013/2014：Network in Network 与 1×1 卷积</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>Network in Network</p>
+          <p><strong>作者：</strong>Min Lin、Qiang Chen、Shuicheng Yan</p>
+          <p><strong>作者简介：</strong>Shuicheng Yan 长期研究计算机视觉与机器学习；该工作来自新加坡国立大学团队。</p>
+          <p><strong>核心贡献：</strong>用 micro neural network 替代线性卷积滤波器，引入 1×1 卷积进行通道混合，并用全局平均池化减少全连接层。</p>
+        </div>
+        <div class="box">
+          <h3>NIN 模块架构</h3>
+          <div class="arch"><span class="layer conv">k×k Conv</span><span class="arrow">→</span><span class="layer conv">1×1 Conv</span><span class="arrow">→</span><span class="layer conv">1×1 Conv</span><span class="arrow">→</span><span class="layer pool">Global Avg Pool</span><span class="arrow">→</span><span class="layer fc">Softmax</span></div>
+          <ul><li>1×1 卷积成为 Inception、ResNet bottleneck、MobileNet 等后续架构的基础组件。</li><li>全局平均池化让空间特征直接对应类别响应，减少参数与过拟合。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：网络设计从“空间卷积”扩展到“通道维度的信息重组”。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2014：VGG —— 简洁、深、可迁移</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>Very Deep Convolutional Networks for Large-Scale Image Recognition</p>
+          <p><strong>作者：</strong>Karen Simonyan、Andrew Zisserman</p>
+          <p><strong>作者简介：</strong>二者来自牛津大学 Visual Geometry Group；Zisserman 是计算机视觉领域代表学者，长期研究几何视觉、识别与视频理解。</p>
+          <p><strong>核心贡献：</strong>证明使用统一的小卷积核 3×3、简单规则地加深网络，可以获得强表示和良好迁移能力。</p>
+        </div>
+        <div class="box">
+          <h3>VGG-16 架构</h3>
+          <div class="arch"><span class="layer">224×224</span><span class="arrow">→</span><span class="layer conv">2×[3×3,64]</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">2×[3×3,128]</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">3×[3×3,256]</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">3×[3×3,512]</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">3×[3×3,512]</span><span class="arrow">→</span><span class="layer fc">4096-4096-1000</span></div>
+          <ul><li>两个 3×3 近似一个 5×5 感受野，三个 3×3 近似一个 7×7，但参数更少且非线性更多。</li><li>缺点：全连接层参数巨大，计算和存储成本高。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：VGG 成为“CNN backbone”的教学与迁移学习模板。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2014：GoogLeNet / Inception —— 多尺度与降维</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>Going Deeper with Convolutions</p>
+          <p><strong>作者：</strong>Christian Szegedy、Wei Liu、Yangqing Jia、Pierre Sermanet、Scott Reed、Dragomir Anguelov、Dumitru Erhan、Vincent Vanhoucke、Andrew Rabinovich 等</p>
+          <p><strong>作者简介：</strong>Szegedy 是 Google Research 研究者，推动 Inception 系列；Yangqing Jia 是 Caffe 作者；团队来自 Google 与学术/工业视觉社区。</p>
+          <p><strong>核心贡献：</strong>Inception 模块在同一层并行使用多种卷积尺度，并用 1×1 卷积做瓶颈降维。</p>
+        </div>
+        <div class="box">
+          <h3>Inception v1 模块</h3>
+          <div class="arch"><span class="layer">输入</span><span class="arrow">→</span><span class="layer conv">1×1</span><span class="layer conv">1×1→3×3</span><span class="layer conv">1×1→5×5</span><span class="layer pool">Pool→1×1</span><span class="arrow">→</span><span class="layer fc">Concat</span></div>
+          <ul><li>多尺度：同时捕捉局部与较大感受野。</li><li>瓶颈：1×1 降低通道数，控制计算量。</li><li>辅助分类器：缓解深层梯度问题。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：从单一路径堆叠转向“模块化、多分支、计算预算受控”的网络设计。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2015：Batch Normalization —— 深网训练稳定器</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</p>
+          <p><strong>作者：</strong>Sergey Ioffe、Christian Szegedy</p>
+          <p><strong>作者简介：</strong>Ioffe 是 Google 研究者，研究机器学习与优化；Szegedy 同时是 Inception 系列核心作者。</p>
+          <p><strong>核心贡献：</strong>在小批量维度归一化中间激活，允许更大学习率、加速收敛，并提供正则化效果。</p>
+        </div>
+        <div class="box">
+          <h3>典型 Conv-BN-ReLU 模块</h3>
+          <div class="arch"><span class="layer conv">Conv</span><span class="arrow">→</span><span class="layer">BatchNorm</span><span class="arrow">→</span><span class="layer">ReLU</span></div>
+          <ul><li>成为 ResNet、Inception-v2/v3 等网络的标配。</li><li>把“训练技巧”提升为“架构基本层”。</li><li>推理时使用滑动平均统计量。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：CNN 的发展不仅靠新拓扑，也靠优化与归一化机制。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2015：ResNet —— 残差学习解决退化问题</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>Deep Residual Learning for Image Recognition</p>
+          <p><strong>作者：</strong>Kaiming He、Xiangyu Zhang、Shaoqing Ren、Jian Sun</p>
+          <p><strong>作者简介：</strong>何恺明是计算机视觉代表学者，后在 FAIR/MIT 等机构研究视觉基础模型；孙剑是微软亚洲研究院杰出研究者；团队长期推动检测、分割和深度视觉基础组件。</p>
+          <p><strong>核心贡献：</strong>学习残差 F(x)=H(x)-x，通过 identity shortcut 让极深网络易优化。</p>
+        </div>
+        <div class="box">
+          <h3>残差块与 ResNet-50</h3>
+          <div class="arch"><span class="layer">x</span><span class="arrow">→</span><span class="layer conv">1×1</span><span class="arrow">→</span><span class="layer conv">3×3</span><span class="arrow">→</span><span class="layer conv">1×1</span><span class="arrow">+</span><span class="layer skip">shortcut x</span><span class="arrow">→</span><span class="layer">ReLU</span></div>
+          <div class="arch"><span class="layer">7×7 stem</span><span class="arrow">→</span><span class="layer pool">Pool</span><span class="arrow">→</span><span class="layer conv">conv2_x ×3</span><span class="arrow">→</span><span class="layer conv">conv3_x ×4</span><span class="arrow">→</span><span class="layer conv">conv4_x ×6</span><span class="arrow">→</span><span class="layer conv">conv5_x ×3</span><span class="arrow">→</span><span class="layer pool">GAP</span><span class="arrow">→</span><span class="layer fc">FC</span></div>
+          <ul><li>34/50/101/152 层成为标准深度。</li><li>后续检测、分割、姿态估计长期使用 ResNet backbone。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：残差连接成为深度学习通用架构范式，不限于 CNN。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2016：DenseNet —— 特征复用与密集连接</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>Densely Connected Convolutional Networks</p>
+          <p><strong>作者：</strong>Gao Huang、Zhuang Liu、Laurens van der Maaten、Kilian Q. Weinberger</p>
+          <p><strong>作者简介：</strong>黄高来自清华/康奈尔研究背景，研究高效视觉网络；van der Maaten 是 t-SNE 作者之一；Weinberger 长期研究机器学习与表示学习。</p>
+          <p><strong>核心贡献：</strong>每一层接收此前所有层的特征作为输入，显式增强特征复用和梯度流。</p>
+        </div>
+        <div class="box">
+          <h3>Dense Block 架构</h3>
+          <div class="arch"><span class="layer">x0</span><span class="arrow">→</span><span class="layer conv">H1</span><span class="arrow">concat</span><span class="layer conv">H2</span><span class="arrow">concat</span><span class="layer conv">H3</span><span class="arrow">concat</span><span class="layer pool">Transition: 1×1 + Pool</span></div>
+          <ul><li>增长率 growth rate 控制每层新增通道。</li><li>相比单纯加深，参数效率更高。</li><li>代价是连接和显存访问更复杂。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：深层网络的核心问题变为“信息和梯度如何跨层流动”。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2016–2017：ResNeXt 与“基数”维度</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>Aggregated Residual Transformations for Deep Neural Networks</p>
+          <p><strong>作者：</strong>Saining Xie、Ross Girshick、Piotr Dollár、Zhuowen Tu、Kaiming He</p>
+          <p><strong>作者简介：</strong>Girshick 是 R-CNN 系列核心作者；Dollár 是视觉检测与特征学习专家；何恺明是 ResNet 作者之一。</p>
+          <p><strong>核心贡献：</strong>提出 cardinality（分支/组数）是除深度、宽度之外的重要容量维度，用 grouped convolution 聚合多个残差变换。</p>
+        </div>
+        <div class="box">
+          <h3>ResNeXt block</h3>
+          <div class="arch"><span class="layer">x</span><span class="arrow">→</span><span class="layer conv">1×1</span><span class="arrow">→</span><span class="layer conv">3×3 grouped conv, C=32</span><span class="arrow">→</span><span class="layer conv">1×1</span><span class="arrow">+</span><span class="layer skip">shortcut</span></div>
+          <ul><li>统一理解 Inception 多分支与 ResNet 残差。</li><li>组卷积让模型容量增加但计算可控。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：CNN 设计开始系统探索深度、宽度、分支数三者的扩展规律。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2017：SENet —— 通道注意力</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>Squeeze-and-Excitation Networks</p>
+          <p><strong>作者：</strong>Jie Hu、Li Shen、Gang Sun</p>
+          <p><strong>作者简介：</strong>该团队来自 Momenta 等机构；SENet 获得 ILSVRC 2017 分类任务冠军，推动注意力机制进入 CNN 主干设计。</p>
+          <p><strong>核心贡献：</strong>通过全局信息自适应重标定通道权重，使网络学会“强调哪些通道”。</p>
+        </div>
+        <div class="box">
+          <h3>SE 模块</h3>
+          <div class="arch"><span class="layer conv">特征 U</span><span class="arrow">→</span><span class="layer pool">Squeeze: GAP</span><span class="arrow">→</span><span class="layer fc">FC r↓ + ReLU</span><span class="arrow">→</span><span class="layer fc">FC + Sigmoid</span><span class="arrow">→</span><span class="layer">Scale 通道</span></div>
+          <ul><li>可插入 ResNet、Inception、ResNeXt 等模型。</li><li>参数/计算开销很小，但精度提升明显。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：CNN 从固定卷积算子走向输入自适应的注意力调制。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2016–2017：SqueezeNet 与 MobileNet —— 轻量化 CNN</h2>
+      <div class="grid2">
+        <div class="box">
+          <h3>SqueezeNet</h3>
+          <p><strong>标题：</strong>SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and &lt;0.5MB model size</p>
+          <p><strong>作者：</strong>Forrest N. Iandola、Song Han、Matthew W. Moskewicz、Khalid Ashraf、William J. Dally、Kurt Keutzer</p>
+          <p><strong>作者简介：</strong>Song Han 与 Dally 长期研究高效深度学习与硬件；Keutzer 研究并行计算和机器学习系统。</p>
+          <div class="arch"><span class="layer conv">Squeeze 1×1</span><span class="arrow">→</span><span class="layer conv">Expand 1×1</span><span class="layer conv">Expand 3×3</span><span class="arrow">→</span><span class="layer fc">Concat</span></div>
+        </div>
+        <div class="box">
+          <h3>MobileNet v1</h3>
+          <p><strong>标题：</strong>MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications</p>
+          <p><strong>作者：</strong>Andrew G. Howard、Menglong Zhu、Bo Chen、Dmitry Kalenichenko、Weijun Wang、Tobias Weyand、Marco Andreetto、Hartwig Adam</p>
+          <p><strong>作者简介：</strong>Google 团队，聚焦移动端视觉模型与产品级部署。</p>
+          <div class="arch"><span class="layer conv">Depthwise 3×3</span><span class="arrow">→</span><span class="layer conv">Pointwise 1×1</span><span class="arrow">→</span><span class="layer">BN/ReLU</span></div>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：当 CNN 进入手机与嵌入式设备，评价标准从单一精度扩展为精度-参数-延迟-能耗。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2017：Xception —— 极致 Inception 与深度可分离卷积</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>Xception: Deep Learning with Depthwise Separable Convolutions</p>
+          <p><strong>作者：</strong>François Chollet</p>
+          <p><strong>作者简介：</strong>Chollet 是 Keras 作者，长期推动深度学习软件生态和模型设计研究。</p>
+          <p><strong>核心贡献：</strong>把 Inception 理解为通道相关性与空间相关性分解；使用 depthwise separable convolution 进一步解耦空间卷积和通道混合。</p>
+        </div>
+        <div class="box">
+          <h3>Xception 模块</h3>
+          <div class="arch"><span class="layer">输入</span><span class="arrow">→</span><span class="layer conv">Depthwise spatial conv</span><span class="arrow">→</span><span class="layer conv">Pointwise 1×1 conv</span><span class="arrow">→</span><span class="layer skip">Residual shortcut</span></div>
+          <ul><li>与 MobileNet 共享高效卷积思想，但面向更强表示。</li><li>说明卷积可以被结构化分解以提升效率。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：可分离卷积成为高效 CNN 的核心算子之一。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2019：EfficientNet —— 复合缩放规律</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks</p>
+          <p><strong>作者：</strong>Mingxing Tan、Quoc V. Le</p>
+          <p><strong>作者简介：</strong>Tan 与 Le 来自 Google Brain；Quoc Le 长期研究 AutoML、神经架构搜索和大规模深度学习。</p>
+          <p><strong>核心贡献：</strong>用 NAS 找到 EfficientNet-B0，再用 compound scaling 同时按比例缩放深度、宽度、输入分辨率。</p>
+        </div>
+        <div class="box">
+          <h3>EfficientNet 架构</h3>
+          <div class="arch"><span class="layer conv">Stem Conv</span><span class="arrow">→</span><span class="layer conv">MBConv1</span><span class="arrow">→</span><span class="layer conv">MBConv6 + SE</span><span class="arrow">→</span><span class="layer conv">多阶段重复</span><span class="arrow">→</span><span class="layer pool">GAP</span><span class="arrow">→</span><span class="layer fc">FC</span></div>
+          <ul><li>MBConv：MobileNetV2 inverted residual + depthwise conv。</li><li>SE 模块提高通道自适应能力。</li><li>复合缩放：depth α^φ, width β^φ, resolution γ^φ。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：CNN 设计进入“结构搜索 + 缩放定律 + 硬件效率”的阶段。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>2022：ConvNeXt —— Transformer 时代重新审视 CNN</h2>
+      <div class="grid2">
+        <div>
+          <p><strong>标题：</strong>A ConvNet for the 2020s</p>
+          <p><strong>作者：</strong>Zhuang Liu、Hanzi Mao、Chao-Yuan Wu、Christoph Feichtenhofer、Trevor Darrell、Saining Xie</p>
+          <p><strong>作者简介：</strong>团队来自 Meta AI/UC Berkeley 等机构；Saining Xie 也是 ResNeXt 作者之一，长期研究视觉架构。</p>
+          <p><strong>核心贡献：</strong>借鉴 Swin Transformer 的训练与宏观设计，用现代化改造证明纯 CNN 仍可达到强竞争力。</p>
+        </div>
+        <div class="box">
+          <h3>ConvNeXt block</h3>
+          <div class="arch"><span class="layer conv">7×7 Depthwise Conv</span><span class="arrow">→</span><span class="layer">LayerNorm</span><span class="arrow">→</span><span class="layer conv">1×1 / Linear 扩张4×</span><span class="arrow">→</span><span class="layer">GELU</span><span class="arrow">→</span><span class="layer conv">1×1 / Linear 降维</span><span class="arrow">+</span><span class="layer skip">shortcut</span></div>
+          <ul><li>更大卷积核、倒残差、LayerNorm、GELU、少激活函数。</li><li>把 CNN 与 Transformer 的设计语言拉近。</li></ul>
+        </div>
+      </div>
+      <p class="takeaway">脉络意义：CNN 不是被 Transformer 简单替代，而是在新训练范式下重新进化。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>经典 CNN 架构对比表</h2>
+      <table>
+        <thead><tr><th>工作</th><th>年份</th><th>关键词</th><th>典型架构</th><th>解决的问题</th></tr></thead>
+        <tbody>
+          <tr><td>Neocognitron</td><td>1980</td><td>S/C 层</td><td>S-C 交替层级</td><td>局部特征与位移容忍雏形</td></tr>
+          <tr><td>LeNet-5</td><td>1998</td><td>端到端 BP</td><td>Conv-Pool-Conv-Pool-FC</td><td>手写识别工业化</td></tr>
+          <tr><td>AlexNet</td><td>2012</td><td>GPU, ReLU, Dropout</td><td>5 Conv + 3 FC</td><td>大规模图像分类突破</td></tr>
+          <tr><td>VGG</td><td>2014</td><td>3×3 小卷积</td><td>规则深层堆叠</td><td>深度与迁移学习模板</td></tr>
+          <tr><td>Inception</td><td>2014</td><td>多分支, 1×1</td><td>并行 1×1/3×3/5×5/Pool</td><td>多尺度表达与计算控制</td></tr>
+          <tr><td>ResNet</td><td>2015</td><td>残差连接</td><td>Bottleneck + shortcut</td><td>极深网络优化</td></tr>
+          <tr><td>DenseNet</td><td>2016</td><td>密集连接</td><td>所有前层 concat</td><td>特征复用与梯度流</td></tr>
+          <tr><td>MobileNet</td><td>2017</td><td>深度可分离卷积</td><td>Depthwise + Pointwise</td><td>移动端效率</td></tr>
+          <tr><td>EfficientNet</td><td>2019</td><td>复合缩放</td><td>MBConv + SE</td><td>精度/效率系统平衡</td></tr>
+          <tr><td>ConvNeXt</td><td>2022</td><td>现代化 ConvNet</td><td>DWConv + LN + inverted bottleneck</td><td>Transformer 时代 CNN 再设计</td></tr>
+        </tbody>
+      </table>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>发展脉络总结：CNN 的“设计语法”如何演化</h2>
+      <div class="grid3">
+        <div class="box"><h3>1. 从神经启发到端到端学习</h3><p>Neocognitron 提供 S/C 层结构直觉；LeNet 把卷积、池化、反向传播结合为可训练系统。</p></div>
+        <div class="box"><h3>2. 从浅层到深层</h3><p>AlexNet 证明大规模深度 CNN 可行；VGG 让“更深 + 小卷积核”成为清晰模板。</p></div>
+        <div class="box"><h3>3. 从单路径到模块化</h3><p>Inception、ResNeXt 引入多分支、1×1、组卷积，在表达能力和计算预算间折中。</p></div>
+        <div class="box"><h3>4. 从堆叠到跨层信息流</h3><p>BatchNorm、ResNet、DenseNet 重点解决梯度传播、退化和特征复用。</p></div>
+        <div class="box"><h3>5. 从精度到部署效率</h3><p>SqueezeNet、MobileNet、EfficientNet 推动轻量化、可分离卷积、缩放策略和硬件意识。</p></div>
+        <div class="box"><h3>6. 从固定算子到自适应与现代化</h3><p>SENet 的通道注意力、ConvNeXt 的现代训练与结构重构说明 CNN 仍持续吸收新范式。</p></div>
+      </div>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>课堂讲解建议：如何串联这些工作</h2>
+      <ol>
+        <li><strong>先讲问题：</strong>图像维度高，普通 MLP 参数爆炸；CNN 用局部连接和权值共享注入图像先验。</li>
+        <li><strong>再讲三次跃迁：</strong>LeNet 的可训练、AlexNet 的规模化、ResNet 的极深化。</li>
+        <li><strong>然后讲设计分叉：</strong>VGG 走简单堆叠，Inception 走多尺度模块，ResNet 走跨层连接。</li>
+        <li><strong>最后讲现实约束：</strong>模型不只是准，还要快、小、省电、易部署。</li>
+        <li><strong>引向今天：</strong>Transformer 出现后，CNN 的归纳偏置仍在检测、分割、移动端和混合架构中重要。</li>
+      </ol>
+      <p class="quote">一句话主线：CNN 的历史，就是把“视觉先验”不断转化为“可优化、可扩展、可部署”的网络结构。</p>
+    </div></section>
+
+    <section class="slide"><div class="card">
+      <h2>参考文献与建议阅读</h2>
+      <ul class="small">
+        <li>Fukushima, K. (1980). Neocognitron: A self-organizing neural network model for a mechanism of pattern recognition unaffected by shift in position.</li>
+        <li>LeCun, Y. et al. (1998). Gradient-Based Learning Applied to Document Recognition.</li>
+        <li>Krizhevsky, A., Sutskever, I., Hinton, G. E. (2012). ImageNet Classification with Deep Convolutional Neural Networks.</li>
+        <li>Zeiler, M. D., Fergus, R. (2013/2014). Visualizing and Understanding Convolutional Networks.</li>
+        <li>Lin, M., Chen, Q., Yan, S. (2013). Network in Network.</li>
+        <li>Simonyan, K., Zisserman, A. (2014). Very Deep Convolutional Networks for Large-Scale Image Recognition.</li>
+        <li>Szegedy, C. et al. (2014/2015). Going Deeper with Convolutions.</li>
+        <li>Ioffe, S., Szegedy, C. (2015). Batch Normalization.</li>
+        <li>He, K. et al. (2015/2016). Deep Residual Learning for Image Recognition.</li>
+        <li>Huang, G. et al. (2016/2017). Densely Connected Convolutional Networks.</li>
+        <li>Hu, J., Shen, L., Sun, G. (2017/2018). Squeeze-and-Excitation Networks.</li>
+        <li>Howard, A. G. et al. (2017). MobileNets.</li>
+        <li>Tan, M., Le, Q. V. (2019). EfficientNet.</li>
+        <li>Liu, Z. et al. (2022). A ConvNet for the 2020s.</li>
+      </ul>
+    </div></section>
+
+    <section class="slide"><div class="card center">
+      <div>
+        <h1>Q & A</h1>
+        <p class="title-meta">讨论题：如果今天从零设计一个 CNN backbone，你会优先选择 ResNet 式残差、Inception 式多分支、MobileNet 式可分离卷积，还是 ConvNeXt 式现代化块？为什么？</p>
+      </div>
+    </div></section>
+  </div>
+  <div class="progress" id="progress"></div>
+  <div class="foot"><span id="counter"></span><span>←/→ 或 Space 翻页 · P 打印/PDF · Home/End 跳转</span></div>
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const counter = document.getElementById('counter');
+    const progress = document.getElementById('progress');
+    let idx = 0;
+    function show(i) {
+      idx = Math.max(0, Math.min(slides.length - 1, i));
+      slides.forEach((s, n) => s.classList.toggle('active', n === idx));
+      counter.textContent = `CNN 发展历程 · ${idx + 1} / ${slides.length}`;
+      progress.style.width = `${((idx + 1) / slides.length) * 100}%`;
+      history.replaceState(null, '', `#${idx + 1}`);
+    }
+    function next() { show(idx + 1); }
+    function prev() { show(idx - 1); }
+    document.addEventListener('keydown', (e) => {
+      if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); next(); }
+      if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+      if (e.key === 'Home') show(0);
+      if (e.key === 'End') show(slides.length - 1);
+      if (e.key.toLowerCase() === 'p') window.print();
+    });
+    const hashNum = parseInt(location.hash.replace('#',''), 10);
+    if (!Number.isNaN(hashNum) && hashNum >= 1) show(hashNum - 1); else show(0);
+  </script>
+</body>
+</html>
