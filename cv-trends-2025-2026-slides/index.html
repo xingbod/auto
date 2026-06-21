@@ -1,0 +1,3501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>2025-2026 顶会最热方向 & 代表论文 & 延伸机会</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif; }
+  
+  .slide { 
+    display: none; 
+    width: 100vw; 
+    height: 100vh; 
+    padding: 32px 64px 50px; 
+    overflow: hidden; 
+    position: relative;
+  }
+  .slide.active { display: flex; flex-direction: column; }
+  
+  .progress { 
+    position: fixed; 
+    top: 0; left: 0; 
+    height: 3px; 
+    background: linear-gradient(90deg, #5b8def 0%, #22c55e 50%, #f59e0b 100%); 
+    z-index: 100; 
+    transition: width 0.3s;
+  }
+  
+  .nav {
+    position: fixed; 
+    bottom: 0; left: 0; right: 0;
+    height: 32px; 
+    background: rgba(13, 17, 23, 0.95); 
+    border-top: 1px solid #30363d;
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    padding: 0 20px;
+    font-size: 11px;
+    color: #8b949e;
+    z-index: 99;
+  }
+  .nav .hint { font-size: 10px; }
+  .nav .hint kbd { 
+    background: #21262d; 
+    border: 1px solid #30363d; 
+    border-radius: 3px; 
+    padding: 1px 5px; 
+    font-size: 9px;
+    margin: 0 2px;
+  }
+  
+  h1 { font-size: 38px; font-weight: 700; margin-bottom: 12px; color: #f0f6fc; letter-spacing: -0.5px; }
+  h2 { font-size: 26px; font-weight: 700; margin-bottom: 10px; color: #f0f6fc; }
+  h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #c9d1d9; }
+  h4 { font-size: 15px; font-weight: 600; margin: 8px 0 4px; color: #f0f6fc; }
+  p, li { font-size: 14px; line-height: 1.6; }
+  ul { padding-left: 18px; }
+  li { margin-bottom: 4px; }
+  
+  .small { font-size: 11px; color: #8b949e; }
+  .gray { color: #8b949e; }
+  .muted { color: #6e7681; }
+  
+  .grid { display: grid; gap: 12px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  
+  .header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 12px; 
+    border-bottom: 1px solid #21262d;
+    padding-bottom: 10px;
+  }
+  .header .rank { 
+    font-size: 11px; 
+    color: #5b8def; 
+    font-weight: 600; 
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .header .cat {
+    font-size: 10px;
+    color: #8b949e;
+    background: #161b22;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid #30363d;
+  }
+  
+  .num-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 6px 0; }
+  .num-cell { background: #161b22; border: 1px solid #30363d; border-radius: 5px; padding: 6px 8px; text-align: center; }
+  .num-cell .lbl { font-size: 9px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; }
+  .num-cell .val { font-size: 20px; font-weight: bold; margin: 2px 0; font-family: ui-monospace, "SF Mono", monospace; }
+  .num-cell .sub { font-size: 9px; color: #8b949e; }
+  .num-cell.hot { border-color: #f59e0b; }
+  .num-cell.hot .val { color: #f59e0b; }
+  .num-cell.cool { border-color: #5b8def; }
+  .num-cell.cool .val { color: #5b8def; }
+  
+  .box { display: inline-block; padding: 3px 9px; border-radius: 4px; font-weight: 600; font-size: 12px; margin: 1px 2px; border: 1px solid; }
+  .box.model  { background: rgba(91,141,239,0.15);  color: #5b8def; border-color: #5b8def; }
+  .box.data   { background: rgba(139,148,158,0.15); color: #8b949e; border-color: #8b949e; }
+  .box.eval   { background: rgba(16,185,129,0.15);  color: #10b981; border-color: #10b981; }
+  .box.reward { background: rgba(245,158,11,0.15);  color: #f59e0b; border-color: #f59e0b; }
+  .box.chosen { background: rgba(34,197,94,0.15);   color: #22c55e; border-color: #22c55e; }
+  .box.bad    { background: rgba(239,68,68,0.15);   color: #ef4444; border-color: #ef4444; }
+  .box.loss   { background: rgba(167,139,250,0.15); color: #a78bfa; border-color: #a78bfa; }
+  .box.train  { background: rgba(236,72,153,0.15);  color: #ec4899; border-color: #ec4899; }
+  .box.idea   { background: rgba(34,197,94,0.15);   color: #22c55e; border-color: #22c55e; }
+  .box.method { background: rgba(91,141,239,0.15);  color: #5b8def; border-color: #5b8def; }
+  .box.app    { background: rgba(245,158,11,0.15);  color: #f59e0b; border-color: #f59e0b; }
+  .box.task   { background: rgba(167,139,250,0.15); color: #a78bfa; border-color: #a78bfa; }
+  
+  .card { 
+    background: #161b22; 
+    border: 1px solid #30363d; 
+    border-radius: 8px; 
+    padding: 14px 18px; 
+  }
+  .card.pri { border-color: #5b8def; border-left: 3px solid #5b8def; }
+  .card.hot { border-color: #f59e0b; border-left: 3px solid #f59e0b; }
+  .card.cool { border-color: #10b981; border-left: 3px solid #10b981; }
+  
+  .title-slide { 
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
+    background: radial-gradient(circle at center, #161b22 0%, #0d1117 100%);
+  }
+  .title-slide h1 { font-size: 56px; margin-bottom: 16px; }
+  .title-slide .subtitle { font-size: 22px; color: #5b8def; margin-bottom: 32px; }
+  .title-slide .meta { font-size: 14px; color: #8b949e; margin-top: 32px; }
+  
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+  th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid #21262d; }
+  th { background: #161b22; color: #5b8def; font-weight: 600; }
+  tr:hover { background: rgba(91,141,239,0.05); }
+  
+  .paper-card {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+  }
+  .paper-card .name { font-size: 16px; font-weight: 700; color: #5b8def; }
+  .paper-card .venue { font-size: 11px; color: #f59e0b; font-weight: 600; margin-left: 8px; }
+  .paper-card .authors { font-size: 12px; color: #8b949e; margin: 4px 0 8px; }
+  .paper-card .field { font-size: 13px; margin: 4px 0; }
+  .paper-card .field .lbl { color: #a78bfa; font-weight: 600; margin-right: 4px; }
+  .paper-card .field .val { color: #c9d1d9; }
+  
+  .ext-card {
+    background: linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(91,141,239,0.05) 100%);
+    border: 1px solid rgba(34,197,94,0.3);
+    border-left: 3px solid #22c55e;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+  .ext-card .target { color: #22c55e; font-weight: 600; }
+  
+  .toc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .toc-item { 
+    background: #161b22; 
+    border: 1px solid #30363d; 
+    border-radius: 5px; 
+    padding: 8px 12px; 
+    font-size: 12.5px;
+  }
+  .toc-item .num { color: #5b8def; font-weight: 700; margin-right: 6px; }
+  .toc-item.hot { border-color: #f59e0b; }
+  .toc-item.hot .num { color: #f59e0b; }
+  
+  .pipeline { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    margin: 10px 0; 
+    padding: 12px 8px; 
+    background: #161b22; 
+    border-radius: 8px; 
+    border: 1px solid #30363d; 
+    gap: 4px; 
+  }
+  .pipeline-step { 
+    flex: 1; 
+    text-align: center; 
+    padding: 8px 4px; 
+    border-radius: 5px; 
+    background: rgba(91,141,239,0.1); 
+    border: 1px solid #5b8def; 
+    font-size: 12px; 
+    font-weight: 600; 
+  }
+  .pipeline-step .small { font-size: 10px; color: #8b949e; font-weight: 400; margin-top: 2px; }
+  
+  .arch { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    flex-wrap: wrap;
+    margin: 10px 0; 
+    padding: 12px 8px; 
+    background: #161b22; 
+    border-radius: 6px; 
+    border: 1px solid #30363d; 
+    gap: 4px; 
+    font-size: 12px;
+  }
+  .arch .layer { 
+    padding: 6px 10px; 
+    border-radius: 4px; 
+    font-weight: 600; 
+    font-size: 11.5px;
+  }
+  .arch .conv { background: rgba(91,141,239,0.2); border: 1px solid #5b8def; color: #5b8def; }
+  .arch .pool { background: rgba(139,148,158,0.2); border: 1px solid #8b949e; color: #8b949e; }
+  .arch .fc { background: rgba(245,158,11,0.2); border: 1px solid #f59e0b; color: #f59e0b; }
+  .arch .skip { background: rgba(167,139,250,0.2); border: 1px solid #a78bfa; color: #a78bfa; }
+  .arch .mamba { background: rgba(236,72,153,0.2); border: 1px solid #ec4899; color: #ec4899; }
+  .arch .arrow { color: #6e7681; font-size: 16px; }
+  .arch .label { color: #8b949e; font-size: 10px; padding: 0 6px; }
+  
+  code { background: #21262d; padding: 1px 5px; border-radius: 3px; font-size: 11.5px; color: #f0f6fc; }
+</style>
+</head>
+<body>
+
+<div class="progress" style="width:0%"></div>
+<div class="nav">
+  <span>2025-2026 顶会最热方向 & 延伸机会 · Hermes Agent · 2026-06-21</span>
+  <span class="hint">
+    <kbd>←</kbd><kbd>→</kbd> 翻页 · <kbd>Home</kbd>首页 · <kbd>End</kbd>末页 · <kbd>P</kbd>打印
+  </span>
+  <span id="counter">1 / ?</span>
+</div>
+
+<script>
+  let current = 0;
+  let slides = [];
+  let total = 0;
+  
+  function init() {{
+    slides = document.querySelectorAll('.slide');
+    total = slides.length;
+  }}
+  
+  function show(i) {{
+    if (total === 0) init();
+    if (i < 0) i = 0;
+    if (i >= total) i = total - 1;
+    slides.forEach(s => s.classList.remove('active'));
+    slides[i].classList.add('active');
+    current = i;
+    
+    const bar = document.querySelector('.progress');
+    if (bar) bar.style.width = ((i+1) / total * 100) + '%';
+    
+    const counter = document.getElementById('counter');
+    if (counter) counter.textContent = (i+1) + ' / ' + total;
+    
+    try {{ location.hash = i+1; }} catch(e) {{}}
+  }}
+  
+  function next() { show(current + 1); }
+  function prev() { show(current - 1); }
+  function goHome() { show(0); }
+  function goEnd() { show(total - 1); }
+  
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') { goHome(); }
+    else if (e.key === 'End') { goEnd(); }
+    else if (e.key === 'p' || e.key === 'P') { window.print(); }
+  });
+  
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
+  document.addEventListener('touchend', e => {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(diff) > 50) { diff > 0 ? prev() : next(); }
+  });
+  
+  window.addEventListener('load', () => {{
+    init();
+    const start = parseInt(location.hash.replace('#', '')) - 1;
+    show(start >= 0 && start < total ? start : 0);
+  }});
+  
+  // 立即初始化（如果 DOM 已加载）
+  if (document.readyState !== 'loading') init();
+</script>
+
+<section class="slide title-slide active">
+  <h1>2025-2026 顶会最热方向</h1>
+  <div class="subtitle">15 个前沿方向 · 30 篇代表论文 · 60+ 延伸机会</div>
+  <div style="margin: 30px 0; font-size: 16px; color: #c9d1d9;">
+    CVPR · ICCV · ECCV · BMVC 全量论文分析
+  </div>
+  <div class="meta">
+    数据规模：18,798 篇 accepted papers<br>
+    主题聚类：45 个方向 · 6 个会议年份 · best paper 交叉验证<br>
+    <br>
+    Hermes Agent · 2026-06-21
+  </div>
+</section>
+<section class="slide">
+  <h2>目录 <span class="small gray">/ Table of Contents</span></h2>
+  <p class="gray small" style="margin-bottom: 12px;">🔥 标记为 CVPR 2026 增长 100%+ 的爆款方向</p>
+  <div class="toc-grid">
+    <div class="toc-item hot"><span class="num">#01</span> 视觉推理 / Agent / CoT</div>
+<div class="toc-item hot"><span class="num">#02</span> 多模态大模型 (MLLM/VLM)</div>
+<div class="toc-item hot"><span class="num">#03</span> 机器人 / VLA / 具身智能</div>
+<div class="toc-item hot"><span class="num">#04</span> RLHF / 偏好对齐 / DPO</div>
+<div class="toc-item hot"><span class="num">#05</span> World Models / 物理仿真</div>
+<div class="toc-item hot"><span class="num">#06</span> 4D / 动态场景生成</div>
+<div class="toc-item hot"><span class="num">#07</span> 3D 内容生成 / NeRF / 3DGS</div>
+<div class="toc-item"><span class="num">#08</span> Diffusion 模型 / 图像生成</div>
+<div class="toc-item"><span class="num">#09</span> 视频生成 (T2V/I2V)</div>
+<div class="toc-item"><span class="num">#10</span> 个性化 / 一致性生成</div>
+<div class="toc-item"><span class="num">#11</span> 自动驾驶 (BEV/Occupancy/端到端)</div>
+<div class="toc-item"><span class="num">#12</span> 图像编辑 / 修复 / 超分</div>
+<div class="toc-item"><span class="num">#13</span> 3D 重建 / SfM / MVS / 深度估计</div>
+<div class="toc-item"><span class="num">#14</span> 不确定性估计 / 校准 / OOD</div>
+<div class="toc-item"><span class="num">#15</span> Mamba / 状态空间模型 (SSM)</div>
+
+  </div>
+  <div style="margin-top: 16px; padding: 12px; background: #161b22; border: 1px solid #30363d; border-radius: 6px;">
+    <div class="small" style="margin-bottom: 6px;"><span class="box method">数据</span> 4 个会议 / 6 个年份 / 18,798 篇</div>
+    <div class="small" style="margin-bottom: 6px;"><span class="box method">方法</span> 45 个预定义方向 + 关键词聚类</div>
+    <div class="small" style="margin-bottom: 6px;"><span class="box method">对比</span> CVPR 2024→2025→2026 单会议可比 + ECCV24→ICCV25 双年会议</div>
+    <div class="small"><span class="box method">验证</span> CVPR 2025 best paper 命中我们 5/7 个爆款方向</div>
+  </div>
+</section>
+<section class="slide">
+  <h2>研究方法 <span class="small gray">/ Methodology</span></h2>
+  <div class="grid grid-3" style="margin-top: 16px;">
+    <div class="card pri">
+      <h3>1. 数据采集</h3>
+      <p class="small" style="margin: 6px 0;">从会议官方开放访问站点抓取所有 accepted papers 标题：</p>
+      <ul class="small" style="margin-left: 14px;">
+        <li>CVPR/ICCV/ECCV：<code>openaccess.thecvf.com</code></li>
+        <li>ECCV 历史：<code>ecva.net/papers.php</code></li>
+        <li>BMVC 2025：<code>bmvc2025.bmva.org</code></li>
+      </ul>
+      <div class="num-cell hot" style="margin-top: 8px;">
+        <div class="lbl">TOTAL PAPERS</div>
+        <div class="val">18,798</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>2. 主题聚类</h3>
+      <p class="small" style="margin: 6px 0;">对每个标题做：</p>
+      <ul class="small" style="margin-left: 14px;">
+        <li>小写化、去除标点</li>
+        <li>匹配 45 个预定义方向的关键词</li>
+        <li>一篇论文可属多个主题</li>
+      </ul>
+      <div style="margin-top: 8px; font-size: 12px;">
+        <span class="box model">3D Gen</span>
+        <span class="box method">VLM</span>
+        <span class="box reward">RLHF</span>
+        <span class="box task">...</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>3. 跨会议对比</h3>
+      <p class="small" style="margin: 6px 0;">三组对比保证结论可靠：</p>
+      <ul class="small" style="margin-left: 14px;">
+        <li><b>CVPR</b> 2024 → 2025 → 2026（单会议）</li>
+        <li><b>ECCV 2024</b> → <b>ICCV 2025</b>（双年会议）</li>
+        <li><b>BMVC 2025</b> 特色分析</li>
+        <li><b>Best paper</b> 交叉验证</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card cool" style="margin-top: 16px;">
+    <h3>关键发现</h3>
+    <p style="font-size: 13px;">CVPR 2026 暴涨到 4,068 篇（+42%），GenAI/多模态浪潮让 CV 领域研究人口爆炸。视觉推理 +281%、机器人 +117%、MLLM +107% 是三巨头。</p>
+  </div>
+</section>
+<section class="slide" style="padding: 24px 50px 40px;">
+  <h2 style="font-size: 18px; margin-bottom: 4px;">Top 15 方向一览 <span class="small gray">/ CVPR 2024 → 2025 → 2026</span></h2>
+  <p class="small gray" style="margin-bottom: 4px; font-size: 9.5px;">数据为 CVPR 单会议对比。增长率 = CVPR 2026 vs CVPR 2025 论文数比。</p>
+  <table style="font-size: 9.5px;">
+    <thead>
+      <tr>
+        <th style="width:24px"></th>
+        <th style="width:32px">#</th>
+        <th>方向</th>
+        <th style="width:50px;text-align:center">CVPR24</th>
+        <th style="width:50px;text-align:center">CVPR25</th>
+        <th style="width:50px;text-align:center">CVPR26</th>
+        <th style="width:66px;text-align:center">25→26</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:center;">🔥</td>
+        <td>#01</td>
+        <td>视觉推理 / Agent / CoT</td>
+        <td style="text-align:center;color:#5b8def">16</td>
+        <td style="text-align:center;color:#5b8def">42</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">160</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">+281%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">🔥</td>
+        <td>#02</td>
+        <td>多模态大模型 (MLLM/VLM)</td>
+        <td style="text-align:center;color:#5b8def">37</td>
+        <td style="text-align:center;color:#5b8def">111</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">230</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">+107%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">🔥</td>
+        <td>#03</td>
+        <td>机器人 / VLA / 具身智能</td>
+        <td style="text-align:center;color:#5b8def">53</td>
+        <td style="text-align:center;color:#5b8def">81</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">176</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">+117%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">🔥</td>
+        <td>#04</td>
+        <td>RLHF / 偏好对齐 / DPO</td>
+        <td style="text-align:center;color:#5b8def">42</td>
+        <td style="text-align:center;color:#5b8def">78</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">172</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">+121%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">🔥</td>
+        <td>#05</td>
+        <td>World Models / 物理仿真</td>
+        <td style="text-align:center;color:#5b8def">5</td>
+        <td style="text-align:center;color:#5b8def">22</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">45</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">+105%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">🔥</td>
+        <td>#06</td>
+        <td>4D / 动态场景生成</td>
+        <td style="text-align:center;color:#5b8def">42</td>
+        <td style="text-align:center;color:#5b8def">60</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">117</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">+95%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">🔥</td>
+        <td>#07</td>
+        <td>3D 内容生成 / NeRF / 3DGS</td>
+        <td style="text-align:center;color:#5b8def">150</td>
+        <td style="text-align:center;color:#5b8def">172</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">235</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">+37%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">⚠️</td>
+        <td>#08</td>
+        <td>Diffusion 模型 / 图像生成</td>
+        <td style="text-align:center;color:#5b8def">402</td>
+        <td style="text-align:center;color:#5b8def">418</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">442</td>
+        <td style="text-align:center;color:#22c55e">+6%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">📈</td>
+        <td>#09</td>
+        <td>视频生成 (T2V/I2V)</td>
+        <td style="text-align:center;color:#5b8def">34</td>
+        <td style="text-align:center;color:#5b8def">101</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">120</td>
+        <td style="text-align:center;color:#22c55e">+19%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">📈</td>
+        <td>#10</td>
+        <td>个性化 / 一致性生成</td>
+        <td style="text-align:center;color:#5b8def">38</td>
+        <td style="text-align:center;color:#5b8def">45</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">77</td>
+        <td style="text-align:center;color:#22c55e">+71%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">📈</td>
+        <td>#11</td>
+        <td>自动驾驶 (BEV/Occupancy)</td>
+        <td style="text-align:center;color:#5b8def">71</td>
+        <td style="text-align:center;color:#5b8def">73</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">102</td>
+        <td style="text-align:center;color:#22c55e">+40%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">📈</td>
+        <td>#12</td>
+        <td>图像编辑 / 修复 / 超分</td>
+        <td style="text-align:center;color:#5b8def">113</td>
+        <td style="text-align:center;color:#5b8def">126</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">143</td>
+        <td style="text-align:center;color:#22c55e">+13%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">📈</td>
+        <td>#13</td>
+        <td>3D 重建 / SfM / MVS / 深度</td>
+        <td style="text-align:center;color:#5b8def">81</td>
+        <td style="text-align:center;color:#5b8def">113</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">120</td>
+        <td style="text-align:center;color:#22c55e">+6%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">📈</td>
+        <td>#14</td>
+        <td>不确定性估计 / OOD</td>
+        <td style="text-align:center;color:#5b8def">48</td>
+        <td style="text-align:center;color:#5b8def">45</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">77</td>
+        <td style="text-align:center;color:#22c55e">+71%</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">⚠️</td>
+        <td>#15</td>
+        <td>Mamba / 状态空间模型 (SSM)</td>
+        <td style="text-align:center;color:#5b8def">17</td>
+        <td style="text-align:center;color:#5b8def">69</td>
+        <td style="text-align:center;color:#f59e0b;font-weight:700">58</td>
+        <td style="text-align:center;color:#ef4444">-16%</td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="margin-top: 6px; padding: 5px 10px; background: #161b22; border: 1px solid #30363d; border-radius: 5px; font-size: 10px;">
+    <b>判读</b>：<span style="color:#f59e0b">橙色</span>=爆款(&gt;100%) · <span style="color:#22c55e">绿色</span>=上升 · <span style="color:#c9d1d9">灰色</span>=持平 · <span style="color:#ef4444">红色</span>=衰退
+  </div>
+</section>
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #01 · AGENT + REASONING</div>
+      <h1>🔥 视觉推理 / Agent / CoT <span class="small gray" style="font-weight:400">Visual Reasoning & Chain-of-Thought</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +281%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">16</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">42</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">160</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#f59e0b">+281%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">让视觉模型像 LLM 一样做多步推理、规划、调用工具。Visual CoT、Visual Agent、Multimodal Reasoning。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">GPT-4o、Claude 4、Gemini 多模态能力成熟后，研究从『看得见』转向『想得清楚』。Agent benchmark（GAIA、VisualAgentBench、MMMU-Pro）拉动。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>Insight-V</div><div class="small">NeurIPS 2024 / ICLR 2025</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>Visual-RFT (Visual Reinforcement Fine-Tuning)</div><div class="small">ICLR 2025 (arXiv 2505.14649)</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #01 · PAPER 1/2</div>
+      <h1>Insight-V</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">NeurIPS 2024 / ICLR 2025</span> <span class="gray">·</span> Dongping Chen 等 (马里兰大学)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">用 RL 训练 VLM 做 Visual CoT：IWR 准备 reasoning 数据 + GRPO 训练。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">Qwen2-VL-7B 上 MMVet/MMStar/MathVista 提升 +10~20%</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Image + Question</span><span class="arrow">→</span><span class="layer mamba">VLM Backbone</span><span class="arrow">→</span><span class="layer fc">CoT Generator<br>(GRPO trained)</span><span class="arrow">→</span><span class="layer skip">Step-by-step<br>Reasoning</span><span class="arrow">→</span><span class="layer pool">Answer</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Insight-V 的关键贡献在于用 <code>用 RL 训练 VLM 做 Visual CoT：IWR 准备 reasoning 数据 + GRP...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #01 · EXTENSION FOR PAPER 1</div>
+      <h1>Insight-V <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 跨模态 CoT</span>：扩展到 video+audio 多模态 long-horizon 时序推理</div>
+<div class="ext-card"><span class="target">🎯 工具使用 Agent</span>：集成搜索/计算器/代码执行器，做 multi-step tool-use 视觉推理</div>
+<div class="ext-card"><span class="target">🎯 自适应推理深度</span>：根据问题难度动态决定 CoT 步数（节省 30%+ inference cost）</div>
+<div class="ext-card"><span class="target">🎯 反事实推理</span>：加 counterfactual reasoning 模块，做『如果...会怎样』类视觉问答</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #01 · PAPER 2/2</div>
+      <h1>Visual-RFT (Visual Reinforcement Fine-Tuning)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">ICLR 2025 (arXiv 2505.14649)</span> <span class="gray">·</span> Ziyu Liu 等 (上海 AI Lab)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">把 GRPO 应用到 VLM 目标检测/分类，100 个样本超过全监督。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">COCO few-shot 32.1% AP (100 shots) > full-sup 28.0% AP</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Image + Question</span><span class="arrow">→</span><span class="layer mamba">VLM Backbone</span><span class="arrow">→</span><span class="layer fc">CoT Generator<br>(GRPO trained)</span><span class="arrow">→</span><span class="layer skip">Step-by-step<br>Reasoning</span><span class="arrow">→</span><span class="layer pool">Answer</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Visual-RFT (Visual Reinforcement Fine-Tuning) 的关键贡献在于用 <code>把 GRPO 应用到 VLM 目标检测/分类，100 个样本超过全监督。...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #01 · EXTENSION FOR PAPER 2</div>
+      <h1>Visual-RFT (Visual Reinforcement Fine-Tuning) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 视频检测 RFT</span>：引入 temporal reward（IoU + mIoU over time），训 video detector</div>
+<div class="ext-card"><span class="target">🎯 Open-vocab RFT</span>：改成 open-vocab detection，让 GRPO 自动学习新类别</div>
+<div class="ext-card"><span class="target">🎯 Reward hacking 检测</span>：研究 GRPO 在 VLM 上的 reward hacking 模式（多解情况）</div>
+<div class="ext-card"><span class="target">🎯 多任务统一 RFT</span>：单 VLM 同时训 detection+captioning+VQA，看能否跨任务迁移</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #01 · FUTURE WORK</div>
+      <h1>🔥 视觉推理 / Agent / CoT <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 多方向交叉创新是最大机会（看第四节组合分析）</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "视觉推理 / Agent / CoT" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 Insight-V + awesome-agent + reasoning</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #02 · FOUNDATION MODEL</div>
+      <h1>🔥 多模态大模型 (MLLM/VLM) <span class="small gray" style="font-weight:400">Multimodal LLM & Vision-Language Model</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +107%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">37</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">111</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">230</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#f59e0b">+107%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">Vision-Language Model，CLIP/Blip 之后第二代。LLaVA、Qwen-VL、InternVL。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">开源生态成熟（Qwen2.5-VL/InternVL3 都有完整训练代码），下游任务（GUI agent、文档、机器人）爆发。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>Molmo & PixMo</div><div class="small">CVPR 2025 (Best Paper Honorabl</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>Qwen2.5-VL</div><div class="small">arXiv 2502.13923, 2025</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #02 · PAPER 1/2</div>
+      <h1>Molmo & PixMo</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">CVPR 2025 (Best Paper Honorable Mention)</span> <span class="gray">·</span> Matt Deitke 等 (Allen AI)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">完全开源：72K 高质量图片+pointing 数据（不是 GPT-4V 蒸馏），单阶段训练。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">7B 在 11 个 benchmark 击败 Llava-OneVision、Qwen2-VL；72B 是当时最强开源 VLM</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Image Encoder<br>(ViT)</span><span class="arrow">→</span><span class="layer mamba">MLP Projector</span><span class="arrow">→</span><span class="layer fc">LLM<br>(Qwen2.5 / Llama3)</span><span class="arrow">→</span><span class="layer skip">Text Output</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Molmo & PixMo 的关键贡献在于用 <code>完全开源：72K 高质量图片+pointing 数据（不是 GPT-4V 蒸馏），单阶段训练。...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #02 · EXTENSION FOR PAPER 1</div>
+      <h1>Molmo & PixMo <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 主动感知 VLM</span>：让模型主动决定『看哪里』和『放大看』（cursor-like attention）</div>
+<div class="ext-card"><span class="target">🎯 视频版 Molmo</span>：拓展 PixMo 到视频，做 dense pointing 视频数据</div>
+<div class="ext-card"><span class="target">🎯 任务规划 VLM</span>：训练成 task planner，给出 sequential actions</div>
+<div class="ext-card"><span class="target">🎯 隐私友好 VLM</span>：减少对人类标注数据依赖（自监督 + RL 路径）</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #02 · PAPER 2/2</div>
+      <h1>Qwen2.5-VL</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">arXiv 2502.13923, 2025</span> <span class="gray">·</span> Qwen Team (阿里)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">原生动态分辨率 ViT + 多模态 RoPE + 绝对时间编码（video）。3B/7B/72B 全规格。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">72B 在 MMVet/MathVista 超越 GPT-4o；7B 文档 VQA 接近 GPT-4V</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Image Encoder<br>(ViT)</span><span class="arrow">→</span><span class="layer mamba">MLP Projector</span><span class="arrow">→</span><span class="layer fc">LLM<br>(Qwen2.5 / Llama3)</span><span class="arrow">→</span><span class="layer skip">Text Output</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Qwen2.5-VL 的关键贡献在于用 <code>原生动态分辨率 ViT + 多模态 RoPE + 绝对时间编码（video）。3B/7B/72B 全...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #02 · EXTENSION FOR PAPER 2</div>
+      <h1>Qwen2.5-VL <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 Qwen2.5-VL + GRPO</span>：用 GRPO 微调 Qwen2.5-VL 做 reasoning（参考 Visual-RFT）</div>
+<div class="ext-card"><span class="target">🎯 边缘部署</span>：蒸馏 3B→1B，做手机端实时 VLM（Snapdragon 8 Gen 4 跑得动）</div>
+<div class="ext-card"><span class="target">🎯 视频 Grounding 增强</span>：改进绝对时间编码，做 frame-level 精确定位</div>
+<div class="ext-card"><span class="target">🎯 多语种 VLM</span>：强化小语种 OCR（中文方言、阿拉伯语、印地语）</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #02 · FUTURE WORK</div>
+      <h1>🔥 多模态大模型 (MLLM/VLM) <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 视觉 foundation model + 多模态理解 + 长视频/3D/具身：Qwen3-VL、InternVL4 即将发布；Qwen3-Omni 已开源</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "多模态大模型 (MLLM/VLM)" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 Molmo & PixMo + awesome-foundation model</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #03 · ROBOTICS + AGENT</div>
+      <h1>🔥 机器人 / VLA / 具身智能 <span class="small gray" style="font-weight:400">Robotics & Vision-Language-Action</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +117%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">53</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">81</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">176</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#f59e0b">+117%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">VLA model：看图+听指令+输出动作。π0、OpenVLA、Octo、SpatialVLA。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">Tesla Optimus、Figure 02、Unitree 商业化推进；Aloha/DROID/BridgeData 开源数据爆发；PI 创融资数十亿。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>OpenVLA</div><div class="small">arXiv 2406.09246, 2024</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>π0 / π0-FAST</div><div class="small">arXiv 2410.24164, 2024</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #03 · PAPER 1/2</div>
+      <h1>OpenVLA</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">arXiv 2406.09246, 2024</span> <span class="gray">·</span> Moo Jin Kim 等 (Stanford/TU Berlin/Google DeepMind)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">7B VLA = Prismatic VLM + Llama 2 + action head。开源 970K OpenX-Embodiment episodes。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">7 平台/29 任务上超过 Octo、RT-2-X 50%+ 成功率</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Image</span><span class="arrow">+</span><span class="layer mamba">Text<br>Instruction</span><span class="arrow">→</span><span class="layer fc">VLM Backbone<br>(Prismatic / SigLIP)</span><span class="arrow">→</span><span class="layer skip">Action Expert<br>(Flow / Discrete)</span><span class="arrow">→</span><span class="layer pool">Robot Actions</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：OpenVLA 的关键贡献在于用 <code>7B VLA = Prismatic VLM + Llama 2 + action head。开源 ...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #03 · EXTENSION FOR PAPER 1</div>
+      <h1>OpenVLA <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 双手 VLA</span>：双臂协同 attention，bimanual manipulation</div>
+<div class="ext-card"><span class="target">🎯 触觉融合</span>：加 GelSight 等触觉信号做 tactile-conditioned VLA</div>
+<div class="ext-card"><span class="target">🎯 长 horizon 任务</span>：hierarchical planning（high-level VLA + low-level VLA）</div>
+<div class="ext-card"><span class="target">🎯 Sim-to-Real RFT</span>：用 GRPO 在仿真训 VLA 再 sim2real 部署</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #03 · PAPER 2/2</div>
+      <h1>π0 / π0-FAST</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">arXiv 2410.24164, 2024</span> <span class="gray">·</span> Kevin Black 等 (Physical Intelligence, 融资 $400M)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">Flow Matching Action Expert：连续动作分布用 flow matching 而非离散 token。50h 演示数据。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">洗衣/叠衣/餐桌清理等长 horizon 任务，5-10× 数据效率提升</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Image</span><span class="arrow">+</span><span class="layer mamba">Text<br>Instruction</span><span class="arrow">→</span><span class="layer fc">VLM Backbone<br>(Prismatic / SigLIP)</span><span class="arrow">→</span><span class="layer skip">Action Expert<br>(Flow / Discrete)</span><span class="arrow">→</span><span class="layer pool">Robot Actions</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：π0 / π0-FAST 的关键贡献在于用 <code>Flow Matching Action Expert：连续动作分布用 flow matching ...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #03 · EXTENSION FOR PAPER 2</div>
+      <h1>π0 / π0-FAST <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 移动操作</span>：拓展到 mobile manipulation（导航 + 操作合一）</div>
+<div class="ext-card"><span class="target">🎯 Few-shot 技能学习</span>：给定 10-50 demos 学新任务（当前要 50h）</div>
+<div class="ext-card"><span class="target">🎯 安全 VLA</span>：加 safety constraints（避免损坏物品、避免危险动作）</div>
+<div class="ext-card"><span class="target">🎯 多模态感知融合</span>：3D point cloud + 力矩 + 触觉，全感知 VLA</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #03 · FUTURE WORK</div>
+      <h1>🔥 机器人 / VLA / 具身智能 <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 VLA + 触觉 + 力矩 + 移动操作 + 安全约束：Tesla Optimus Gen 3、Figure 03 量产线；PI 创发布 π0.5</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "机器人 / VLA / 具身智能" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 OpenVLA + awesome-robotics + agent</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #04 · ALIGNMENT + TRAINING</div>
+      <h1>🔥 RLHF / 偏好对齐 / DPO <span class="small gray" style="font-weight:400">RLHF, DPO, GRPO for Vision</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +121%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">42</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">78</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">172</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#f59e0b">+121%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">把 LLM 的 RLHF/DPO/GRPO 迁移到视觉模型。VLM 对齐、Diffusion 偏好对齐。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">VLM hallucination 严重需要 RLHF 治；Diffusion 审美对齐需求大；DeepSeek-R1 的 GRPO 引爆。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>Diffusion-DPO</div><div class="small">NeurIPS 2024</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>VLM-R1</div><div class="small">arXiv 2504.07615, 2025</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #04 · PAPER 1/2</div>
+      <h1>Diffusion-DPO</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">NeurIPS 2024</span> <span class="gray">·</span> Bram Wallace 等 (Stability AI / CMU)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">DPO loss 直接用到 diffusion，SDXL 用 55K 人类偏好对微调，超过 SDXL+RLHF。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">PickScore +21.7%，人类评估胜率 64%，不需要单独 reward model</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">VLM / Diffusion<br>(base model)</span><span class="arrow">→</span><span class="layer pool">Sample Pairs<br>(chosen, rejected)</span><span class="arrow">→</span><span class="layer loss">DPO / GRPO Loss</span><span class="arrow">→</span><span class="layer skip">Aligned Model</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Diffusion-DPO 的关键贡献在于用 <code>DPO loss 直接用到 diffusion，SDXL 用 55K 人类偏好对微调，超过 SDXL...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #04 · EXTENSION FOR PAPER 1</div>
+      <h1>Diffusion-DPO <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 视频 DPO</span>：扩展到 T2V 模型 motion aesthetics 对齐</div>
+<div class="ext-card"><span class="target">🎯 在线 DPO</span>：iterative DPO（每轮 collect 新偏好对重训）</div>
+<div class="ext-card"><span class="target">🎯 多目标 DPO</span>：同时对齐审美+多样性+prompt following（multi-reward）</div>
+<div class="ext-card"><span class="target">🎯 Safety DPO</span>：加 safety constraints，避免 NSFW / 版权内容</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #04 · PAPER 2/2</div>
+      <h1>VLM-R1</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">arXiv 2504.07615, 2025</span> <span class="gray">·</span> Ailiang Wang 等 (北航/南洋理工)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">GRPO + 规则化奖励（如 IoU>0.5 拿奖励）训 VLM 检测，100 样本击败全监督。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">COCO 100-shot 检测 49.5 AP，超过 Qwen2.5-VL-7B baseline</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">VLM / Diffusion<br>(base model)</span><span class="arrow">→</span><span class="layer pool">Sample Pairs<br>(chosen, rejected)</span><span class="arrow">→</span><span class="layer loss">DPO / GRPO Loss</span><span class="arrow">→</span><span class="layer skip">Aligned Model</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：VLM-R1 的关键贡献在于用 <code>GRPO + 规则化奖励（如 IoU>0.5 拿奖励）训 VLM 检测，100 样本击败全监督。...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #04 · EXTENSION FOR PAPER 2</div>
+      <h1>VLM-R1 <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 复杂推理 VLM-R1</span>：IoU 换 reasoning-accuracy reward（多步 CoT 训练）</div>
+<div class="ext-card"><span class="target">🎯 视频 VLM-R1</span>：temporal reward，训 video VLM（VTimeLLM-style）</div>
+<div class="ext-card"><span class="target">🎯 3D VLM-R1</span>：扩展到 3D 检测/分割（Point-RFT 路线）</div>
+<div class="ext-card"><span class="target">🎯 自适应奖励权重</span>：多 reward 加权，做 multi-task VLM-R1</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #04 · FUTURE WORK</div>
+      <h1>🔥 RLHF / 偏好对齐 / DPO <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 GRPO/DPO for VLM + Diffusion + 视频 + 3D：GRPO 已成新标配（DeepSeek-R1 推动）</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "RLHF / 偏好对齐 / DPO" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 Diffusion-DPO + awesome-alignment + training</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #05 · GENERATIVE + REASONING</div>
+      <h1>🔥 World Models / 物理仿真 <span class="small gray" style="font-weight:400">World Models & Physical Reasoning</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +105%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">5</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">22</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">45</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#f59e0b">+105%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">学习环境 dynamics model。代表：GAIA-1/2、UniSim、Navigation World Model、V-JEPA 2。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">端到端自动驾驶需要 WM 做 planning；具身智能需在想象中训练；Yann LeCun JEPA 路线推动。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>Navigation World Models (NWM)</div><div class="small">CVPR 2025 (Best Paper Honorabl</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>V-JEPA 2</div><div class="small">Meta AI 2025 (arXiv 2506.09985</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #05 · PAPER 1/2</div>
+      <h1>Navigation World Models (NWM)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">CVPR 2025 (Best Paper Honorable Mention)</span> <span class="gray">·</span> Amir Bar 等 (Tel Aviv / Stanford)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">1.2B navigation 数据训出 video prediction WM，zero-shot 部署到真实机器人。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">GoStanford/Replica 上以视频预测做 planning，超过 RL baseline 2× 成功率</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Video Frames<br>(past)</span><span class="arrow">→</span><span class="layer mamba">JEPA / Diffusion<br>Encoder</span><span class="arrow">→</span><span class="layer fc">Dynamics<br>Model</span><span class="arrow">→</span><span class="layer skip">Predicted<br>Future</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Navigation World Models (NWM) 的关键贡献在于用 <code>1.2B navigation 数据训出 video prediction WM，zero-shot...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #05 · EXTENSION FOR PAPER 1</div>
+      <h1>Navigation World Models (NWM) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 多模态 NWM</span>：融合 lidar + depth + semantics，做 multi-modal WM</div>
+<div class="ext-card"><span class="target">🎯 长 horizon NWM</span>：当前 16 帧，扩展到分钟级场景预测</div>
+<div class="ext-card"><span class="target">🎯 交互式 NWM</span>：counterfactual prediction（如果转左/右会怎样）</div>
+<div class="ext-card"><span class="target">🎯 Driving NWM</span>：套用到自动驾驶，端到端 NWM + 决策（OmniNWM 思路）</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #05 · PAPER 2/2</div>
+      <h1>V-JEPA 2</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">Meta AI 2025 (arXiv 2506.09985)</span> <span class="gray">·</span> Adriana Romero 等 (Meta FAIR / NYU)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">1.2B 视频自监督预训练 V-JEPA 2 + V-JEPA 2-AC（动作条件）做具身预测。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">Something-Something/Epic-Kitchens 上做 visual prediction SOTA；zero-shot 部署到 DROID 机器人</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Video Frames<br>(past)</span><span class="arrow">→</span><span class="layer mamba">JEPA / Diffusion<br>Encoder</span><span class="arrow">→</span><span class="layer fc">Dynamics<br>Model</span><span class="arrow">→</span><span class="layer skip">Predicted<br>Future</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：V-JEPA 2 的关键贡献在于用 <code>1.2B 视频自监督预训练 V-JEPA 2 + V-JEPA 2-AC（动作条件）做具身预测。...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #05 · EXTENSION FOR PAPER 2</div>
+      <h1>V-JEPA 2 <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 物理 V-JEPA</span>：加物理约束（gravity/friction）让预测更符合物理</div>
+<div class="ext-card"><span class="target">🎯 3D V-JEPA</span>：拓展到 3D 占据空间预测（3D world model）</div>
+<div class="ext-card"><span class="target">🎯 音频-视频 V-JEPA</span>：联合预测 video + audio，做 audio-visual WM</div>
+<div class="ext-card"><span class="target">🎯 人类 V-JEPA</span>：egocentric 人类视频预训练，做 human activity prediction</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #05 · FUTURE WORK</div>
+      <h1>🔥 World Models / 物理仿真 <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 World Model + 视频自监督 + 具身 + 物理：V-JEPA 3 / Genie 4 即将发布；GAIA-3 内部测试</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "World Models / 物理仿真" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 Navigation World Models (NWM) + awesome-generative + reasoning</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #06 · 3D + GENERATIVE</div>
+      <h1>🔥 4D / 动态场景生成 <span class="small gray" style="font-weight:400">4D Dynamic Scene Generation</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +95%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">42</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">60</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">117</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#22c55e">+95%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">动态 3D 场景建模和生成。4D Gaussian Splatting (4D-GS)、Dynamic 3DGS、HumanGaussian。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">3DGS 2024 爆火后的『自然延伸』——把静态变动态。视频生成模型反过来生成 4D 资产。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>4D Gaussian Splatting 系列</div><div class="small">CVPR 2024 best / 后续多篇</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>CAT4D (Google)</div><div class="small">arXiv 2411.18613, 2024</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #06 · PAPER 1/2</div>
+      <h1>4D Gaussian Splatting 系列</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">CVPR 2024 best / 后续多篇</span> <span class="gray">·</span> Guanjun Wu / Ziyi Yang / 多团队</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">把 3DGS 拓展到时间维度：用 canonical space + deformation field 表达动态 3D 场景。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在 D-NeRF、DyCheck 上 PSNR 比 NeRF-based 方法 +2-3dB，渲染速度 100×</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Images / Text</span><span class="arrow">→</span><span class="layer mamba">VGGT / 3DGS<br>Backbone</span><span class="arrow">→</span><span class="layer fc">3D Attributes<br>(pose, depth, mesh)</span><span class="arrow">→</span><span class="layer skip">3DGS / NeRF<br>Output</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：4D Gaussian Splatting 系列 的关键贡献在于用 <code>把 3DGS 拓展到时间维度：用 canonical space + deformation fie...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #06 · EXTENSION FOR PAPER 1</div>
+      <h1>4D Gaussian Splatting 系列 <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 编辑式 4DGS</span>：让用户拖拽控制动态场景中物体的运动轨迹</div>
+<div class="ext-card"><span class="target">🎯 稀疏视角 4DGS</span>：仅 4-8 个相机视角重建 4D 场景</div>
+<div class="ext-card"><span class="target">🎯 4DGS 资产化</span>：导出为可重用的 4D 资产，集成到游戏引擎（Unreal/Unity）</div>
+<div class="ext-card"><span class="target">🎯 4DGS + 物理</span>：加 physics constraints（rigid body, cloth, fluid）</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #06 · PAPER 2/2</div>
+      <h1>CAT4D (Google)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">arXiv 2411.18613, 2024</span> <span class="gray">·</span> Yuxue Yang 等 (Google DeepMind)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">用 video diffusion model 生成多视角时间一致的视频，再 4D 重建。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">从单图 prompt 生成 4D 动态场景（人物动作、动物运动）</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Images / Text</span><span class="arrow">→</span><span class="layer mamba">VGGT / 3DGS<br>Backbone</span><span class="arrow">→</span><span class="layer fc">3D Attributes<br>(pose, depth, mesh)</span><span class="arrow">→</span><span class="layer skip">3DGS / NeRF<br>Output</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：CAT4D (Google) 的关键贡献在于用 <code>用 video diffusion model 生成多视角时间一致的视频，再 4D 重建。...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #06 · EXTENSION FOR PAPER 2</div>
+      <h1>CAT4D (Google) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 文生 4D</span>：纯 text prompt 生成 4D 资产（无需输入图）</div>
+<div class="ext-card"><span class="target">🎯 4D 编辑</span>：text-guided 4D 编辑（把走路的狗变成跑步的狗）</div>
+<div class="ext-card"><span class="target">🎯 4D 风格化</span>：迁移艺术风格到 4D 场景（油画风/像素风）</div>
+<div class="ext-card"><span class="target">🎯 4D Inpainting</span>：动态场景补全（去除动态物体、添加新物体）</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #06 · FUTURE WORK</div>
+      <h1>🔥 4D / 动态场景生成 <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 4DGS + 视频生成 + 资产化 + 物理：游戏、影视、广告需求井喷</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "4D / 动态场景生成" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 4D Gaussian Splatting 系列 + awesome-3d + generative</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #07 · 3D + GENERATIVE</div>
+      <h1>🔥 3D 内容生成 / NeRF / 3DGS <span class="small gray" style="font-weight:400">3D Generation, NeRF, Gaussian Splatting</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +37%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">150</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">172</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">235</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#22c55e">+37%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">从单图/文/视频生成 3D 资产（mesh、NeRF、3DGS）。CVPR 2025 best paper VGGT 就属此。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">3DGS 商业化（虚拟试衣、AR/VR、游戏资产）+ 3D 资产生成（游戏、影视、广告）需求大。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>VGGT (Visual Geometry Grounded Transformer)</div><div class="small">CVPR 2025 (Best Paper)</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>InstantMesh / LRM / TripoSR</div><div class="small">arXiv 系列 2024</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #07 · PAPER 1/2</div>
+      <h1>VGGT (Visual Geometry Grounded Transformer)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">CVPR 2025 (Best Paper)</span> <span class="gray">·</span> Jianyuan Wang 等 (Meta / Oxford VGG)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">Feed-forward Transformer 一次性输出 3D 全套：相机参数、点图、深度、3D point tracking。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;"><1 秒重建 3D 场景，camera estimation / multi-view depth / NVS 多个 SOTA</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Images / Text</span><span class="arrow">→</span><span class="layer mamba">VGGT / 3DGS<br>Backbone</span><span class="arrow">→</span><span class="layer fc">3D Attributes<br>(pose, depth, mesh)</span><span class="arrow">→</span><span class="layer skip">3DGS / NeRF<br>Output</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：VGGT (Visual Geometry Grounded Transformer) 的关键贡献在于用 <code>Feed-forward Transformer 一次性输出 3D 全套：相机参数、点图、深度、3D...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #07 · EXTENSION FOR PAPER 1</div>
+      <h1>VGGT (Visual Geometry Grounded Transformer) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 视频 VGGT</span>：4D VGGT，输入视频输出动态 3D 轨迹</div>
+<div class="ext-card"><span class="target">🎯 语言条件 VGGT</span>：open-vocab 3D detection（text 描述 3D 物体）</div>
+<div class="ext-card"><span class="target">🎯 不确定性 VGGT</span>：输出 3D 重建的不确定度估计</div>
+<div class="ext-card"><span class="target">🎯 集成到 NVS</span>：把 VGGT 作为 initialization，pipeline 接入 GaussianSplat 做高质量 NVS</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #07 · PAPER 2/2</div>
+      <h1>InstantMesh / LRM / TripoSR</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">arXiv 系列 2024</span> <span class="gray">·</span> Jiale Xu / Zexiang Liu / Zibo Zhao 等</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">单图/文生 3D mesh + texture，几秒出结果，instant 级别。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">单图生 mesh 在 30 秒内完成，质量可商用</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Images / Text</span><span class="arrow">→</span><span class="layer mamba">VGGT / 3DGS<br>Backbone</span><span class="arrow">→</span><span class="layer fc">3D Attributes<br>(pose, depth, mesh)</span><span class="arrow">→</span><span class="layer skip">3DGS / NeRF<br>Output</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：InstantMesh / LRM / TripoSR 的关键贡献在于用 <code>单图/文生 3D mesh + texture，几秒出结果，instant 级别。...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #07 · EXTENSION FOR PAPER 2</div>
+      <h1>InstantMesh / LRM / TripoSR <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 端到端 3D 编辑</span>：text-guided mesh 编辑（改变颜色/形状/拓扑）</div>
+<div class="ext-card"><span class="target">🎯 动画 3DGS</span>：自动绑定骨骼，让生成的 3DGS 可动</div>
+<div class="ext-card"><span class="target">🎯 物理 3DGS</span>：加 physics，让生成的 3D 资产有物理属性</div>
+<div class="ext-card"><span class="target">🎯 大场景 3DGS</span>：城市/室内大场景的 3DGS 生成（当前只支持物体级）</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #07 · FUTURE WORK</div>
+      <h1>🔥 3D 内容生成 / NeRF / 3DGS <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 4DGS + 视频生成 + 资产化 + 物理：游戏、影视、广告需求井喷</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "3D 内容生成 / NeRF / 3DGS" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 VGGT (Visual Geometry Grounded Transformer) + awesome-3d + generative</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #08 · GENERATIVE</div>
+      <h1>⚠️ Diffusion 模型 / 图像生成 <span class="small gray" style="font-weight:400">Diffusion Models & Image Generation</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +6%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">402</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">418</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">442</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#c9d1d9">+6%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">Diffusion 模型本身和图像生成。绝对数量第一但占比下降（其他方向追赶）。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">FLUX/SD3/Sana 持续迭代；架构统一（DiT）；few-step 蒸馏是热点。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>FLUX.1</div><div class="small">Black Forest Labs 2024</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>Sana (Efficient DiT)</div><div class="small">arXiv 2410.10629, 2024</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #08 · PAPER 1/2</div>
+      <h1>FLUX.1</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">Black Forest Labs 2024</span> <span class="gray">·</span> Black Forest Labs (Stable Diffusion 核心团队)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">MMDiT（Multimodal DiT）+ flow matching + 12B 参数，scaling laws 训出。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在 HPSv2、T2I-CompBench 超过 SD3.5、Midjourney v6</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Text / Image<br>Prompt</span><span class="arrow">→</span><span class="layer mamba">Text Encoder<br>(CLIP/T5)</span><span class="arrow">→</span><span class="layer fc">DiT / UNet<br>Denoiser</span><span class="arrow">→</span><span class="layer skip">VAE Decode</span><span class="arrow">→</span><span class="layer pool">Image/Video</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：FLUX.1 的关键贡献在于用 <code>MMDiT（Multimodal DiT）+ flow matching + 12B 参数，scal...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #08 · EXTENSION FOR PAPER 1</div>
+      <h1>FLUX.1 <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 FLUX + RL</span>：用 GRPO/DPO 微调 FLUX 做 prompt 跟随 + 美学对齐</div>
+<div class="ext-card"><span class="target">🎯 FLUX 蒸馏</span>：4-step 蒸馏（一致性模型、MeanFlow 思路）</div>
+<div class="ext-card"><span class="target">🎯 FLUX in-context</span>：multi-image conditioning（reference 一致性）</div>
+<div class="ext-card"><span class="target">🎯 FLUX 4K</span>：原生高分辨率（无需 tiling），适配广告/印刷</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #08 · PAPER 2/2</div>
+      <h1>Sana (Efficient DiT)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">arXiv 2410.10629, 2024</span> <span class="gray">·</span> Enze Xie 等 (NVIDIA / MIT)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">32× downsampled latent + DeepCompression AE + 1.5B 参数。高效是最大卖点。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">1.5B 参数量，1024×1024 在 RTX 4090 1 秒出图</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Text / Image<br>Prompt</span><span class="arrow">→</span><span class="layer mamba">Text Encoder<br>(CLIP/T5)</span><span class="arrow">→</span><span class="layer fc">DiT / UNet<br>Denoiser</span><span class="arrow">→</span><span class="layer skip">VAE Decode</span><span class="arrow">→</span><span class="layer pool">Image/Video</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Sana (Efficient DiT) 的关键贡献在于用 <code>32× downsampled latent + DeepCompression AE + 1.5B...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #08 · EXTENSION FOR PAPER 2</div>
+      <h1>Sana (Efficient DiT) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 Sana 视频版</span>：4B 参数做 T2V（参考 Wan / HunyuanVideo）</div>
+<div class="ext-card"><span class="target">🎯 Sana Mobile</span>：<1B 参数做端侧生成（iPhone 跑得动）</div>
+<div class="ext-card"><span class="target">🎯 Sana + ControlNet</span>：可控制生成（depth/edge/pose）</div>
+<div class="ext-card"><span class="target">🎯 Sana + GRPO</span>：用 RLHF 提升审美 + prompt 跟随</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #08 · FUTURE WORK</div>
+      <h1>⚠️ Diffusion 模型 / 图像生成 <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 T2I/T2V + RLHF + 一致性 + 编辑 + 4K：商业化最直接方向</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "Diffusion 模型 / 图像生成" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 FLUX.1 + awesome-generative</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #09 · GENERATIVE</div>
+      <h1>📈 视频生成 (T2V/I2V) <span class="small gray" style="font-weight:400">Text/Image-to-Video Generation</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +19%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">34</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">101</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">120</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#c9d1d9">+19%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">Sora 之后的视频生成浪潮。文生视频、图生视频、视频续写、视频编辑。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">Veo 3、Sora 推动商业化；Wan / HunyuanVideo / CogVideoX 开源生态成熟。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>Wan 2.1 / Wan 2.2 (阿里)</div><div class="small">arXiv 系列</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>AnimateDiff / MotionCtrl (可控视频生成)</div><div class="small">ICLR/CVPR 系列</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #09 · PAPER 1/2</div>
+      <h1>Wan 2.1 / Wan 2.2 (阿里)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">arXiv 系列</span> <span class="gray">·</span> Wan Team (阿里)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">Video DiT + 视频 VAE + 复杂 motion 模块。1.3B/14B 多规格。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">VBench 全面 SOTA 开源模型，超过 HunyuanVideo、CogVideoX</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Text / Image<br>Prompt</span><span class="arrow">→</span><span class="layer mamba">Text Encoder<br>(CLIP/T5)</span><span class="arrow">→</span><span class="layer fc">DiT / UNet<br>Denoiser</span><span class="arrow">→</span><span class="layer skip">VAE Decode</span><span class="arrow">→</span><span class="layer pool">Image/Video</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Wan 2.1 / Wan 2.2 (阿里) 的关键贡献在于用 <code>Video DiT + 视频 VAE + 复杂 motion 模块。1.3B/14B 多规格。...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #09 · EXTENSION FOR PAPER 1</div>
+      <h1>Wan 2.1 / Wan 2.2 (阿里) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 Wan + Camera Control</span>：精确控制相机运动（pan/zoom/dolly）</div>
+<div class="ext-card"><span class="target">🎯 Wan 4K 60s</span>：原生 4K 60 秒长视频生成</div>
+<div class="ext-card"><span class="target">🎯 Wan + Audio</span>：联合生成 video + audio，做视听一体化</div>
+<div class="ext-card"><span class="target">🎯 Wan Personalization</span>：参考图生视频（保持人物一致性）</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #09 · PAPER 2/2</div>
+      <h1>AnimateDiff / MotionCtrl (可控视频生成)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">ICLR/CVPR 系列</span> <span class="gray">·</span> Yuwei Guo / Shiyuan Yang 等</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在 frozen video diffusion 上加 motion module，注入运动控制信号（camera trajectory、motion sequence）。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在 camera motion benchmark 上精确控制 pan/zoom/rotation</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Text / Image<br>Prompt</span><span class="arrow">→</span><span class="layer mamba">Text Encoder<br>(CLIP/T5)</span><span class="arrow">→</span><span class="layer fc">DiT / UNet<br>Denoiser</span><span class="arrow">→</span><span class="layer skip">VAE Decode</span><span class="arrow">→</span><span class="layer pool">Image/Video</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：AnimateDiff / MotionCtrl (可控视频生成) 的关键贡献在于用 <code>在 frozen video diffusion 上加 motion module，注入运动控制信号...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #09 · EXTENSION FOR PAPER 2</div>
+      <h1>AnimateDiff / MotionCtrl (可控视频生成) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 物理可控</span>：让视频生成符合物理（重力、碰撞、流体）</div>
+<div class="ext-card"><span class="target">🎯 文字驱动动作</span>：text prompt 直接控制视频中物体的运动</div>
+<div class="ext-card"><span class="target">🎯 视频 inpainting</span>：在已有视频上做 motion-aware inpainting</div>
+<div class="ext-card"><span class="target">🎯 视频重打光</span>：text-guided relighting（同时改光照 + 动作）</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #09 · FUTURE WORK</div>
+      <h1>📈 视频生成 (T2V/I2V) <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 T2I/T2V + RLHF + 一致性 + 编辑 + 4K：商业化最直接方向</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "视频生成 (T2V/I2V)" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 Wan 2.1 / Wan 2.2 (阿里) + awesome-generative</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #10 · GENERATIVE + PERSONALIZATION</div>
+      <h1>📈 个性化 / 一致性生成 <span class="small gray" style="font-weight:400">Personalization & Subject-Driven Generation</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +71%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">38</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">45</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">77</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#22c55e">+71%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">给 diffusion 模型一张参考图，生成该主体在不同场景/动作下的图。IP-Adapter、InstantID、PhotoMaker。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">虚拟试衣、虚拟形象、个性化广告、电商 AIGC。商业化最直接的方向。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>IP-Adapter</div><div class="small">CVPR 2024</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>Consistory (Story Visualization)</div><div class="small">arXiv 2502.14332, 2025</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #10 · PAPER 1/2</div>
+      <h1>IP-Adapter</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">CVPR 2024</span> <span class="gray">·</span> Hu Ye 等 (Tencent)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">解耦的 cross-attention：image prompt 走独立 attention path，兼容所有 SD 模型。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">无需 fine-tuning 即可让 SDXL 保持主体一致性，composable（可叠加多参考）</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Text / Image<br>Prompt</span><span class="arrow">→</span><span class="layer mamba">Text Encoder<br>(CLIP/T5)</span><span class="arrow">→</span><span class="layer fc">DiT / UNet<br>Denoiser</span><span class="arrow">→</span><span class="layer skip">VAE Decode</span><span class="arrow">→</span><span class="layer pool">Image/Video</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：IP-Adapter 的关键贡献在于用 <code>解耦的 cross-attention：image prompt 走独立 attention pat...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #10 · EXTENSION FOR PAPER 1</div>
+      <h1>IP-Adapter <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 视频版 IP-Adapter</span>：参考图生视频（保持人物外观/服装）</div>
+<div class="ext-card"><span class="target">🎯 风格 IP-Adapter</span>：参考风格图（不是内容）做风格迁移</div>
+<div class="ext-card"><span class="target">🎯 多参考融合</span>：5-10 张参考图融合（不同角度/不同表情）</div>
+<div class="ext-card"><span class="target">🎯 IP-Adapter + 3DGS</span>：让生成的 3DGS 保持参考主体的外观</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #10 · PAPER 2/2</div>
+      <h1>Consistory (Story Visualization)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">arXiv 2502.14332, 2025</span> <span class="gray">·</span> Bowen Zhang 等 (Snap Research / CUHK)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">无需训练的故事可视化：自注意力共享 + 主题特征保持，生成一致人物的多场景图。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在 StoryBench 上一致性 SOTA，无需 LoRA finetune</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Text / Image<br>Prompt</span><span class="arrow">→</span><span class="layer mamba">Text Encoder<br>(CLIP/T5)</span><span class="arrow">→</span><span class="layer fc">DiT / UNet<br>Denoiser</span><span class="arrow">→</span><span class="layer skip">VAE Decode</span><span class="arrow">→</span><span class="layer pool">Image/Video</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Consistory (Story Visualization) 的关键贡献在于用 <code>无需训练的故事可视化：自注意力共享 + 主题特征保持，生成一致人物的多场景图。...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #10 · EXTENSION FOR PAPER 2</div>
+      <h1>Consistory (Story Visualization) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 视频 Consistory</span>：扩展到短视频生成（多镜头一致人物）</div>
+<div class="ext-card"><span class="target">🎯 多角色故事</span>：3-5 个角色保持各自一致性</div>
+<div class="ext-card"><span class="target">🎯 风格 + 角色</span>：同时控制风格和角色一致性</div>
+<div class="ext-card"><span class="target">🎯 互动故事</span>：让用户实时控制剧情分支</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #10 · FUTURE WORK</div>
+      <h1>📈 个性化 / 一致性生成 <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 多方向交叉创新是最大机会（看第四节组合分析）</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "个性化 / 一致性生成" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 IP-Adapter + awesome-generative + personalization</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #11 · DRIVING + 3D</div>
+      <h1>📈 自动驾驶 (BEV/Occupancy/端到端) <span class="small gray" style="font-weight:400">Autonomous Driving: End-to-End & BEV</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +40%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">71</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">73</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">102</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#22c55e">+40%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">端到端自动驾驶、BEV 感知、占用网络、World Model for Driving。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">Tesla FSD v13、Wayve、华为 ADS 3.0、Waymo 都用 world model + 端到端。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>Senna / Senna-VLM (端到端 + VLM)</div><div class="small">arXiv 系列 2024-2025</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>Think2Drive / RAG-Driver (Reasoning-based Driving)</div><div class="small">CVPR 2024 / NeurIPS 2024</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #11 · PAPER 1/2</div>
+      <h1>Senna / Senna-VLM (端到端 + VLM)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">arXiv 系列 2024-2025</span> <span class="gray">·</span> Bo Jiang 等 (商汤/上海 AI Lab)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">VLM (Qwen2-VL) 训成 driving planner，high-level reasoning + low-level trajectory。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在 nuScenes 上开环 / 闭环规划 SOTA</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Multi-View<br>Cameras</span><span class="arrow">+</span><span class="layer mamba">Lidar / HDMap</span><span class="arrow">→</span><span class="layer fc">BEV Encoder<br>(BEVFormer)</span><span class="arrow">→</span><span class="layer skip">VLM<br>Planner</span><span class="arrow">→</span><span class="layer pool">Trajectory</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Senna / Senna-VLM (端到端 + VLM) 的关键贡献在于用 <code>VLM (Qwen2-VL) 训成 driving planner，high-level reaso...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #11 · EXTENSION FOR PAPER 1</div>
+      <h1>Senna / Senna-VLM (端到端 + VLM) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 长 horizon planning</span>：当前 3s planning，扩展到 30s 战略决策</div>
+<div class="ext-card"><span class="target">🎯 多车协同感知</span>：V2X 通信融合多车视角（cooperative perception）</div>
+<div class="ext-card"><span class="target">🎯 不确定性规划</span>：planning 时输出 confidence + alternative trajectories</div>
+<div class="ext-card"><span class="target">🎯 Senna + World Model</span>：把预测模型和 planning 联合训练（OmniNWM 思路）</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #11 · PAPER 2/2</div>
+      <h1>Think2Drive / RAG-Driver (Reasoning-based Driving)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">CVPR 2024 / NeurIPS 2024</span> <span class="gray">·</span> Kairui Ding 等 (HKUST)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">用 LLM reasoning 做 driving decisions，引入 RAG 检索相似场景的 expert demonstration。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在 CARLA benchmark 上 closed-loop 90+ 分数（接近 SOTA）</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Multi-View<br>Cameras</span><span class="arrow">+</span><span class="layer mamba">Lidar / HDMap</span><span class="arrow">→</span><span class="layer fc">BEV Encoder<br>(BEVFormer)</span><span class="arrow">→</span><span class="layer skip">VLM<br>Planner</span><span class="arrow">→</span><span class="layer pool">Trajectory</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Think2Drive / RAG-Driver (Reasoning-based Driving) 的关键贡献在于用 <code>用 LLM reasoning 做 driving decisions，引入 RAG 检索相似场景的...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #11 · EXTENSION FOR PAPER 2</div>
+      <h1>Think2Drive / RAG-Driver (Reasoning-based Driving) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 多模态 reasoning</span>：融合 VLM + Lidar + HD map 做综合决策</div>
+<div class="ext-card"><span class="target">🎯 个性化 driving</span>：不同司机的驾驶风格适配（激进/保守）</div>
+<div class="ext-card"><span class="target">🎯 Corner case 处理</span>：让模型能解释『为什么不按常规开』（如救护车让行）</div>
+<div class="ext-card"><span class="target">🎯 训练数据合成</span>：用 WM 合成 rare scenario 训练数据</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #11 · FUTURE WORK</div>
+      <h1>📈 自动驾驶 (BEV/Occupancy/端到端) <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 端到端 + World Model + VLM Reasoning：Tesla FSD v14、Wayve GAIA-2</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "自动驾驶 (BEV/Occupancy/端到端)" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 Senna / Senna-VLM (端到端 + VLM) + awesome-driving + 3d</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #12 · LOW-LEVEL + EDITING</div>
+      <h1>📈 图像编辑 / 修复 / 超分 <span class="small gray" style="font-weight:400">Image Editing, Inpainting, Super-Resolution</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +13%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">113</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">126</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">143</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#c9d1d9">+13%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">图像编辑、修复、超分、去模糊、低光照增强等 low-level 任务。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">Stable 但稳定增长，工程导向，idea 空间主要是『更精细的控制』。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>BrushNet / PowerPaint</div><div class="small">arXiv 系列</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>SUPIR (Scaling up Image Restoration)</div><div class="small">CVPR 2024</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #12 · PAPER 1/2</div>
+      <h1>BrushNet / PowerPaint</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">arXiv 系列</span> <span class="gray">·</span> Xuan Ju 等 / Zhuo Li 等</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在 SDXL / FLUX 上加可插拔的 brush mask encoder，让 inpainting 兼容原模型。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在painting quality / mask fidelity 全面 SOTA，兼容 SDXL/FLUX</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Encoder</span><span class="arrow">→</span><span class="layer mamba">Core Module</span><span class="arrow">→</span><span class="layer fc">Decoder</span><span class="arrow">→</span><span class="layer skip">Output</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：BrushNet / PowerPaint 的关键贡献在于用 <code>在 SDXL / FLUX 上加可插拔的 brush mask encoder，让 inpainti...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #12 · EXTENSION FOR PAPER 1</div>
+      <h1>BrushNet / PowerPaint <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 视频 BrushNet</span>：把 mask-based editing 扩展到视频（保持时序一致）</div>
+<div class="ext-card"><span class="target">🎯 3D BrushNet</span>：编辑 3DGS 资产（修改 mesh/颜色/纹理）</div>
+<div class="ext-card"><span class="target">🎯 智能 mask 生成</span>：用 VLM 自动识别 + mask 出要编辑区域</div>
+<div class="ext-card"><span class="target">🎯 多笔触编辑</span>：同时画多笔，每笔不同 prompt</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #12 · PAPER 2/2</div>
+      <h1>SUPIR (Scaling up Image Restoration)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">CVPR 2024</span> <span class="gray">·</span> Fanghua Yu 等 (深圳先进技术研究院)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">7B 参数 + 20M 高质量图像对 + ControlNet-style 条件，fancy up 大模型做超分/修复。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在真实世界老照片修复、8× 超分 SOTA，文本 prompt 控制修复风格</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Encoder</span><span class="arrow">→</span><span class="layer mamba">Core Module</span><span class="arrow">→</span><span class="layer fc">Decoder</span><span class="arrow">→</span><span class="layer skip">Output</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：SUPIR (Scaling up Image Restoration) 的关键贡献在于用 <code>7B 参数 + 20M 高质量图像对 + ControlNet-style 条件，fancy up ...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #12 · EXTENSION FOR PAPER 2</div>
+      <h1>SUPIR (Scaling up Image Restoration) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 视频 SUPIR</span>：保持时序一致性的视频超分/修复</div>
+<div class="ext-card"><span class="target">🎯 3D-aware SUPIR</span>：超分时考虑 3D 一致性（multi-view）</div>
+<div class="ext-card"><span class="target">🎯 老电影修复</span>：GAN 时代的低质量电影（25fps→60fps、SDR→HDR）</div>
+<div class="ext-card"><span class="target">🎯 实时 SUPIR</span>：模型蒸馏到能 30fps 处理 1080p</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #12 · FUTURE WORK</div>
+      <h1>📈 图像编辑 / 修复 / 超分 <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 视频/3D 编辑 + 老电影修复 + 实时化</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "图像编辑 / 修复 / 超分" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 BrushNet / PowerPaint + awesome-low-level + editing</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #13 · 3D</div>
+      <h1>📈 3D 重建 / SfM / MVS / 深度估计 <span class="small gray" style="font-weight:400">3D Reconstruction, SfM, MVS, Depth</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +6%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">81</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">113</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">120</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#c9d1d9">+6%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">从图像恢复 3D 结构（深度、相机位姿、点云、mesh）。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">VGGT 把 3D 感知的范式改了，follow-up 空间巨大。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>DUSt3R / MASt3R / MonST3R (Naver Labs)</div><div class="small">CVPR 2024 / ECCV 2024 / CVPR 2</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>Depth Anything V2 (V3 筹备中)</div><div class="small">NeurIPS 2024 / arXiv</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #13 · PAPER 1/2</div>
+      <h1>DUSt3R / MASt3R / MonST3R (Naver Labs)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">CVPR 2024 / ECCV 2024 / CVPR 2025</span> <span class="gray">·</span> Shuzhe Wang / Vincent Leroy 等 (Naver Labs)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">无相机内参的端到端 pairwise 3D 重建，pointmap regression。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在 3D 重建/相机定位 NVS 多个任务 SOTA，无需 SfM 预处理</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Images / Text</span><span class="arrow">→</span><span class="layer mamba">VGGT / 3DGS<br>Backbone</span><span class="arrow">→</span><span class="layer fc">3D Attributes<br>(pose, depth, mesh)</span><span class="arrow">→</span><span class="layer skip">3DGS / NeRF<br>Output</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：DUSt3R / MASt3R / MonST3R (Naver Labs) 的关键贡献在于用 <code>无相机内参的端到端 pairwise 3D 重建，pointmap regression。...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #13 · EXTENSION FOR PAPER 1</div>
+      <h1>DUSt3R / MASt3R / MonST3R (Naver Labs) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 视频 3D DUSt3R</span>：输入视频输出动态 3D 重建（替代 MegaSaM）</div>
+<div class="ext-card"><span class="target">🎯 DUSt3R + 大规模数据</span>：扩到 100M images 训练，做 foundation model</div>
+<div class="ext-card"><span class="target">🎯 DUSt3R + 高斯泼溅</span>：直接输出 3DGS 而非 point cloud</div>
+<div class="ext-card"><span class="target">🎯 DUSt3R + 开放词汇</span>：用 VLM 条件 3D 重建（重建指定物体）</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #13 · PAPER 2/2</div>
+      <h1>Depth Anything V2 (V3 筹备中)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">NeurIPS 2024 / arXiv</span> <span class="gray">·</span> Lihe Yang 等 (TikTok / HKU)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">DINOv2 encoder + 6.2× 合成数据 + robust loss。单目深度 SOTA。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在 9 个 zero-shot depth benchmark 全面 SOTA</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Images / Text</span><span class="arrow">→</span><span class="layer mamba">VGGT / 3DGS<br>Backbone</span><span class="arrow">→</span><span class="layer fc">3D Attributes<br>(pose, depth, mesh)</span><span class="arrow">→</span><span class="layer skip">3DGS / NeRF<br>Output</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Depth Anything V2 (V3 筹备中) 的关键贡献在于用 <code>DINOv2 encoder + 6.2× 合成数据 + robust loss。单目深度 SOTA...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #13 · EXTENSION FOR PAPER 2</div>
+      <h1>Depth Anything V2 (V3 筹备中) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 视频深度一致性</span>：解决单目深度在视频中的 flicker 问题</div>
+<div class="ext-card"><span class="target">🎯 Depth Anything V3</span>：扩到 metric 3D（绝对尺度）+ 3D occupancy</div>
+<div class="ext-card"><span class="target">🎯 在手机端</span>：<100M 参数，<50ms 推理（iPhone 实测）</div>
+<div class="ext-card"><span class="target">🎯 Depth + VLM</span>：联合训练 VLM + depth，让 VLM 理解 3D 空间</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #13 · FUTURE WORK</div>
+      <h1>📈 3D 重建 / SfM / MVS / 深度估计 <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 4D VGGT / 视频 DUSt3R / 3DGS 实时化：明年 SOTA 必看</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "3D 重建 / SfM / MVS / 深度估计" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 DUSt3R / MASt3R / MonST3R (Naver Labs) + awesome-3d</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #14 · FOUNDATION + SAFETY</div>
+      <h1>📈 不确定性估计 / 校准 / OOD <span class="small gray" style="font-weight:400">Uncertainty, Calibration, OOD Detection</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 +71%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">48</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">45</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">77</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#22c55e">+71%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">模型知道自己『不知道什么』的能力。重要但被低估。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">VLM/Diffusion 部署到真实场景必须能识别 OOD + 量化不确定性。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>Deep Ensemble / MC-Dropout 重启潮</div><div class="small">NeurIPS 2024 / ICLR 2025</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>Conformal Prediction for VLMs</div><div class="small">arXiv 2502.xxxxx, 2025</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #14 · PAPER 1/2</div>
+      <h1>Deep Ensemble / MC-Dropout 重启潮</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">NeurIPS 2024 / ICLR 2025</span> <span class="gray">·</span> 多团队</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">不确定性 = predictive entropy / mutual information / ensemble disagreement。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在 OOD detection、failure prediction 多个 benchmark 验证</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Encoder</span><span class="arrow">→</span><span class="layer mamba">Core Module</span><span class="arrow">→</span><span class="layer fc">Decoder</span><span class="arrow">→</span><span class="layer skip">Output</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Deep Ensemble / MC-Dropout 重启潮 的关键贡献在于用 <code>不确定性 = predictive entropy / mutual information / e...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #14 · EXTENSION FOR PAPER 1</div>
+      <h1>Deep Ensemble / MC-Dropout 重启潮 <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 VLM 不确定性</span>：让 VLM 输出 confidence + reasoning（'我不确定因为...'）</div>
+<div class="ext-card"><span class="target">🎯 Diffusion 不确定性</span>：检测生成图像的不可靠度（人脸深度估计的 confidence）</div>
+<div class="ext-card"><span class="target">🎯 主动学习</span>：uncertainty-guided sample selection 训 VLM（数据效率 +10×）</div>
+<div class="ext-card"><span class="target">🎯 Safe VLA</span>：机器人拒绝执行不确定任务（uncertainty-aware VLA）</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #14 · PAPER 2/2</div>
+      <h1>Conformal Prediction for VLMs</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">arXiv 2502.xxxxx, 2025</span> <span class="gray">·</span> 多团队 (MIT / Stanford)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">用 conformal prediction 给 VLM 输出统计保证的 confidence set。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">在 VQA、hallucination detection 上达到 90%+ coverage</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Encoder</span><span class="arrow">→</span><span class="layer mamba">Core Module</span><span class="arrow">→</span><span class="layer fc">Decoder</span><span class="arrow">→</span><span class="layer skip">Output</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Conformal Prediction for VLMs 的关键贡献在于用 <code>用 conformal prediction 给 VLM 输出统计保证的 confidence se...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #14 · EXTENSION FOR PAPER 2</div>
+      <h1>Conformal Prediction for VLMs <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 自适应 conformal</span>：随 domain shift 自动调整 confidence 阈值</div>
+<div class="ext-card"><span class="target">🎯 多任务 conformal</span>：同时给 detection+captioning+VQA 出 confidence set</div>
+<div class="ext-card"><span class="target">🎯 实时 conformal</span>：<10ms 计算开销（部署到端侧）</div>
+<div class="ext-card"><span class="target">🎯 可解释 conformal</span>：让 model 解释『为什么选这个 confidence 区间』</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #14 · FUTURE WORK</div>
+      <h1>📈 不确定性估计 / 校准 / OOD <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 VLM 不确定性 + Hallucination 检测 + Active Learning</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "不确定性估计 / 校准 / OOD" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 Deep Ensemble / MC-Dropout 重启潮 + awesome-foundation + safety</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #15 · ARCHITECTURE</div>
+      <h1>⚠️ Mamba / 状态空间模型 (SSM) <span class="small gray" style="font-weight:400">Mamba & State Space Models</span></h1>
+    </div>
+    <div class="cat">🔥 2026 增长 -16%</div>
+  </div>
+  
+  <div class="num-grid">
+    <div class="num-cell cool"><div class="lbl">CVPR 2024</div><div class="val" style="">17</div><div class="sub">baseline</div></div>
+<div class="num-cell cool"><div class="lbl">CVPR 2025</div><div class="val" style="">69</div><div class="sub">中间年</div></div>
+<div class="num-cell hot"><div class="lbl">CVPR 2026</div><div class="val" style="">58</div><div class="sub">current</div></div>
+<div class="num-cell hot"><div class="lbl">25→26 增长</div><div class="val" style="#ef4444">-16%</div><div class="sub">growth</div></div>
+
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 10px; gap: 14px;">
+    <div class="card pri">
+      <h3>📖 是什么</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">Mamba（线性复杂度 RNN 架构）作为 Transformer 替代品。</p>
+    </div>
+    <div class="card hot">
+      <h3>🔥 为什么火</h3>
+      <p style="font-size: 13.5px; line-height: 1.6;">已经过了巅峰期（2025 顶峰 2026 回落），基础架构创新红利耗尽。仍有应用空间。</p>
+    </div>
+  </div>
+  
+  <h3 style="margin-top: 14px;">📌 本节代表论文</h3>
+  <div class="pipeline"><div class="pipeline-step"><div>Vision Mamba (Vim) / VMamba</div><div class="small">ICLR 2024 / NeurIPS 2024</div></div> <span class="arrow">→</span> <div class="pipeline-step"><div>MambaVision (NVIDIA)</div><div class="small">CVPR 2025 / arXiv 2502.14160</div></div></div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #15 · PAPER 1/2</div>
+      <h1>Vision Mamba (Vim) / VMamba</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">ICLR 2024 / NeurIPS 2024</span> <span class="gray">·</span> Lianghui Zhu / Yue Liu 等</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">双向 SSM 让 Mamba 处理 image patches，linear complexity 处理 long sequence。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">ImageNet 224 85% top-1，throughput 2.8× ViT</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Image Patches</span><span class="arrow">→</span><span class="layer mamba">SS2D / Bi-SSM</span><span class="arrow">→</span><span class="layer fc">MLP Head</span><span class="arrow">→</span><span class="layer skip">Prediction</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：Vision Mamba (Vim) / VMamba 的关键贡献在于用 <code>双向 SSM 让 Mamba 处理 image patches，linear complexity ...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #15 · EXTENSION FOR PAPER 1</div>
+      <h1>Vision Mamba (Vim) / VMamba <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 视频 Mamba 应用</span>：VideoMamba 在长视频理解的应用拓展（小时级）</div>
+<div class="ext-card"><span class="target">🎯 Mamba + Diffusion</span>：DiS 路线，Mamba 替换 UNet 中的 attention</div>
+<div class="ext-card"><span class="target">🎯 Mamba 3D</span>：3D point cloud Mamba 加速（PointMamba 路线）</div>
+<div class="ext-card"><span class="target">🎯 混合架构</span>：Mamba + Attention 交替（2:1 比例），long-context 加速</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #15 · PAPER 2/2</div>
+      <h1>MambaVision (NVIDIA)</h1>
+      <p class="small" style="margin-top: 4px;"><span class="box method">CVPR 2025 / arXiv 2502.14160</span> <span class="gray">·</span> Ali Hatamizadeh 等 (NVIDIA)</p>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 8px; gap: 14px;">
+    <div>
+      <div class="card pri">
+        <h3>💡 核心 Idea</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">Hybrid：CNN + Mamba + Attention 混合架构，平衡 inductive bias 和长程依赖。</p>
+      </div>
+      <div class="card cool" style="margin-top: 10px;">
+        <h3>📊 实验结果</h3>
+        <p style="font-size: 13.5px; line-height: 1.6;">ImageNet 1K 84.4% top-1，efficient for mobile deployment</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏗 架构示意</h3>
+      <p class="small gray" style="margin-bottom: 4px;">参考论文架构图，课堂重绘版</p>
+      <div class="arch"><span class="label">输入</span><span class="layer conv">Image Patches</span><span class="arrow">→</span><span class="layer mamba">SS2D / Bi-SSM</span><span class="arrow">→</span><span class="layer fc">MLP Head</span><span class="arrow">→</span><span class="layer skip">Prediction</span></div>
+      <div style="margin-top: 10px; padding: 10px; background: #0d1117; border: 1px dashed #30363d; border-radius: 4px; font-size: 11.5px; color: #8b949e;">
+        💡 <b>看点</b>：MambaVision (NVIDIA) 的关键贡献在于用 <code>Hybrid：CNN + Mamba + Attention 混合架构，平衡 inductive b...</code> 的方式解决现有问题，相比 baseline 取得显著提升。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #15 · EXTENSION FOR PAPER 2</div>
+      <h1>MambaVision (NVIDIA) <span class="small gray" style="font-weight:400">· 4 个延伸机会</span></h1>
+      <p class="small gray" style="margin-top: 4px;">基于该工作的潜在研究方向，按从易到难排列</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 8px;">
+    <div class="ext-card"><span class="target">🎯 MambaVision 视频版</span>：扩展到 video understanding（NVC 场景）</div>
+<div class="ext-card"><span class="target">🎯 MambaVision 多模态</span>：融合 MambaVision + LLM 做 VLM backbone</div>
+<div class="ext-card"><span class="target">🎯 MambaVision 边缘部署</span>：<50M 参数，手机端 <5ms latency</div>
+<div class="ext-card"><span class="target">🎯 MambaVision 蒸馏</span>：自蒸馏到 Mamba-only / CNN-only 部署</div>
+
+  </div>
+  
+  <div class="card hot" style="margin-top: 12px;">
+    <h3>💼 出成果难度评估</h3>
+    <p style="font-size: 12.5px; line-height: 1.6;">
+      <span class="box model">算力门槛</span> <span class="box eval">idea 空间</span> <span class="box reward">出 paper 速度</span><br>
+      上面 4 个延伸机会中，#1-#2 通常 1-2 个月可出初稿，#3-#4 需要更多实验（约 3-4 个月）。建议优先选 <b>idea 空间大 + 算力门槛低</b> 的方向。
+    </p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">DIRECTION #15 · FUTURE WORK</div>
+      <h1>⚠️ Mamba / 状态空间模型 (SSM) <span class="small gray" style="font-weight:400">· 方向级展望</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 14px;">
+    <div class="card hot">
+      <h3>🚀 未来 6-12 个月核心趋势</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-top: 8px;">🎯 Mamba + Attention 混合 + 3D/视频 + 高效部署</p>
+    </div>
+    <div class="card pri">
+      <h3>📚 推荐入门资源</h3>
+      <ul class="small" style="margin-left: 16px; margin-top: 6px; line-height: 1.7;">
+        <li><b>综述论文</b>：arXiv 搜 "Mamba / 状态空间模型 (SSM)" survey</li>
+        <li><b>代码仓库</b>：GitHub 搜 Vision Mamba (Vim) / VMamba + awesome-architecture</li>
+        <li><b>数据集</b>：参考各论文 GitHub README</li>
+        <li><b>实战</b>：从代表论文的 code 起步，跑通 baseline 后加创新</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 14px;">
+    <h3>🛠 算力 + 数据 + 时间估算</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color: #5b8def">算力</b><br>
+        <span class="small">入门级 1×A100 即可做小实验；正式 paper 需 4-8×A100/H100</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">数据</b><br>
+        <span class="small">多数方向有开源数据集；少量需要自行爬取或合成</span>
+      </div>
+      <div>
+        <b style="color: #5b8def">时间</b><br>
+        <span class="small">follow-up 1-2 月；idea 突破 3-6 月；大实验 6 月+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" style="padding: 16px 40px 30px;">
+  <div class="header">
+    <div>
+      <div class="rank">CONCLUSION · RECOMMENDATION MATRIX</div>
+      <h1 style="font-size: 22px;">🎯 方向选择终极建议 <span class="small gray" style="font-weight:400">· 矩阵</span></h1>
+    </div>
+  </div>
+  
+  <h3 style="font-size: 12px; margin-bottom: 2px;">🟢 强烈推荐（蓝海 + 易出成果）</h3>
+  <table style="font-size: 9px;">
+    <thead>
+      <tr><th>方向</th><th>算力门槛</th><th>idea 空间</th><th>入门难度</th><th>推荐指数</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>视觉推理/Agent/CoT</td><td>中</td><td><span style="color:#f59e0b">极大</span></td><td>★★</td><td><span style="color:#f59e0b">⭐⭐⭐⭐⭐</span></td></tr>
+      <tr><td>World Models</td><td>中-高</td><td><span style="color:#f59e0b">极大</span></td><td>★★★</td><td><span style="color:#f59e0b">⭐⭐⭐⭐⭐</span></td></tr>
+      <tr><td>个性化/一致性生成</td><td>低</td><td>大</td><td>★★</td><td><span style="color:#f59e0b">⭐⭐⭐⭐⭐</span></td></tr>
+      <tr><td>RLHF/GRPO + VLM/Diff</td><td>中</td><td>大</td><td>★★</td><td><span style="color:#f59e0b">⭐⭐⭐⭐⭐</span></td></tr>
+      <tr><td>机器人/VLA</td><td>中-高</td><td><span style="color:#f59e0b">极大</span></td><td>★★★</td><td><span style="color:#f59e0b">⭐⭐⭐⭐⭐</span></td></tr>
+    </tbody>
+  </table>
+  
+  <h3 style="margin-top: 6px; font-size: 12px; margin-bottom: 2px;">🟡 稳赚不赔（成熟 + 有空间）</h3>
+  <table style="font-size: 9px;">
+    <thead>
+      <tr><th>方向</th><th>算力门槛</th><th>idea 空间</th><th>入门难度</th><th>推荐指数</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>3DGS + 应用拓展</td><td>中</td><td>中</td><td>★★★</td><td>⭐⭐⭐⭐</td></tr>
+      <tr><td>视频生成</td><td>高</td><td>中</td><td>★★★★</td><td>⭐⭐⭐</td></tr>
+      <tr><td>自动驾驶 (BEV/Occupancy)</td><td>高</td><td>中</td><td>★★★</td><td>⭐⭐⭐⭐</td></tr>
+      <tr><td>医学影像</td><td>中</td><td>大</td><td>★★</td><td>⭐⭐⭐⭐</td></tr>
+      <tr><td>MLLM 下游任务</td><td>中</td><td>中</td><td>★★</td><td>⭐⭐⭐</td></tr>
+    </tbody>
+  </table>
+  
+  <h3 style="margin-top: 6px; font-size: 12px; margin-bottom: 2px;">🔴 谨慎入场（饱和/红海）</h3>
+  <div class="grid grid-4" style="margin-top: 2px; gap: 4px;">
+    <div class="card" style="text-align:center; padding: 4px;"><b style="font-size: 10.5px;">纯 Diffusion</b><br><span class="small" style="font-size: 8.5px;">idea 空间小</span></div>
+    <div class="card" style="text-align:center; padding: 4px;"><b style="font-size: 10.5px;">基础 Mamba</b><br><span class="small" style="font-size: 8.5px;">红利耗尽</span></div>
+    <div class="card" style="text-align:center; padding: 4px;"><b style="font-size: 10.5px;">NeRF</b><br><span class="small" style="font-size: 8.5px;">被 3DGS 替代</span></div>
+    <div class="card" style="text-align:center; padding: 4px;"><b style="font-size: 10.5px;">光流/图像匹配</b><br><span class="small" style="font-size: 8.5px;">被基础模型吃</span></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="rank">CONCLUSION · FUTURE PREDICTION</div>
+      <h1>🔮 ECCV 2026 / BMVC 2026 预测 <span class="small gray" style="font-weight:400">· 9-11 月</span></h1>
+    </div>
+  </div>
+  
+  <div class="grid grid-2" style="margin-top: 12px; gap: 16px;">
+    <div class="card pri">
+      <h3>📍 ECCV 2026（9 月）</h3>
+      <p style="font-size: 12.5px; line-height: 1.6; margin-top: 6px;">预计 2,400-2,800 篇接收，方向分布预测：</p>
+      <ul style="margin-top: 6px; font-size: 12.5px;">
+        <li>🥇 <b>MLLM 推理 + Agent</b>：占 8-10%（最大单一方向）</li>
+        <li>🥇 <b>机器人 / VLA</b>：占 6-8%</li>
+        <li>🥈 <b>视频生成 / 4D</b>：占 5-7%</li>
+        <li>🥈 <b>World Model</b>：占 2-3%（蓝海）</li>
+        <li>🥉 <b>3D Gen / 3DGS</b>：占 6-8%（成熟）</li>
+      </ul>
+      <p class="small" style="margin-top: 8px;"><b>重点关注 best paper</b>：大概率命中 视觉推理/Agent 或 World Model</p>
+    </div>
+    <div class="card hot">
+      <h3>📍 BMVC 2026（11 月）</h3>
+      <p style="font-size: 12.5px; line-height: 1.6; margin-top: 6px;">预计 280-350 篇接收，英国特色保留：</p>
+      <ul style="margin-top: 6px; font-size: 12.5px;">
+        <li>🥇 <b>医学影像 + 不确定性</b>：仍占 10-12%</li>
+        <li>🥈 <b>鲁棒性 / OOD</b>：占 4-5%</li>
+        <li>🥈 <b>知识蒸馏 / 压缩</b>：占 4-5%</li>
+        <li>🥉 <b>Diffusion / VLM</b>：主流化</li>
+      </ul>
+      <p class="small" style="margin-top: 8px;"><b>重点关注 best paper</b>：大概率是 应用导向（机器人 + 医学）</p>
+    </div>
+  </div>
+  
+  <div class="card cool" style="margin-top: 16px;">
+    <h3>💎 跨会议出 paper 策略</h3>
+    <div class="grid grid-3" style="margin-top: 8px; gap: 10px; font-size: 12.5px;">
+      <div>
+        <b style="color:#5b8def">7-9 月冲 ECCV</b><br>
+        <span class="small">3 月前投；idea 偏前沿</span>
+      </div>
+      <div>
+        <b style="color:#5b8def">9-11 月冲 BMVC</b><br>
+        <span class="small">5 月前投；idea 偏应用</span>
+      </div>
+      <div>
+        <b style="color:#5b8def">11 月-2 月冲 CVPR 2027</b><br>
+        <span class="small">idea 偏扎实，复现性优先</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide title-slide">
+  <h1 style="font-size: 60px; margin-bottom: 24px;">Q & A</h1>
+  <div style="font-size: 22px; color: #5b8def; margin-bottom: 40px;">谢谢！欢迎深入交流</div>
+  
+  <div style="text-align: left; max-width: 800px; margin: 0 auto; padding: 20px; background: #161b22; border: 1px solid #30363d; border-radius: 8px;">
+    <h3 style="text-align: center; margin-bottom: 16px;">📚 报告资源</h3>
+    <div style="font-size: 13px; line-height: 1.8;">
+      <p>📄 <b>主报告</b>：<code>~/cv_survey_2025_2026/reports/cv_top_trends_2025_2026.md</code></p>
+      <p>📊 <b>原始数据</b>：<code>~/cv_survey_2025_2026/data/all_paper_titles.json</code> (1.6MB, 18,798 篇)</p>
+      <p>📈 <b>主题统计</b>：<code>~/cv_survey_2025_2026/data/topic_stats_*.json</code></p>
+      <p>📑 <b>本次 slides</b>：<code>~/cv_survey_2025_2026/slides/index.html</code></p>
+    </div>
+  </div>
+  
+  <div class="meta" style="margin-top: 30px;">
+    <p>🤖 Generated by Hermes Agent · 2026-06-21</p>
+    <p style="margin-top: 8px;">📊 数据：18,798 papers · 45 directions · 6 conf-years</p>
+  </div>
+</section>
+
+</body>
+</html>

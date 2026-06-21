@@ -1,0 +1,20 @@
+{
+  "VGGT": {
+    "title": "VGGT: Visual Geometry Grounded Transformer",
+    "arxiv": "2503.11651",
+    "comment": "CVPR 2025, Project Page: https://vgg-t.github.io/",
+    "pub": "2025-03-14"
+  },
+  "MegaSaM": {
+    "title": "MegaSaM: Accurate, Fast, and Robust Structure and Motion from Casual Dynamic Videos",
+    "arxiv": "2412.04463",
+    "comment": "Project page: https://mega-sam.github.io/",
+    "pub": "2024-12-05"
+  },
+  "Navigation World Models": {
+    "title": "OmniNWM: Omniscient Driving Navigation World Models",
+    "arxiv": "2510.18313v4",
+    "comment": "https://arlo0o.github.io/OmniNWM/",
+    "pub": "2025-10-21"
+  }
+}
