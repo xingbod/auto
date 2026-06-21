@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLM 对齐强化学习方法 · 从 PPO 到 DPO 到 GRPO</title>
+<style>
+  /* ===== 基础设置 ===== */
+  :root {
+    --bg: #0e1116;
+    --bg2: #161b22;
+    --fg: #e6edf3;
+    --muted: #8b949e;
+    --accent: #5b8def;
+    --policy: #5b8def;
+    --ref:    #8b949e;
+    --critic: #10b981;
+    --reward: #f59e0b;
+    --chosen: #22c55e;
+    --bad:    #ef4444;
+    --loss:   #a78bfa;
+    --code-bg:#0a0d12;
+    --border: #30363d;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  /* ===== 进度条与导航 ===== */
+  .progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 3px; background: var(--accent);
+    width: 0%; z-index: 1000;
+    transition: width 0.2s;
+  }
+  .slide-counter {
+    position: fixed; top: 12px; right: 20px;
+    color: var(--muted); font-size: 13px; z-index: 1000;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .nav {
+    position: fixed; bottom: 16px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 10px; z-index: 1000;
+  }
+  .nav button {
+    background: var(--bg2); color: var(--fg);
+    border: 1px solid var(--border);
+    padding: 6px 16px; border-radius: 6px;
+    cursor: pointer; font-size: 14px;
+  }
+  .nav button:hover { background: var(--accent); border-color: var(--accent); }
+
+  /* ===== slide 容器 ===== */
+  main { width: 100vw; height: 100vh; position: relative; }
+  .slide {
+    position: absolute; inset: 0;
+    padding: 28px 60px 24px;
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide h1 { font-size: 28px; margin: 0 0 8px; color: var(--fg); }
+  .slide h2 { font-size: 22px; margin: 0 0 10px; color: var(--accent); }
+  .slide h3 { font-size: 17px; margin: 10px 0 4px; color: var(--fg); }
+  .slide p  { margin: 4px 0; }
+  .slide ul, .slide ol { margin: 4px 0; padding-left: 22px; }
+  .slide li { margin: 2px 0; }
+  .slide .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+  .slide .hint {
+    position: absolute; bottom: 4px; right: 16px;
+    color: var(--muted); font-size: 11px;
+    background: var(--bg); padding: 1px 6px;
+  }
+
+  /* ===== 通用组件 ===== */
+  .box {
+    display: inline-block; padding: 4px 10px;
+    border-radius: 5px; font-weight: 600;
+    font-size: 13px; margin: 1px 3px;
+    border: 1px solid;
+  }
+  .box.policy { background: rgba(91,141,239,0.15); color: var(--policy); border-color: var(--policy); }
+  .box.ref    { background: rgba(139,148,158,0.15); color: var(--ref);    border-color: var(--ref); }
+  .box.critic { background: rgba(16,185,129,0.15); color: var(--critic); border-color: var(--critic); }
+  .box.reward { background: rgba(245,158,11,0.15); color: var(--reward); border-color: var(--reward); }
+  .box.chosen { background: rgba(34,197,94,0.15);  color: var(--chosen); border-color: var(--chosen); }
+  .box.bad    { background: rgba(239,68,68,0.15);  color: var(--bad);    border-color: var(--bad); }
+  .box.loss   { background: rgba(167,139,250,0.15);color: var(--loss);   border-color: var(--loss); }
+
+  .arrow { color: var(--muted); margin: 0 6px; font-weight: bold; }
+
+  /* 流程图 */
+  .flow {
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: 4px; margin: 8px 0; padding: 8px 10px;
+    background: var(--bg2); border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  /* 公式块 */
+  .eq {
+    background: var(--bg2); border-left: 3px solid var(--accent);
+    padding: 8px 12px; margin: 6px 0;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px; color: var(--fg);
+    border-radius: 0 5px 5px 0;
+    overflow-x: auto;
+  }
+  .eq .hl { color: var(--accent); font-weight: bold; }
+
+  /* 代码块 */
+  pre.code {
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 5px; padding: 8px 12px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px; line-height: 1.4;
+    overflow-x: auto; margin: 4px 0;
+  }
+  pre.code .k { color: #ff7b72; }  /* keyword */
+  pre.code .s { color: #a5d6ff; }  /* string */
+  pre.code .c { color: #8b949e; font-style: italic; }  /* comment */
+  pre.code .v { color: #d2a8ff; }  /* var */
+  pre.code .n { color: #79c0ff; }  /* number */
+  pre.code .f { color: #ffa657; }  /* function */
+
+  /* 表格 */
+  table {
+    border-collapse: collapse; width: 100%;
+    margin: 6px 0; font-size: 12px;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 4px 8px; text-align: left;
+  }
+  th { background: var(--bg2); color: var(--accent); }
+  td.center { text-align: center; }
+  td .check { color: var(--chosen); font-weight: bold; }
+  td .cross { color: var(--bad);    font-weight: bold; }
+
+  /* 关键概念 callout */
+  .callout {
+    background: rgba(91,141,239,0.08);
+    border-left: 3px solid var(--accent);
+    padding: 6px 10px; margin: 6px 0;
+    border-radius: 0 5px 5px 0;
+    font-size: 13px;
+  }
+  .callout.warn   { background: rgba(245,158,11,0.08); border-left-color: var(--reward); }
+  .callout.chosen { background: rgba(34,197,94,0.08);  border-left-color: var(--chosen); }
+  .callout.bad    { background: rgba(239,68,68,0.08);  border-left-color: var(--bad); }
+
+  /* 双栏布局 */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 6px 0; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 6px 0; }
+
+  /* 树状图 */
+  .tree { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px;
+          white-space: pre; background: var(--bg2); padding: 10px 14px; border-radius: 5px;
+          border: 1px solid var(--border); line-height: 1.4; }
+
+  /* 数字对比块 */
+  .num-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 6px 0; }
+  .num-cell {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 5px; padding: 6px; text-align: center;
+  }
+  .num-cell .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; }
+  .num-cell .val { font-size: 18px; font-weight: bold; margin: 2px 0; font-family: ui-monospace, monospace; }
+  .num-cell .sub { font-size: 10px; color: var(--muted); }
+  .num-cell.good .val { color: var(--chosen); }
+  .num-cell.bad  .val { color: var(--bad); }
+
+  /* 强调字 */
+  .em    { color: var(--accent); font-weight: 600; }
+  .green { color: var(--chosen); font-weight: 600; }
+  .red   { color: var(--bad);    font-weight: 600; }
+  .yellow{ color: var(--reward); font-weight: 600; }
+  .purple{ color: var(--loss);   font-weight: 600; }
+  .gray  { color: var(--muted); }
+  .mono  { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .small { font-size: 12px; }
+  .big   { font-size: 20px; }
+  .center{ text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+<div class="slide-counter" id="counter">1 / 21</div>
+
+<main id="deck">
+
+<!-- ============== Slide 1: 封面 ============== -->
+<section class="slide active">
+  <h1 style="font-size: 48px; margin-top: 80px;">LLM 对齐的强化学习方法</h1>
+  <p class="subtitle big" style="margin-top: 8px;">从 PPO → DPO → GRPO,一次讲清楚</p>
+  <div style="margin-top: 50px;">
+    <p>本课讲什么:</p>
+    <ul style="font-size: 19px;">
+      <li>大语言模型为什么需要"对齐",以及为什么传统的 SFT 不够</li>
+      <li>强化学习在 LLM 里的角色:reward、policy、KL 约束</li>
+      <li>PPO、RLHF 的标准流程与痛点</li>
+      <li>DPO 家族:一个简洁的"无 critic"流派</li>
+      <li>GRPO 与推理模型的新范式</li>
+      <li>怎么根据场景选方法</li>
+    </ul>
+  </div>
+  <div style="position: absolute; bottom: 60px; right: 70px; color: var(--muted); font-size: 14px;">
+    <p>→ 方向键 / 空格翻页</p>
+    <p>→ P 打印或导出 PDF</p>
+    <p>→ Home / End 跳到首/末</p>
+  </div>
+  <div class="hint">1 / 21</div>
+</section>
+
+<!-- ============== Slide 2: 学习目标 ============== -->
+<section class="slide">
+  <h1>学习目标</h1>
+  <p class="subtitle">学完之后你应该能...</p>
+  <div class="three-col" style="margin-top: 30px;">
+    <div class="callout">
+      <h3>理解问题</h3>
+      <p class="small">说出为什么 SFT 后模型还会"答得烂",以及 RL 想解决什么</p>
+    </div>
+    <div class="callout">
+      <h3>看懂公式</h3>
+      <p class="small">理解 PPO、RLHF、DPO、GRPO 的核心 loss 各自代表什么</p>
+    </div>
+    <div class="callout">
+      <h3>实战选型</h3>
+      <p class="small">面对"我要做个对话/推理/代码模型",知道该用哪种方法</p>
+    </div>
+  </div>
+  <h3 style="margin-top: 30px;">本课结构(从浅到深)</h3>
+  <div class="flow">
+    <span class="box ref">问题</span>
+    <span class="arrow">→</span>
+    <span class="box critic">RL 基础</span>
+    <span class="arrow">→</span>
+    <span class="box policy">PPO / RLHF</span>
+    <span class="arrow">→</span>
+    <span class="box loss">DPO 家族</span>
+    <span class="arrow">→</span>
+    <span class="box reward">GRPO / 推理</span>
+    <span class="arrow">→</span>
+    <span class="box chosen">选型</span>
+  </div>
+  <div class="hint">2 / 21</div>
+</section>
+
+<!-- ============== Slide 3: 为什么需要 RL ============== -->
+<section class="slide">
+  <h1>起点:SFT 解决了什么,没解决什么</h1>
+  <p class="subtitle">先看清问题,再看 RL 怎么救场</p>
+
+  <h3>SFT(监督微调)做了什么</h3>
+  <div class="flow">
+    <span class="box">问答数据 (问,答)</span>
+    <span class="arrow">→</span>
+    <span class="box policy">模型</span>
+    <span class="arrow">→</span>
+    <span class="box chosen">学会"问→答"格式</span>
+  </div>
+
+  <h3>SFT 没解决什么</h3>
+  <div class="two-col">
+    <div class="callout bad">
+      <h3>❌ 内容质量参差不齐</h3>
+      <p class="small">数据里有些答案漂亮、有些胡编,模型都学了。<br>"李白是个卖菜的大爷"也可能冒出来。</p>
+    </div>
+    <div class="callout bad">
+      <h3>❌ 没有"偏好"概念</h3>
+      <p class="small">"哪个答案更好"这个信息 SFT 用不上,只有 loss 高低。</p>
+    </div>
+    <div class="callout bad">
+      <h3>❌ 不能直接对齐人类价值观</h3>
+      <p class="small">有用性、诚实性、无害性这些 SFT 标不出来。</p>
+    </div>
+    <div class="callout warn">
+      <h3>⚠️ 我们想要的</h3>
+      <p class="small">让模型"更想说"好答案, "更不想说"坏答案, 知道什么该说什么不该说。</p>
+    </div>
+  </div>
+  <div class="hint">3 / 21</div>
+</section>
+
+<!-- ============== Slide 4: RL 基础 ============== -->
+<section class="slide">
+  <h1>强化学习基础:把 LLM 套进 RL 框架</h1>
+  <p class="subtitle">术语对照表,先记住这张图</p>
+
+  <table>
+    <tr><th>RL 术语</th><th>LLM 中的对应</th><th>例子</th></tr>
+    <tr><td class="mono">State s</td><td>当前上下文(prompt + 已生成的 token)</td><td>"介绍一下李白\n答:李"</td></tr>
+    <tr><td class="mono">Action a</td><td>下一个要生成的 token</td><td>"白"</td></tr>
+    <tr><td class="mono">Policy π(a|s)</td><td>语言模型(给状态,输出 token 概率)</td><td>P("白")=0.4, P("一")=0.1, ...</td></tr>
+    <tr><td class="mono">Reward r(s,a)</td><td>对生成内容的人类打分</td><td>流畅 +1, 答对 +2, 有害 -5</td></tr>
+    <tr><td class="mono">Trajectory τ</td><td>一段完整的回答</td><td>"白,字太白,号青莲居士..."</td></tr>
+  </table>
+
+  <h3>核心目标</h3>
+  <div class="eq">
+    <span class="hl">max</span> E<sub>τ ~ π</sub> [ R(τ) ]   <span class="gray">← 让模型期望回报最大化</span>
+  </div>
+  <div class="callout">
+    <p>难点:<span class="em">奖励函数 r 怎么来?</span> 人类对每个 token 打分不现实,对整段回答打分信号又太稀疏。</p>
+  </div>
+  <div class="hint">4 / 21</div>
+</section>
+
+<!-- ============== Slide 5: REINFORCE ============== -->
+<section class="slide">
+  <h1>最朴素的策略梯度:REINFORCE</h1>
+  <p class="subtitle">起点:既然要最大化期望回报,就对 reward 大的轨迹求梯度</p>
+
+  <h3>核心公式</h3>
+  <div class="eq">
+    ∇J(θ) = E<sub>τ ~ π<sub>θ</sub></sub> [ R(τ) · ∇log π<sub>θ</sub>(τ) ]
+  </div>
+
+  <h3>直觉</h3>
+  <ul>
+    <li>采样一段回答 τ,得到总奖励 R(τ)</li>
+    <li>如果 R(τ) 高 → 加大这条轨迹出现的概率(∇log π)</li>
+    <li>如果 R(τ) 低 → 降低</li>
+  </ul>
+
+  <h3>致命问题</h3>
+  <div class="callout warn">
+    <p><b>高方差</b>:每次只采一条轨迹,reward 波动巨大,训练极不稳定。</p>
+    <p class="small">解决方案:加 baseline(用价值函数估计"平均期望"),变成 Actor-Critic。</p>
+  </div>
+
+  <div class="callout">
+    <p>这就是 PPO 出现前的状态:能用,但训不好。</p>
+  </div>
+  <div class="hint">5 / 21</div>
+</section>
+
+<!-- ============== Slide 6: PPO ============== -->
+<section class="slide">
+  <h1>PPO:让策略更新稳定下来</h1>
+  <p class="subtitle">Proximal Policy Optimization,OpenAI 2017,RLHF 的事实标准</p>
+
+  <h3>核心机制:clip 截断</h3>
+  <div class="eq">
+    L<sup>CLIP</sup>(θ) = E [ min( r<sub>t</sub>(θ)·A<sub>t</sub>, clip(r<sub>t</sub>(θ), 1-ε, 1+ε)·A<sub>t</sub> ) ]
+  </div>
+  <p class="small">其中 r<sub>t</sub>(θ) = π<sub>θ</sub>(a<sub>t</sub>|s<sub>t</sub>) / π<sub>θ_old</sub>(a<sub>t</sub>|s<sub>t</sub>),A 是优势(相对 baseline 的好坏)</p>
+
+  <h3>直觉</h3>
+  <ul>
+    <li>r<sub>t</sub> 衡量"新策略相对旧策略的偏移倍数"</li>
+    <li>clip 在 [1-ε, 1+ε] (通常 ε=0.2) 之间,不让一次更新太猛</li>
+    <li>有 critic 估计 A<sub>t</sub>,降低方差</li>
+  </ul>
+
+  <h3>PPO 的三大组件</h3>
+  <div class="flow">
+    <span class="box policy">Actor (policy)</span>
+    <span class="arrow">→</span>
+    <span class="box critic">Critic (value)</span>
+    <span class="arrow">→</span>
+    <span class="box reward">Reward Model</span>
+    <span class="arrow">→</span>
+    <span class="box ref">Reference (SFT ckpt)</span>
+  </div>
+  <div class="callout warn">
+    <p>↑ 这就是 RLHF 内存爆炸的根源:<b>4 个模型同时在显存里</b>。</p>
+  </div>
+  <div class="hint">6 / 21</div>
+</section>
+
+<!-- ============== Slide 7: RLHF 完整流程 ============== -->
+<section class="slide">
+  <h1>RLHF 三件套:经典做法(ChatGPT 同款)</h1>
+  <p class="subtitle">InstructGPT 2022,Ouyang et al.</p>
+
+  <div class="flow" style="font-size: 16px;">
+    <div style="display: flex; flex-direction: column; align-items: center; padding: 8px;">
+      <span class="box policy">Stage 1<br>SFT</span>
+      <p class="small gray">监督微调</p>
+    </div>
+    <span class="arrow" style="font-size: 24px;">→</span>
+    <div style="display: flex; flex-direction: column; align-items: center; padding: 8px;">
+      <span class="box reward">Stage 2<br>Reward Model</span>
+      <p class="small gray">奖励模型训练</p>
+    </div>
+    <span class="arrow" style="font-size: 24px;">→</span>
+    <div style="display: flex; flex-direction: column; align-items: center; padding: 8px;">
+      <span class="box critic">Stage 3<br>PPO</span>
+      <p class="small gray">强化学习对齐</p>
+    </div>
+  </div>
+
+  <h3>三阶段细节</h3>
+  <table>
+    <tr><th>阶段</th><th>输入</th><th>产出</th><th>目的</th></tr>
+    <tr><td>1. SFT</td><td>(prompt, answer) 对</td><td>初始 policy π<sub>SFT</sub></td><td>学会基本对话格式</td></tr>
+    <tr><td>2. RM 训练</td><td>(prompt, y<sub>好</sub>, y<sub>坏</sub>) 偏好对</td><td>奖励模型 r(x,y)</td><td>学到"人类偏好"打分函数</td></tr>
+    <tr><td>3. PPO</td><td>prompt 池</td><td>对齐后的 policy π<sub>RL</sub></td><td>最大化 r, 同时不偏离 SFT 太远</td></tr>
+  </table>
+
+  <div class="callout">
+    <p>关键细节:PPO 阶段有个 <b>KL 惩罚</b>,强制 π<sub>RL</sub> 不要离 π<sub>SFT</sub> 太远,防止 reward hacking。</p>
+  </div>
+  <div class="hint">7 / 21</div>
+</section>
+
+<!-- ============== Slide 8: RLHF 痛点 ============== -->
+<section class="slide">
+  <h1>RLHF 的工程痛点</h1>
+  <p class="subtitle">为什么大家开始想"砍掉一些东西"</p>
+
+  <div class="three-col">
+    <div class="callout bad">
+      <h3>😵 4 个模型同显存</h3>
+      <p class="small">policy + critic + reward + reference<br>对 7B 模型光 PPO 阶段就要 80GB+</p>
+    </div>
+    <div class="callout bad">
+      <h3>🎢 训练不稳定</h3>
+      <p class="small">KL 系数、reward 缩放、clip range...<br>超参敏感,容易训崩</p>
+    </div>
+    <div class="callout bad">
+      <h3>🎯 Reward Hacking</h3>
+      <p class="small">模型学会"骗"RM:<br>输出人类看着爽但实际没用的内容</p>
+    </div>
+    <div class="callout bad">
+      <h3>🔧 实现复杂</h3>
+      <p class="small">需要训 RM,搭 PPO 循环,管理老/新 policy<br>调通一遍要几周</p>
+    </div>
+    <div class="callout bad">
+      <h3>🐛 Critic 不准</h3>
+      <p class="small">value function 在稀疏奖励下估计偏差大<br>进一步拉低训练稳定性</p>
+    </div>
+    <div class="callout bad">
+      <h3>💰 数据贵</h3>
+      <p class="small">偏好标注:每条 (好,坏) 对要请人打分<br>百万级标注 = 数十万美元</p>
+    </div>
+  </div>
+  <div class="callout">
+    <p>2023 年,Stanford 团队问:<b>"能不能不要 RM、不要 critic,直接训 policy?"</b> → DPO 诞生。</p>
+  </div>
+  <div class="hint">8 / 21</div>
+</section>
+
+<!-- ============== Slide 9: DPO 洞察 ============== -->
+<section class="slide">
+  <h1>DPO 的核心洞察</h1>
+  <p class="subtitle">Rafailov et al., 2023, Stanford</p>
+
+  <h3>问题</h3>
+  <p>RLHF 复杂,有没有办法把 RM 和 PPO 合二为一?</p>
+
+  <h3>DPO 的回答</h3>
+  <div class="callout chosen">
+    <p>在带 KL 约束的 RL 优化下,<b>最优 policy 的 reward 有一个解析形式</b>,直接用 policy 自身就能算出来。</p>
+  </div>
+
+  <div class="eq" style="font-size: 17px;">
+    最优 policy 满足:
+    <br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;π*(y|x)
+    <br>r*(x, y) = β · log ———————  +  常数(与 y 无关)
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;π<sub>ref</sub>(y|x)
+  </div>
+
+  <h3>翻译成人话</h3>
+  <ul>
+    <li><b>reward ≈  policy 相对 reference 的"对数偏好偏移" × 温度 β</b></li>
+    <li>不需要单独训 RM</li>
+    <li>不需要 critic,不需要 PPO 循环</li>
+    <li>只要有偏好对 + 监督学习式的 loss,就能训</li>
+  </ul>
+
+  <div class="callout">
+    <p>这一招把"两阶段 + 强化学习"压成了"一阶段 + 监督学习"。</p>
+  </div>
+  <div class="hint">9 / 21</div>
+</section>
+
+<!-- ============== Slide 10: Bradley-Terry ============== -->
+<section class="slide">
+  <h1>Bradley-Terry 偏好模型</h1>
+  <p class="subtitle">DPO 推导的起点</p>
+
+  <h3>核心假设</h3>
+  <p>人类更喜欢 y<sub>好</sub> 的概率,只取决于两者的 reward 差:</p>
+
+  <div class="eq">
+    P(y<sub>好</sub> ≻ y<sub>坏</sub> | x)  =  σ( r(x, y<sub>好</sub>) − r(x, y<sub>坏</sub>) )
+  </div>
+
+  <h3>说明</h3>
+  <ul>
+    <li>σ 是 sigmoid 函数,把任意实数压到 (0, 1)</li>
+    <li>reward 差越大 → 越确定"好答案更好"</li>
+    <li>reward 差为 0 → 50/50</li>
+  </ul>
+
+  <h3>这只是假设,不是 DPO 的创新</h3>
+  <p class="small">早在 1952 年 Bradley-Terry 就提出这个模型,广泛用于排位、推荐系统。</p>
+
+  <div class="callout">
+    <p>DPO 的贡献是:<b>把 r 表达成 π 和 π<sub>ref</sub> 的函数,代入这个式子,常数项被消掉</b>。</p>
+  </div>
+  <div class="hint">10 / 21</div>
+</section>
+
+<!-- ============== Slide 11: DPO 公式推导 ============== -->
+<section class="slide">
+  <h1>从 Bradley-Terry 到 DPO 公式</h1>
+  <p class="subtitle">一行数学,核心就这一行</p>
+
+  <h3>Step 1:代入 r 的解析形式</h3>
+  <div class="eq" style="font-size: 16px;">
+    r(x, y) = β · log( π(y|x) / π<sub>ref</sub>(y|x) ) + 常数
+  </div>
+
+  <h3>Step 2:r(y<sub>好</sub>) − r(y<sub>坏</sub>),常数项抵消</h3>
+  <div class="eq" style="font-size: 16px;">
+    Δ = β · [ log(π(y<sub>好</sub>|x)/π<sub>ref</sub>(y<sub>好</sub>|x)) − log(π(y<sub>坏</sub>|x)/π<sub>ref</sub>(y<sub>坏</sub>|x)) ]
+  </div>
+
+  <h3>Step 3:写成更直观的形式</h3>
+  <div class="eq" style="font-size: 16px;">
+    <span class="hl">logits_diff = β × (</span>
+    <br>&nbsp;&nbsp;&nbsp;&nbsp;[log π(y<sub>好</sub>) − log π(y<sub>坏</sub>)]
+    <br>&nbsp;&nbsp;− [log π<sub>ref</sub>(y<sub>好</sub>) − log π<sub>ref</sub>(y<sub>坏</sub>)]
+    <br><span class="hl">)</span>
+  </div>
+
+  <h3>Step 4:DPO loss</h3>
+  <div class="eq" style="font-size: 17px;">
+    <span class="hl">L = − log σ( logits_diff )</span>   <span class="gray">← 鼓励 logits_diff 变大变正</span>
+  </div>
+
+  <div class="callout">
+    <p>整个 DPO 训练,就是 <b>监督学习式的最大化偏好对数似然</b>。</p>
+  </div>
+  <div class="hint">11 / 21</div>
+</section>
+
+<!-- ============== Slide 12: 数值例子 ============== -->
+<section class="slide">
+  <h1>DPO 数值演算:走一遍</h1>
+  <p class="subtitle">具体数字,看看 loss 怎么下降</p>
+
+  <h3>设定</h3>
+  <div class="flow" style="font-size: 14px;">
+    <span class="box">prompt = "介绍一下李白"</span>
+    <span class="arrow">→</span>
+    <span class="box chosen">chosen  = "李白,字太白,号青莲居士..."</span>
+    <span class="arrow">→</span>
+    <span class="box bad">rejected = "李白是个卖菜的大爷。"</span>
+  </div>
+
+  <h3>训练前:policy 与 reference 一致</h3>
+  <table>
+    <tr><th></th><th>log π(chosen)</th><th>log π(rejected)</th><th>内部差</th></tr>
+    <tr><td>π<sub>ref</sub> (SFT)</td><td>−2.50</td><td>−2.70</td><td>0.20</td></tr>
+    <tr><td>π (训练前)</td><td>−2.50</td><td>−2.70</td><td>0.20</td></tr>
+  </table>
+  <div class="eq">Δ = 0.20 − 0.20 = 0   →   L = −log σ(0.1 × 0) = log 2 ≈ <span class="yellow">0.693</span></div>
+
+  <h3>训练 N 步后:policy 在 chosen 上推高,rejected 上压低</h3>
+  <table>
+    <tr><th></th><th>log π(chosen)</th><th>log π(rejected)</th><th>内部差</th></tr>
+    <tr><td>π (训练后)</td><td class="green">−1.80</td><td class="red">−3.90</td><td class="green">2.10</td></tr>
+  </table>
+  <div class="eq">Δ = 2.10 − 0.20 = 1.90   →   L = −log σ(0.19) ≈ <span class="green">0.603</span>  ↓</div>
+
+  <div class="callout">
+    <p>policy 相对 reference 拉开差距,loss 下降,模型"敢说" chosen、"不敢说" rejected。</p>
+  </div>
+  <div class="hint">12 / 21</div>
+</section>
+
+<!-- ============== Slide 13: DPO 代码 ============== -->
+<section class="slide">
+  <h1>DPO 代码逐行解读</h1>
+  <p class="subtitle">对照我们 scripts/03_dpo.py</p>
+
+<pre class="code"><span class="c"># 1. 准备一对序列</span>
+ci, cm = encode_pair({<span class="k">**</span>rec, <span class="s">'answer'</span>: rec[<span class="s">'chosen'</span>]},   tok, MAX_LEN)
+ri, rm = encode_pair({<span class="k">**</span>rec, <span class="s">'answer'</span>: rec[<span class="s">'rejected'</span>]}, tok, MAX_LEN)
+
+<span class="c"># 2. policy 和 reference 分别算 log prob</span>
+lp_chosen    = sequence_logprob(<span class="v">policy</span>, ci, cm)            <span class="c"># log π(y_好|x)</span>
+lp_rejected  = sequence_logprob(<span class="v">policy</span>, ri, rm)            <span class="c"># log π(y_坏|x)</span>
+ref_chosen   = sequence_logprob(<span class="v">ref</span>,    ci, cm).detach()  <span class="c"># log π_ref(y_好|x)</span>
+ref_rejected = sequence_logprob(<span class="v">ref</span>,    ri, rm).detach()  <span class="c"># log π_ref(y_坏|x)</span>
+                                              <span class="c">↑ .detach() 切断 ref 的梯度</span>
+
+<span class="c"># 3. 算 DPO loss</span>
+logits_diff = BETA * (
+    (<span class="v">lp_chosen</span> - <span class="v">lp_rejected</span>) -          <span class="c"># policy 内部 chosen-rejected 差距</span>
+    (<span class="v">ref_chosen</span> - <span class="v">ref_rejected</span>)          <span class="c"># reference 内部 chosen-rejected 差距</span>
+)
+loss = -logits_diff.log_sigmoid().mean()   <span class="c"># 鼓励 logits_diff 变大</span></pre>
+
+  <h3>关键点</h3>
+  <ul>
+    <li><b>detach()</b>:ref 是冻结的,梯度不能流过去</li>
+    <li><b>BETA</b>:控制"拉多狠",0.1 是常用值</li>
+    <li><b>log_sigmoid</b>:数值稳定的 −log σ(x) 计算</li>
+  </ul>
+  <div class="hint">13 / 21</div>
+</section>
+
+<!-- ============== Slide 14: β 怎么选 ============== -->
+<section class="slide">
+  <h1>β 怎么选:超参里最重要的一个</h1>
+  <p class="subtitle">β ↔ 隐式 KL 强度 ↔ 偏离 reference 的容忍度</p>
+
+  <h3>β 的作用</h3>
+  <p>logits_diff = β × (policy 内部差 − ref 内部差)</p>
+  <p>β 越大,loss 对差值越敏感,policy 被推得越远。</p>
+
+  <h3>不同 β 的效果</h3>
+  <table>
+    <tr><th>β 值</th><th>训练强度</th><th>policy 偏离 ref</th><th>语言能力</th><th>偏好准确度</th></tr>
+    <tr><td class="mono">0.05</td><td>温和</td><td>很小</td><td class="green">几乎不变</td><td class="red">信号弱</td></tr>
+    <tr><td class="mono">0.1</td><td class="green">平衡</td><td class="green">适度</td><td class="green">微降</td><td class="green">够用</td></tr>
+    <tr><td class="mono">0.3</td><td>激进</td><td>较大</td><td class="yellow">下降</td><td>强</td></tr>
+    <tr><td class="mono">1.0</td><td class="red">过激</td><td class="red">远</td><td class="red">可能崩</td><td>过拟合风险</td></tr>
+  </table>
+
+  <h3>实战建议</h3>
+  <div class="callout">
+    <p>• 从 <b>β=0.1</b> 起步,看 val loss 走势</p>
+    <p>• 如果偏好准确率上不去,小步往上加 (0.1 → 0.15 → 0.2)</p>
+    <p>• 如果 PPL 飙升超过 20%,调小 β 或减少训练步数</p>
+    <p>• 监控:<b>val PPL + chosen/rejected 准确率</b> 一起看</p>
+  </div>
+  <div class="hint">14 / 21</div>
+</section>
+
+<!-- ============== Slide 15: DPO 家族 ============== -->
+<section class="slide">
+  <h1>DPO 家族:砍什么补什么的演化</h1>
+  <p class="subtitle">2023-2024 的"无 critic"流派</p>
+
+  <h3>家族树</h3>
+  <div class="tree" style="font-size: 11px; line-height: 1.35;">
+                       ┌──────────────────┐
+                       │ DPO (2023)       │  只需 ref
+                       └────────┬─────────┘
+              ┌──────────────────┼──────────────────┐
+              │砍 ref             │加正则            │合二为一
+              ▼                   ▼                  ▼
+        ┌──────────┐       ┌──────────┐       ┌──────────┐
+        │ SimPO    │       │ IPO      │       │ ORPO     │
+        │ 2024     │       │ 2023     │       │ 2024     │
+        │ 省内存   │       │ 抗过拟合 │       │ SFT+DPO  │
+        └────┬─────┘       └──────────┘       └──────────┘
+             │单条标签
+             ▼
+        ┌──────────┐
+        │ KTO 2024 │
+        │ 数据松散 │
+        └──────────┘
+  </div>
+
+  <h3>各变体解决了什么</h3>
+  <table>
+    <tr><th>方法</th><th>改动</th><th>解决问题</th><th>代价</th></tr>
+    <tr><td>IPO</td><td>加平方正则</td><td>DPO 在偏好对都好时过拟合</td><td>收敛略慢</td></tr>
+    <tr><td>KTO</td><td>只要单条好/坏</td><td>难收集成对数据</td><td>信号弱</td></tr>
+    <tr><td>SimPO</td><td>砍掉 reference</td><td>内存省一半</td><td>无 KL 锚点</td></tr>
+    <tr><td>ORPO</td><td>合并 SFT + DPO</td><td>省 SFT 阶段</td><td>loss 更复杂</td></tr>
+  </table>
+  <div class="hint">15 / 22</div>
+</section>
+
+<!-- ============== Slide 16: GRPO ============== -->
+<section class="slide">
+  <h1>GRPO:推理模型的新范式</h1>
+  <p class="subtitle">Group Relative Policy Optimization,DeepSeek R1 (2024)</p>
+
+  <h3>核心思想</h3>
+  <p>不需要 critic,直接对<b>同 prompt 的一组回答</b>做"组内相对比较"。</p>
+
+  <h3>训练流程</h3>
+  <div class="flow" style="font-size: 14px;">
+    <span class="box">prompt</span>
+    <span class="arrow">→</span>
+    <span class="box policy">policy 采样 K 个回答</span>
+    <span class="arrow">→</span>
+    <span class="box reward">规则/RM 给每个打分</span>
+    <span class="arrow">→</span>
+    <span class="box critic">计算组内 μ, σ,优势 A<sub>i</sub>=(r<sub>i</sub>−μ)/σ</span>
+    <span class="arrow">→</span>
+    <span class="box loss">PPO-style clip loss + A<sub>i</sub></span>
+  </div>
+
+  <h3>为什么适合推理模型</h3>
+  <div class="two-col">
+    <div class="callout chosen">
+      <h3>✅ 可验证奖励</h3>
+      <p class="small">数学题:答对 +1,答错 −1<br>代码:测试通过 +1,失败 −1</p>
+    </div>
+    <div class="callout chosen">
+      <h3>✅ 节省 critic</h3>
+      <p class="small">组内统计量自动当 baseline<br>省一半内存,训练更稳</p>
+    </div>
+    <div class="callout chosen">
+      <h3>✅ 长 CoT 友好</h3>
+      <p class="small">多次采样可探索不同解法<br>学"哪条思路更可能答对"</p>
+    </div>
+    <div class="callout warn">
+      <h3>⚠️ 前提</h3>
+      <p class="small">必须有可验证的奖励信号<br>否则只能退回 DPO</p>
+    </div>
+  </div>
+  <div class="hint">16 / 21</div>
+</section>
+
+<!-- ============== Slide 17: PRM vs ORM ============== -->
+<section class="slide">
+  <h1>PRM vs ORM:过程奖励 vs 结果奖励</h1>
+  <p class="subtitle">给"中间步骤"打分 vs 只给"最终答案"打分</p>
+
+  <h3>ORM (Outcome Reward Model)</h3>
+  <div class="callout">
+    <p>只看最终答案对不对:</p>
+    <p class="small mono">"42" → 答对 +1, 答错 −1</p>
+    <p>信号稀疏、长 CoT 难以训练。</p>
+  </div>
+
+  <h3>PRM (Process Reward Model)</h3>
+  <div class="callout chosen">
+    <p>对推理的每一步打分:</p>
+    <p class="small mono">step 1: 设未知数为 x   → +0.3</p>
+    <p class="small mono">step 2: 列方程 2x+3=7  → +0.5</p>
+    <p class="small mono">step 3: 算出 x=2      → +1.0</p>
+    <p>信号密集、CoT 训练好,但标注贵。</p>
+  </div>
+
+  <h3>对比</h3>
+  <table>
+    <tr><th></th><th>ORM</th><th>PRM</th></tr>
+    <tr><td>奖励位置</td><td>最后一步</td><td>每一步</td></tr>
+    <tr><td>信号密度</td><td>稀疏</td><td>密集</td></tr>
+    <tr><td>标注成本</td><td>低</td><td class="red">高(每步都要评)</td></tr>
+    <tr><td>适用</td><td>短答案</td><td>长 CoT / 推理</td></tr>
+    <tr><td>代表</td><td>DeepSeek R1 早期</td><td>OpenAI o1</td></tr>
+  </table>
+  <div class="hint">17 / 21</div>
+</section>
+
+<!-- ============== Slide 18: 在线 vs 离线 ============== -->
+<section class="slide">
+  <h1>在线 vs 离线:训练范式</h1>
+  <p class="subtitle">偏好对是预先收集的,还是训练中边采边评?</p>
+
+  <table>
+    <tr><th></th><th>离线 (Offline)</th><th>在线 (Online)</th></tr>
+    <tr><td>数据来源</td><td>预收集的偏好对</td><td>训练中 policy 实时采样</td></tr>
+    <tr><td>代表方法</td><td>DPO, IPO, KTO, SimPO, ORPO</td><td>PPO, GRPO, Online DPO, RLOO</td></tr>
+    <tr><td>稳定性</td><td class="green">高</td><td class="yellow">中</td></tr>
+    <tr><td>实现复杂度</td><td class="green">低</td><td class="red">高</td></tr>
+    <tr><td>探索能力</td><td class="red">受限于固定数据</td><td class="green">强</td></tr>
+    <tr><td>内存</td><td>小</td><td>大(要存采样)</td></tr>
+  </table>
+
+  <h3>Online DPO 是个聪明的折中</h3>
+  <div class="callout">
+    <p>每个 step:policy 采样 → RM 打分 → 构造新 (chosen, rejected) 对 → 跑 DPO loss</p>
+    <p class="small">既有 DPO 的简洁,又有在线探索的强能力。LLaMA 3 / Qwen 2 大量使用。</p>
+  </div>
+  <div class="hint">18 / 21</div>
+</section>
+
+<!-- ============== Slide 19: 演进时间线 ============== -->
+<section class="slide">
+  <h1>演进时间线:2017 → 2025</h1>
+  <p class="subtitle">从"什么都配齐"到"能砍就砍"</p>
+
+  <div class="flow" style="font-size: 13px; line-height: 1.6;">
+    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px;">
+      <span class="gray">2017</span>
+      <span class="box policy">PPO</span>
+    </div>
+    <span class="arrow">→</span>
+    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px;">
+      <span class="gray">2022</span>
+      <span class="box critic">RLHF</span>
+      <span class="small gray">PPO+RM+Ref</span>
+    </div>
+    <span class="arrow">→</span>
+    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px;">
+      <span class="gray">2023</span>
+      <span class="box loss">DPO</span>
+      <span class="small gray">砍 RM</span>
+    </div>
+    <span class="arrow">→</span>
+    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px;">
+      <span class="gray">2024</span>
+      <span class="box chosen">SimPO</span>
+      <span class="small gray">砍 Ref</span>
+    </div>
+    <span class="arrow">→</span>
+    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px;">
+      <span class="gray">2024</span>
+      <span class="box reward">GRPO</span>
+      <span class="small gray">砍 Critic</span>
+    </div>
+    <span class="arrow">→</span>
+    <div style="display: flex; flex-direction: column; align-items: center; padding: 4px;">
+      <span class="gray">2025</span>
+      <span class="box">?</span>
+      <span class="small gray">PRM+Agent+...</span>
+    </div>
+  </div>
+
+  <h3>主线逻辑</h3>
+  <ul>
+    <li><b>减法</b>:RM → ref → critic → 偏好对形式,一代砍一个</li>
+    <li><b>并行</b>:推理模型用 GRPO,通用对话用 DPO/SimPO,两条线不冲突</li>
+    <li><b>回归</b>:2024 后又开始往 PPO 思路靠(Online DPO),发现纯离线有上限</li>
+  </ul>
+  <div class="hint">19 / 21</div>
+</section>
+
+<!-- ============== Slide 20: 对比表 ============== -->
+<section class="slide">
+  <h1>全景对比表</h1>
+  <p class="subtitle">一张表查清楚:你要的方法需要啥</p>
+
+  <table style="font-size: 14px;">
+    <tr>
+      <th>方法</th><th>需要 RM</th><th>需要 ref</th><th>需要 critic</th>
+      <th>数据形式</th><th>训练方式</th><th>典型场景</th>
+    </tr>
+    <tr>
+      <td class="mono"><b>PPO</b></td>
+      <td class="center"><span class="check">✓</span></td>
+      <td class="center"><span class="check">✓</span></td>
+      <td class="center"><span class="check">✓</span></td>
+      <td>(prompt, y) + RM</td><td>在线</td><td>ChatGPT 经典</td>
+    </tr>
+    <tr>
+      <td class="mono"><b>DPO</b></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td class="center"><span class="check">✓</span></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td>(好, 坏) 对</td><td>离线</td><td>入门首选</td>
+    </tr>
+    <tr>
+      <td class="mono"><b>IPO</b></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td class="center"><span class="check">✓</span></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td>(好, 坏) 对</td><td>离线</td><td>偏好对噪声多</td>
+    </tr>
+    <tr>
+      <td class="mono"><b>KTO</b></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td>单条 ± 标签</td><td>离线</td><td>数据松散</td>
+    </tr>
+    <tr>
+      <td class="mono"><b>SimPO</b></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td>(好, 坏) 对</td><td>离线</td><td>内存紧张</td>
+    </tr>
+    <tr>
+      <td class="mono"><b>ORPO</b></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td>(好, 坏) 对</td><td>离线</td><td>一步训完</td>
+    </tr>
+    <tr>
+      <td class="mono"><b>Online DPO</b></td>
+      <td class="center"><span class="check">✓</span></td>
+      <td class="center"><span class="check">✓</span></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td>采样得到</td><td class="green">在线</td><td>探索能力强</td>
+    </tr>
+    <tr>
+      <td class="mono"><b>GRPO</b></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td>可验证奖励</td><td class="green">在线</td><td>推理/代码</td>
+    </tr>
+    <tr>
+      <td class="mono"><b>RLOO</b></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td class="center"><span class="cross">✗</span></td>
+      <td>可验证奖励</td><td class="green">在线</td><td>简单在线</td>
+    </tr>
+  </table>
+  <div class="hint">20 / 21</div>
+</section>
+
+<!-- ============== Slide 21: 决策树 ============== -->
+<section class="slide">
+  <h1>实战选型:决策树</h1>
+  <p class="subtitle">一个流程图解决"我该用啥"</p>
+
+  <div class="tree">
+你的任务是什么?
+│
+├── 通用对话模型
+│   └── 偏好数据质量高?
+│       ├── 高 → SFT → DPO / SimPO / ORPO
+│       └── 一般 → SFT → IPO
+│
+├── 推理 / 数学 / 代码
+│   └── 有可验证奖励?
+│       ├── 有 → SFT → GRPO (推荐) 或 RLOO
+│       └── 无 → SFT → DPO
+│
+├── 安全对齐 (避免有害输出)
+│   └── SFT → RLHF (PPO) 或 DPO
+│
+└── 资源紧张 / 内存小
+    └── SimPO 或 KTO (省内存省数据)
+  </div>
+
+  <h3>决策三要素</h3>
+  <div class="three-col">
+    <div class="callout">
+      <p class="small"><b>① 任务</b>:通用对话?推理?安全?</p>
+    </div>
+    <div class="callout">
+      <p class="small"><b>② 可验证性</b>:答对/答错能自动判吗?</p>
+    </div>
+    <div class="callout">
+      <p class="small"><b>③ 资源</b>:显存?数据量?</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p>不确定时,默认从 <span class="em">SFT → DPO</span> 起步,β=0.1,几千步看 val loss 趋势。</p>
+  </div>
+  <div class="hint">21 / 22</div>
+</section>
+
+<!-- ============== Slide 22: 总结 + 思考题 ============== -->
+<section class="slide">
+  <h1>本课要点 + 思考题</h1>
+  <p class="subtitle">回顾 + 课后练习</p>
+
+  <h3>本课要点回顾</h3>
+  <ul>
+    <li>RL 想让模型 <span class="em">"更想说"好答案</span>、<span class="em">"更不想说"坏答案</span></li>
+    <li><span class="purple">PPO</span> 是基线,但要 RM + ref + critic,工程复杂</li>
+    <li><span class="em">DPO</span> 用解析式把 reward 写成 π/π<sub>ref</sub>,砍掉了 RM</li>
+    <li>DPO 家族都在砍东西:ref → 单条数据 → 合并 SFT</li>
+    <li><span class="yellow">GRPO</span> 用"组内相对打分"替代 critic,适合可验证任务</li>
+    <li>选方法看三件事:<b>任务、可验证性、资源</b></li>
+  </ul>
+
+  <h3>思考题</h3>
+  <div class="callout">
+    <p><b>1.</b> 如果你只有 1 万条单条标注(无成对),但有 RM,你会怎么组合?</p>
+    <p class="small gray">提示:KTO + Online DPO 各能解决什么?</p>
+  </div>
+  <div class="callout">
+    <p><b>2.</b> DPO 训完后 PPL 飙升,怎么排查和修复?</p>
+    <p class="small gray">提示:从数据、β、步数、ref 一一排查</p>
+  </div>
+  <div class="callout">
+    <p><b>3.</b> 为什么 GRPO 在创造性写作上效果通常不如 DPO?</p>
+    <p class="small gray">提示:创造性写作没有"标准答案",奖励信号稀疏</p>
+  </div>
+
+  <h3>扩展阅读</h3>
+  <p class="small">• DPO: Rafailov et al., 2023, <i>NeurIPS</i>  &nbsp; • GRPO: DeepSeek-AI, 2024, arXiv:2402.03300<br>
+  • SimPO: Meng et al., 2024, arXiv:2405.14734  &nbsp; • ORPO: Hong et al., 2024, arXiv:2403.07691</p>
+  <div class="hint">22 / 22 · 完</div>
+</section>
+
+</main>
+
+<div class="nav">
+  <button onclick="prev()">◀ 上一张</button>
+  <button onclick="next()">下一张 ▶</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let cur = 0;
+
+  function show(i) {
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    document.getElementById('counter').textContent = (i + 1) + ' / ' + total;
+    document.getElementById('progress').style.width = ((i + 1) / total * 100) + '%';
+    cur = i;
+    if (location.hash !== '#' + (i + 1)) {
+      history.replaceState(null, '', '#' + (i + 1));
+    }
+  }
+  function next() { if (cur < total - 1) show(cur + 1); }
+  function prev() { if (cur > 0) show(cur - 1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { next(); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { prev(); e.preventDefault(); }
+    else if (e.key === 'Home') { show(0); e.preventDefault(); }
+    else if (e.key === 'End') { show(total - 1); e.preventDefault(); }
+    else if (e.key === 'p' || e.key === 'P') { window.print(); }
+  });
+
+  // 触摸滑动支持
+  let tx = 0;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+  });
+
+  // 启动时按 hash 跳转
+  const m = location.hash.match(/^#(\d+)$/);
+  if (m) {
+    const i = Math.max(0, Math.min(total - 1, parseInt(m[1]) - 1));
+    show(i);
+  } else {
+    show(0);
+  }
+</script>
+
+</body>
+</html>
