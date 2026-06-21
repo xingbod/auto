@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>大模型训练工程 · 从数据到部署</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --bg2: #161b22;
+    --fg: #e6edf3;
+    --muted: #8b949e;
+    --accent: #5b8def;
+    --data:  #f59e0b;
+    --model: #5b8def;
+    --train: #10b981;
+    --sft:   #a78bfa;
+    --align: #ec4899;
+    --eval:  #06b6d4;
+    --deploy:#22c55e;
+    --bad:   #ef4444;
+    --code-bg:#0a0d12;
+    --border: #30363d;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  .progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 3px; background: var(--accent);
+    width: 0%; z-index: 1000;
+    transition: width 0.2s;
+  }
+  .slide-counter {
+    position: fixed; top: 12px; right: 20px;
+    color: var(--muted); font-size: 13px; z-index: 1000;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .nav {
+    position: fixed; bottom: 16px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 10px; z-index: 1000;
+  }
+  .nav button {
+    background: var(--bg2); color: var(--fg);
+    border: 1px solid var(--border);
+    padding: 6px 16px; border-radius: 6px;
+    cursor: pointer; font-size: 14px;
+  }
+  .nav button:hover { background: var(--accent); border-color: var(--accent); }
+
+  main { width: 100vw; height: 100vh; position: relative; }
+  .slide {
+    position: absolute; inset: 0;
+    padding: 28px 60px 24px;
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide h1 { font-size: 28px; margin: 0 0 8px; color: var(--fg); }
+  .slide h2 { font-size: 22px; margin: 0 0 10px; color: var(--accent); }
+  .slide h3 { font-size: 17px; margin: 10px 0 4px; color: var(--fg); }
+  .slide p  { margin: 4px 0; }
+  .slide ul, .slide ol { margin: 4px 0; padding-left: 22px; }
+  .slide li { margin: 2px 0; }
+  .slide .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+  .slide .hint {
+    position: absolute; bottom: 4px; right: 16px;
+    color: var(--muted); font-size: 11px;
+    background: var(--bg); padding: 1px 6px;
+  }
+
+  .box {
+    display: inline-block; padding: 4px 10px;
+    border-radius: 5px; font-weight: 600;
+    font-size: 13px; margin: 1px 3px;
+    border: 1px solid;
+  }
+  .box.data   { background: rgba(245,158,11,0.15); color: var(--data);   border-color: var(--data); }
+  .box.model  { background: rgba(91,141,239,0.15); color: var(--model);  border-color: var(--model); }
+  .box.train  { background: rgba(16,185,129,0.15); color: var(--train);  border-color: var(--train); }
+  .box.sft    { background: rgba(167,139,250,0.15);color: var(--sft);    border-color: var(--sft); }
+  .box.align  { background: rgba(236,72,153,0.15); color: var(--align);  border-color: var(--align); }
+  .box.eval   { background: rgba(6,182,212,0.15);  color: var(--eval);   border-color: var(--eval); }
+  .box.deploy { background: rgba(34,197,94,0.15);  color: var(--deploy); border-color: var(--deploy); }
+  .box.bad    { background: rgba(239,68,68,0.15);  color: var(--bad);    border-color: var(--bad); }
+
+  .arrow { color: var(--muted); margin: 0 6px; font-weight: bold; }
+
+  .flow {
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: 4px; margin: 8px 0; padding: 8px 10px;
+    background: var(--bg2); border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  .eq {
+    background: var(--bg2); border-left: 3px solid var(--accent);
+    padding: 8px 12px; margin: 6px 0;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px; color: var(--fg);
+    border-radius: 0 5px 5px 0;
+    overflow-x: auto;
+  }
+  .eq .hl { color: var(--accent); font-weight: bold; }
+
+  pre.code {
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 5px; padding: 8px 12px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px; line-height: 1.4;
+    overflow-x: auto; margin: 4px 0;
+  }
+  pre.code .k { color: #ff7b72; }
+  pre.code .s { color: #a5d6ff; }
+  pre.code .c { color: #8b949e; font-style: italic; }
+  pre.code .v { color: #d2a8ff; }
+  pre.code .n { color: #79c0ff; }
+  pre.code .f { color: #ffa657; }
+
+  table {
+    border-collapse: collapse; width: 100%;
+    margin: 6px 0; font-size: 12px;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 4px 8px; text-align: left;
+  }
+  th { background: var(--bg2); color: var(--accent); }
+  td.center { text-align: center; }
+  td .check { color: var(--deploy); font-weight: bold; }
+  td .cross { color: var(--bad);    font-weight: bold; }
+
+  .callout {
+    background: rgba(91,141,239,0.08);
+    border-left: 3px solid var(--accent);
+    padding: 6px 10px; margin: 6px 0;
+    border-radius: 0 5px 5px 0;
+    font-size: 13px;
+  }
+  .callout.warn   { background: rgba(245,158,11,0.08); border-left-color: var(--data); }
+  .callout.good   { background: rgba(34,197,94,0.08);  border-left-color: var(--deploy); }
+  .callout.bad    { background: rgba(239,68,68,0.08);  border-left-color: var(--bad); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 6px 0; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 6px 0; }
+
+  .tree { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px;
+          white-space: pre; background: var(--bg2); padding: 10px 14px; border-radius: 5px;
+          border: 1px solid var(--border); line-height: 1.4; }
+
+  .pipeline {
+    display: flex; align-items: center; justify-content: space-between;
+    margin: 12px 0; padding: 12px 8px;
+    background: var(--bg2); border-radius: 8px;
+    border: 1px solid var(--border); gap: 4px;
+  }
+  .pipeline-step {
+    flex: 1; text-align: center;
+    padding: 8px 4px; border-radius: 5px;
+    background: rgba(91,141,239,0.1);
+    border: 1px solid var(--accent);
+    font-size: 12px; font-weight: 600;
+  }
+  .pipeline-step.sft    { background: rgba(167,139,250,0.1); border-color: var(--sft); }
+  .pipeline-step.align  { background: rgba(236,72,153,0.1);  border-color: var(--align); }
+  .pipeline-step.eval   { background: rgba(6,182,212,0.1);   border-color: var(--eval); }
+  .pipeline-step.deploy { background: rgba(34,197,94,0.1);   border-color: var(--deploy); }
+  .pipeline-step .small { font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+
+  .num-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 6px 0; }
+  .num-cell {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 5px; padding: 6px; text-align: center;
+  }
+  .num-cell .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; }
+  .num-cell .val { font-size: 18px; font-weight: bold; margin: 2px 0; font-family: ui-monospace, monospace; }
+  .num-cell .sub { font-size: 10px; color: var(--muted); }
+
+  .em    { color: var(--accent); font-weight: 600; }
+  .green { color: var(--deploy); font-weight: 600; }
+  .red   { color: var(--bad);    font-weight: 600; }
+  .yellow{ color: var(--data);   font-weight: 600; }
+  .purple{ color: var(--sft);    font-weight: 600; }
+  .pink  { color: var(--align);  font-weight: 600; }
+  .cyan  { color: var(--eval);   font-weight: 600; }
+  .gray  { color: var(--muted); }
+  .mono  { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .small { font-size: 12px; }
+  .big   { font-size: 20px; }
+  .center{ text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+<div class="slide-counter" id="counter">1 / 22</div>
+
+<main id="deck">
+
+<!-- ============== Slide 1: 封面 ============== -->
+<section class="slide active">
+  <h1 style="font-size: 48px; margin-top: 80px;">大模型训练工程</h1>
+  <p class="subtitle big" style="margin-top: 8px;">从一条原始数据,到一个可用的模型服务</p>
+  <div style="margin-top: 50px;">
+    <p>本课讲什么:</p>
+    <ul style="font-size: 19px;">
+      <li>训练一个 LLM 究竟要走哪几步,每步在做什么</li>
+      <li>工程上每个阶段的输入、产出、关键决策点</li>
+      <li>数据准备、分布式训练、稳定性、监控、评估的实战细节</li>
+      <li>SFT、对齐、推理优化、部署的关键套路</li>
+      <li>真实项目里每个阶段大概花多少算力、产出什么</li>
+    </ul>
+  </div>
+  <div style="position: absolute; bottom: 60px; right: 70px; color: var(--muted); font-size: 14px;">
+    <p>→ 方向键 / 空格翻页</p>
+    <p>→ P 打印或导出 PDF</p>
+    <p>→ Home / End 跳到首/末</p>
+  </div>
+  <div class="hint">1 / 22</div>
+</section>
+
+<!-- ============== Slide 2: 流程全景 ============== -->
+<section class="slide">
+  <h1>训练流程全景图</h1>
+  <p class="subtitle">8 个阶段 + 1 套基础设施,1 张图看明白</p>
+
+  <div class="pipeline">
+    <div class="pipeline-step" style="background: rgba(245,158,11,0.1); border-color: var(--data);">
+      数据
+      <div class="small">采集清洗去重</div>
+    </div>
+    <div class="pipeline-step" style="background: rgba(91,141,239,0.1); border-color: var(--model);">
+      预训练
+      <div class="small">万亿 token</div>
+    </div>
+    <div class="pipeline-step" style="background: rgba(91,141,239,0.15); border-color: var(--model);">
+      中间训练
+      <div class="small">长文/垂域</div>
+    </div>
+    <div class="pipeline-step sft">
+      SFT
+      <div class="small">学指令格式</div>
+    </div>
+    <div class="pipeline-step align">
+      对齐
+      <div class="small">DPO/GRPO</div>
+    </div>
+    <div class="pipeline-step eval">
+      评估
+      <div class="small">榜单+人工</div>
+    </div>
+    <div class="pipeline-step" style="background: rgba(91,141,239,0.1); border-color: var(--model);">
+      推理优化
+      <div class="small">量化/调度</div>
+    </div>
+    <div class="pipeline-step deploy">
+      部署
+      <div class="small">服务+监控</div>
+    </div>
+  </div>
+
+  <h3>配套基础设施(贯穿全程)</h3>
+  <div class="flow">
+    <span class="box">数据/训练流水线</span>
+    <span class="arrow">+</span>
+    <span class="box">实验追踪 W&B</span>
+    <span class="arrow">+</span>
+    <span class="box">评测平台</span>
+    <span class="arrow">+</span>
+    <span class="box">算子优化 Triton</span>
+    <span class="arrow">+</span>
+    <span class="box">网络 IB/RoCE</span>
+    <span class="arrow">+</span>
+    <span class="box">存储 S3/Lustre</span>
+  </div>
+
+  <h3>规模量级感</h3>
+  <div class="num-grid">
+    <div class="num-cell">
+      <div class="lbl">数据</div>
+      <div class="val">15T</div>
+      <div class="sub">token(LLaMA 3)</div>
+    </div>
+    <div class="num-cell">
+      <div class="lbl">算力</div>
+      <div class="val">10K+</div>
+      <div class="sub">GPU 卡数月</div>
+    </div>
+    <div class="num-cell">
+      <div class="lbl">成本</div>
+      <div class="val">$100M+</div>
+      <div class="sub">从头训一个 70B</div>
+    </div>
+    <div class="num-cell">
+      <div class="lbl">周期</div>
+      <div class="val">月级</div>
+      <div class="sub">预训练</div>
+    </div>
+  </div>
+  <div class="hint">2 / 22</div>
+</section>
+
+<!-- ============== Slide 3: 数据采集 ============== -->
+<section class="slide">
+  <h1>阶段 1 · 数据采集</h1>
+  <p class="subtitle">模型的上限由数据决定,不是由架构决定</p>
+
+  <h3>主要数据源</h3>
+  <table>
+    <tr><th>类型</th><th>来源</th><th>典型规模</th><th>特点</th></tr>
+    <tr><td>网页</td><td>CommonCrawl / C4 / RefinedWeb</td><td>数 T token</td><td>量大噪声多</td></tr>
+    <tr><td>书籍</td><td>Books3 / Project Gutenberg / 内部</td><td>百 G</td><td>质量高,长文</td></tr>
+    <tr><td>代码</td><td>GitHub / The Stack</td><td>数百 G</td><td>需 license 过滤</td></tr>
+    <tr><td>论文</td><td>arXiv / S2ORC / PubMed</td><td>百 G</td><td>高质量专业知识</td></tr>
+    <tr><td>百科</td><td>Wikipedia / Baidu Baike</td><td>数十 G</td><td>事实性,需多语言平衡</td></tr>
+    <tr><td>问答</td><td>StackExchange / Reddit / 论坛</td><td>数十 G</td><td>对话格式,带偏好</td></tr>
+    <tr><td>合成</td><td>LLM 自己生成的指令/CoT</td><td>可控</td><td>针对性补短板</td></tr>
+  </table>
+
+  <h3>采集要点</h3>
+  <ul>
+    <li>多语言平衡:中英欧亚等多语种配比,避免英语霸权</li>
+    <li>时间新鲜度:定期抓新数据,避免知识陈旧</li>
+    <li>法律合规:GDPR / 版权 / 隐私 / robots.txt</li>
+    <li>来源溯源:每条数据保留 URL,方便事后剔除</li>
+  </ul>
+  <div class="callout warn">
+    <p>经验值:训练 token 数 ≈ <b>模型参数 × 20</b>。70B 模型至少要训 1.4T token,实际常 10-30 倍。</p>
+  </div>
+  <div class="hint">3 / 22</div>
+</section>
+
+<!-- ============== Slide 4: 数据清洗去重 ============== -->
+<section class="slide">
+  <h1>阶段 1 · 清洗、去重、过滤</h1>
+  <p class="subtitle">从 100T 原始网页到 10T 高质量 token</p>
+
+  <h3>处理流水线</h3>
+  <div class="flow">
+    <span class="box">原始网页</span>
+    <span class="arrow">→</span>
+    <span class="box">HTML 解析</span>
+    <span class="arrow">→</span>
+    <span class="box">语言识别</span>
+    <span class="arrow">→</span>
+    <span class="box">规则清洗</span>
+    <span class="arrow">→</span>
+    <span class="box">去重</span>
+    <span class="arrow">→</span>
+    <span class="box">质量打分</span>
+    <span class="arrow">→</span>
+    <span class="box">PII 脱敏</span>
+    <span class="arrow">→</span>
+    <span class="box">token 流</span>
+  </div>
+
+  <h3>关键环节详解</h3>
+  <table>
+    <tr><th>环节</th><th>做法</th><th>剔除率</th></tr>
+    <tr><td>规则清洗</td><td>去 HTML/导航/页脚、长度过滤、符号比</td><td>~40%</td></tr>
+    <tr><td>语言识别</td><td>fastText/langid 多语言打分</td><td>~20%</td></tr>
+    <tr><td>精确去重</td><td>段落级 SHA-256 hash</td><td>~10%</td></tr>
+    <tr><td>模糊去重</td><td>MinHash LSH (Jaccard > 0.8)</td><td>~15%</td></tr>
+    <tr><td>质量打分</td><td>KenLM 困惑度 / 小模型分类器</td><td>~30%</td></tr>
+    <tr><td>PII 脱敏</td><td>正则 + NER 替换为 &lt;EMAIL&gt; 等</td><td>~2%</td></tr>
+  </table>
+
+  <h3>质量过滤的两条路线</h3>
+  <div class="two-col">
+    <div class="callout">
+      <h3>启发式 (快)</h3>
+      <p class="small">• 文档长度、词数、句子数<br>• 标点/字母/中文比<br>• 停用词比例、重复行比例<br>• 用 KenLM 算 perplexity,过滤异常值</p>
+    </div>
+    <div class="callout">
+      <h3>模型打分 (准)</h3>
+      <p class="small">• 训一个小分类器(质量好/中/差)<br>• 用 GPT-4 当"教师"给数据打分<br>• 保留 top-K,扔掉 bottom-K<br>• 成本:几十万到几百万美元</p>
+    </div>
+  </div>
+  <div class="hint">4 / 22</div>
+</section>
+
+<!-- ============== Slide 5: Tokenization ============== -->
+<section class="slide">
+  <h1>阶段 1 · Tokenization 选型</h1>
+  <p class="subtitle">把文本切成 token,直接影响训练效率和模型能力</p>
+
+  <h3>主流方案对比</h3>
+  <table>
+    <tr><th>方案</th><th>代表</th><th>词表</th><th>压缩率</th><th>多语言</th><th>工具</th></tr>
+    <tr><td>BPE</td><td>GPT-2/3/4</td><td>50K-100K</td><td>~4 chars/tok</td><td class="red">差</td><td>tiktoken</td></tr>
+    <tr><td>SentencePiece BPE</td><td>LLaMA / Qwen</td><td>32K-128K</td><td>~3.5</td><td>中</td><td>sentencepiece</td></tr>
+    <tr><td>Unigram LM</td><td>XLNet / ALBERT</td><td>32K</td><td>~3.8</td><td>中</td><td>sentencepiece</td></tr>
+    <tr><td>BBPE</td><td>GPT-4o / Qwen2</td><td>200K+</td><td>~5</td><td class="green">好</td><td>tiktoken</td></tr>
+  </table>
+
+  <h3>选型要点</h3>
+  <ul>
+    <li><b>词表大小</b>:越大 → 单 token 信息量高 → 序列短;但 embedding 表大,稀疏训练</li>
+    <li><b>压缩率</b>:越高越好,训练效率高(同样算力看更多文本)</li>
+    <li><b>多语言</b>:中英欧都要好,避免中文被切成 3 字节</li>
+    <li><b>数字处理</b>:每个数字 1 token 还是每位 1 token?影响算术能力</li>
+    <li><b>特殊 token</b>:&lt;|endoftext|&gt;、&lt;|user|&gt;、&lt;|tool_call|&gt; 等要预留</li>
+  </ul>
+
+  <div class="callout warn">
+    <p>数字的 tokenization 是个大学问:Qwen2 把每个数字单独 1 token,显著提升算术能力。</p>
+  </div>
+  <div class="hint">5 / 22</div>
+</section>
+
+<!-- ============== Slide 6: 数据配比 + 课程 ============== -->
+<section class="slide">
+  <h1>阶段 1 · 数据配比与课程学习</h1>
+  <p class="subtitle">不同来源数据怎么混,顺序怎么排</p>
+
+  <h3>典型配比(以中文 LLM 为例)</h3>
+  <table>
+    <tr><th>类型</th><th>占比</th><th>说明</th></tr>
+    <tr><td>网页</td><td>50-70%</td><td>主菜,量大但杂</td></tr>
+    <tr><td>书籍/论文</td><td>10-15%</td><td>高质量长文,提升推理</td></tr>
+    <tr><td>代码</td><td>10-20%</td><td>逻辑和结构化能力</td></tr>
+    <tr><td>百科</td><td>5-10%</td><td>事实性</td></tr>
+    <tr><td>问答/对话</td><td>5-10%</td><td>对话格式</td></tr>
+  </table>
+
+  <h3>课程学习 (Curriculum Learning)</h3>
+  <ul>
+    <li>简单 → 复杂:先喂短文、易懂文,后喂长文、专业文</li>
+    <li>质量 → 多样:前 50% 用高质量,后 50% 引入多样</li>
+    <li>数据采样不均匀:按"信息量"加权,信息量低的样本少采</li>
+  </ul>
+
+  <h3>退火 (Annealing) 阶段</h3>
+  <div class="callout">
+    <p>预训练最后 5-10% 步,切换到<b>高质量小数据</b>(教科书、精选问答),在 LR 衰减配合下大幅提升能力。<br>
+    这是 LLaMA 3 公开强调的 trick,被多家复现验证。</p>
+  </div>
+  <div class="hint">6 / 22</div>
+</section>
+
+<!-- ============== Slide 7: 模型架构 ============== -->
+<section class="slide">
+  <h1>阶段 2 · 模型架构选型</h1>
+  <p class="subtitle">Decoder-only Transformer 已经是事实标准</p>
+
+  <h3>核心组件</h3>
+  <table>
+    <tr><th>组件</th><th>主流选择</th><th>备注</th></tr>
+    <tr><td>Attention</td><td>Multi-Head / <b>GQA</b> / MQA</td><td>GQA 是 GQA-8 折中,推理加速</td></tr>
+    <tr><td>位置编码</td><td><b>RoPE</b> / YaRN / ALiBi</td><td>RoPE 支持长度外推</td></tr>
+    <tr><td>激活函数</td><td><b>SwiGLU</b> / GELU / ReLU²</td><td>SwiGLU + gating 效果最好</td></tr>
+    <tr><td>Norm</td><td><b>RMSNorm</b> (无 mean)</td><td>比 LayerNorm 快 10-20%</td></tr>
+    <tr><td>Norm 位置</td><td><b>Pre-Norm</b></td><td>训练更稳</td></tr>
+    <tr><td>Embedding 共享</td><td>input/output 共享权重</td><td>省一半参数,小幅提升</td></tr>
+    <tr><td>MoE</td><td>Mixtral / DeepSeek-V3</td><td>稀疏激活,参数大但 FLOPs 适中</td></tr>
+  </table>
+
+  <h3>典型规模配置</h3>
+  <table>
+    <tr><th>模型</th><th>参数量</th><th>layers</th><th>heads</th><th>dim</th></tr>
+    <tr><td>LLaMA-7B</td><td>6.7B</td><td>32</td><td>32</td><td>4096</td></tr>
+    <tr><td>LLaMA-70B</td><td>70B</td><td>80</td><td>64</td><td>8192</td></tr>
+    <tr><td>Qwen2.5-72B</td><td>72B</td><td>80</td><td>64</td><td>8192</td></tr>
+  </table>
+
+  <div class="callout">
+    <p>近 2 年的趋势:小模型(<b>3-8B</b>)质量逼近大模型,加上更好的数据/对齐,7B 已能商用。</p>
+  </div>
+  <div class="hint">7 / 22</div>
+</section>
+
+<!-- ============== Slide 8: 分布式训练 ============== -->
+<section class="slide">
+  <h1>阶段 2 · 分布式训练:3D 并行</h1>
+  <p class="subtitle">单卡放不下,只能拆开</p>
+
+  <h3>3 种并行策略</h3>
+  <table>
+    <tr><th>策略</th><th>拆什么</th><th>通信开销</th><th>典型规模</th></tr>
+    <tr><td><b>DP</b> (Data Parallel)</td><td>数据切成 N 份,每卡跑一份</td><td>梯度 all-reduce</td><td>8-256 卡</td></tr>
+    <tr><td><b>TP</b> (Tensor Parallel)</td><td>把一个矩阵乘拆到 N 张卡</td><td>all-reduce 每层</td><td>8-16 卡/节点</td></tr>
+    <tr><td><b>PP</b> (Pipeline Parallel)</td><td>把 N 层拆到 N 张卡</td><td>点对点 send/recv</td><td>跨节点 8-64</td></tr>
+  </table>
+
+  <h3>补充策略</h3>
+  <ul>
+    <li><b>SP</b> (Sequence Parallel):长序列时切 seq 维,降低 TP 通信</li>
+    <li><b>EP</b> (Expert Parallel):MoE 专用,把不同 expert 放不同卡</li>
+    <li><b>CP</b> (Context Parallel):超长序列跨卡拆分 attention</li>
+    <li><b>ZeRO / FSDP</b>:把优化器状态/梯度/参数切片,内存省 N 倍</li>
+  </ul>
+
+  <h3>真实训练配置示例(LLaMA-3 405B)</h3>
+  <pre class="code"><span class="c"># 16384 GPU (H100) 训练 ~30 天</span>
+TP=8  PP=16  CP=2  ZeRO-1 (FSDP on data parallel rank)
+<span class="c"># 总: 8 × 16 × 2 = 256 路并行组,每组 64 卡</span>
+<span class="c"># 配合 BF16 训练 + FP8 部分层</span></pre>
+
+  <div class="callout warn">
+    <p>坑:TP 跨节点性能差(NVLink 才高效),一般 TP≤8 限制在一个节点内。PP 气泡率大,通常和 TP/DP 组合使用。</p>
+  </div>
+  <div class="hint">8 / 22</div>
+</section>
+
+<!-- ============== Slide 9: 混合精度 ============== -->
+<section class="slide">
+  <h1>阶段 2 · 混合精度与数值格式</h1>
+  <p class="subtitle">用更少的 bit 算更多的 token</p>
+
+  <h3>精度格式</h3>
+  <table>
+    <tr><th>格式</th><th>bits</th><th>动态范围</th><th>用途</th></tr>
+    <tr><td>FP32</td><td>32</td><td>±3.4e38</td><td>优化器状态、loss</td></tr>
+    <tr><td>BF16</td><td>16</td><td>±3.4e38 (8 位指数)</td><td>前向、反向、参数</td></tr>
+    <tr><td>FP16</td><td>16</td><td>±6.5e4 (易溢出)</td><td>需 loss scaling,逐渐被 BF16 替代</td></tr>
+    <tr><td>FP8 (E4M3 / E5M2)</td><td>8</td><td>±448 / ±57344</td><td>H100 时代新标准,加速 ~2x</td></tr>
+    <tr><td>FP4</td><td>4</td><td>极小</td><td>B200 / RTX 5090 实验中</td></tr>
+  </table>
+
+  <h3>典型混合精度策略</h3>
+  <pre class="code"><span class="c"># 主流: BF16 主路径 + FP32 优化器状态 (AdamW)</span>
+<span class="k">with</span> torch.autocast(dtype=torch.<span class="v">bfloat16</span>):
+    loss = model(input_ids, labels=input_ids)
+loss.backward()        <span class="c"># BF16 梯度</span>
+optimizer.<span class="f">step</span>()   <span class="c"># optimizer 内部用 FP32 master weight 更新</span></pre>
+
+  <h3>数值稳定性保障</h3>
+  <ul>
+    <li>Grad Norm 监控:训练中每步 log grad norm,异常时回滚</li>
+    <li>Loss spike 检测:loss 突然涨 > 2x,自动 skip 当前 step 或回 checkpoint</li>
+    <li>Q / K 矩阵的 attention logit 上限截断(防止 softmax 溢出)</li>
+    <li>BF16 > FP16:BF16 指数位宽,几乎不溢出,推荐优先用</li>
+  </ul>
+  <div class="hint">9 / 22</div>
+</section>
+
+<!-- ============== Slide 10: 优化器 ============== -->
+<section class="slide">
+  <h1>阶段 2 · 优化器与学习率调度</h1>
+  <p class="subtitle">SGD 早就过时,AdamW 是底座,分布式版是新前沿</p>
+
+  <h3>主流优化器</h3>
+  <table>
+    <tr><th>优化器</th><th>特点</th><th>代表项目</th></tr>
+    <tr><td>AdamW</td><td>Adam + 解耦 weight decay,行业标准</td><td>几乎所有 LLM</td></tr>
+    <tr><td>Lion</td><td>只用 sign(momentum),省显存</td><td>BLOOM 等小模型</td></tr>
+    <tr><td>分布式 Adam / ZeRO-Adam</td><td>把 Adam 状态切到多卡</td><td>FSDP / DeepSpeed</td></tr>
+    <tr><td>分布式 <b>Muon</b> (2024)</td><td>对参数矩阵正交化,显著加速</td><td>Kimi K2 / NanoGPT speedrun</td></tr>
+    <tr><td>Adafactor</td><td>用低秩近似二阶矩,省显存</td><td>T5 / PaLM 早期</td></tr>
+  </table>
+
+  <h3>学习率调度</h3>
+  <div class="two-col">
+    <div class="callout">
+      <h3>WSD (Warmup-Stable-Decay)</h3>
+      <p class="small">• 0~1% 步:线性 warmup<br>• 1%~90% 步:常数 LR<br>• 90%~100% 步:余弦/线性 decay 到 10%</p>
+      <p class="small">优势:<b>支持训练中途重启</b>,工业界主流</p>
+    </div>
+    <div class="callout">
+      <h3>Cosine Schedule</h3>
+      <p class="small">• warmup 后余弦降到 ~10% LR<br>• 平滑,损失曲线稳定<br>• 缺点:不支持续训,换 LR schedule 等于从头训</p>
+    </div>
+  </div>
+
+  <h3>超参典型值</h3>
+  <div class="num-grid">
+    <div class="num-cell"><div class="lbl">峰值 LR</div><div class="val">3e-4</div><div class="sub">AdamW</div></div>
+    <div class="num-cell"><div class="lbl">β1 / β2</div><div class="val">0.9 / 0.95</div><div class="sub">-</div></div>
+    <div class="num-cell"><div class="lbl">Weight Decay</div><div class="val">0.1</div><div class="sub">-</div></div>
+    <div class="num-cell"><div class="lbl">Grad Clip</div><div class="val">1.0</div><div class="sub">L2 norm</div></div>
+  </div>
+  <div class="hint">10 / 22</div>
+</section>
+
+<!-- ============== Slide 11: 训练稳定性 ============== -->
+<section class="slide">
+  <h1>阶段 2 · 训练稳定性</h1>
+  <p class="subtitle">训练崩溃的 5 大原因 + 应对</p>
+
+  <h3>常见症状与处理</h3>
+  <table>
+    <tr><th>症状</th><th>原因</th><th>处理</th></tr>
+    <tr><td>Loss spike(突然涨)</td><td>数据噪声 / LR 太大 / batch 异常</td><td>skip 当前 step,记录,继续训</td></tr>
+    <tr><td>Loss → NaN</td><td>溢出 / 除零 / 极差 batch</td><td>立即 rollback,降 LR 50%</td></tr>
+    <tr><td>Loss 不下降</td><td>数据配比错 / 架构 bug / LR 不对</td><td>小实验快速验证,别死磕</td></tr>
+    <tr><td>模型不收敛</td><td>初始化 / Norm 配置 / 数据有问题</td><td>先 1/100 数据 + 1/10 模型过拟合验证</td></tr>
+    <tr><td>Eval 突然崩</td><td>checkpoint 损坏 / OOM 写入失败</td><td>保留最近 N 份,跨节点冗余存储</td></tr>
+  </table>
+
+  <h3>工程保险措施</h3>
+  <ul>
+    <li><b>梯度裁剪</b>:L2 norm 限制在 1.0,这是基本盘</li>
+    <li><b>Loss spike 自动跳过</b>:超过移动平均 N 倍就 skip</li>
+    <li><b>定期保存</b>:每 1-2 小时存一份,保留最近 3-5 份</li>
+    <li><b>异步 checkpoint</b>:写入不阻塞训练(GCS / S3)</li>
+    <li><b>数据校验</b>:离线先做 1 epoch dry-run,统计 token 数 / batch 形状</li>
+    <li><b>健康检查</b>:监控 GPU 温度、NVLink 错误、磁盘 IO 延迟</li>
+  </ul>
+  <div class="callout bad">
+    <p><b>真实代价</b>:一次 NaN 没及时处理,可能浪费 1 周 GPU 时 + 几十万人民币。监控系统必须 <b>7×24</b> 有响应。</p>
+  </div>
+  <div class="hint">11 / 22</div>
+</section>
+
+<!-- ============== Slide 12: 训练监控 ============== -->
+<section class="slide">
+  <h1>阶段 2 · 训练监控:看哪些指标</h1>
+  <p class="subtitle">看错指标,训完才发现就晚了</p>
+
+  <h3>核心指标</h3>
+  <table>
+    <tr><th>指标</th><th>正常范围</th><th>异常含义</th></tr>
+    <tr><td>train_loss</td><td>单调下降,后期平稳</td><td>不下降 / spike / NaN</td></tr>
+    <tr><td>eval_loss</td><td>与 train_loss 接近</td><td>gap 过大 → 过拟合</td></tr>
+    <tr><td>grad_norm</td><td>0.1 ~ 5.0</td><td>持续为 0 → 梯度消失</td></tr>
+    <tr><td>lr</td><td>按 schedule 走</td><td>配置错 / warmup 漏</td></tr>
+    <tr><td>throughput (TPS)</td><td>目标值的 80%+</td><td>数据加载瓶颈</td></tr>
+    <tr><td>MFU (Model FLOPs Utilization)</td><td>40-60% (业内好水平)</td><td>&lt; 30% → 有优化空间</td></tr>
+    <tr><td>GPU 显存</td><td>80-95%</td><td>OOM 风险</td></tr>
+    <tr><td>GPU 温度 / 功耗</td><td>&lt; 85°C</td><td>散热问题</td></tr>
+  </table>
+
+  <h3>看图识状态</h3>
+  <div class="callout warn">
+    <p><b>loss 平稳但 eval 涨</b>:过拟合,检查数据配比 / 加正则<br>
+    <b>loss 慢但 eval 同步降</b>:正常,继续<br>
+    <b>loss 慢,eval 也慢</b>:数据/模型/LR 都可能有问题<br>
+    <b>loss 突然下降</b>:往往是数据泄漏或 batch 异常,要警惕</p>
+  </div>
+
+  <h3>工具</h3>
+  <ul>
+    <li><span class="em">实验追踪</span>:W&amp;B / MLflow / TensorBoard (loss / grad norm 实时面板)</li>
+    <li><span class="em">集群监控</span>:Prometheus + Grafana (GPU / 网络 / 存储)</li>
+    <li><span class="em">告警</span>:Slack / 飞书机器人,异常自动通知</li>
+  </ul>
+  <div class="hint">12 / 22</div>
+</section>
+
+<!-- ============== Slide 13: Mid-Training ============== -->
+<section class="slide">
+  <h1>阶段 3 · 中间训练 (Mid-Training)</h1>
+  <p class="subtitle">预训练完,正式 SFT 之前,还有一个"调优期"</p>
+
+  <h3>三件主要工作</h3>
+  <div class="three-col">
+    <div class="callout">
+      <h3>退火 Annealing</h3>
+      <p class="small">• 最后 5-10% 步切到高质量数据<br>• LR 余弦衰减到 10%<br>• 大幅提升榜单分数</p>
+    </div>
+    <div class="callout">
+      <h3>长上下文扩展</h3>
+      <p class="small">• 8K → 32K → 128K → 1M<br>• RoPE base 改大 / YaRN 插值<br>• 短文混训,避免遗忘</p>
+    </div>
+    <div class="callout">
+      <h3>垂域继续预训练</h3>
+      <p class="small">• 医学 / 法律 / 金融 / 代码<br>• 数据比例从 5% 提到 30-50%<br>• 防止灾难性遗忘要混通用数据</p>
+    </div>
+  </div>
+
+  <h3>长上下文训练要点</h3>
+  <table>
+    <tr><th>阶段</th><th>做法</th><th>关键参数</th></tr>
+    <tr><td>位置编码</td><td>RoPE base 从 10K → 500K-1M</td><td>base 越大,支持越长</td></tr>
+    <tr><td>YaRN / NTK-aware</td><td>插值方法,保留短文能力</td><td>scale factor</td></tr>
+    <tr><td>数据混合</td><td>短文 50% + 中文 30% + 长文 20%</td><td>防遗忘</td></tr>
+    <tr><td>评估</th><td>Needle-in-Haystack / RULER</td><td>长文检索/推理</td></tr>
+  </table>
+  <div class="hint">13 / 22</div>
+</section>
+
+<!-- ============== Slide 14: SFT 细节 ============== -->
+<section class="slide">
+  <h1>阶段 4 · SFT 细节</h1>
+  <p class="subtitle">把 base model 变成"会听话"的助手</p>
+
+  <h3>数据构造</h3>
+  <table>
+    <tr><th>来源</th><th>特点</th><th>成本</th></tr>
+    <tr><td>人工标注</td><td>质量最高,数量有限</td><td>高</td></tr>
+    <tr><td>Self-Instruct</td><td>用 LLM 自己生成多样指令</td><td>低</td></tr>
+    <tr><td>Evol-Instruct</td><td>把简单指令"进化"成复杂</td><td>中</td></tr>
+    <tr><td>GPT-4 蒸馏</td><td>用 GPT-4 生成答案当标签</td><td>中</td></tr>
+  </table>
+
+  <h3>关键 trick</h3>
+  <div class="two-col">
+    <div class="callout">
+      <h3>Loss Mask</h3>
+      <p class="small">• 只在 assistant 回复上算 loss<br>• 用户输入部分 mask 掉<br>• 用 -100 (PyTorch ignore_index)</p>
+    </div>
+    <div class="callout">
+      <h3>Sequence Packing</h3>
+      <p class="small">• 把多条短样本拼到 max_len<br>• 用 attention mask 隔开<br>• 训练吞吐提升 3-10 倍</p>
+    </div>
+    <div class="callout">
+      <h3>多轮对话</h3>
+      <p class="small">• 用 chat template 拼接<br>• 只在最后一轮 assistant 上算 loss<br>• 工具调用 / Function Call 模板</p>
+    </div>
+    <div class="callout">
+      <h3>NEFTune</h3>
+      <p class="small">• embedding 加均匀噪声<br>• 免费 trick,显著提升指令遵循<br>• α=5 常用</p>
+    </div>
+  </div>
+
+  <h3>典型超参</h3>
+  <div class="num-grid">
+    <div class="num-cell"><div class="lbl">LR</div><div class="val">2e-5</div><div class="sub">AdamW</div></div>
+    <div class="num-cell"><div class="lbl">Epochs</div><div class="val">2-3</div><div class="sub">-</div></div>
+    <div class="num-cell"><div class="lbl">Batch</div><div class="val">128</div><div class="sub">全局样本</div></div>
+    <div class="num-cell"><div class="lbl">数据量</div><div class="val">10-100K</div><div class="sub">条</div></div>
+  </div>
+  <div class="hint">14 / 22</div>
+</section>
+
+<!-- ============== Slide 15: 对齐 ============== -->
+<section class="slide">
+  <h1>阶段 5 · 对齐 (Alignment)</h1>
+  <p class="subtitle">让模型"更愿意"说好的,"更不敢"说坏的</p>
+
+  <h3>主流路径</h3>
+  <div class="flow" style="font-size: 14px;">
+    <span class="box sft">SFT 完</span>
+    <span class="arrow">→</span>
+    <span class="box align" style="padding: 6px 10px;">选对齐方法</span>
+    <span class="arrow">→</span>
+    <span class="box" style="padding: 6px 10px;">DPO / SimPO / GRPO</span>
+    <span class="arrow">→</span>
+    <span class="box align" style="padding: 6px 10px;">安全 RL</span>
+    <span class="arrow">→</span>
+    <span class="box eval">评估</span>
+  </div>
+
+  <h3>选型速查</h3>
+  <table>
+    <tr><th>场景</th><th>推荐</th><th>原因</th></tr>
+    <tr><td>通用对话</td><td><b>DPO / SimPO</b></td><td>简洁稳定,数据要求低</td></tr>
+    <tr><td>推理 / 数学 / 代码</td><td><b>GRPO</b></td><td>用规则奖励,能学"答对"模式</td></tr>
+    <tr><td>安全对齐</td><td><b>PPO 或 DPO</b></td><td>需要严格 KL 约束</td></tr>
+    <tr><td>创意写作</td><td>DPO + Constitutional AI</td><td>奖励信号稀疏,不能上 GRPO</td></tr>
+    <tr><td>资源紧</td><td>SimPO / KTO</td><td>省显存省数据</td></tr>
+  </table>
+
+  <h3>对齐的代价</h3>
+  <div class="callout warn">
+    <p>对齐通常会让 <b>PPL 上升</b>(语言建模能力略降),因为 policy 偏离了 reference。<br>
+    监控 <b>eval PPL + 偏好准确率 + 任务榜单</b> 三个数一起看,任意一个崩了就该停。</p>
+  </div>
+
+  <p class="small gray">详细方法对比见配套 slides: llm-rl-alignment-slides</p>
+  <div class="hint">15 / 22</div>
+</section>
+
+<!-- ============== Slide 16: 评估 ============== -->
+<section class="slide">
+  <h1>阶段 6 · 评估体系</h1>
+  <p class="subtitle">训完一个模型,怎么知道它好不好</p>
+
+  <h3>三层评估</h3>
+  <div class="three-col">
+    <div class="callout">
+      <h3>① 公开榜单</h3>
+      <p class="small">MMLU, MATH, HumanEval,<br>GSM8K, BBH, IFEval,<br>AIME, LiveCodeBench,<br>MMMU, MMM, ...</p>
+    </div>
+    <div class="callout">
+      <h3>② 内部 Eval Set</h3>
+      <p class="small">• 防污染:训练后构造<br>• 覆盖业务场景<br>• 定期更新版本</p>
+    </div>
+    <div class="callout">
+      <h3>③ LLM-as-Judge</h3>
+      <p class="small">• GPT-4 / Claude 当评委<br>• 胜率 (A vs B) 打分<br>• 与人工相关性 80%+</p>
+    </div>
+  </div>
+
+  <h3>人工评估 (Human Eval)</h3>
+  <ul>
+    <li><b>绝对评分</b>:1-5 分打单个回答</li>
+    <li><b>相对评分</b>:A vs B 哪个更好(更准,标注员偏好)</li>
+    <li><b>维度</b>:有用性 / 诚实性 / 无害性 / 流畅性</li>
+    <li>成本:每千条 1-3 万人民币,自动化降低 90% 成本但 5% 误差</li>
+  </ul>
+
+  <h3>安全评估 (专门)</h3>
+  <div class="flow" style="font-size: 13px;">
+    <span class="box">RefuseBench</span>
+    <span class="arrow">+</span>
+    <span class="box">HarmBench</span>
+    <span class="arrow">+</span>
+    <span class="box">AdvBench</span>
+    <span class="arrow">+</span>
+    <span class="box">Red Team</span>
+    <span class="arrow">+</span>
+    <span class="box">Jailbreak 测试</span>
+  </div>
+  <div class="hint">16 / 22</div>
+</section>
+
+<!-- ============== Slide 17: Checkpoint 管理 ============== -->
+<section class="slide">
+  <h1>阶段 7 · Checkpoint 管理</h1>
+  <p class="subtitle">模型有了,怎么存怎么用</p>
+
+  <h3>保存策略</h3>
+  <table>
+    <tr><th>策略</th><th>频率</th><th>保留数</th><th>用途</th></tr>
+    <tr><td>每 N 步存</td><td>每 1-2 小时</td><td>最近 3-5 份</td><td>断点续训</td></tr>
+    <tr><td>退火后存</td><td>关键里程碑</td><td>长期保留</td><td>主模型</td></tr>
+    <tr><td>外部存</td><td>实时</td><td>1 份主 + 1 份冷备</td><td>防集群事故</td></tr>
+  </table>
+
+  <h3>格式</h3>
+  <div class="two-col">
+    <div class="callout">
+      <h3>训练格式 (Framework Native)</h3>
+      <p class="small">• PyTorch: <span class="mono">.pt / .bin</span><br>• DeepSpeed: ZeRO 分片,需 gather<br>• Megatron: TP/PP 切分,需转换<br>• 一般包含 <b>optimizer state</b> + <b>model state</b></p>
+    </div>
+    <div class="callout">
+      <h3>推理格式 (Deploy Ready)</h3>
+      <p class="small">• <span class="mono">safetensors</span>: HuggingFace 标准,无 pickle 风险<br>• <span class="mono">GGUF</span>: llama.cpp 量化格式<br>• <span class="mono">TensorRT-LLM</span>: NVIDIA 优化引擎<br>• <span class="mono">AWQ / GPTQ</span>: 4bit 量化</p>
+    </div>
+  </div>
+
+  <h3>容错机制</h3>
+  <ul>
+    <li><b>异步上传</b>:checkpoint 写本地,后台 sync 到 S3/GCS,训练不阻塞</li>
+    <li><b>校验和</b>:每个 checkpoint 配 SHA256,定期验证完整性</li>
+    <li><b>节点故障恢复</b>:PyTorch Elastic / Slurm restart from ckpt</li>
+    <li><b>模型分片</b>:70B 模型 140GB,分布式保存避免单点失败</li>
+  </ul>
+  <div class="callout warn">
+    <p><b>血的教训</b>:没存够 checkpoint,集群故障一次丢几周训练。<b>规则</b>:再贵的存储也比 GPU 时便宜。</p>
+  </div>
+  <div class="hint">17 / 22</div>
+</section>
+
+<!-- ============== Slide 18: 推理优化 ============== -->
+<section class="slide">
+  <h1>阶段 8 · 推理优化</h1>
+  <p class="subtitle">训练只是开始,落地要解决:速度、成本、并发</p>
+
+  <h3>四个方向</h3>
+  <table>
+    <tr><th>方向</th><th>技术</th><th>收益</th></tr>
+    <tr><td>内存优化</td><td>PagedAttention (vLLM), FlashAttention, KV cache 压缩</td><td>并发提升 10-24x</td></tr>
+    <tr><td>量化</td><td>INT8 / INT4 (GPTQ / AWQ / GGUF), K-Quants</td><td>显存降 2-4x</td></tr>
+    <tr><td>解码加速</td><td>Speculative Decoding, Medusa, EAGLE</td><td>吞吐 2-3x</td></tr>
+    <tr><td>批处理</td><td>Continuous Batching, Prefix Caching, Chunked Prefill</td><td>吞吐 5-10x</td></tr>
+  </table>
+
+  <h3>主流推理框架对比</h3>
+  <table>
+    <tr><th>框架</th><th>特点</th><th>适用</th></tr>
+    <tr><td><b>vLLM</b></td><td>PagedAttention 开创者,生态最广</td><td>通用首选</td></tr>
+    <tr><td><b>SGLang</b></td><td>RadixAttention,结构化 prompt 友好</td><td>Agent / 多轮</td></tr>
+    <tr><td><b>TensorRT-LLM</b></td><td>NVIDIA 官方,极致优化</td><td>追求极限</td></tr>
+    <tr><td><b>llama.cpp / Ollama</b></td><td>CPU + GPU,本地部署</td><td>本地 / 边缘</td></tr>
+    <tr><td><b>MLX (Apple)</b></td><td>Apple Silicon 优化</td><td>Mac / iOS</td></tr>
+  </table>
+
+  <h3>典型指标</h3>
+  <div class="num-grid">
+    <div class="num-cell"><div class="lbl">TTFT</div><div class="val">&lt;200ms</div><div class="sub">首 token</div></div>
+    <div class="num-cell"><div class="lbl">TPOT</div><div class="val">&lt;50ms</div><div class="sub">每 token</div></div>
+    <div class="num-cell"><div class="lbl">QPS</div><div class="val">100+</div><div class="sub">/ 卡</div></div>
+    <div class="num-cell"><div class="lbl">显存</div><div class="val">80%</div><div class="sub">占卡率</div></div>
+  </div>
+  <div class="hint">18 / 22</div>
+</section>
+
+<!-- ============== Slide 19: 部署 ============== -->
+<section class="slide">
+  <h1>阶段 9 · 部署与服务化</h1>
+  <p class="subtitle">从 demo 到生产,中间还差 N 个工程问题</p>
+
+  <h3>典型架构</h3>
+  <div class="flow" style="font-size: 13px;">
+    <span class="box">客户端</span>
+    <span class="arrow">→</span>
+    <span class="box">API Gateway</span>
+    <span class="arrow">→</span>
+    <span class="box">限流/鉴权</span>
+    <span class="arrow">→</span>
+    <span class="box">路由</span>
+    <span class="arrow">→</span>
+    <span class="box deploy">推理集群 (vLLM)</span>
+    <span class="arrow">→</span>
+    <span class="box">响应</span>
+  </div>
+
+  <h3>必须解决的事</h3>
+  <table>
+    <tr><th>类别</th><th>问题</th><th>方案</th></tr>
+    <tr><td>弹性</td><td>QPS 波动 10 倍</td><td>自动扩缩容 (HPA), 预热模型池</td></tr>
+    <tr><td>路由</td><td>大模型小模型分流量</td><td>基于 query 分类 / 难度路由</td></tr>
+    <tr><td>缓存</td><td>相似 query 重复算</td><td>语义 cache (embedding 检索)</td></tr>
+    <tr><td>成本</td><td>长输出吃满</td><td>max_tokens 限制, 流式响应</td></tr>
+    <tr><td>安全</td><td>恶意 prompt / 输出合规</td><td>输入审核 + 输出审核 (双层)</td></tr>
+    <tr><td>可观测</td><td>线上效果</td><td>采样 1% 人工 review + 实时指标</td></tr>
+  </table>
+
+  <h3>SLO 监控</h3>
+  <div class="callout warn">
+    <p>生产级 LLM 服务至少要监控: <b>TTFT、TPOT、QPS、错误率、显存、token 吞吐量、用户满意度(点赞/点踩)</b>。<br>
+    一个指标掉到 SLO 之外 = 告警 + 必要时切流量到备用集群。</p>
+  </div>
+  <div class="hint">19 / 22</div>
+</section>
+
+<!-- ============== Slide 20: 真实成本 ============== -->
+<section class="slide">
+  <h1>真实成本量级</h1>
+  <p class="subtitle">让你有个"烧多少钱"的概念</p>
+
+  <h3>从头训一个 70B 模型的资源估算</h3>
+  <table>
+    <tr><th>阶段</th><th>算力</th><th>时长</th><th>成本 (USD)</th></tr>
+    <tr><td>预训练 15T token</td><td>~10000 H100</td><td>~30 天</td><td class="red">~$30-50M</td></tr>
+    <tr><td>中间训练</td><td>~2000 H100</td><td>~7 天</td><td>~$1-2M</td></tr>
+    <tr><td>SFT (100K 条)</td><td>~256 H100</td><td>~1-2 天</td><td>~$50-100K</td></tr>
+    <tr><td>DPO / 对齐</td><td>~256 H100</td><td>~1-2 天</td><td>~$50-100K</td></tr>
+    <tr><td>评估</td><td>~32 H100</td><td>~3 天</td><td>~$20-30K</td></tr>
+    <tr><td>数据准备</td><td>CPU + 人工</td><td>~3-6 月</td><td>~$2-5M (人力)</td></tr>
+  </table>
+
+  <h3>替代路线:开源基座 + 微调</h3>
+  <div class="callout good">
+    <p>从 Qwen2.5-72B / LLaMA-3-70B 微调到产品级:通常 <b>$10-50K</b>,周期 1-2 周<br>
+    从 7B 模型微调:通常 <b>$1-5K</b>,周期 1-3 天<br>
+    从头训一个 7B 也要 $1-3M,所以 <b>99% 的项目都该用开源基座</b></p>
+  </div>
+  <div class="hint">20 / 22</div>
+</section>
+
+<!-- ============== Slide 21: 常见坑 ============== -->
+<section class="slide">
+  <h1>实战常见坑 (Top 10)</h1>
+  <p class="subtitle">踩过的都写在这里了</p>
+
+  <table style="font-size: 13px;">
+    <tr><th>#</th><th>坑</th><th>症状</th><th>对策</th></tr>
+    <tr><td>1</td><td>数据里有重复(测试集泄漏到训练集)</td><td>榜单虚高</td><td>严格去重 + holdout 防污染</td></tr>
+    <tr><td>2</td><td>评估时用 chat template 错了</td><td>分数莫名其妙低</td><td>用 model 自己官方的 template</td></tr>
+    <tr><td>3</td><td>tokenizer 没考虑中文</td><td>中文被切 3 字节,效率低</td><td>用 Qwen2 / BGE 系中文友好 tokenizer</td></tr>
+    <tr><td>4</td><td>LR schedule 中途换</td><td>训练损失曲线断崖</td><td>用 WSD 支持重启</td></tr>
+    <tr><td>5</td><td>ZeRO-3 + TP 一起开</td><td>通信爆炸,慢 5x</td><td>ZeRO-1 + TP+PP 更稳</td></tr>
+    <tr><td>6</td><td>checkpoint 只存本地</td><td>集群故障丢模型</td><td>异步同步到对象存储</td></tr>
+    <tr><td>7</td><td>对齐后没测 PPL</td><td>语言能力掉了一大截</td><td>同时监控 PPL + 偏好 + 任务榜</td></tr>
+    <tr><td>8</td><td>温度/top_p 推理默认 0</td><td>问答很死板</td><td>不同任务不同采样参数</td></tr>
+    <tr><td>9</td><td>微调时用了 SFT 数据 + 偏好数据混训</td><td>损失函数混淆</td><td>严格分阶段:先 SFT 再偏好</td></tr>
+    <tr><td>10</td><td>没做安全审核直接上线</td><td>出合规事故</td><td>输入输出双层审核 + 红队测试</td></tr>
+  </table>
+  <div class="hint">21 / 22</div>
+</section>
+
+<!-- ============== Slide 22: 总结 ============== -->
+<section class="slide">
+  <h1>一页纸总结 + 思考题</h1>
+  <p class="subtitle">回到流程,把握节奏</p>
+
+  <h3>本课要点</h3>
+  <ul>
+    <li><span class="yellow">数据</span>决定上限:采集 → 清洗 → 去重 → 过滤 → 配比 → 退火</li>
+    <li><span class="em">预训练</span>是算力怪兽:3D 并行 + 混合精度 + 严格监控,容错第一</li>
+    <li><span class="em">中间训练</span>是"调优期":长上下文、垂域、退火三个常见目标</li>
+    <li><span class="purple">SFT</span>关键在数据质量 + loss mask + packing,数据量级反而不大</li>
+    <li><span class="pink">对齐</span>选型看任务:通用 DPO、推理 GRPO、紧资源 SimPO/KTO</li>
+    <li><span class="cyan">评估</span>三层:榜单 + 内部 + 人工(LLM-as-judge 兜底)</li>
+    <li><span class="green">部署</span>从 demo 到生产差 10 个工程问题:弹性、路由、缓存、安全、SLO</li>
+  </ul>
+
+  <h3>思考题</h3>
+  <div class="callout">
+    <p><b>1.</b> 你的项目数据有 5% 测试集泄漏到训练集,怎么排查?有什么自动检测方法?</p>
+  </div>
+  <div class="callout">
+    <p><b>2.</b> 训练到一半,eval loss 突然涨了 30%,但 train loss 继续降,你怎么判断和应对?</p>
+  </div>
+  <div class="callout">
+    <p><b>3.</b> 你的服务 QPS 涨 10 倍,推理成本线性涨,怎么用工程手段降到 3x?</p>
+  </div>
+
+  <h3>推荐资源</h3>
+  <p class="small">• LLaMA 3 论文 (Meta, 2024)  史上最详细的训练手册<br>
+  • DeepSeek V3 技术报告 (2024)  MoE + FP8 训练实战<br>
+  • HuggingFace smol-course  端到端小模型训练教程<br>
+  • 配套 slides: llm-rl-alignment-slides  详解对齐方法</p>
+  <div class="hint">22 / 22 · 完</div>
+</section>
+
+</main>
+
+<div class="nav">
+  <button onclick="prev()">◀ 上一张</button>
+  <button onclick="next()">下一张 ▶</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let cur = 0;
+
+  function show(i) {
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    document.getElementById('counter').textContent = (i + 1) + ' / ' + total;
+    document.getElementById('progress').style.width = ((i + 1) / total * 100) + '%';
+    cur = i;
+    if (location.hash !== '#' + (i + 1)) {
+      history.replaceState(null, '', '#' + (i + 1));
+    }
+  }
+  function next() { if (cur < total - 1) show(cur + 1); }
+  function prev() { if (cur > 0) show(cur - 1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { next(); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { prev(); e.preventDefault(); }
+    else if (e.key === 'Home') { show(0); e.preventDefault(); }
+    else if (e.key === 'End') { show(total - 1); e.preventDefault(); }
+    else if (e.key === 'p' || e.key === 'P') { window.print(); }
+  });
+
+  let tx = 0;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+  });
+
+  const m = location.hash.match(/^#(\d+)$/);
+  if (m) {
+    const i = Math.max(0, Math.min(total - 1, parseInt(m[1]) - 1));
+    show(i);
+  } else {
+    show(0);
+  }
+</script>
+
+</body>
+</html>
