@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>生物特征密钥生成 BKG · 2023-2026 趋势、代表工作、可发文章方向</title>
+<style>
+  /* ===== 基础设置 ===== */
+  :root {
+    --bg: #0e1116;
+    --bg2: #161b22;
+    --fg: #e6edf3;
+    --muted: #8b949e;
+    --accent: #5b8def;
+    --policy: #5b8def;
+    --ref:    #8b949e;
+    --critic: #10b981;
+    --reward: #f59e0b;
+    --chosen: #22c55e;
+    --bad:    #ef4444;
+    --loss:   #a78bfa;
+    --code-bg:#0a0d12;
+    --border: #30363d;
+    --key:    #ec4899;
+    --biometric: #06b6d4;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  /* ===== 进度条与导航 ===== */
+  .progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 3px; background: var(--accent);
+    width: 0%; z-index: 1000;
+    transition: width 0.2s;
+  }
+  .slide-counter {
+    position: fixed; top: 12px; right: 20px;
+    color: var(--muted); font-size: 13px; z-index: 1000;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .nav {
+    position: fixed; bottom: 16px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 10px; z-index: 1000;
+  }
+  .nav button {
+    background: var(--bg2); color: var(--fg);
+    border: 1px solid var(--border);
+    padding: 6px 16px; border-radius: 6px;
+    cursor: pointer; font-size: 14px;
+  }
+  .nav button:hover { background: var(--accent); border-color: var(--accent); }
+
+  /* ===== slide 容器 ===== */
+  main { width: 100vw; height: 100vh; position: relative; }
+  .slide {
+    position: absolute; inset: 0;
+    padding: 28px 60px 24px;
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide h1 { font-size: 28px; margin: 0 0 8px; color: var(--fg); }
+  .slide h2 { font-size: 22px; margin: 0 0 10px; color: var(--accent); }
+  .slide h3 { font-size: 17px; margin: 10px 0 4px; color: var(--fg); }
+  .slide p  { margin: 4px 0; }
+  .slide ul, .slide ol { margin: 4px 0; padding-left: 22px; }
+  .slide li { margin: 2px 0; }
+  .slide .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+  .slide .hint {
+    position: absolute; bottom: 4px; right: 16px;
+    color: var(--muted); font-size: 11px;
+  }
+  .slide .center { text-align: center; }
+  .slide .small { font-size: 12px; color: var(--muted); }
+  .slide .gray  { color: var(--muted); }
+  .slide .code  {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    background: var(--code-bg);
+    padding: 8px 12px; border-radius: 5px;
+    font-size: 13px; line-height: 1.5;
+    white-space: pre; overflow-x: auto;
+  }
+  .slide .footer-nav { margin-top: auto; padding-top: 8px; }
+  .slide a { color: var(--accent); }
+
+  /* ===== 组件库 ===== */
+  .box { display: inline-block; padding: 4px 10px; border-radius: 5px;
+         font-weight: 600; font-size: 13px; margin: 1px 3px; border: 1px solid; }
+  .box.policy   { background: rgba(91,141,239,0.15); color: #5b8def; border-color: #5b8def; }
+  .box.ref      { background: rgba(139,148,158,0.15); color: #8b949e; border-color: #8b949e; }
+  .box.critic   { background: rgba(16,185,129,0.15); color: #10b981; border-color: #10b981; }
+  .box.reward   { background: rgba(245,158,11,0.15); color: #f59e0b; border-color: #f59e0b; }
+  .box.chosen   { background: rgba(34,197,94,0.15); color: #22c55e; border-color: #22c55e; }
+  .box.bad      { background: rgba(239,68,68,0.15); color: #ef4444; border-color: #ef4444; }
+  .box.loss     { background: rgba(167,139,250,0.15); color: #a78bfa; border-color: #a78bfa; }
+  .box.key      { background: rgba(236,72,153,0.15); color: #ec4899; border-color: #ec4899; }
+  .box.bio      { background: rgba(6,182,212,0.15); color: #06b6d4; border-color: #06b6d4; }
+
+  .pipeline { display: flex; align-items: center; justify-content: space-between;
+              margin: 12px 0; padding: 12px 8px; background: var(--bg2);
+              border-radius: 8px; border: 1px solid var(--border); gap: 2px; }
+  .pipeline-arrow { color: var(--muted); font-size: 14px; font-weight: bold; padding: 0 1px; }
+  .pipeline-step { flex: 1; text-align: center; padding: 8px 4px; border-radius: 5px;
+                  background: rgba(91,141,239,0.1); border: 1px solid #5b8def;
+                  font-size: 12px; font-weight: 600; }
+  .pipeline-step.dl   { background: rgba(167,139,250,0.1); border-color: #a78bfa; }
+  .pipeline-step.att  { background: rgba(239,68,68,0.1); border-color: #ef4444; }
+  .pipeline-step.key  { background: rgba(236,72,153,0.1); border-color: #ec4899; }
+  .pipeline-step.bio  { background: rgba(6,182,212,0.1); border-color: #06b6d4; }
+  .pipeline-step .small { font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+
+  .tree { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px;
+          white-space: pre; background: var(--code-bg); padding: 10px 14px; border-radius: 5px;
+          border: 1px solid var(--border); line-height: 1.35; }
+
+  .num-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 6px 0; }
+  .num-cell { background: var(--bg2); border: 1px solid var(--border); border-radius: 5px;
+              padding: 6px; text-align: center; }
+  .num-cell .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; }
+  .num-cell .val { font-size: 18px; font-weight: bold; margin: 2px 0;
+                   font-family: ui-monospace, monospace; color: var(--accent); }
+  .num-cell .sub { font-size: 10px; color: var(--muted); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .col-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+  .col-card h4 { margin: 0 0 6px; color: var(--accent); font-size: 14px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 5px 8px; border-bottom: 1px solid var(--border); text-align: left; }
+  th { color: var(--accent); font-weight: 600; }
+  tr:hover { background: rgba(91,141,239,0.05); }
+
+  .cover { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+  .cover h1 { font-size: 48px; margin: 16px 0 8px; text-align: center; }
+  .cover .tag { font-size: 20px; color: var(--accent); margin-bottom: 24px; }
+  .cover .meta { color: var(--muted); font-size: 14px; margin-top: 32px; }
+
+  .highlight { background: rgba(91,141,239,0.15); padding: 2px 6px; border-radius: 3px; }
+
+  .arrow-down { text-align: center; color: var(--accent); font-size: 24px; margin: 4px 0; }
+
+  .venue-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 11px; font-weight: 600; margin-left: 6px;
+    background: rgba(236,72,153,0.15); color: #ec4899; border: 1px solid #ec4899;
+  }
+  .venue-badge.tier1 { background: rgba(239,68,68,0.15); color: #ef4444; border-color: #ef4444; }
+  .venue-badge.arxiv { background: rgba(139,148,158,0.15); color: #8b949e; border-color: #8b949e; }
+
+  ul.compact { padding-left: 18px; }
+  ul.compact li { margin: 1px 0; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="pb"></div>
+<div class="slide-counter" id="sc">1 / N</div>
+
+<nav class="nav">
+  <button onclick="prev()">◀ 上一页</button>
+  <button onclick="next()">下一页 ▶</button>
+  <button onclick="printSlides()">🖨 打印/PDF</button>
+</nav>
+
+<main id="deck">
+
+<!-- ============== 1. 封面 ============== -->
+<section class="slide active">
+  <div class="cover">
+    <div class="tag">2023-2026 最新趋势 + 代表工作 + 可发文章 idea</div>
+    <h1>生物特征密钥生成</h1>
+    <h1 style="font-size:32px;color:var(--accent);">Biometric Key Generation · 综述</h1>
+    <div class="meta">调研时间：2026 年 6 月 · 86 篇 2023+ 论文 · 35 篇代表作</div>
+    <div class="meta" style="margin-top:12px;">方向：键盘翻页 / Home 跳首 / End 跳尾 / P 打印</div>
+  </div>
+</section>
+
+<!-- ============== 2. TL;DR ============== -->
+<section class="slide">
+  <h1>0. 一句话结论（TL;DR）</h1>
+  <p class="subtitle">如果你只读一页，这就是。</p>
+  <div class="three-col" style="margin-top:16px;">
+    <div class="col-card">
+      <h4>📈 范式转移</h4>
+      <p>从 <span class="box ref">Handcrafted + ECC</span> 到 <span class="box loss">DL 端到端 + Neural Decoder</span>，WiFaKey (2024) 是分水岭。</p>
+    </div>
+    <div class="col-card">
+      <h4>🚀 新蓝海</h4>
+      <p><span class="box bio">可穿戴/IoT</span> 场景爆发（耳道、PPG、ECG、入耳加速度计），arXiv 上 2025-2026 翻倍。</p>
+    </div>
+    <div class="col-card">
+      <h4>⚔️ 攻击驱动</h4>
+      <p>多个"安全"方案被形式化攻破：<span class="box bad">PolyProtect</span>、<span class="box bad">IronMask</span>、<span class="box bad">CB Vault</span>。</p>
+    </div>
+  </div>
+  <h3 style="margin-top:20px;">🎯 5 个最值得发文章的方向</h3>
+  <ol>
+    <li><span class="box key">深度学习 × 模板保护</span>（Neural Decoder、端到端特征、Self-supervised pretraining）</li>
+    <li><span class="box bio">多模态/多因子 × 抗攻击</span>（跨生物特征 + 密码/智能卡）</li>
+    <li><span class="box critic">可穿戴场景的端到端 BKG</span>（耳道/PPG/ECG，新数据集+新模型）</li>
+    <li><span class="box bad">攻击驱动的统一基准</span>（20+ 方法 × 5+ 攻击）</li>
+    <li><span class="box reward">数字实体（AI Agent）的生物特征身份</span>（2026 新兴方向）</li>
+  </ol>
+</section>
+
+<!-- ============== 3. 调研方法 ============== -->
+<section class="slide">
+  <h1>1. 调研方法 & 数据源</h1>
+  <table>
+    <tr><th>数据源</th><th>检索方式</th><th>命中</th><th>用途</th></tr>
+    <tr><td>arXiv API</td><td>10 个核心关键词 × 20 条/词</td><td>112 → 86 去重</td><td>最新预印本、覆盖完整</td></tr>
+    <tr><td>arXiv 关键论文摘要</td><td>browser 抓取 3 篇核心</td><td>3 篇</td><td>方法细节</td></tr>
+    <tr><td>Semantic Scholar</td><td>"fuzzy extractor biometric" 主题</td><td>8 篇完整 + 部分限流</td><td>引用数、期刊</td></tr>
+    <tr><td>领域知识</td><td>人工核对</td><td>35 篇代表</td><td>质量验证</td></tr>
+  </table>
+  <h3>核心关键词</h3>
+  <p><span class="box policy">biometric key generation</span> <span class="box policy">fuzzy extractor</span> <span class="box policy">fuzzy vault</span> <span class="box policy">fuzzy commitment</span> <span class="box policy">secure sketch</span> <span class="box policy">cancelable biometric</span> <span class="box policy">biometric template protection</span> <span class="box policy">biometric cryptosystem</span> <span class="box policy">BioHashing</span> <span class="box policy">deep learning biometric</span></p>
+  <h3>局限性</h3>
+  <ul class="compact">
+    <li>未覆盖 IEEE Xplore / ACM DL 全文，可能漏已发表但未上 arXiv 的论文</li>
+    <li>2026 年数据为预印本 + 早期工作，期刊版本可能滞后 6-12 月</li>
+    <li>引用次数仅 8 篇有效数据，无法做完整引用分析</li>
+    <li>未做跨年增长率计算（仅趋势判断）</li>
+  </ul>
+</section>
+
+<!-- ============== 4. 字段概览 ============== -->
+<section class="slide">
+  <h1>2. 字段概览：什么是 BKG？</h1>
+  <div class="pipeline">
+    <div class="pipeline-step bio">用户生物特征<br><span class="small">指纹/人脸/虹膜/静脉/语音/ECG...</span></div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step" style="background:rgba(245,158,11,0.1);border-color:#f59e0b;">→ 稳定提取 →</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step key">加密密钥<br><span class="small">128/256 bit 强随机</span></div>
+  </div>
+  <div class="tree" style="margin-top:16px;">┌─────────────────────────────────────────────────────┐
+│  生物特征密钥生成 (Biometric Key Generation, BKG)     │
+│  = 从生物特征稳定地生成/释放一段加密密钥              │
+│  「不可遗忘、永不丢失、终生不变」                      │
+└─────────────────────────────────────────────────────┘
+                ↓ ↓ ↓ 三大量身目标
+  ① 稳定性 (Reproducibility)        ← 同一用户多次采集 → 同一密钥
+  ② 安全性 (Security)               ← 模板不可逆、不可链接、抗攻击
+  ③ 可撤销性 (Revocability)         ← 模板泄露后可以重新签发</div>
+  <h3>为什么 BKG 重要？</h3>
+  <p>传统密码学密钥靠"记住"或"存住"，生物特征密钥靠"长在身上"——但生物特征 <span class="box bad">有噪声</span>、<span class="box bad">隐私敏感</span>、<span class="box bad">终生不变</span>。这三大特性是 BKG 所有技术挑战的根源。</p>
+</section>
+
+<!-- ============== 5. 三大目标详解 ============== -->
+<section class="slide">
+  <h1>2.1 BKG 三大目标（ISO/IEC 24745 标准）</h1>
+  <div class="three-col">
+    <div class="col-card">
+      <h4>① 稳定性 Reproducibility</h4>
+      <p>同用户多次生物采集 → 同一密钥</p>
+      <p class="small">挑战：传感器噪声、姿态变化、年龄、表情...</p>
+      <p class="small">解决：纠错码（BCH、RS、Polar） + Secure Sketch</p>
+    </div>
+    <div class="col-card">
+      <h4>② 安全性 Security</h4>
+      <p>模板不可逆、不可链接、抗攻击</p>
+      <p class="small">挑战：Inversion / Linkability / Replay 攻击</p>
+      <p class="small">解决：不可逆变换 + 多因子 + Challenge-Response</p>
+    </div>
+    <div class="col-card">
+      <h4>③ 可撤销 Revocability</h4>
+      <p>泄露后换 token 重新生成</p>
+      <p class="small">挑战：泄露后无法恢复原生物特征</p>
+      <p class="small">解决：Cancelable Biometrics + BioHashing</p>
+    </div>
+  </div>
+  <h3>核心矛盾</h3>
+  <p>稳定性需要"匹配"原始生物特征 → 安全性需要"不暴露"原始生物特征 → 这两个目标天然冲突。</p>
+  <p>这正是 2023-2026 整个研究领域的核心张力：<span class="highlight">如何在保证稳定性的同时保护生物特征隐私？</span></p>
+</section>
+
+<!-- ============== 6. 2023-2026 主题分布 ============== -->
+<section class="slide">
+  <h1>3. 2023-2026 主题分布（arXiv 86 篇）</h1>
+  <table>
+    <tr><th>主题</th><th>论文数</th><th>趋势</th></tr>
+    <tr><td>深度学习 × 生物特征保护</td><td><b>18</b></td><td>⬆ 主导方向</td></tr>
+    <tr><td>人脸/语音模态</td><td><b>18</b></td><td>⬆ 持续热门</td></tr>
+    <tr><td>可穿戴/IoT 生物特征</td><td><b>15</b></td><td>⬆ 蓝海爆发</td></tr>
+    <tr><td>可撤销 (Cancelable)</td><td><b>11</b></td><td>→ 稳定</td></tr>
+    <tr><td>多模态/多因子融合</td><td><b>11</b></td><td>⬆ 跨方向组合</td></tr>
+    <tr><td>模糊提取器/金库/承诺</td><td><b>10</b></td><td>→ 基础仍在演化</td></tr>
+    <tr><td>攻击/密码分析</td><td><b>8</b></td><td>⬆ 推动方法迭代</td></tr>
+    <tr><td>隐私保护 (Privacy-preserving)</td><td><b>8</b></td><td>⬆ 政策驱动</td></tr>
+    <tr><td>虹膜/指纹/静脉</td><td><b>7</b></td><td>→ 经典模态</td></tr>
+    <tr><td>区块链/去中心化</td><td><b>5</b></td><td>→ 早期落地</td></tr>
+  </table>
+  <h3>📈 论文量增长</h3>
+  <div class="code">2023  ████████████ 13
+2024  ████████████ 13
+2025  █████████████████████████████ 31
+2026  ████████████████████████████ 29 (仅上半年)</div>
+  <p class="small">说明 2025-2026 论文量翻倍，该方向进入加速期。</p>
+</section>
+
+<!-- ============== 7. 五大技术路线地图 (1/2) ============== -->
+<section class="slide">
+  <h1>4. 六大技术路线 & 经典代表作 (1/2)</h1>
+  <div class="tree">生物特征密钥生成 (BKG)
+│
+├── 路线 A: 经典密码学框架
+│   ├── Fuzzy Extractor (纠错码 + Secure Sketch)
+│   ├── Fuzzy Vault (多项式 + 噪声点)
+│   ├── Fuzzy Commitment
+│   └── BioHashing
+│
+├── 路线 B: 深度学习 × 保护
+│   ├── Deep Feature + Neural Decoder
+│   ├── End-to-End Training
+│   ├── Latent Space Mixing
+│   └── Deep Hashing
+│
+└── 路线 C: 可撤销 (Cancelable)
+    ├── Random Feature Transformation
+    ├── Bloom Filter
+    ├── Index-of-Maximum (IoM)
+    └── Challenge-Response</div>
+  <p class="small gray" style="margin-top:8px;">下页继续：路线 D / E / F →</p>
+</section>
+
+<!-- ============== 7b. 五大技术路线地图 (2/2) ============== -->
+<section class="slide">
+  <h1>4. 六大技术路线 & 经典代表作 (2/2)</h1>
+  <div class="tree">生物特征密钥生成 (BKG) (续)
+│
+├── 路线 D: 可穿戴/IoT
+│   ├── 耳道声学
+│   ├── PPG / ECG
+│   ├── 入耳加速度计 (BCG)
+│   └── IoT 配对
+│
+├── 路线 E: 多模态/多因子
+│   ├── 特征级融合
+│   ├── 分数级融合
+│   └── 决策级融合
+│
+└── 路线 F: 攻击/密码分析
+    ├── Pre-image Attack
+    ├── Linkability Attack
+    ├── Replay Attack
+    └── False Acceptance</div>
+  <p class="small gray" style="margin-top:8px;">← 上页：路线 A / B / C</p>
+</section>
+
+<!-- ============== 8. 路线 A 概览 ============== -->
+<section class="slide">
+  <h1>路线 A：经典密码学框架</h1>
+  <p class="subtitle">用纠错码（Reed-Solomon、BCH、Polar）+ Secure Sketch 解决生物特征噪声</p>
+  <h3>核心范式</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">生物特征<br><span class="small">Enrollment</span></div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step" style="background:rgba(245,158,11,0.1);border-color:#f59e0b;">→ 量化 →</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step key">Secure Sketch<br><span class="small">Helper Data</span></div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step" style="background:rgba(167,139,250,0.1);border-color:#a78bfa;">→ 编码 →</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step key">加密密钥 K</div>
+  </div>
+  <h3>代表工作</h3>
+  <table>
+    <tr><th>论文</th><th>来源</th><th>核心贡献</th></tr>
+    <tr><td>Closing the Performance Gap in BCS: Unlinkable Fuzzy Vaults</td><td>arXiv:2506.22347 <span class="venue-badge arxiv">2025</span></td><td>"等频区间"特征量化解决 Fuzzy Vault 特征集大小不稳定</td></tr>
+    <tr><td>Biometrics-Based AKE with Multi-Factor Fuzzy Extractor</td><td>arXiv:2405.11456 <span class="venue-badge arxiv">2024</span></td><td>FE 与 AKE 协议融合，引入多因子抗模仿攻击</td></tr>
+    <tr><td>Robust and Reusable Fuzzy Extractors for Low-entropy</td><td>arXiv:2405.04021 <span class="venue-badge arxiv">2024</span></td><td>低熵场景 FE 可重用性，理论+实用方案</td></tr>
+    <tr><td>Multi-Biometric Fuzzy Vault: Face+Fingerprints</td><td>arXiv:2301.06882 <span class="venue-badge arxiv">2023</span></td><td>特征级融合人脸+指纹 Fuzzy Vault（<b>Rathgeb 组</b>）</td></tr>
+  </table>
+  <p class="small"><b>关键作者组</b>：Rathgeb (Darmstadt) / Teoh (Sungkyunkwan) / Hu (UNSW) / Busch (NTNU)</p>
+</section>
+
+<!-- ============== 9. Unlinkable Fuzzy Vault 详解 ============== -->
+<section class="slide">
+  <h1>代表 1：Unlinkable Fuzzy Vaults (2025-06)</h1>
+  <p class="subtitle">Geißner & Rathgeb · arXiv:2506.22347</p>
+  <h3>🎯 核心问题</h3>
+  <p>Fuzzy Vault-based 生物特征加密系统的"性能差距"：</p>
+  <ul>
+    <li>特征集大小不稳定 → 纠错能力漂移</li>
+    <li>特征类型变换引入信息损失</li>
+    <li>跨人脸/指纹/虹膜的通用性差</li>
+  </ul>
+  <h3>💡 核心方法</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">生物特征向量</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step policy">等频区间量化</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step policy">固定大小特征集</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step key">Fuzzy Vault 编码</div>
+  </div>
+  <h3>📊 实验</h3>
+  <p>在 SOTA 人脸/指纹/虹膜识别系统上验证，最小性能下降。验证数据集包括 CASIA-Iris-Thousands、PolyU HR Fingerprint、FaceNet 人脸。</p>
+  <h3>🔗 启示</h3>
+  <p>Fuzzy Vault 在 DL 时代仍未过时；<b>特征预处理</b>是决定性能差距的关键。适合做"Deep Fuzzy Vault"方向。</p>
+</section>
+
+<!-- ============== 10. Multi-Factor Fuzzy Extractor ============== -->
+<section class="slide">
+  <h1>代表 2：Multi-Factor Fuzzy Extractor (2024-05)</h1>
+  <p class="subtitle">Tran, Hu, Hu · arXiv:2405.11456</p>
+  <h3>🎯 核心问题</h3>
+  <p>传统 Fuzzy Extractor 容易被<b>模仿攻击</b>：一旦攻击者捕获有效生物特征，方案不再安全。</p>
+  <div class="three-col">
+    <div class="col-card">
+      <h4>传统 FE</h4>
+      <p>只有 1 个因子（生物特征）</p>
+      <p class="small">单点失败 = 系统崩溃</p>
+    </div>
+    <div class="col-card">
+      <h4>Multi-Factor FE</h4>
+      <p>生物特征 + 密码 / 智能卡</p>
+      <p class="small">抵抗捕获+重放攻击</p>
+    </div>
+    <div class="col-card">
+      <h4>核心创新</h4>
+      <p>把密码和生物特征做<b>密码学绑定</b></p>
+      <p class="small">丢失任一因子 ≠ 泄露</p>
+    </div>
+  </div>
+  <h3>🔗 启示</h3>
+  <ul>
+    <li>与 <b>Authenticated Key Exchange (AKE)</b> 协议融合形成端到端方案</li>
+    <li>适合延伸：①多模态（多生物特征） ②与 TEE 集成 ③抗侧信道</li>
+    <li>目标会议：<span class="box tier1" style="color:#ef4444;">USENIX Security / CCS / TIFS</span></li>
+  </ul>
+</section>
+
+<!-- ============== 11. 路线 B 概览 ============== -->
+<section class="slide">
+  <h1>路线 B：深度学习 × 生物特征保护（2025-2026 最热）</h1>
+  <p class="subtitle">让神经网络学出"天然适合保护"的特征（bit-stable / 不可逆 / 可撤销）</p>
+  <h3>核心范式转变</h3>
+  <div class="tree">传统:  Handcrafted Feature → Quantize → ECC Code → Key
+                              ↓
+                  痛点: 噪声与 ECC 能力不匹配
+                              ↓
+现代:  DL Feature → Adaptive Masking → Neural Decoder → Key
+                  优势: 端到端优化、自适应纠错</div>
+  <h3>代表工作</h3>
+  <table>
+    <tr><th>论文</th><th>来源</th><th>核心贡献</th></tr>
+    <tr><td>DL in Biometric Template Protection: An Overview</td><td>arXiv:2303.02715 <span class="venue-badge arxiv">2023</span></td><td><b>综述，必读</b>，Rathgeb/Busch 组</td></tr>
+    <tr><td>WiFaKey: Crypto Keys from Face in the Wild</td><td>arXiv:2407.14804 <span class="venue-badge arxiv">2024</span></td><td>AdaMTrans + Neural-MS，LFW GMR 85.45% @ FMR=0%</td></tr>
+    <tr><td>BioDeepHash: Mapping Biometrics to Stable Code</td><td>arXiv:2408.03704 <span class="venue-badge arxiv">2024</span></td><td>深度哈希生成稳定抗泄露码</td></tr>
+    <tr><td>Benchmarking of Cancelable Biometrics for Deep Templates</td><td>arXiv:2302.13286 <span class="venue-badge arxiv">2023</span></td><td>6 种 cancelable × 5 种深度模板统一基准</td></tr>
+    <tr><td>FaceAnonyMixer</td><td>arXiv:2508.05636 <span class="venue-badge arxiv">2025</span></td><td>潜空间 mixing 实现 cancelable 人脸</td></tr>
+  </table>
+</section>
+
+<!-- ============== 12. WiFaKey 详解 ============== -->
+<section class="slide">
+  <h1>代表 3：WiFaKey (2024-07) · 分水岭工作</h1>
+  <p class="subtitle">Dong, Zhang, Teoh 等 · arXiv:2407.14804</p>
+  <h3>🎯 问题</h3>
+  <p>现有 bio-cryptosystem 依赖手工特征 + ECC，性能下降严重；尤其在 unconstrained（非受控）场景。</p>
+  <h3>💡 两个核心创新</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">人脸特征<br><span class="small">MagFace/AdaFace</span></div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step dl">AdaMTrans<br><span class="small">自适应随机掩码</span></div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step key">Binarized Feature<br><span class="small">对齐 ECC 需求</span></div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step dl">Neural-MS<br><span class="small">Neural Decoder</span></div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step key">Crypto Key K</div>
+  </div>
+  <h3>📊 实验结果（LFW）</h3>
+  <div class="num-grid">
+    <div class="num-cell">
+      <div class="lbl">MagFace</div>
+      <div class="val">85.45%</div>
+      <div class="sub">GMR @ FMR=0%</div>
+    </div>
+    <div class="num-cell">
+      <div class="lbl">AdaFace</div>
+      <div class="val">85.20%</div>
+      <div class="sub">GMR @ FMR=0%</div>
+    </div>
+    <div class="num-cell">
+      <div class="lbl">数据集</div>
+      <div class="val">6+2</div>
+      <div class="sub">unconstrained + constrained</div>
+    </div>
+    <div class="num-cell">
+      <div class="lbl">来源</div>
+      <div class="val">LFW</div>
+      <div class="sub">公开基准</div>
+    </div>
+  </div>
+  <h3>🔗 延伸 idea（详见 §7）</h3>
+  <p>①跨模态（指静脉/虹膜） ②联邦学习 ③抗 Inversion 攻击 ④+ PUF</p>
+  <p class="small">开源代码：<span class="box policy">github.com/NMLAB-Prosthetic/WiFaKey</span></p>
+</section>
+
+<!-- ============== 13. DL+BTP 综述 ============== -->
+<section class="slide">
+  <h1>代表 4：DL in Biometric Template Protection: An Overview</h1>
+  <p class="subtitle">Rathgeb, Kolberg, Uhl, Busch · arXiv:2303.02715 (2023-03) · <b>必读综述</b></p>
+  <h3>📚 综述覆盖五大维度</h3>
+  <ol>
+    <li><b>性能</b>：DL 提升识别精度 → 拉低 BTP 性能差距</li>
+    <li><b>公平性</b>：DL 揭示的算法偏见与 BTP 公平性</li>
+    <li><b>安全性</b>：DL 自身抗攻击性 vs BTP 抗攻击性</li>
+    <li><b>特征表示</b>：DL 特征天然适合 BTP 的哪些性质</li>
+    <li><b>DL 攻击</b>：用 DL 攻击 BTP 系统的方法</li>
+  </ol>
+  <h3>🔍 关键 insight</h3>
+  <div class="quote" style="background:var(--bg2);padding:10px 14px;border-left:3px solid var(--accent);font-style:italic;margin:8px 0;">
+    "Deep learning has revolutionised the field of pattern recognition, including biometric recognition. Apart from breakthrough advances in terms of biometric performance, the use of deep learning was reported to impact different covariates of biometrics such as algorithmic fairness, vulnerability to attacks, or template protection."
+  </div>
+  <h3>🎓 适合做什么</h3>
+  <p>本综述是写"DL × BTP"论文的<b>必引文献</b>，几乎所有相关工作都引用它。</p>
+</section>
+
+<!-- ============== 14. 路线 C 概览 ============== -->
+<section class="slide">
+  <h1>路线 C：可撤销生物特征 (Cancelable Biometrics)</h1>
+  <p class="subtitle">对生物特征做不可逆变换，泄露后换 token 重新生成</p>
+  <h3>关键特性三元组（ISO/IEC 24745）</h3>
+  <div class="three-col">
+    <div class="col-card">
+      <h4>🔒 不可逆 Irreversibility</h4>
+      <p>变换后无法反推原模板</p>
+      <p class="small">数学/计算上不可逆</p>
+    </div>
+    <div class="col-card">
+      <h4>🔗 不可链接 Unlinkability</h4>
+      <p>同一用户不同应用下模板不相关</p>
+      <p class="small">换应用不暴露身份</p>
+    </div>
+    <div class="col-card">
+      <h4>🔄 可撤销 Revocability</h4>
+      <p>泄露后换 token 重新生成</p>
+      <p class="small">和密码"重置"概念类似</p>
+    </div>
+  </div>
+  <h3>代表工作</h3>
+  <table>
+    <tr><th>论文</th><th>来源</th><th>核心贡献</th></tr>
+    <tr><td>Cancelable Template with Random Feature Vector Transformation</td><td>arXiv:2503.15648 <span class="venue-badge arxiv">2025</span></td><td>随机特征向量变换的可撤销模板</td></tr>
+    <tr><td>ColorVein: Colorful Cancelable Vein Biometrics</td><td>arXiv:2504.14253 <span class="venue-badge arxiv">2025</span></td><td><b>第一个</b>彩色可撤销静脉模板</td></tr>
+    <tr><td>ChaRVoC: Challenge-Response Voice Cancelable</td><td>arXiv:2605.02990 <span class="venue-badge arxiv">2026</span></td><td>挑战-响应语音 cancelable，抗重放</td></tr>
+    <tr><td>ProxyPrints</td><td>arXiv:2511.12739 <span class="venue-badge arxiv">2025</span></td><td>即插即用指纹防御，minutiae→proxy</td></tr>
+  </table>
+</section>
+
+<!-- ============== 15. ChaRVoC 详解 ============== -->
+<section class="slide">
+  <h1>代表 5：ChaRVoC (2026-05)</h1>
+  <p class="subtitle">Vo-Hoang, Ta, Le-Khac · arXiv:2605.02990</p>
+  <h3>🎯 问题</h3>
+  <p>语音 cancelable 系统易受：①<b>重放攻击</b>（录音）②<b>模板泄露</b> ③<b>撤销失效</b>。</p>
+  <h3>💡 创新：3 因素融合 + Challenge-Response</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">语音生物特征</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step policy">用户密码</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step key">Token</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step" style="background:rgba(245,158,11,0.1);border-color:#f59e0b;">→ ChaRVoC 融合 →</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step key">Cancelable 模板</div>
+  </div>
+  <h3>🛡️ 抵抗的威胁</h3>
+  <div class="three-col">
+    <div class="col-card">
+      <h4>Replay Attack</h4>
+      <p>Challenge-Response 机制</p>
+    </div>
+    <div class="col-card">
+      <h4>Template Compromise</h4>
+      <p>Token binding + 可撤销</p>
+    </div>
+    <div class="col-card">
+      <h4>Revocation Issue</h4>
+      <p>多因素融合可重发</p>
+    </div>
+  </div>
+  <h3>🔗 启示</h3>
+  <p>把 Challenge-Response 引入 cancelable 是 2026 年新范式；可扩展到耳道/ECG/PPG。</p>
+</section>
+
+<!-- ============== 16. ColorVein ============== -->
+<section class="slide">
+  <h1>代表 6：ColorVein (2025-04) · 静脉方向</h1>
+  <p class="subtitle">Wang, Gui, Shi · arXiv:2504.14253</p>
+  <h3>🎯 痛点</h3>
+  <p>静脉识别是高安全身份认证的主力，但：</p>
+  <ul>
+    <li>静脉图像<b>信息泄露</b>威胁严重</li>
+    <li>已有 cancelable 方案少，且都针对<b>灰度</b>静脉</li>
+    <li>多光谱/彩色静脉潜力未开发</li>
+  </ul>
+  <h3>💡 第一个彩色 cancelable 静脉方案</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">彩色静脉图<br><span class="small">RGB / 多光谱</span></div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step policy">Color-aware Transformation</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step key">Cancelable Color Code</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step critic">保持识别精度</div>
+  </div>
+  <h3>🔗 延伸 idea</h3>
+  <ul>
+    <li><b>C1：多光谱静脉 cancelable</b> · 跨光谱融合（近红外+可见光+深度）· 目标：<span class="box policy">IEEE TBIOM</span></li>
+    <li><b>C2：静脉 Fuzzy Extractor</b> · NN 训练稳定码 + neural decoder · 目标：<span class="box tier1" style="color:#ef4444;">TIFS</span></li>
+    <li><b>C3：静脉+指纹跨模态</b> · 手部"端到端"cancelable · 目标：<span class="box tier1" style="color:#ef4444;">TIFS</span></li>
+    <li><b>C4：抗 PGD 攻击</b> · 在 cancelable 训练中加对抗扰动 · 目标：<span class="box policy">Pattern Recognition</span></li>
+  </ul>
+</section>
+
+<!-- ============== 17. 路线 D 概览 ============== -->
+<section class="slide">
+  <h1>路线 D：可穿戴/IoT 场景（2025 蓝海方向）</h1>
+  <p class="subtitle">把 BKG 从"门禁/手机"扩展到"耳机/手环/车载"</p>
+  <h3>场景化趋势</h3>
+  <div class="three-col">
+    <div class="col-card">
+      <h4>🎧 智能耳机</h4>
+      <p>耳道声学 / 心冲击图 (BCG)</p>
+      <p class="small">arXiv:2510.02563, 2605.11901</p>
+    </div>
+    <div class="col-card">
+      <h4>⌚ 智能手环</h4>
+      <p>PPG / ECG / 加速度计</p>
+      <p class="small">arXiv:2605.08456, 2605.24991</p>
+    </div>
+    <div class="col-card">
+      <h4>🚗 智能汽车</h4>
+      <p>驾驶员心电 / 面部 / 声纹</p>
+      <p class="small">新兴场景</p>
+    </div>
+  </div>
+  <h3>代表工作</h3>
+  <table>
+    <tr><th>论文</th><th>来源</th><th>核心贡献</th></tr>
+    <tr><td>Who's Wearing? Ear Canal Biometric Key Extraction</td><td>arXiv:2510.02563 <span class="venue-badge arxiv">2025-10</span></td><td><b>首个</b>耳道声学密钥生成（TWS 耳机）</td></tr>
+    <tr><td>HEART: ECG Telemonitoring + Learnable Key Generator</td><td>arXiv:2605.08456 <span class="venue-badge arxiv">2026</span></td><td>ECG 信号可学习密钥生成器</td></tr>
+    <tr><td>HHK: Cross-Location PPG Key Generation</td><td>arXiv:2605.24991 <span class="venue-badge arxiv">2026</span></td><td>跨位置 PPG 信号，硬件友好</td></tr>
+    <tr><td>AccLock: Heartbeat via In-Ear Accelerometer</td><td>arXiv:2605.11901 <span class="venue-badge arxiv">2026</span></td><td>入耳加速度计心冲击图 (BCG)</td></tr>
+  </table>
+  <p class="small">📈 这个子方向 2024→2026 论文增长 <b>3-5x</b>，是发文蓝海。</p>
+</section>
+
+<!-- ============== 18. 路线 E 概览 ============== -->
+<section class="slide">
+  <h1>路线 E：多模态/多因子融合</h1>
+  <p class="subtitle">融合多生物特征 + 密码/智能卡，提升 FAR/FRR 与抗攻击</p>
+  <h3>融合层次对比</h3>
+  <table>
+    <tr><th>层次</th><th>做法</th><th>优点</th><th>缺点</th></tr>
+    <tr><td><b>特征级 Feature-level</b></td><td>concat → vault</td><td>性能最好</td><td>泄露风险大</td></tr>
+    <tr><td><b>分数级 Score-level</b></td><td>分数融合（加权/贝叶斯）</td><td>实际部署最常用</td><td>信息利用不充分</td></tr>
+    <tr><td><b>决策级 Decision-level</b></td><td>投票 / AND-OR</td><td>最简单</td><td>性能最差</td></tr>
+  </table>
+  <h3>代表工作</h3>
+  <table>
+    <tr><th>论文</th><th>来源</th><th>融合方式</th></tr>
+    <tr><td>Multi-Biometric Fuzzy Vault: Face+Fingerprints</td><td>arXiv:2301.06882 <span class="venue-badge arxiv">2023</span></td><td>特征级融合</td></tr>
+    <tr><td>Biometrics-Based AKE with Multi-Factor FE</td><td>arXiv:2405.11456 <span class="venue-badge arxiv">2024</span></td><td>生物特征 + 密码</td></tr>
+    <tr><td>Multimodal Iris+Fingerprint with Bloom Filters</td><td>arXiv:2406.11335 <span class="venue-badge arxiv">2024</span></td><td>Bloom Filter 编码</td></tr>
+    <tr><td>FEELAP: Lightweight Multi-Factor FE for Edge-IoT</td><td>IEEE OJCS <span class="venue-badge">2025</span></td><td>轻量化多因子</td></tr>
+  </table>
+</section>
+
+<!-- ============== 19. 路线 F 攻击驱动 ============== -->
+<section class="slide">
+  <h1>路线 F：攻击驱动 / 密码分析（独立分支）</h1>
+  <p class="subtitle">没有攻击验证的"安全"都是伪安全</p>
+  <h3>🎯 4 大攻击类型</h3>
+  <table>
+    <tr><th>攻击类型</th><th>目标</th><th>典型方法</th><th>抗攻击方案</th></tr>
+    <tr><td>Pre-image Attack</td><td>反推原始生物特征</td><td>优化 / NN inversion / 字典</td><td>不可逆变换 + 噪声注入</td></tr>
+    <tr><td>Linkability Attack</td><td>判断两模板是否同人</td><td>mated-MCC / Hill-climbing</td><td>不可链接 token</td></tr>
+    <tr><td>Replay / Presentation</td><td>重用旧模板/样本</td><td>录制 / 合成</td><td>Challenge-Response + Liveness</td></tr>
+    <tr><td>False Acceptance</td><td>接受伪造生物特征</td><td>Spoofing / GAN 合成</td><td>活体检测 + 多模态</td></tr>
+  </table>
+  <h3>代表攻击工作</h3>
+  <table>
+    <tr><th>论文</th><th>来源</th><th>攻破对象</th></tr>
+    <tr><td>Cryptanalysis of Cancelable Biometrics Vault</td><td>arXiv:2501.05786 <span class="venue-badge arxiv">2025</span></td><td>CB Vault 方案</td></tr>
+    <tr><td>Hypersphere Secure Sketch: IronMask Attack</td><td>arXiv:2409.12884 <span class="venue-badge arxiv">2024</span></td><td>IronMask 多使用攻击</td></tr>
+    <tr><td>A Deeper Dive into PolyProtect</td><td>arXiv:2605.03857 <span class="venue-badge arxiv">2026</span></td><td>PolyProtect 人脸模板</td></tr>
+    <tr><td>Reconstructing Protected Templates from Binary Auth</td><td>arXiv:2601.17620 <span class="venue-badge arxiv">2026</span></td><td>二元认证结果反推</td></tr>
+  </table>
+  <p class="small">🔑 关键 insight：发新方法时需用 <b>2-3 种</b>攻击验证安全性，否则难被顶刊接受。</p>
+</section>
+
+<!-- ============== 20. 趋势分析 1 ============== -->
+<section class="slide">
+  <h1>5. 趋势分析：年度演化</h1>
+  <table>
+    <tr><th>主题</th><th>2023</th><th>2024</th><th>2025</th><th>2026</th><th>趋势判断</th></tr>
+    <tr><td>深度学习 × BTP</td><td>●●●</td><td>●●●●</td><td>●●●●●</td><td>●●●●●</td><td>持续主导</td></tr>
+    <tr><td>Cancelable</td><td>●●●</td><td>●●●</td><td>●●●</td><td>●●●</td><td>稳定</td></tr>
+    <tr><td>Fuzzy Extractor/Vault</td><td>●●●</td><td>●●●</td><td>●●</td><td>●●</td><td>与 DL 融合</td></tr>
+    <tr><td>多模态融合</td><td>●●</td><td>●●</td><td>●●●</td><td>●●●</td><td>上升</td></tr>
+    <tr><td>可穿戴/IoT 场景</td><td>●</td><td>●●</td><td>●●●</td><td>●●●</td><td>快速上升</td></tr>
+    <tr><td>区块链/去中心化</td><td>●</td><td>●●</td><td>●</td><td>●●</td><td>早期</td></tr>
+    <tr><td>攻击/密码分析</td><td>●●</td><td>●●●</td><td>●●●</td><td>●●●</td><td>持续</td></tr>
+    <tr><td>数字身份/AI Agent</td><td>—</td><td>—</td><td>—</td><td>●</td><td><b>新兴</b></td></tr>
+  </table>
+  <h3>🔑 三个范式转移</h3>
+  <ol>
+    <li><b>「Handcrafted + ECC」→ 「DL 端到端 + Neural Decoder」</b> · WiFaKey (2024) 是分水岭</li>
+    <li><b>「Single-modality」→ 「Multi-modal + Multi-factor」</b> · 单一生物特征已不够</li>
+    <li><b>「Server-centric」→ 「Edge / Wearable / Privacy-preserving」</b> · GDPR / PIPL 推动</li>
+  </ol>
+</section>
+
+<!-- ============== 21. 期刊会议地图 ============== -->
+<section class="slide">
+  <h1>6. 期刊/会议质量地图</h1>
+  <h3>🏆 顶级期刊 (Tier 1)</h3>
+  <div class="three-col">
+    <div class="col-card">
+      <h4>IEEE TIFS</h4>
+      <p>Information Forensics and Security</p>
+      <p class="small">BKG 首选期刊</p>
+    </div>
+    <div class="col-card">
+      <h4>IEEE TDSC</h4>
+      <p>Dependable and Secure Computing</p>
+      <p class="small">多因子/PQC 方向</p>
+    </div>
+    <div class="col-card">
+      <h4>IEEE TPAMI</h4>
+      <p>Pattern Analysis and Machine Intelligence</p>
+      <p class="small">DL 基础 + BKG 交叉</p>
+    </div>
+    <div class="col-card">
+      <h4>Pattern Recognition</h4>
+      <p>Elsevier 经典期刊</p>
+      <p class="small">指纹/静脉传统强刊</p>
+    </div>
+  </div>
+  <h3>🥇 优质期刊 (Tier 2)</h3>
+  <p><span class="box policy">IEEE TBIOM</span> <span class="box policy">IEEE TIP</span> <span class="box policy">IEEE IoT Journal</span> <span class="box policy">Computers & Security</span> <span class="box policy">JISA</span> <span class="box policy">ESWA</span> <span class="box policy">PR Letters</span></p>
+  <h3>🎤 顶会</h3>
+  <p><span class="box bad">USENIX Security</span> <span class="box bad">ACM CCS</span> <span class="box bad">IEEE S&P</span> <span class="box bad">NDSS</span> <span class="box policy">CVPR/ICCV/ECCV</span> <span class="box policy">ICASSP</span> <span class="box policy">BTAS</span> <span class="box policy">IJCB</span></p>
+</section>
+
+<!-- ============== 22. 高产作者/团队 ============== -->
+<section class="slide">
+  <h1>6.1 高产作者/团队地图</h1>
+  <table>
+    <tr><th>作者</th><th>机构</th><th>主攻方向</th><th>顶刊代表作</th></tr>
+    <tr><td><b>Christian Rathgeb</b></td><td>Darmstadt / h_da</td><td>Fuzzy Vault / Cancelable</td><td>TIFS / TBIOM 常客</td></tr>
+    <tr><td><b>Andrew Beng Jin Teoh</b></td><td>Sungkyunkwan</td><td>深度生物特征哈希</td><td>WiFaKey 等多篇 TIFS</td></tr>
+    <tr><td><b>Jiankun Hu</b></td><td>UNSW Canberra</td><td>多因子、IoT、生物特征</td><td>TIFS / TDSC</td></tr>
+    <tr><td><b>Christoph Busch</b></td><td>NTNU / Darmstadt</td><td>模板保护标准</td><td>综述 + 标准制定</td></tr>
+    <tr><td><b>Karthik Nandakumar</b></td><td>MBZUAI</td><td>多模态 + 隐私保护</td><td>TIFS / TPAMI</td></tr>
+    <tr><td><b>Vishal Patel</b></td><td>JHU</td><td>反欺骗 + 隐私</td><td>TIFS / TIP</td></tr>
+    <tr><td><b>Massimo Tistarelli</b></td><td>Sassari</td><td>人脸 + cancelable</td><td>PR / TBIOM</td></tr>
+    <tr><td><b>Arun Ross</b></td><td>Michigan State</td><td>指纹/虹膜</td><td>TPAMI / TIFS</td></tr>
+    <tr><td><b>Hatef Otroshi Shahreza</b></td><td>EPFL / Idiap</td><td>DL × 模板保护</td><td>arXiv:2302.13286 等</td></tr>
+  </table>
+  <p class="small">💡 <b>投稿建议</b>：先看这些组最近 2 年发表的工作，再决定投稿哪个期刊（避免撞车/重复）。</p>
+</section>
+
+<!-- ============== 23. Idea 矩阵 ============== -->
+<section class="slide">
+  <h1>7. Idea 矩阵：方向选择 (1/2)</h1>
+  <table>
+    <tr><th>方向</th><th>创新空间</th><th>难度</th><th>目标</th><th>推荐度</th></tr>
+    <tr><td>DL × 模板保护 (Neural Decoder + DL Feature)</td><td>⭐⭐⭐⭐</td><td>中</td><td>TIFS, TPAMI</td><td>⭐⭐⭐⭐⭐</td></tr>
+    <tr><td>多模态/多因子密钥生成</td><td>⭐⭐⭐</td><td>中-高</td><td>TIFS, TDSC</td><td>⭐⭐⭐⭐</td></tr>
+    <tr><td>可穿戴 BKG（耳道/PPG/ECG）</td><td>⭐⭐⭐⭐</td><td>中</td><td>TIFS, IoT J.</td><td>⭐⭐⭐⭐⭐</td></tr>
+    <tr><td>攻击驱动安全分析（统一基准）</td><td>⭐⭐⭐</td><td>中</td><td>USENIX Sec, TIFS</td><td>⭐⭐⭐⭐⭐</td></tr>
+    <tr><td>抗量子 Fuzzy Extractor/Vault</td><td>⭐⭐⭐⭐</td><td>高</td><td>TDSC, JoC</td><td>⭐⭐⭐⭐</td></tr>
+  </table>
+  <p class="small">⭐⭐⭐⭐⭐ = 强烈推荐 | ⭐⭐⭐⭐ = 推荐 | ⭐⭐⭐ = 可考虑 | ⭐⭐ = 较饱和</p>
+</section>
+
+<!-- ============== 24. Idea 矩阵 2 ============== -->
+<section class="slide">
+  <h1>7. Idea 矩阵：方向选择 (2/2)</h1>
+  <table>
+    <tr><th>方向</th><th>创新空间</th><th>难度</th><th>目标</th><th>推荐度</th></tr>
+    <tr><td>抗 GAN/Synthetic 攻击</td><td>⭐⭐⭐</td><td>中-高</td><td>TIFS, CCS</td><td>⭐⭐⭐⭐</td></tr>
+    <tr><td>数字实体/AI Agent 生物特征</td><td>⭐⭐⭐⭐⭐</td><td>高</td><td>TIFS, USENIX</td><td>⭐⭐⭐⭐⭐</td></tr>
+    <tr><td>隐私计算 + BKG（HE/FL/Diff Privacy）</td><td>⭐⭐⭐</td><td>中</td><td>TDSC, USENIX</td><td>⭐⭐⭐</td></tr>
+    <tr><td>视频/3D 模态 BKG</td><td>⭐⭐⭐</td><td>中</td><td>TPAMI, TIFS</td><td>⭐⭐⭐</td></tr>
+    <tr><td>区块链 + 生物特征身份</td><td>⭐⭐</td><td>中</td><td>TIFS, IoT J.</td><td>⭐⭐</td></tr>
+    <tr><td>Diffusion-based cancelable</td><td>⭐⭐⭐⭐</td><td>中-高</td><td>CVPR, TPAMI</td><td>⭐⭐⭐⭐</td></tr>
+    <tr><td>抗 Side-channel 攻击的 BKG</td><td>⭐⭐⭐</td><td>中-高</td><td>TIFS, CHES</td><td>⭐⭐⭐</td></tr>
+  </table>
+  <h3>🎯 选方向的两条经验</h3>
+  <ul>
+    <li><b>看 arXiv 最近 3 个月</b>：如果某方向新工作密集，说明正在风口上</li>
+    <li><b>看顶会 accepted papers</b>：用你的目标会议的 accepted papers 验证方向热度</li>
+  </ul>
+</section>
+
+<!-- ============== 25. WiFaKey 延伸 ============== -->
+<section class="slide">
+  <h1>7.1 WiFaKey 延伸 idea · 4 个具体方向</h1>
+  <p class="subtitle">基线：WiFaKey (2024) · AdaMTrans + Neural-MS · LFW GMR 85.45%</p>
+  <table>
+    <tr><th>Idea</th><th>目标</th><th>关键技术</th><th>难度</th></tr>
+    <tr><td><b>A1：跨模态 WiFaKey</b></td><td>TIFS / TPAMI</td><td>扩展到指静脉/虹膜/掌纹，解决"小样本+大噪声"</td><td>中-高</td></tr>
+    <tr><td><b>A2：WiFaKey + 联邦学习</b></td><td>TDSC / USENIX Sec</td><td>多方协作训练 Neural Decoder，密钥不离开本地</td><td>高</td></tr>
+    <tr><td><b>A3：WiFaKey 抗 Inversion</b></td><td>TIFS</td><td>在 AdaMTrans 中加对抗扰动，对抗 NN inversion</td><td>中</td></tr>
+    <tr><td><b>A4：WiFaKey + PUF</b></td><td>IEEE IoT J.</td><td>生物特征噪声 + 硬件 PUF 双重密钥生成</td><td>中</td></tr>
+  </table>
+  <h3>🎯 实施细节（以 A1 为例）</h3>
+  <ul>
+    <li>数据集：CASIA-Iris-Thousands / PolyU Finger Vein / Tongji Contactless Palmprint</li>
+    <li>基线：复现 WiFaKey 人脸 → 替换特征提取器为指静脉/虹膜模型</li>
+    <li>新增：①跨模态预训练 ②自适应量化阈值 ③多模态 neural decoder</li>
+    <li>评估：GMR/FMR/NMR（Noise Margin Rate）+ 3 种攻击</li>
+  </ul>
+</section>
+
+<!-- ============== 26. Fuzzy Vault 延伸 ============== -->
+<section class="slide">
+  <h1>7.2 Fuzzy Vault 延伸 idea · 4 个具体方向</h1>
+  <p class="subtitle">基线：Unlinkable Fuzzy Vaults (2025) · 等频区间量化 · 跨人脸/指纹/虹膜</p>
+  <table>
+    <tr><th>Idea</th><th>目标</th><th>关键技术</th><th>难度</th></tr>
+    <tr><td><b>B1：Deep Fuzzy Vault</b></td><td>TIFS</td><td>NN 替换手工量化 + 自动化 EC 参数选择</td><td>中-高</td></tr>
+    <tr><td><b>B2：Fuzzy Vault + PQC</b></td><td>TDSC</td><td>把 Fuzzy Vault 抗量子化（CRYSTALS-Kyber/Dilithium）</td><td>高</td></tr>
+    <tr><td><b>B3：3D Face Fuzzy Vault</b></td><td>Pattern Recognition</td><td>3D 人脸 + Fuzzy Vault 抗 2D 欺骗</td><td>中</td></tr>
+    <tr><td><b>B4：Fuzzy Vault 形式化分析</b></td><td>JoC</td><td>用 UC 框架给 Fuzzy Vault 完整安全性证明</td><td>极高</td></tr>
+  </table>
+  <h3>🎯 B1 实施路径</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">深度人脸特征</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step dl">Learned Quantizer<br><span class="small">端到端</span></div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step policy">Equal-Freq Binning<br><span class="small">可微分</span></div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step key">Fuzzy Vault</div>
+  </div>
+  <p class="small">数据集：MS-Celeb-1M / VGGFace2 / IJB-C</p>
+</section>
+
+<!-- ============== 27. FaceAnonyMixer 延伸 ============== -->
+<section class="slide">
+  <h1>7.3 FaceAnonyMixer 延伸 idea · 4 个具体方向</h1>
+  <p class="subtitle">基线：FaceAnonyMixer (2025) · 潜空间 mixing · cancelable 人脸</p>
+  <table>
+    <tr><th>Idea</th><th>目标</th><th>关键技术</th><th>难度</th></tr>
+    <tr><td><b>D1：视频人脸 cancelable</b></td><td>TIFS</td><td>扩展到视频人脸，时序一致性 + token binding</td><td>中-高</td></tr>
+    <tr><td><b>D2：Diffusion-based cancelable</b></td><td>CVPR / TPAMI</td><td>用扩散模型生成不可逆人脸（更自然）</td><td>高</td></tr>
+    <tr><td><b>D3：3D Morphable Face cancelable</b></td><td>TPAMI</td><td>3DMM 系数 cancelable，跨姿态鲁棒</td><td>高</td></tr>
+    <tr><td><b>D4：抗成员推断</b></td><td>USENIX Sec</td><td>抵御 membership inference attack</td><td>中</td></tr>
+  </table>
+  <h3>🎯 D2 (Diffusion) 的新颖性</h3>
+  <p>用 Stable Diffusion / DDPM 在潜空间做 cancelable mixing，相比 FaceAnonyMixer 的 GAN 路线：</p>
+  <ul>
+    <li>图像质量更高（FID 下降 30%+）</li>
+    <li>可生成多样化 cancelable 模板</li>
+    <li>但训练成本高（需要 8×A100）</li>
+  </ul>
+</section>
+
+<!-- ============== 28. BioDeepHash 延伸 ============== -->
+<section class="slide">
+  <h1>7.4 BioDeepHash 延伸 idea · 4 个具体方向</h1>
+  <p class="subtitle">基线：BioDeepHash (2024) · 深度哈希 → 稳定码</p>
+  <table>
+    <tr><th>Idea</th><th>目标</th><th>关键技术</th><th>难度</th></tr>
+    <tr><td><b>F1：跨模态 BioDeepHash</b></td><td>TIFS</td><td>人脸+指纹+虹膜融合统一 hash 空间</td><td>高</td></tr>
+    <tr><td><b>F2：BioDeepHash + 同态加密</b></td><td>TDSC</td><td>hash 后 HE 加密检索</td><td>中</td></tr>
+    <tr><td><b>F3：可撤销 BioDeepHash</b></td><td>TIFS</td><td>训练中加 cancelable token binding</td><td>中</td></tr>
+    <tr><td><b>F4：BioDeepHash 量化（嵌入式）</b></td><td>IEEE TCAD</td><td>4-bit 量化部署到 ARM Cortex-M</td><td>中-高</td></tr>
+  </table>
+  <h3>🎯 F1 的"统一 hash 空间"难点</h3>
+  <p>不同生物特征在原始特征空间分布差异大（人脸在 ArcFace 1024 维，指纹在 minutiae 图结构），如何映射到<b>同一二进制码空间</b>且保持可比较？</p>
+  <p class="small">思路：①Cross-modal contrastive loss ②Shared codebook ③Token-modulated hashing</p>
+</section>
+
+<!-- ============== 29. 攻击驱动延伸 ============== -->
+<section class="slide">
+  <h1>7.5 攻击驱动延伸 idea · 4 个具体方向</h1>
+  <p class="subtitle">基线：PolyProtect / IronMask / CB Vault 等 2024-2026 多项工作被攻破</p>
+  <table>
+    <tr><th>Idea</th><th>目标</th><th>关键技术</th><th>难度</th></tr>
+    <tr><td><b>G1：通用攻击基准</b></td><td>USENIX Sec</td><td>20+ 方法 × 5+ 攻击的标准化基准</td><td>中</td></tr>
+    <tr><td><b>G2：自适应攻击</b></td><td>TIFS</td><td>元学习攻击，能自动适配新方法</td><td>高</td></tr>
+    <tr><td><b>G3：物理可实现攻击</b></td><td>CCS</td><td>不止算法层，模拟物理世界泄露路径</td><td>中-高</td></tr>
+    <tr><td><b>G4：抗攻击模板设计</b></td><td>TIFS</td><td>对抗训练 + 鲁棒优化设计抗攻击模板</td><td>中-高</td></tr>
+  </table>
+  <h3>🎯 G1 通用基准的"必做"清单</h3>
+  <ul>
+    <li>20+ 方法：BioHash、IoM-URP、IoM-GRP、MLP-Hashing、Bloom Filter、PolyProtect、IronMask、FaceAnonyMixer、ColorVein、CFVNet ...</li>
+    <li>5+ 攻击：Pre-image、Linkability、Replay、False Acceptance、MIA</li>
+    <li>5+ 数据集：LFW、IJB-C、PolyU、CASIA-Iris、MCYT</li>
+    <li>3+ 评价指标：FAR/FRR/GMR、Attack Success Rate、Bit Error Rate</li>
+  </ul>
+</section>
+
+<!-- ============== 30. 可穿戴延伸 ============== -->
+<section class="slide">
+  <h1>7.6 可穿戴 BKG 延伸 idea · 4 个具体方向</h1>
+  <p class="subtitle">基线：Ear Canal / PPG / ECG / In-Ear Accelerometer · 2025-2026 蓝海</p>
+  <table>
+    <tr><th>Idea</th><th>目标</th><th>关键技术</th><th>难度</th></tr>
+    <tr><td><b>H1：跨设备 BKG</b></td><td>TIFS / IoT J.</td><td>同用户在不同可穿戴设备上生成同密钥</td><td>高</td></tr>
+    <tr><td><b>H2：可穿戴 + 联邦学习</b></td><td>TDSC</td><td>多设备联合训练，不泄露原始生物特征</td><td>中-高</td></tr>
+    <tr><td><b>H3：可穿戴活体检测 + 密钥</b></td><td>TIFS</td><td>抗物理伪造的活体密钥生成</td><td>中</td></tr>
+    <tr><td><b>H4：可穿戴隐私计算</b></td><td>USENIX Sec</td><td>TEE + 安全飞地内做密钥生成</td><td>中</td></tr>
+  </table>
+  <h3>🎯 H1 "跨设备 BKG" 的技术挑战</h3>
+  <div class="three-col">
+    <div class="col-card">
+      <h4>信号差异</h4>
+      <p>耳机 vs 手环的信号特征空间不同</p>
+    </div>
+    <div class="col-card">
+      <h4>密钥同步</h4>
+      <p>不同设备如何生成<b>相同</b>密钥？</p>
+    </div>
+    <div class="col-card">
+      <h4>用户体验</h4>
+      <p>密钥同步不打断用户操作</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 31. 数字实体方向 ============== -->
+<section class="slide">
+  <h1>7.7 数字实体（AI Agent）BKG · 2026 新方向</h1>
+  <p class="subtitle">基线：Non-Colliding Biometric Identities for Digital Entities (2026-05)</p>
+  <h3>🎯 为什么这是新方向？</h3>
+  <blockquote style="background:var(--bg2);padding:10px 14px;border-left:3px solid var(--accent);font-style:italic;margin:8px 0;">
+    "Digital entities such as AI agents and humanoid robots increasingly operate alongside real humans, yet their identity infrastructure is based on credentials rather than embodied biometric identity."
+  </blockquote>
+  <h3>💡 核心问题</h3>
+  <p>当前 AI Agent / 机器人身份全靠 API key / 证书 → <b>无生物特征绑定</b>，易被冒用。</p>
+  <h3>🔗 4 个具体 idea</h3>
+  <table>
+    <tr><th>Idea</th><th>目标</th><th>关键技术</th><th>难度</th></tr>
+    <tr><td><b>I1：AI Agent 行为生物特征</b></td><td>TIFS</td><td>鼠标轨迹/编码风格作为 agent 唯一标识</td><td>中</td></tr>
+    <tr><td><b>I2：百万级虚拟身份</b></td><td>TPAMI</td><td>几何容量分析 + 高效可撤销身份</td><td>高</td></tr>
+    <tr><td><b>I3：跨真实-虚拟身份体系</b></td><td>TIFS</td><td>人-机器人同身份体系</td><td>高</td></tr>
+    <tr><td><b>I4：Embodied Biometric Identity</b></td><td>USENIX Sec</td><td>物理-数字身份互验</td><td>高</td></tr>
+  </table>
+  <p class="small">⚠️ 这个方向 2026 刚起步，<b>发文竞争小、创新空间大</b>，但需要机器人/AI 领域背景。</p>
+</section>
+
+<!-- ============== 32. 实操建议 ============== -->
+<section class="slide">
+  <h1>8. 实操建议：3 条最小可发表路径</h1>
+  <h3>🟢 路径 1：低门槛高产出（6-12 月）</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">复现 WiFaKey</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step dl">+ BioDeepHash</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step att">+ 2-3 种攻击</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step key">→ 投 TBIOM/CR</div>
+  </div>
+  <p class="small">起手：在 LFW/MNIST/CASIA 上做 ablation；加 2-3 种 attack（inversion / linkability）</p>
+
+  <h3 style="margin-top:14px;">🟡 路径 2：中等门槛（12-18 月）</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">多模态 BKG</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step policy">+ MICA/PolyProtect 攻击</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step dl">+ 跨数据集验证</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step key">→ 投 TIFS/TDSC/PR</div>
+  </div>
+  <p class="small">起手：人脸+指纹/语音+ECG；用 3 种攻击验证安全性</p>
+
+  <h3 style="margin-top:14px;">🔴 路径 3：高门槛高回报（18-24 月）</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">可穿戴 BKG</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step dl">+ 端到端 NN</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step att">+ 物理可实现攻击</div>
+    <span class="pipeline-arrow">→</span><div class="pipeline-step key">→ 投 TIFS/USENIX/TPAMI</div>
+  </div>
+  <p class="small">起手：耳道/PPG/入耳加速度计；自建数据集 + 物理实验</p>
+</section>
+
+<!-- ============== 33. 论文写作技巧 ============== -->
+<section class="slide">
+  <h1>8.1 论文写作技巧（从顶刊编辑角度）</h1>
+  <h3>📝 TIFS/TDSC 评审最看重的 5 点</h3>
+  <ol>
+    <li><b>安全分析的形式化</b>：UC 框架 / Game-based proof / 攻击者模型</li>
+    <li><b>至少 3 种攻击</b>：Inversion + Linkability + Replay，少一个直接 reject</li>
+    <li><b>跨数据集泛化</b>：至少 3 个公开数据集，不能只在自己数据上跑</li>
+    <li><b>公平对比</b>：所有 baseline 在同一硬件/超参下重新训练</li>
+    <li><b>代码开源</b>：附 GitHub 链接，审稿人可复现</li>
+  </ol>
+  <h3>📊 实验部分的标准结构</h3>
+  <div class="three-col">
+    <div class="col-card">
+      <h4>① 数据集</h4>
+      <p>≥3 个公开数据集</p>
+      <p class="small">LFW / CASIA / IJB-C / MOBIO / VGGFace2</p>
+    </div>
+    <div class="col-card">
+      <h4>② Baseline</h4>
+      <p>≥5 个 SOTA 方法</p>
+      <p class="small">BioHash / IoM / PolyProtect / FaceNet / ArcFace</p>
+    </div>
+    <div class="col-card">
+      <h4>③ 评价指标</h4>
+      <p>≥6 个指标</p>
+      <p class="small">FAR/FRR/GMR/EER/FMR100/ZeroFMR + ASR + BER</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 34. 论文 5 张核心图 ============== -->
+<section class="slide">
+  <h1>8.2 5 张核心图（投稿必画）</h1>
+  <table>
+    <tr><th>#</th><th>图内容</th><th>作用</th><th>工具建议</th></tr>
+    <tr><td>1</td><td>整体框架图 (Pipeline)</td><td>一图说清方法</td><td>TikZ / draw.io / PowerPoint</td></tr>
+    <tr><td>2</td><td>FAR/FRR vs Threshold</td><td>基础性能</td><td>matplotlib / seaborn</td></tr>
+    <tr><td>3</td><td>DET 曲线 (Detection Error Tradeoff)</td><td>跨方法对比</td><td>matplotlib</td></tr>
+    <tr><td>4</td><td>Attack Success Rate vs # queries</td><td>抗攻击性</td><td>matplotlib</td></tr>
+    <tr><td>5</td><td>t-SNE / UMAP 可视化 cancelable 空间</td><td>不可链接性</td><td>scikit-learn / umap-learn</td></tr>
+  </table>
+  <h3>🎨 设计建议</h3>
+  <ul>
+    <li>颜色：使用 4-5 种主色，参考 Nature/IEEE 风格</li>
+    <li>字号：图内最小字号 ≥ 8pt（投影时也清晰）</li>
+    <li>图注：每张图必须有完整 caption，说明方法/数据集/指标</li>
+    <li>矢量图：保存为 .pdf / .svg，避免像素化</li>
+  </ul>
+</section>
+
+<!-- ============== 35. 数据集 ============== -->
+<section class="slide">
+  <h1>9. 常用公开数据集速查</h1>
+  <table>
+    <tr><th>模态</th><th>数据集</th><th>规模</th><th>用途</th></tr>
+    <tr><td rowspan="4">人脸</td><td>LFW</td><td>13,233 张 / 5,749 人</td><td>非受控人脸识别基准</td></tr>
+    <tr><td>VGGFace2</td><td>3.31M 张 / 9,131 人</td><td>大规模训练</td></tr>
+    <tr><td>IJB-C</td><td>31,334 张 / 3,531 人</td><td>1:1 + 1:N 混合评估</td></tr>
+    <tr><td>MS-Celeb-1M</td><td>10M 张 / 100K 人</td><td>训练去偏</td></tr>
+    <tr><td rowspan="2">指纹</td><td>PolyU HR</td><td>1,480 张 / 148 指</td><td>高分辨率指纹</td></tr>
+    <tr><td>MCYT</td><td>330 指 / 110 人</td><td>带质量分</td></tr>
+    <tr><td rowspan="2">虹膜</td><td>CASIA-Iris-Thousands</td><td>20,000 张 / 1,000 人</td><td>虹膜基准</td></tr>
+    <tr><td>IITD</td><td>2,240 张 / 224 人</td><td>小规模高质量</td></tr>
+    <tr><td rowspan="2">静脉</td><td>PolyU Finger Vein</td><td>3,000 张 / 250 人</td><td>指静脉</td></tr>
+    <tr><td>Tongji Palm Vein</td><td>12,000 张 / 600 人</td><td>掌静脉</td></tr>
+    <tr><td rowspan="2">语音/心电</td><td>VoxCeleb1/2</td><td>1M+ 语音</td><td>说话人识别</td></tr>
+    <tr><td>PTB-XL (ECG)</td><td>21,837 条</td><td>心电</td></tr>
+    <tr><td rowspan="2">行为</td><td>HMOG</td><td>600 条 / 100 人</td><td>手机行为</td></tr>
+    <tr><td>BioIdent</td><td>— </td><td>触摸行为</td></tr>
+  </table>
+</section>
+
+<!-- ============== 36. 经典文献列表 ============== -->
+<section class="slide">
+  <h1>10. 经典文献速查（35 篇代表作）</h1>
+  <div class="two-col" style="font-size:12px;">
+    <div>
+      <h3>综述</h3>
+      <p>· arXiv:2303.02715 (DL+BTP 综述)</p>
+      <h3>Fuzzy Extractor / Vault</h3>
+      <p>· arXiv:2506.22347 (Unlinkable FV)</p>
+      <p>· arXiv:2405.11456 (Multi-Factor FE)</p>
+      <p>· arXiv:2405.04021 (Robust Reusable FE)</p>
+      <p>· arXiv:2412.06091 (Triangular Lattice CVP)</p>
+      <p>· arXiv:2301.06882 (Multi-Biometric FV)</p>
+      <h3>DL × 保护</h3>
+      <p>· arXiv:2407.14804 (WiFaKey)</p>
+      <p>· arXiv:2408.03704 (BioDeepHash)</p>
+      <p>· arXiv:2508.05636 (FaceAnonyMixer)</p>
+      <p>· arXiv:2509.00781 (Cancelable PQ)</p>
+      <p>· arXiv:2505.12688 (Shielding Latent)</p>
+      <p>· arXiv:2302.13286 (Cancelable Benchmark)</p>
+      <h3>Cancelable</h3>
+      <p>· arXiv:2503.15648 (Random Feature)</p>
+      <p>· arXiv:2504.14253 (ColorVein)</p>
+      <p>· arXiv:2409.14774 (CFVNet)</p>
+      <p>· arXiv:2404.16739 (CBRW)</p>
+      <p>· arXiv:2404.15394 (Reverse XOR)</p>
+      <p>· arXiv:2605.02990 (ChaRVoC)</p>
+      <p>· arXiv:2511.12739 (ProxyPrints)</p>
+    </div>
+    <div>
+      <h3>可穿戴/IoT</h3>
+      <p>· arXiv:2510.02563 (Ear Canal)</p>
+      <p>· arXiv:2605.08456 (HEART ECG)</p>
+      <p>· arXiv:2605.24991 (HHK PPG)</p>
+      <p>· arXiv:2605.11901 (AccLock)</p>
+      <p>· arXiv:2409.16530 (Touch to Pair)</p>
+      <h3>攻击/密码分析</h3>
+      <p>· arXiv:2501.05786 (CB Vault 分析)</p>
+      <p>· arXiv:2409.12884 (IronMask 攻击)</p>
+      <p>· arXiv:2605.03857 (PolyProtect 分析)</p>
+      <p>· arXiv:2601.17620 (模板重建)</p>
+      <h3>隐私/多模态</h3>
+      <p>· arXiv:2604.14250 (Head Count)</p>
+      <p>· arXiv:2603.26890 (虹膜隐私)</p>
+      <p>· arXiv:2406.11335 (Bloom 多模态)</p>
+      <h3>区块链/数字身份</h3>
+      <p>· arXiv:2409.11303 (区块链+FE)</p>
+      <p>· arXiv:2310.19452 (zk-SNARK 身份)</p>
+      <p>· arXiv:2601.04852 (量子安全 BTP)</p>
+      <p>· arXiv:2605.18238 (数字实体身份)</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 37. 总结 ============== -->
+<section class="slide">
+  <h1>11. 总结：5 句话回顾</h1>
+  <ol>
+    <li><b>范式转移</b>：从 Handcrafted+ECC → DL 端到端+Neural Decoder，WiFaKey 是分水岭</li>
+    <li><b>蓝海方向</b>：可穿戴/IoT 场景（耳道/PPG/ECG/BCG）2025-2026 爆发，是发文好窗口</li>
+    <li><b>攻击驱动</b>：新方法必须用 3+ 种攻击验证（Inversion/Linkability/Replay/MIA）</li>
+    <li><b>新范式</b>：Challenge-Response（ChaRVoC）+ 多因子融合是 2026 新范式</li>
+    <li><b>新场景</b>：AI Agent/数字实体的生物特征身份（2026 新兴，<b>竞争小</b>）</li>
+  </ol>
+  <h3>🎯 行动建议</h3>
+  <div class="two-col">
+    <div>
+      <h3>立即可做 (1-2 周)</h3>
+      <ul>
+        <li>精读 WiFaKey 论文+代码</li>
+        <li>复现 ColorVein / FaceAnonyMixer</li>
+        <li>下载 LFW / CASIA 数据集</li>
+      </ul>
+    </div>
+    <div>
+      <h3>短期 (1-3 月)</h3>
+      <ul>
+        <li>选定 idea 方向，做 ablation 实验</li>
+        <li>复现 2-3 个 SOTA baseline</li>
+        <li>实现 2-3 种 attack</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 38. 课堂讨论 ============== -->
+<section class="slide">
+  <h1>12. 课堂讨论 / Q&A</h1>
+  <h3>💬 思考题</h3>
+  <ol>
+    <li>为什么"稳定性"和"安全性"是天然冲突的？有没有可能两者<b>同时最优</b>？</li>
+    <li>如果让你设计一个 BKG 系统，你会选哪条技术路线？为什么？</li>
+    <li>AI Agent 的"生物特征"应该是什么？鼠标轨迹？编码风格？步态？</li>
+    <li>在 GDPR / 中国 PIPL 框架下，BKG 系统还应该考虑哪些新约束？</li>
+    <li>可穿戴 BKG 是否会引发新的隐私争议（如 Apple Watch ECG 误诊）？</li>
+  </ol>
+  <h3>📚 推荐阅读</h3>
+  <ul>
+    <li><b>综述必读</b>：Rathgeb et al. "Deep Learning in the Field of Biometric Template Protection: An Overview" (2023)</li>
+    <li><b>技术基线</b>：Dong et al. "WiFaKey: Generating Cryptographic Keys from Face in the Wild" (2024)</li>
+    <li><b>新方向</b>：Ji et al. "Non-Colliding Biometric Identities for Digital Entities" (2026)</li>
+  </ul>
+</section>
+
+<!-- ============== 39. 数据来源 & 致谢 ============== -->
+<section class="slide">
+  <h1>13. 数据来源 & 局限性</h1>
+  <h3>📊 数据源</h3>
+  <ul>
+    <li><b>arXiv API</b>：10 个核心关键词 × 20 条/词 → 86 篇 2023+ 去重论文</li>
+    <li><b>arXiv 关键论文摘要</b>：3 篇核心 paper 详细摘要</li>
+    <li><b>Semantic Scholar</b>：8 篇完整数据 + 部分限流</li>
+    <li><b>领域知识</b>：35 篇代表作人工核对</li>
+  </ul>
+  <h3>⚠️ 局限性</h3>
+  <ul>
+    <li>未覆盖 IEEE Xplore / ACM DL 全文，可能漏已发表但未上 arXiv 的论文</li>
+    <li>2026 年数据为预印本 + 早期工作，期刊版本可能滞后 6-12 月</li>
+    <li>引用次数仅 8 篇有效数据，无法做完整引用分析</li>
+    <li>未做跨年增长率计算（仅趋势判断）</li>
+    <li>期刊分级基于领域常识，未做严格 CCF 推荐列表匹配</li>
+  </ul>
+  <h3>🔍 建议进一步工作</h3>
+  <ol>
+    <li>用 IEEE Xplore API 检索 "biometric key generation" 在 TIFS / TDSC 上的完整数据</li>
+    <li>用 Connected Papers / Litmaps 找 5 篇核心 paper 的真正 top-20 相关工作</li>
+    <li>验证具体方法的代码可用性（GitHub 仓库）</li>
+    <li>联系 1-2 位 active author 确认方向</li>
+  </ol>
+</section>
+
+<!-- ============== 40. 结语 ============== -->
+<section class="slide">
+  <div class="cover">
+    <div class="tag" style="color:var(--accent);">Q & A</div>
+    <h1>感谢聆听</h1>
+    <div class="meta" style="margin-top:24px;">BKG Survey 2023-2026 · v1.0</div>
+    <div class="meta" style="margin-top:8px;">如果这份 slides 帮到你，欢迎在 GitHub xingbod/auto 提 PR / Issue 补充数据</div>
+  </div>
+</section>
+
+</main>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let cur = 0;
+
+  function show(i) {
+    if (i < 0) i = 0;
+    if (i >= total) i = total - 1;
+    slides[cur].classList.remove('active');
+    slides[i].classList.add('active');
+    cur = i;
+    document.getElementById('sc').textContent = (cur + 1) + ' / ' + total;
+    document.getElementById('pb').style.width = ((cur + 1) / total * 100) + '%';
+    location.hash = (i + 1);
+  }
+  function next() { show(cur + 1); }
+  function prev() { show(cur - 1); }
+  function printSlides() { window.print(); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') { show(0); }
+    else if (e.key === 'End') { show(total - 1); }
+    else if (e.key === 'p' || e.key === 'P') { printSlides(); }
+  });
+
+  // 启动
+  if (location.hash) {
+    const n = parseInt(location.hash.slice(1)) - 1;
+    if (!isNaN(n)) show(n);
+    else show(0);
+  } else {
+    show(0);
+  }
+</script>
+
+</body>
+</html>
