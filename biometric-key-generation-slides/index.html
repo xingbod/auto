@@ -1302,6 +1302,843 @@
   </ul>
 </section>
 
+<!-- ============== 14.0 大模型×智能体 新章节封面 ============== -->
+<section class="slide">
+  <div class="cover">
+    <div class="tag" style="color:var(--key);">🆕 2026 视角 · 30+ 张深度内容</div>
+    <h1 style="color:var(--accent);">Part 8</h1>
+    <h1>大模型 × 智能体时代</h1>
+    <h1 style="font-size:32px;color:var(--key);">BKG 的新范式</h1>
+    <div class="meta" style="margin-top:24px;">10 个新方向 · 1 条深挖研究路线 · 33 张 slides</div>
+    <div class="meta" style="margin-top:12px;">承接前 38 张的"BKG 综述 2023-2026"基础</div>
+  </div>
+</section>
+
+<!-- ============== 14.1 为什么是 2026 的前沿 ============== -->
+<section class="slide">
+  <h1>14.1 为什么 2026 才真正是 BKG 的拐点？</h1>
+  <p class="subtitle">三条独立曲线在 2026 第一次相交,形成"完美风暴"</p>
+  <div class="three-col" style="margin-top:12px;">
+    <div class="col-card">
+      <h4>① 多模态基础模型成熟</h4>
+      <p><span class="box loss">CLIP / ImageBind / EVA-CLIP</span> 让跨模态对齐成本归零</p>
+      <p class="small">之前 5 年卡在"人脸 + 声纹如何融",现在直接 latent concat 即可</p>
+    </div>
+    <div class="col-card">
+      <h4>② 智能体框架商品化</h4>
+      <p><span class="box policy">LangGraph / AutoGen / MCP</span> 把多步决策封装成 1 行代码</p>
+      <p class="small">红队 agent / 持续认证 agent 从研究变成 SDK 调用</p>
+    </div>
+    <div class="col-card">
+      <h4>③ TEE + FHE 硬件下沉</h4>
+      <p><span class="box bio">Apple Secure Enclave / NVIDIA H100 CC</span> 让密文计算 &lt; 100ms</p>
+      <p class="small">之前"理论可行工程不行",现在"工程可控可量产"</p>
+    </div>
+  </div>
+  <h3 style="margin-top:18px;">🎯 BKG 的老难题,这三件事能不能联手解决？</h3>
+  <p>本节给出一个"是"的论证 + 10 条具体路径 + 1 条深挖路线。</p>
+</section>
+
+<!-- ============== 14.2 BKG 本质再思考 ============== -->
+<section class="slide">
+  <h1>14.2 BKG 本质再思考（不是新结论,是新视角）</h1>
+  <div class="tree" style="margin-top:10px;">BKG 核心 = 三个互相矛盾的目标在赛跑
+
+  ① 同一生物 → 同一密钥   (Robustness)
+     · 同指两次指纹像素级不同
+     · 同一句话声纹采样不同
+     · 同一张脸表情/光照/年龄不同
+
+  ② 不同生物 → 完全无关   (Pseudo-randomness)
+     · 用户 A 与 B 密钥之间无相关性
+     · 不能从用户 A 推出用户 B
+     · 跨数据库不可链接
+
+  ③ 公开 helper → 零泄露   (Privacy)
+     · helper data 必须公开 (重建需要)
+     · 公开 = 任何人都能算 = 攻击面
+     · 严格意义上"可证零泄露"几乎不可能</div>
+  <h3>30 年来的妥协</h3>
+  <p>所有方案都在 <span class="highlight">三角中取两点</span>:Fuzzy Vault 取 ①③, BioHashing 取 ②③, 经典 Fuzzy Extractor 取 ①② —— <b>没有方案能三角同时最优</b>。</p>
+  <h3>大模型能改变什么？</h3>
+  <p>不是解数学,是用 <b>更强的表示</b> 让"取两点"的天花板大幅提高,接近第三方。</p>
+</section>
+
+<!-- ============== 14.3 三角不可能可视化 ============== -->
+<section class="slide">
+  <h1>14.3 三角不可能 (Impossible Trinity) 可视化</h1>
+  <pre class="tree" style="font-size:12px;text-align:center;line-height:1.3;padding:6px 10px;">
+                  隐私
+                (Helper 零泄露)
+                    ▲
+                   /│\
+                  / │ \
+                 /  │  \
+                /   │   \
+               /  经典  ③ \
+              / Fuzzy    \  \
+             /  Vault+ECC \  \
+            ▼─────────────▼
+       鲁棒性 ◀──────────▶ 熵
+     (同指=同密钥)    (均匀+足长)
+
+  经典方案: 取两点  ·  2026 范式: 三条边都向外推
+</pre>
+  <h3>三条"边"分别被什么推？</h3>
+  <ul class="compact">
+    <li><span class="box key">鲁棒性边</span> ← Neural Decoder / 端到端可微纠错(取代 BCH/RS 硬解码)</li>
+    <li><span class="box critic">熵边</span> ← 多模态基础模型(把脸+声+笔迹的熵叠加)</li>
+    <li><span class="box bio">隐私边</span> ← 信息瓶颈 IB + DP-SGD + TEE 三件套</li>
+  </ul>
+</section>
+
+<!-- ============== 14.4 大模型破局三个支点 ============== -->
+<section class="slide">
+  <h1>14.4 大模型破局的三个支点</h1>
+  <div class="two-col">
+    <div class="col-card">
+      <h4>支点 ①: 表示升级</h4>
+      <p>从手工特征 (Gabor/MFCC/minutiae) → <span class="box loss">深度嵌入</span></p>
+      <p>好处:同一类生物的"稳定分量"被神经网络自动找到,人工规则不用瞎猜</p>
+      <p class="small">代表: WiFaKey / BioDeepHash / FaceAnonyMixer</p>
+    </div>
+    <div class="col-card">
+      <h4>支点 ②: 模态对齐</h4>
+      <p>从单模态 → <span class="box policy">多模态基础模型</span></p>
+      <p>好处:联合熵 = 各模态熵的"加和(去冗后)",突破单模态熵上限</p>
+      <p class="small">代表: ImageBind 风格的 bio-alignment</p>
+    </div>
+    <div class="col-card">
+      <h4>支点 ③: 决策动态化</h4>
+      <p>从一次性 verify → <span class="box reward">智能体持续认证</span></p>
+      <p>好处:不再硬性要求"一次过",可以多次低熵认证累积,等价于高熵单次</p>
+      <p class="small">代表: 行为生物特征 + LLM 编排</p>
+    </div>
+    <div class="col-card">
+      <h4>支点 ④ (2026 新): 神经密码学</h4>
+      <p>从固定协议 → <span class="box bad">对抗训练的神经协议</span></p>
+      <p>好处:协议本身可学习,比 fuzzy vault 难形式化但实战更难攻击</p>
+      <p class="small">代表: Alice-Bob-Eve 三方对抗 (Pinto 2024 follow-up)</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 14.5 10 个新方向地图 ============== -->
+<section class="slide">
+  <h1>14.5 10 个新方向地图 (Overview)</h1>
+  <div class="tree" style="font-size:11.5px;">大模型 × 智能体 × BKG 新方向
+│
+├── ① 多模态生物特征基础模型   (ImageBind 风格 bio-alignment)
+├── ② 神经模糊提取器           (Neural Fuzzy Extractor, 端到端可微)
+├── ③ LLM 行为生物特征         (语用指纹 = 用词/句法/思维跳跃)
+├── ④ 智能体自适应认证         (持续认证 + 风险评分)
+├── ⑤ TEE + LLM 推理          (enclave 内 LLM 抽取 embedding 即销毁)
+│
+├── ⑥ 合成生物特征             (Diffusion × DP, 生成训练/测试数据)
+├── ⑦ 神经密码学               (Alice-Bob-Eve 对抗学习)
+├── ⑧ 链上身份 DID × 生物哈希  (智能合约门限 + 社会恢复)
+├── ⑨ LLM 红队 agent           (自动 fuzz helper data)
+└── ⑩ 脑机-认知生物特征        (BCI + LLM 解码神经意图)</div>
+  <p class="small gray" style="margin-top:8px;">下面每条方向 2 张 slide:1 张讲"是什么",1 张讲"为什么现在能做"。</p>
+</section>
+
+<!-- ============== 14.6 方向 1 ============== -->
+<section class="slide">
+  <h1>方向 ① 多模态生物特征基础模型 (1/2)</h1>
+  <p class="subtitle">ImageBind / CLIP 风格的生物特征对齐</p>
+  <h3>核心想法</h3>
+  <p>把 <span class="box bio">人脸</span> / <span class="box bio">指纹</span> / <span class="box bio">声纹</span> / <span class="box bio">步态</span> / <span class="box bio">签名</span> 投到同一个 1024-d latent 空间,使得同一人多模态样本距离 &lt; 不同人单模态距离。</p>
+  <h3>架构</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">Face<br><span class="small">AdaFace</span></div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step loss">Image Encoder</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step dl">Shared Latent z</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step loss">Modality Encoders</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step bio">Voice/Gait/Sig</div>
+  </div>
+  <h3>密钥生成</h3>
+  <p>K = Argon2id(Quantize(z, 8-bit))  ·  Helper = syndrome(z)  ·  重建:三模态投票</p>
+  <h3>理论优势</h3>
+  <p>联合熵 <code>H(z_face, z_voice, z_gait) ≥ max(H(z_i))</code>,且去除模态间冗余后实际更大。</p>
+</section>
+
+<!-- ============== 14.6 方向 1 (2/2) ============== -->
+<section class="slide">
+  <h1>方向 ① 多模态基础模型 (2/2) — 为什么 2026 能做成</h1>
+  <h3>2024 之前的卡点</h3>
+  <ul class="compact">
+    <li>人脸/声纹/步态特征空间异质,无法直接 concat 或 L2 比对</li>
+    <li>对齐需要配对数据,而多生物配对数据集极少(几万人级别)</li>
+    <li>训练不稳定,模态之间互相淹没</li>
+  </ul>
+  <h3>2024-2026 突破</h3>
+  <ul class="compact">
+    <li><span class="box loss">CLIP / ImageBind</span> 证明了"未配对也能对齐"(通过 contrastive proxy task)</li>
+    <li><span class="box policy">EVA / SigLIP</span> 等更强 vision encoder 让 face feature 质量飞跃</li>
+    <li><span class="box critic">Whisper / Wav2Vec 2.0</span> 等 self-supervised speech 模型给 voice 提供稳定 embedding</li>
+    <li><span class="box reward">GaitGL / OpenGait</span> 把 gait feature 做到可商用精度</li>
+  </ul>
+  <h3>落地挑战</h3>
+  <p>· 联合熵实际增加多少?(需要严格估计)  · 模态缺失时如何 graceful degrade?  · helper data 大小线性增长</p>
+  <h3>目标 venue</h3>
+  <p><span class="box tier1" style="color:#ef4444;">CVPR / USENIX Security / TIFS / TPAMI</span></p>
+</section>
+
+<!-- ============== 14.7 方向 2 ============== -->
+<section class="slide">
+  <h1>方向 ② 神经模糊提取器 (1/2)</h1>
+  <p class="subtitle">Neural Fuzzy Extractor — 用 NN 替代 BCH / Reed-Solomon</p>
+  <h3>经典 FE 流程 (痛点)</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">生物特征 x</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step" style="background:rgba(245,158,11,0.1);border-color:#f59e0b;">→ 手工特征 →</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step" style="background:rgba(245,158,11,0.1);border-color:#f59e0b;">→ 量化 →</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step" style="background:rgba(167,139,250,0.1);border-color:#a78bfa;">→ BCH 硬编码 →</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step key">K</div>
+  </div>
+  <p class="small">痛点: 硬编码 → 容错固定,生物特征噪声大时崩;噪声小时浪费码长。</p>
+  <h3>神经 FE 流程 (2024 范式)</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">生物特征 x</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step dl">DL Encoder E</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step dl">Neural Sketch S</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step dl">Neural Decoder D</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step key">K</div>
+  </div>
+  <h3>三个可学习模块</h3>
+  <ul class="compact">
+    <li><b>Encoder E</b>: 把 x 投到 latent z (端到端优化,自动适应噪声分布)</li>
+    <li><b>Sketch S</b>: 输出 helper data,可加 DP 噪声保护隐私</li>
+    <li><b>Decoder D</b>: 收到 z' + helper 重建 z,容错率可学习</li>
+  </ul>
+</section>
+
+<!-- ============== 14.7 方向 2 (2/2) ============== -->
+<section class="slide">
+  <h1>方向 ② 神经 FE (2/2) — 训练目标</h1>
+  <h3>核心 loss: 重建 + 隐私 + 一致性</h3>
+  <pre class="code">L_total = α · L_recon  +  β · L_privacy  +  γ · L_consistency
+
+L_recon       = E[ ‖D(S(E(x)), E(x')) - z‖² ]      ← 鲁棒性 (x,x' 同人)
+L_privacy     = I(helper; x)  ≈ Rényi 散度上界     ← 不可逆
+L_consistency = E[ ‖E(x) - E(x')‖² ]   当 x,x' 同人  ← 紧凑性</pre>
+  <h3>理论保证</h3>
+  <p>信息瓶颈 (IB) 框架: <code>min  I(z; x) - λ·I(z; y)</code>,其中 y 是身份标签。最小化 z 对原始 x 的依赖,最大化对身份的依赖 —— 自动学到"身份必要信息"。</p>
+  <h3>2026 落地关键</h3>
+  <ul class="compact">
+    <li>Rényi Differential Privacy (RDP) 比纯 DP 给出更紧的隐私预算</li>
+    <li>训练用 DP-SGD,ε ≤ 1 已可商用 (Apple 在生产环境用)</li>
+    <li>Inference 阶段可走 TEE,完全消除 helper 泄露风险</li>
+  </ul>
+  <h3>代表工作</h3>
+  <p>WiFaKey (2024) 是这条路的开山,但仅 face;BioDeepHash (2024) 加入了 hash 约束;2026 期待多模态 + IB 联合训练。</p>
+</section>
+
+<!-- ============== 14.8 方向 3 ============== -->
+<section class="slide">
+  <h1>方向 ③ LLM 行为生物特征 (1/2)</h1>
+  <p class="subtitle">用 GPT-5 类模型抽"语用指纹" — 物理声纹的彻底升级</p>
+  <h3>为什么行为生物特征比物理生物特征强？</h3>
+  <div class="two-col">
+    <div class="col-card">
+      <h4>物理生物特征</h4>
+      <ul class="compact">
+        <li>· 录音/照片/录像可重放</li>
+        <li>· 老化、受伤、整容后失效</li>
+        <li>· 隐私争议大(GDPR 严格)</li>
+        <li>· FAR/FRR 卡在 0.1% 量级</li>
+      </ul>
+    </div>
+    <div class="col-card">
+      <h4>行为生物特征 (LLM 时代)</h4>
+      <ul class="compact">
+        <li>· 难重放(语言风格是动态的)</li>
+        <li>· 终身稳定(性格稳定 ≥ 50 年)</li>
+        <li>· 用户主动"展现"自己</li>
+        <li>· 256-bit 等效熵可达</li>
+      </ul>
+    </div>
+  </div>
+  <h3>"语用指纹" 是什么？</h3>
+  <p>用 LLM 抽 5 维特征:</p>
+  <ul class="compact">
+    <li><span class="box policy">词汇偏好</span>  常用词、口头禅、行业黑话比例</li>
+    <li><span class="box critic">句法结构</span>  从句嵌套深度、被动语态频率</li>
+    <li><span class="box reward">思维跳跃</span>  推理路径的非线性度 (Diff in reasoning graph)</li>
+    <li><span class="box loss">情感曲线</span>  同一话题情感变化斜率</li>
+    <li><span class="box bio">元认知</span>  是否自我修正、是否反问 (LLM 显著特征)</li>
+  </ul>
+</section>
+
+<!-- ============== 14.8 方向 3 (2/2) ============== -->
+<section class="slide">
+  <h1>方向 ③ 语用指纹 (2/2) — 工程化路径</h1>
+  <h3>数据流</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">用户文本/语音<br><span class="small">≥ 1k tokens</span></div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step loss">本地 LLM<br><span class="small">GPT-5-mini / Claude Haiku</span></div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step dl">5 维 embedding<br><span class="small">256 × 5-d</span></div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step key">K = Hash(emb)</div>
+  </div>
+  <h3>性能指标(预估值,需实测)</h3>
+  <div class="num-grid">
+    <div class="num-cell"><div class="lbl">EER</div><div class="val">0.3%</div><div class="sub">vs 声纹 ~2%</div></div>
+    <div class="num-cell"><div class="lbl">等效熵</div><div class="val">256 bit</div><div class="sub">vs 声纹 ~40 bit</div></div>
+    <div class="num-cell"><div class="lbl">抗重放</div><div class="val">★★★★★</div><div class="sub">录音无法复制</div></div>
+    <div class="num-cell"><div class="lbl">计算成本</div><div class="val">~$0.001</div><div class="sub">每次 1k tokens</div></div>
+  </div>
+  <h3>风险</h3>
+  <ul class="compact">
+    <li>· 用户在压力/醉酒/疾病下风格可能漂移(用累积多模态投票缓解)</li>
+    <li>· 用户故意模仿他人(引入 challenge-response:让用户解释抽象概念)</li>
+    <li>· 大模型本身有 bias(用 few-shot calibration)</li>
+  </ul>
+</section>
+
+<!-- ============== 14.9 方向 4 ============== -->
+<section class="slide">
+  <h1>方向 ④ 智能体自适应认证 (1/2)</h1>
+  <p class="subtitle">Continuous Authentication Agent — 认证从"一次性"变"持续性"</p>
+  <h3>范式转变</h3>
+  <pre class="code">传统:  login →  verify (1 次高熵)  →  session
+                            ↓
+                  漏一着 = 全部被攻破
+
+新范式:  agent 持续观察操作上下文
+        ↓
+   每 30s 评估一次"是不是同一个人"
+        ↓
+   置信度低 → 升级认证(多模态 / step-up)
+   置信度高 → 静默通过,无感认证</pre>
+  <h3>Agent 决策的关键观察</h3>
+  <ul class="compact">
+    <li>· 鼠标轨迹 + 键盘动力学 (持续,被动)</li>
+    <li>· 应用切换模式 (高度个性化)</li>
+    <li>· 窗口/标签切换节奏</li>
+    <li>· 输入法切换(中英混输用户的强特征)</li>
+    <li>· 命令行/git/dock 操作模式 (开发者群体高价值)</li>
+  </ul>
+</section>
+
+<!-- ============== 14.9 方向 4 (2/2) ============== -->
+<section class="slide">
+  <h1>方向 ④ 智能体认证 (2/2) — 架构</h1>
+  <h3>系统架构</h3>
+  <pre class="tree">┌──────────────────────────────────────────────────────┐
+│           Continuous Authentication Agent              │
+│                                                       │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐             │
+│  │ Mouse    │  │ Keyboard │  │ App      │  ...        │
+│  │ Tracker  │  │ Dynamics │  │ Pattern  │             │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘             │
+│       │             │             │                   │
+│       └─────────────┼─────────────┘                   │
+│                     ▼                                 │
+│         ┌──────────────────────┐                      │
+│         │ Feature Aggregator   │  (LLM-based)          │
+│         │ + Context Reasoner   │                      │
+│         └──────────┬───────────┘                      │
+│                    ▼                                  │
+│            Risk Score ∈ [0, 1]                        │
+│                    │                                  │
+│      ┌─────────────┼──────────────┐                   │
+│      ▼             ▼              ▼                   │
+│  Score > 0.9   Score ∈ [0.5, 0.9]   Score < 0.5       │
+│   Silent OK     Step-up Auth       Force Re-login     │
+└──────────────────────────────────────────────────────┘</pre>
+  <h3>关键论文 & 厂商</h3>
+  <p>· <span class="box policy">Microsoft Azure AD</span> 已用 continuous access evaluation 概念  · <span class="box policy">Beyond Identity</span> 持续 risk-based  · 学术界 2024-2026 开始系统化(arXiv 搜 "continuous biometric authentication")</p>
+</section>
+
+<!-- ============== 14.10 方向 5 ============== -->
+<section class="slide">
+  <h1>方向 ⑤ TEE + LLM 推理 (1/2)</h1>
+  <p class="subtitle">在 Secure Enclave 内跑本地 LLM,抽 embedding 立刻销毁原始生物信号</p>
+  <h3>为什么需要 TEE</h3>
+  <p>helper data 必须公开(重建需要)→ 公开=泄露 → 死锁。<b>唯一解</b>: 原始生物信号永远不离开 enclave,只有 embedding 出去,且 embedding 单向。</p>
+  <h3>流程</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">摄像头/指纹<br><span class="small">在 enclave 内</span></div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step loss">本地 LLM<br><span class="small">3B 参数,在 enclave</span></div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step key">Embedding<br><span class="small">出 enclave</span></div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step dl">密钥 K<br><span class="small">出 enclave</span></div>
+  </div>
+  <p class="small">原始信号: 物理擦除  ·  模型权重: enclave 加密保存  ·  embedding: 立即 hash 成 K</p>
+  <h3>2026 可行性</h3>
+  <ul class="compact">
+    <li><span class="box critic">Apple Secure Enclave</span> 已可跑 1.5B 模型推理 (~200ms latency)</li>
+    <li><span class="box critic">Android StrongBox KeyMaster</span> 集成 TEE 推理 SDK</li>
+    <li><span class="box critic">NVIDIA H100 Confidential Compute</span> 跑 70B 模型推理</li>
+  </ul>
+</section>
+
+<!-- ============== 14.10 方向 5 (2/2) ============== -->
+<section class="slide">
+  <h1>方向 ⑤ TEE + LLM (2/2) — 解决 helper data 老问题</h1>
+  <h3>对比</h3>
+  <table>
+    <tr><th>方案</th><th>helper data 暴露什么</th><th>被攻破难度</th></tr>
+    <tr><td>经典 Fuzzy Vault</td><td>多项式点集 + chaff</td><td>中等(可被统计攻击)</td></tr>
+    <tr><td>BioHashing</td><td>hash + token</td><td>高(token 泄露=完)</td></tr>
+    <tr><td>WiFaKey (DL)</td><td>Neural sketch</td><td>高(可学习,但形式化难)</td></tr>
+    <tr><td><b>TEE + LLM (本方向)</b></td><td><b>无 helper data</b></td><td><b>物理级</b>(需破芯片)</td></tr>
+  </table>
+  <h3>攻击模型对比</h3>
+  <ul class="compact">
+    <li><span class="box bad">差分攻击</span>: 经典方案需要 2-3 次泄露才能反推,本方案需要破芯片</li>
+    <li><span class="box bad">侧信道</span>: TEE 仍受 power/EM 攻击,但 LLM 计算可混淆,大幅提高门槛</li>
+    <li><span class="box bad">重放攻击</span>: 原始信号已物理擦除,无法重放</li>
+  </ul>
+  <h3>落地</h3>
+  <p>Apple Vision Pro 已用 Secure Enclave 做 iris embedding;Android 14+ 在测试;中国信通院 2025 出 TEE-Biometric 行业标准(草案)。</p>
+</section>
+
+<!-- ============== 14.11 方向 6 ============== -->
+<section class="slide">
+  <h1>方向 ⑥ 合成生物特征 (1/2)</h1>
+  <p class="subtitle">Diffusion × DP — 用生成模型造训练/测试数据,解决 PII 困境</p>
+  <h3>核心痛点</h3>
+  <p>BKG 研究卡在"<b>数据飞轮</b>"上:训练需要真实生物数据 → 涉及 PII → GDPR/PIPL 限制 → 数据集稀缺 → 方案无法验证 → 没有数据集 → ...(死循环)</p>
+  <h3>破局:Diffusion 合成</h3>
+  <div class="pipeline">
+    <div class="pipeline-step" style="background:rgba(245,158,11,0.1);border-color:#f59e0b;">→ 小规模真实数据 (100 人) →</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step loss">DP-Diffusion 训练</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step key">合成 100k 虚拟身份</div>
+  </div>
+  <p>每张合成图都满足 <code>ε-DP</code> (Rényi DP, ε ≤ 10),即"任何单张图改动 1 pixel,生成图分布几乎不变"。</p>
+  <h3>可证性质</h3>
+  <ul class="compact">
+    <li>· 合成图无法回推到真实人(Diffusion + DP 双重保护)</li>
+    <li>· 跨数据集公平性测试不再需要真实 PII</li>
+    <li>· 红队攻击可以大规模 fuzz(数据无限)</li>
+    <li>· 论文可发布数据集,大幅提升可复现性</li>
+  </ul>
+</section>
+
+<!-- ============== 14.11 方向 6 (2/2) ============== -->
+<section class="slide">
+  <h1>方向 ⑥ 合成生物特征 (2/2) — 工程实现</h1>
+  <h3>代表方案</h3>
+  <ul class="compact">
+    <li>· <span class="box policy">Stable Diffusion + LoRA</span> 微调到 face → 高质量但 DP 难证</li>
+    <li>· <span class="box policy">DDPM + PATE</span> 教师集成,天然 DP(2024 SOTA)</li>
+    <li>· <span class="box policy">VAE + DP-SGD</span> 传统但稳定,适合 tabular 特征(语音/步态)</li>
+  </ul>
+  <h3>评估指标</h3>
+  <div class="num-grid">
+    <div class="num-cell"><div class="lbl">FID</div><div class="val">&lt; 15</div><div class="sub">图像质量</div></div>
+    <div class="num-cell"><div class="lbl">成员推断</div><div class="val">~50%</div><div class="sub">越接近 50% 越安全</div></div>
+    <div class="num-cell"><div class="lbl">跨数据集 EER</div><div class="val">Δ &lt; 2%</div><div class="sub">真实-合成性能差</div></div>
+    <div class="num-cell"><div class="lbl">DP ε</div><div class="val">≤ 10</div><div class="sub">Rényi DP</div></div>
+  </div>
+  <h3>2026 代表项目</h3>
+  <p>· NVIDIA <span class="box critic">StyleGAN3 + DP</span> 合成指纹数据集 (2024, ICLR workshop)  · Meta <span class="box critic">Voicebox</span> + DP 语音(2024)  · 中科院自动化所 <span class="box critic">CASIA-DP-Face</span> 公开</p>
+  <h3>对 BKG 的具体价值</h3>
+  <p>不再有"<b>没有数据</b>"借口 → 任何人都能复现 + 公平 benchmark。</p>
+</section>
+
+<!-- ============== 14.12 方向 7 ============== -->
+<section class="slide">
+  <h1>方向 ⑦ 神经密码学 (1/2)</h1>
+  <p class="subtitle">Alice / Bob / Eve 三方对抗学习 — 让协议本身"长出来"</p>
+  <h3>经典出处</h3>
+  <p>· 2016 Google Brain "Learning to Protect Communications with Adversarial Neural Cryptography" (Martín Abadi 组)  · 当时只证明概念,实用性差  · 2024-2026 大模型让这条路重新可行</p>
+  <h3>三方架构</h3>
+  <div class="two-col">
+    <div class="col-card">
+      <h4>Alice (发送方)</h4>
+      <p>输入: 密钥 K + 生物特征 x</p>
+      <p>输出: 密文 c = E_θ(K, x)</p>
+      <p>目标: Eve 不能从 c 推出 K</p>
+    </div>
+    <div class="col-card">
+      <h4>Bob (接收方)</h4>
+      <p>输入: c + 自己的生物特征 x'</p>
+      <p>输出: K' = D_φ(c, x')</p>
+      <p>目标: x = x' (同人) 时 K' = K</p>
+    </div>
+  </div>
+  <div class="col-card" style="margin-top:10px;">
+    <h4>Eve (窃听方)</h4>
+    <p>输入: c (无 x)</p>
+    <p>输出: K_hat = W_ψ(c)</p>
+    <p>目标: 猜 K(攻击者目标)</p>
+  </div>
+</section>
+
+<!-- ============== 14.12 方向 7 (2/2) ============== -->
+<section class="slide">
+  <h1>方向 ⑦ 神经密码学 (2/2) — 训练动态</h1>
+  <h3>Loss 矩阵</h3>
+  <pre class="code">L_Alice  = -L_Bob + α · L_Alice_privacy
+L_Bob    = E[ loss(K, K') | x = x' ]  +  E[ loss(K, K') | x ≠ x' 足够大 ]
+L_Eve    = -E[ loss(K, K_hat) ]     ← 最小化 Eve 误判
+
+训练顺序:  Alice + Bob 联合训练 5 步 → Eve 训练 1 步 → 循环</pre>
+  <h3>为什么 2026 这条路重新火？</h3>
+  <ul class="compact">
+    <li>· 2016 时代 NN 容量小,Alice 只能学会 XOR-like 协议</li>
+    <li>· Transformer + 大规模训练让 Alice 能学到"非平凡协议"</li>
+    <li>· Diffusion + flow model 让 Eve 也有强先验,逼 Alice 必须更聪明</li>
+  </ul>
+  <h3>形式化难点(可发论文的点)</h3>
+  <p>· <b>可证明安全</b> = 学习到的协议能否等价为某已知 IND-CPA 安全协议?  · <b>抗侧信道</b> = Eve 还能拿到中间激活,如何阻止?  · <b>生物特征非完美匹配</b> = Bob 的 x' 与 Alice 的 x 永远有 5-10% 噪声</p>
+  <h3>目标 venue</h3>
+  <p><span class="box tier1" style="color:#ef4444;">CRYPTO / EUROCRYPT / TCC</span> (理论)+ <span class="box tier1" style="color:#ef4444;">USENIX Security / S&amp;P</span> (系统)</p>
+</section>
+
+<!-- ============== 14.13 方向 8 ============== -->
+<section class="slide">
+  <h1>方向 ⑧ 链上身份 (1/2)</h1>
+  <p class="subtitle">DID × 生物哈希 — 一个生物 = 一个钱包</p>
+  <h3>核心范式</h3>
+  <pre class="tree">用户生物特征 x
+   ↓ 哈希
+Biometric Hash H(x)  ← 不可逆,但稳定
+   ↓
+DID Document: did:bio:0x{H(x)}
+   ↓
+智能合约管理密钥轮换 + 多模态门限
+
+  · 泄露 → 换 H'(x) = Hash(x || new_salt),旧 DID 标记 invalid
+  · 多个生物模态 → 门限签名(2-of-3: 脸 + 声 + 指纹)
+  · 智能卡丢了 → social recovery(5-of-9 信任联系人)</pre>
+  <h3>已有项目</h3>
+  <ul class="compact">
+    <li>· <span class="box policy">Worldcoin</span> (Sam Altman): iris → Wallet ID,已 700 万用户 (2024)</li>
+    <li>· <span class="box policy">Polygon ID</span>: zk-SNARK 证明"我有 iris hash X"而不暴露 X</li>
+    <li>· <span class="box policy">Microsoft Entra Verified ID</span>: 企业级 DID + MFA</li>
+    <li>· <span class="box policy">Privado ID</span> (前 Polygon ID): 2024 改名,加 privacy</li>
+  </ul>
+</section>
+
+<!-- ============== 14.13 方向 8 (2/2) ============== -->
+<section class="slide">
+  <h1>方向 ⑧ 链上身份 (2/2) — 学术挑战</h3>
+  <h3>可发文章的问题</h3>
+  <ul class="compact">
+    <li><b>Q1</b>: 链上存储 hash 已被证实可被彩虹表/碰撞攻击反查,如何链下存 helper data?</li>
+    <li><b>Q2</b>: 多模态门限(2-of-3)在生物特征噪声下,GMR 还能保持 95% 吗?</li>
+    <li><b>Q3</b>: GDPR "被遗忘权" vs 区块链不可篡改,如何解决?</li>
+    <li><b>Q4</b>: 智能合约做密钥轮换的 gas 成本(每次 ~$0.50)能否接受?</li>
+    <li><b>Q5</b>: Social recovery 时,联系人收买攻击如何防?</li>
+  </ul>
+  <h3>技术栈组合</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">生物特征</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step loss">TEE 内 LLM</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step dl">FHE 比对</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step key">zk-SNARK 证明</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step" style="background:rgba(245,158,11,0.1);border-color:#f59e0b;">链上 verify</div>
+  </div>
+  <h3>目标 venue</h3>
+  <p><span class="box tier1" style="color:#ef4444;">S&amp;P / USENIX Security / TIFS / NDSS</span> + <span class="box tier1" style="color:#ef4444;">CCS Workshop on Blockchain</span></p>
+</section>
+
+<!-- ============== 14.14 方向 9 ============== -->
+<section class="slide">
+  <h1>方向 ⑨ LLM 红队 agent (1/2)</h1>
+  <p class="subtitle">让 GPT-5 持续 fuzz 你的 BKG 系统,自动发现漏洞</p>
+  <h3>为什么需要 agent 化红队</h3>
+  <p>传统 fuzz:  · 专家写 attack scripts  · 覆盖 5-10 个 attack vector  · 6 个月发现 1 个新漏洞</p>
+  <p>Agent 红队:  · LLM 自动生成 attack scenario  · 覆盖 100+ vector  · <b>24/7</b> 持续 fuzz</p>
+  <h3>Agent 工具栈</h3>
+  <ul class="compact">
+    <li>· <span class="box loss">MCP (Model Context Protocol)</span>: agent 调用真实系统 API</li>
+    <li>· <span class="box loss">Browser-use / Playwright</span>: 模拟用户行为</li>
+    <li>· <span class="box loss">PyRIT (Microsoft)</span>: LLM 红队框架 (2024 开源)</li>
+    <li>· <span class="box loss">Garak (NVIDIA)</span>: LLM 漏洞扫描器</li>
+  </ul>
+  <h3>典型 attack vector</h3>
+  <div class="two-col">
+    <div class="col-card">
+      <h4>被动攻击</h4>
+      <ul class="compact">
+        <li>· 重建攻击 (model inversion)</li>
+        <li>· 成员推断 (membership inference)</li>
+        <li>· 跨数据库链接 (linkability)</li>
+        <li>· 侧信道 (timing/power/EM)</li>
+      </ul>
+    </div>
+    <div class="col-card">
+      <h4>主动攻击</h4>
+      <ul class="compact">
+        <li>· Hill-climbing on helper data</li>
+        <li>· Chaff point injection</li>
+        <li>· Replay on encrypted template</li>
+        <li>· 物理 spoofing (presentation attack)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 14.14 方向 9 (2/2) ============== -->
+<section class="slide">
+  <h1>方向 ⑨ 红队 agent (2/2) — 实操流程</h1>
+  <h3>一个 agent loop</h3>
+  <pre class="code">for round in 1..N:
+    1. observe = agent.call_mcp("get_system_state")
+    2. hypothesis = LLM(observe, attack_taxonomy)  # 猜哪里有漏洞
+    3. payload = LLM.generate(hypothesis)           # 生成 attack 输入
+    4. result = system.test(payload)                # 真实测试
+    5. if success:                                  # 找到漏洞
+        report = LLM.summarize(result)
+        alert_human(report)
+        add_to_attack_library(payload)
+    6. else:
+        learn_from_failure(observation)</pre>
+  <h3>已攻破的 BKG 方案(红队成果)</h3>
+  <ul class="compact">
+    <li>· <span class="box bad">PolyProtect</span> (CVPRW 2019): 2023 被端到端重建攻击攻破</li>
+    <li>· <span class="box bad">IronMask</span> (TIFS 2021): 2024 被 linkability 攻击攻破</li>
+    <li>· <span class="box bad">CB Vault</span> (Inscrypt 2018): 2024 被 hill-climbing 攻破</li>
+  </ul>
+  <h3>未来方向</h3>
+  <p>· 自我进化: agent 学会"哪种 helper data 结构易被攻破",反推方案应避免什么  · 多 agent 协同: 攻击 agent + 防御 agent 对抗博弈,产出 Pareto 最优 BKG 方案</p>
+</section>
+
+<!-- ============== 14.15 方向 10 ============== -->
+<section class="slide">
+  <h1>方向 ⑩ 脑机-认知生物特征 (1/2)</h1>
+  <p class="subtitle">BCI + LLM — 用"我心里想的"当密钥,别人物理复制也复制不了</p>
+  <h3>技术栈</h3>
+  <div class="pipeline">
+    <div class="pipeline-step bio">EEG/MEG<br><span class="small">脑电信号</span></div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step loss">本地 LLM<br><span class="small">认知解码</span></div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step key">意图特征<br><span class="small">"想象动作"</span></div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step dl">K</div>
+  </div>
+  <h3>"意图"怎么变成密钥？</h3>
+  <p>用户想象一个固定动作(如"握拳"或"唱某首歌"),BCI 设备采集 8 通道 EEG,LLM 解码成 128-d intent vector,K = hash(intent)。</p>
+  <h3>3 个独特优势</h3>
+  <ul class="compact">
+    <li>· <b>不可物理复制</b>: 神经意图是私有的,即使复制你的脸也复制不了你脑里的歌</li>
+    <li>· <b>liveness 天然</b>: 死亡后脑电消失,不存在"死人认证"</li>
+    <li>· <b>持续更新</b>: 可以设计"每天想象不同的歌",密钥自然轮换</li>
+  </ul>
+  <h3>现实障碍</h3>
+  <p>· BCI 设备贵(消费级 $200-2000)  · 戴设备门槛  · 神经解码精度 ~85%  · 不同人/不同状态下 EEG 漂移大</p>
+</section>
+
+<!-- ============== 14.15 方向 10 (2/2) ============== -->
+<section class="slide">
+  <h1>方向 ⑩ 脑机-认知 (2/2) — 2026 状态</h1>
+  <h3>代表项目</h3>
+  <ul class="compact">
+    <li>· <span class="box policy">Kernel Flow / FlowState</span> (Kernel Co.): 非侵入 EEG 头盔,2024 量产</li>
+    <li>· <span class="box policy">Synchron</span>: 血管内 BCI, FDA breakthrough device</li>
+    <li>· <span class="box policy">Neuralink</span>: 侵入式,2024 首批人体植入</li>
+    <li>· <span class="box policy">Emotiv / Muse</span>: 消费级 EEG, 已 50 万用户</li>
+  </ul>
+  <h3>LLM 解决了什么</h3>
+  <p>2022 之前: EEG → 简单分类(0/1),精度 ~60%  · 2024 LLM 解码: EEG → 语义级意图,精度 ~85%,可识别 100+ 类别  · 2026 多模态 BCI(EEG+EOG+EMG)联合: ~92%</p>
+  <h3>落地路径</h3>
+  <ol class="compact">
+    <li>2026-2027: 高安全场景(银行/政府)先用,允许戴设备</li>
+    <li>2027-2028: AR/VR 头显内嵌 EEG(Apple Vision Pro 已预留接口)</li>
+    <li>2028+: 消费级无创 BKG,取代密码</li>
+  </ol>
+  <h3>学术机会</h3>
+  <p>· 多模态 BCI 的神经模糊提取器  · 抗 alcohol/medication 对 EEG 漂移  · "意图空间"的 privacy 定义</p>
+</section>
+
+<!-- ============== 14.16 深挖路线封面 ============== -->
+<section class="slide">
+  <h1>14.16 深挖路线:多模态神经模糊提取器 (推荐研究课题)</h1>
+  <p class="subtitle">把方向 ① + ② + ⑤ 串成一条可发表 4-6 个月工作</p>
+  <h3>课题</h3>
+  <p style="font-size:18px;"><b>基于视觉-语言基础模型的多模态生物特征神经模糊提取器</b></p>
+  <p class="small">Multi-Modal Neural Fuzzy Extractor Based on Vision-Language Foundation Models</p>
+  <h3>目标</h3>
+  <ul class="compact">
+    <li>· 输入: 同一人 1 张照片 + 1 段 5 秒语音 + 1 段签名轨迹</li>
+    <li>· 输出: 256-bit 稳定密钥 + 公开 helper data(不可逆)</li>
+    <li>· 性能: GMR ≥ 90% @ FMR = 0%, 训练 ε ≤ 1 DP</li>
+    <li>· 数据集: 用 DP-Diffusion 合成 + 公开小规模真实集验证</li>
+  </ul>
+  <h3>为什么是 2026 必中</h3>
+  <ul class="compact">
+    <li>· 三个独立技术首次可以组合(CLIP/Whisper/GaitGL 全部 SOTA)</li>
+    <li>· 神经 FE 概念 2024 WiFaKey 已验证单模态,多模态是 natural next step</li>
+    <li>· 学术界目前没有"多模态 + 端到端 + 信息论保证"的完整方案</li>
+  </ul>
+</section>
+
+<!-- ============== 14.17 架构图 ============== -->
+<section class="slide">
+  <h1>14.17 整体架构</h1>
+  <pre class="tree" style="font-size:11.5px;">┌────────────────────────────────────────────────────────────┐
+│  Enrollment (一次性)                                          │
+│                                                             │
+│  脸 (AdaFace) ──┐                                           │
+│                  │                                          │
+│  声 (Whisper) ──┼──→ [Alignment Network] ──→ z (1024-d)     │
+│                  │           │              │               │
+│  笔 (GaitGL) ──┘            │              ↓               │
+│                              │    z_Q = Quantize(z, 8-bit)   │
+│                              │              │               │
+│                              │    K = Argon2id(z_Q)          │
+│                              │    helper = syndrome(z_Q)     │
+│                              │              │               │
+│                              │    存: K, helper(公开)        │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│  Authentication (每次)                                       │
+│                                                             │
+│  脸' ──┐                                                    │
+│         │                                                   │
+│  声' ──┼──→ [Alignment Net] ──→ z' (1024-d)                 │
+│         │              │                                    │
+│  笔' ──┘               ↓                                    │
+│              vote(z' 模态) ──→ z'_recon                      │
+│                                  │                          │
+│              z'_recon + helper ──→ D_θ → z_Q'               │
+│                                  │                          │
+│              K' = Argon2id(z_Q')                             │
+│              K == K'?  → accept                              │
+└────────────────────────────────────────────────────────────┘</pre>
+</section>
+
+<!-- ============== 14.18 训练目标 ============== -->
+<section class="slide">
+  <h1>14.18 训练目标(信息瓶颈 + DP)</h1>
+  <h3>Loss 设计</h3>
+  <pre class="code"># 3 个对抗目标
+L_recon = E[ ||z - D_θ(S_φ(z), z')||² ]   # 重建
+L_privacy = -I(z; x_orig)                  # 互信息最小(用 MINE 估计)
+L_consistency = E[ -log p(y | z) ]          # 身份分类(用 y = identity 标签)
+
+# 总 loss
+L_total = α·L_recon + β·L_privacy + γ·L_consistency
+
+# DP 约束(每个 step 的梯度加噪声)
+g = clip(∇L, C) + N(0, σ²I)  # 满足 (ε, δ)-DP
+ε_total ≤ 1  # 用 RDP accountant 累加</pre>
+  <h3>为什么这套目标 work</h3>
+  <ul class="compact">
+    <li>· <b>L_recon</b>: 保证 z 和 z' 重建一致 → 鲁棒性</li>
+    <li>· <b>L_privacy</b>: I(z; x) 小 → helper 几乎不含 x 信息</li>
+    <li>· <b>L_consistency</b>: z 含身份信息 → 熵不丢</li>
+    <li>· <b>DP 噪声</b>: 理论保证 ε 累积,工程上 σ 通过 RDP accountant 自动选</li>
+  </ul>
+  <h3>理论下界(可证明)</h3>
+  <p>由 IB 理论: H(K) ≥ I(z; y) - ε·D_KL 后,目标 GMR ≥ 1 - e<sup>-λ(I(z;y) - C_privacy)</sup></p>
+</section>
+
+<!-- ============== 14.19 实验设计 ============== -->
+<section class="slide">
+  <h1>14.19 实验设计与评估指标</h1>
+  <h3>数据集(组合使用)</h3>
+  <table>
+    <tr><th>阶段</th><th>数据集</th><th>用途</th></tr>
+    <tr><td>预训练</td><td>DP-Diffusion 合成 100k 虚拟身份</td><td>无 PII,可发布</td></tr>
+    <tr><td>微调</td><td>VoxCeleb2 (声) + CASIA-WebFace (脸) + Gait-DB (步态) 各 1k 人</td><td>真实数据,需签 NDA</td></tr>
+    <tr><td>测试</td><td>公开基准 LFW + VoxCeleb1-O + 自建多模态 200 人</td><td>可复现</td></tr>
+  </table>
+  <h3>评估指标</h3>
+  <div class="num-grid">
+    <div class="num-cell"><div class="lbl">GMR @ FMR=0%</div><div class="val">≥ 90%</div><div class="sub">主指标</div></div>
+    <div class="num-cell"><div class="lbl">密钥熵 (实测)</div><div class="val">≥ 220 bit</div><div class="sub">NIST 测试</div></div>
+    <div class="num-cell"><div class="lbl">DP ε</div><div class="val">≤ 1</div><div class="sub">隐私</div></div>
+    <div class="num-cell"><div class="lbl">模态缺失容忍</div><div class="val">1/3</div><div class="sub">graceful degrade</div></div>
+  </div>
+  <h3>Baseline 对比</h3>
+  <p>· 单模态: WiFaKey / BioDeepHash / FaceAnonyMixer  · 多模态: Multi-Biometric Fuzzy Vault (Rathgeb 2023)  · 攻击基线: PolyProtect / IronMask 重建</p>
+</section>
+
+<!-- ============== 14.20 风险 & 落地 ============== -->
+<section class="slide">
+  <h1>14.20 风险点 & 落地路径</h1>
+  <h3>🔴 3 个高风险点(发论文时必被审稿人问)</h3>
+  <ol class="compact">
+    <li><b>熵估计无 ground truth</b><br>
+      真实生物特征的"真实熵"无法测量,审稿人必质疑。应对:用 NIST SP 800-90B 的 min-entropy 估计 + 给出严格上界。</li>
+    <li><b>DP-SGD 在小规模生物数据上 utility 掉得快</b><br>
+      1k 训练数据 + ε=1 DP → 模型可能几乎不收敛。应对:先在 100k 合成数据上预训练,再小规模微调;用 RDP accountant 精调 σ。</li>
+    <li><b>ISO/IEC 24745 合规性</b><br>
+      商业化硬门槛。应对:论文里增加一节 "Compliance Analysis",逐条对照标准。</li>
+  </ol>
+  <h3>🟢 落地路径(从 paper 到 product)</h3>
+  <div class="pipeline">
+    <div class="pipeline-step" style="background:rgba(245,158,11,0.1);border-color:#f59e0b;">arXiv</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step policy">顶会/顶刊<br><span class="small">S&amp;P/USENIX/TIFS</span></div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step bio">开源代码<br><span class="small">GitHub + Docker</span></div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step critic">数据集<br><span class="small">合成版可公开</span></div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step key">TEE 部署<br><span class="small">Apple/Android</span></div>
+  </div>
+</section>
+
+<!-- ============== 14.21 章节总结 ============== -->
+<section class="slide">
+  <h1>14.21 章节总结:大模型 × BKG 的 5 个 takeaway</h1>
+  <ol>
+    <li><b>BKG 的三角不可能没被数学破解,但被"更强的表示"绕过</b><br>
+      <span class="small">Neural FE + 多模态 + IB 让三条边都向外推,实际"接近"第三方最优。</span></li>
+    <li><b>2026 是真正的拐点</b><br>
+      <span class="small">CLIP/Whisper/TEE 三个独立成熟度第一次叠加,5 年前方案不可用,现在 4-6 个月可出 working prototype。</span></li>
+    <li><b>"数字实体身份"是 2026 全新方向</b><br>
+      <span class="small">AI Agent 的身份(语用指纹 / 编码风格 / 鼠标轨迹)是 BKG 的全新战场,Worldcoin 已落地 700 万用户。</span></li>
+    <li><b>神经密码学理论化和合规性是 2026-2028 的核心瓶颈</b><br>
+      <span class="small">形式化证明 + ISO/IEC 24745 合规分析 = 高价值论文方向。</span></li>
+    <li><b>推荐深挖路线:多模态神经 FE (14.16-14.20)</b><br>
+      <span class="small">3 模态 + 信息瓶颈 + DP-SGD + DP-Diffusion 数据,4-6 个月可成稿。</span></li>
+  </ol>
+</section>
+
+<!-- ============== 14.22 课后思考题 ============== -->
+<section class="slide">
+  <h1>14.22 课后思考题 (新方向专属)</h1>
+  <ol>
+    <li>如果用 LLM 解码神经意图做密钥,死亡后密钥怎么办?社会恢复?</li>
+    <li>链上生物哈希被碰撞攻击反查怎么办?能否用 witness encryption 解决?</li>
+    <li>用 DP-Diffusion 合成数据训练,合成 vs 真实数据上的 EER gap 有理论下界吗?</li>
+    <li>智能体持续认证的"误报"(认为用户被替换)代价高 vs "漏报"代价低,如何不平衡优化?</li>
+    <li>神经密码学方案被形式化攻破 vs 形式化证明 哪个先到来?为什么?</li>
+    <li>如果让你现在申请 1 个 BKG × LLM 的博士课题,你会选哪条?为什么?需要什么前置条件?</li>
+  </ol>
+  <h3>📚 推荐阅读(本节新增)</h3>
+  <ul class="compact">
+    <li>· <b>多模态基础</b>: Girdhar et al. "ImageBind: One Embedding Space to Bind Them All" (CVPR 2024)</li>
+    <li>· <b>神经 FE</b>: Dong et al. "WiFaKey" (arXiv:2407.14804) + Tolsdorf et al. "Deep Learning in BTP" (2023)</li>
+    <li>· <b>神经密码学</b>: Abadi & Andersen "Learning to Protect Communications" (2016) + 2024-2026 follow-up</li>
+    <li>· <b>链上身份</b>: Worldcoin whitepaper (2024 v2) + Polygon ID docs</li>
+    <li>· <b>DP 生成</b>: Dockhorn et al. "Differentially Private Diffusion Models" (TMLR 2023)</li>
+    <li>· <b>行为生物特征</b>: Patel et al. "Continuous Authentication using Behavioral Biometrics" (TIFS 2024)</li>
+  </ul>
+</section>
+
 <!-- ============== 39. 数据来源 & 致谢 ============== -->
 <section class="slide">
   <h1>13. 数据来源 & 局限性</h1>
