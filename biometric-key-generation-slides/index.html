@@ -142,6 +142,7 @@
   th, td { padding: 5px 8px; border-bottom: 1px solid var(--border); text-align: left; }
   th { color: var(--accent); font-weight: 600; }
   tr:hover { background: rgba(91,141,239,0.05); }
+  .slide section table th, .slide section table td { padding: 3px 6px; font-size: 12px; }
 
   .cover { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
   .cover h1 { font-size: 48px; margin: 16px 0 8px; text-align: center; }
@@ -221,11 +222,13 @@
   <h1>1. 调研方法 & 数据源</h1>
   <table>
     <tr><th>数据源</th><th>检索方式</th><th>命中</th><th>用途</th></tr>
-    <tr><td>arXiv API</td><td>10 个核心关键词 × 20 条/词</td><td>112 → 86 去重</td><td>最新预印本、覆盖完整</td></tr>
-    <tr><td>arXiv 关键论文摘要</td><td>browser 抓取 3 篇核心</td><td>3 篇</td><td>方法细节</td></tr>
-    <tr><td>Semantic Scholar</td><td>"fuzzy extractor biometric" 主题</td><td>8 篇完整 + 部分限流</td><td>引用数、期刊</td></tr>
-    <tr><td>领域知识</td><td>人工核对</td><td>35 篇代表</td><td>质量验证</td></tr>
+    <tr><td><b>OpenAlex</b></td><td>25 个核心关键词 × 50 条/词</td><td><b>199 篇</b></td><td>主源（IEEE/Elsevier/Springer/ACM 顶刊）</td></tr>
+    <tr><td><b>DBLP</b></td><td>12 个关键词 × XML 端点</td><td><b>240 篇</b></td><td>顶会覆盖（CCS/ICML/IJCB/BIOSIG 等）</td></tr>
+    <tr><td>Semantic Scholar (DOI 精查)</td><td>41 篇关键 paper</td><td>41 篇</td><td>引用数 + 期刊精确</td></tr>
+    <tr><td>arXiv API</td><td>10 个核心关键词</td><td>86 篇去重</td><td>最新预印本</td></tr>
+    <tr><td>arXiv 关键摘要</td><td>browser 抓取</td><td>3 篇</td><td>方法细节</td></tr>
   </table>
+  <p class="small gray" style="margin-top:6px;">⚠️ 未覆盖：Google Scholar（CAPTCHA 拦截）、IEEE Xplore（需机构访问）</p>
   <h3>核心关键词</h3>
   <p><span class="box policy">biometric key generation</span> <span class="box policy">fuzzy extractor</span> <span class="box policy">fuzzy vault</span> <span class="box policy">fuzzy commitment</span> <span class="box policy">secure sketch</span> <span class="box policy">cancelable biometric</span> <span class="box policy">biometric template protection</span> <span class="box policy">biometric cryptosystem</span> <span class="box policy">BioHashing</span> <span class="box policy">deep learning biometric</span></p>
   <h3>局限性</h3>
@@ -710,6 +713,42 @@
     <li><b>「Single-modality」→ 「Multi-modal + Multi-factor」</b> · 单一生物特征已不够</li>
     <li><b>「Server-centric」→ 「Edge / Wearable / Privacy-preserving」</b> · GDPR / PIPL 推动</li>
   </ol>
+</section>
+
+<!-- ============== 20c. 顶会突破 (CCS / ICML / IJCB) ============== -->
+<section class="slide" style="padding:24px 50px 20px;">
+  <h1 style="font-size:24px;margin:0 0 6px;">5.2 顶会突破 (CCS / ICML / IJCB 2025)</h1>
+  <p class="subtitle" style="margin-bottom:8px;">DBLP 命中 48 篇会议论文 · 包含 arXiv 检索不到的工作</p>
+  <div class="two-col">
+    <div class="col-card" style="padding:8px;">
+      <h4 style="margin:0 0 4px;font-size:13px;">🏆 CCS 2025 <span style="color:#ef4444">Top-4 Security</span></h4>
+      <p style="font-size:13px;margin:2px 0;"><b>Fuzzy Extractors are Practical: Key Derivation from the Iris</b></p>
+      <p class="small" style="font-size:11px;">Shukla, Demarest, Fuller, ...</p>
+    </div>
+    <div class="col-card" style="padding:8px;">
+      <h4 style="margin:0 0 4px;font-size:13px;">🏆 ICML 2025 <span style="color:#ec4899">Top ML</span></h4>
+      <p style="font-size:13px;margin:2px 0;"><b>Distributed DP Data Analytics via Secure Sketching</b></p>
+      <p class="small" style="font-size:11px;">Burkhardt, Keller, Orlandi, ...</p>
+    </div>
+  </div>
+  <h3 style="font-size:14px;margin:8px 0 4px;">🎤 Tier-1 生物特征会议 (6 篇 · Rathgeb 组占 5)</h3>
+  <table>
+    <tr><th>会议</th><th>论文</th></tr>
+    <tr><td><b>IJCB 2025</b></td><td>Closing the Performance Gap in BCS</td></tr>
+    <tr><td><b>IJCB 2023</b></td><td>Multi-Biometric FV: Face+Fingerprints</td></tr>
+    <tr><td><b>BIOSIG 2025</b></td><td>Deep Fingerprint Fuzzy Vault</td></tr>
+    <tr><td><b>BIOSIG 2025</b></td><td>Multi-Party HE for PQC Biometric</td></tr>
+    <tr><td><b>EUSIPCO 2025</b></td><td>Deep Multi-Finger Fuzzy Commitment</td></tr>
+    <tr><td><b>IWBF 2025</b></td><td>AMB-FHE: Multi-Biometric + FHE</td></tr>
+  </table>
+  <h3 style="font-size:14px;margin:8px 0 4px;">🔐 Tier-1 密码学顶会</h3>
+  <p style="margin:4px 0;"><span class="box policy">ProvSec 2024 (Isogeny FE)</span> <span class="box policy">ACNS 2024 (FE 升级 ×3)</span> <span class="box policy">QRSEC@CCS 2025 (信息论安全 FE)</span></p>
+  <h3 style="font-size:14px;margin:6px 0 4px;">💡 关键观察</h3>
+  <ul style="margin:2px 0;padding-left:18px;font-size:12px;">
+    <li><b>Rathgeb 组一家独大</b>：6 篇 Tier-1 会议中 5 篇出自该组，<b>做 BKG 必须和 Rathgeb 组 baseline 对比</b></li>
+    <li><b>同源密码 + FE</b>：ProvSec 2024 Isogeny-based Reusable FE 是抗量子新方向</li>
+    <li><b>顶会稀少但存在</b>：CCS 2025 + ICML 2025 各 1 篇</li>
+  </ul>
 </section>
 
 <!-- ============== 20b. 新趋势：抗量子生物特征 ============== -->

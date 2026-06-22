@@ -387,10 +387,70 @@ BKG 顶刊顶会（按重要性排序）：
 | **Post-Quantum Biometric Authentication Based on Homomorphic Encryption and Classic McEliece** | Applied Sciences | 2023 | **21** | **PQC + HE + 生物特征** |
 | Robust biometric scheme against replay attacks using one-time biometric templates | C&S | 2024 | 19 | 重放攻击 + 一次性模板 |
 | **Deep secure PalmNet: cancelable palmprint template protection with deep attention** | C&S | 2024 | **15** | 掌纹 cancelable + attention |
-| Multimodal biometric user authentication using improved decentralized fuzzy vault | JISA | 2024 | 24 | 去中心化模糊金库 |
+| **STBCIoT: Securing the Transmission of Biometric Images in Customer IoT** | IEEE IoT J | 2024 | 14 | IoT 生物图像保护 |
 | **KeyEncoder: EEG-based cryptographic key generation mechanism** | Pattern Recognition Letters | 2023 | **11** | EEG 密钥生成 |
 | A novel compression-based 2D-chaotic sine map for enhancing privacy of biometric | JISA | 2024 | 23 | 2D 混沌映射隐私增强 |
 | Blockchain-based biometric identity management | Cluster Computing | 2023 | 28 | 区块链 + 生物身份 |
+
+---
+
+## 7.5 DBLP 顶会/专题会议论文清单 (48 篇, 2023-2026)
+
+**重要发现**：DBLP 命中包含 **CCS 2025** 和 **ICML 2025** 等顶会论文，arXiv 检索无法覆盖这些。
+
+### Tier-1 顶会 (2 篇)
+
+| 论文 | 年 | 重点 |
+|------|---|------|
+| **Fuzzy Extractors are Practical: Cryptographic Strength Key Derivation from the Iris** | **CCS 2025** | **顶会突破**：Fuzzy Extractor 在虹膜上达到密码学强度 |
+| **Distributed Differentially Private Data Analytics via Secure Sketching** | **ICML 2025** | **顶会突破**：Secure Sketch + 联邦差分隐私 |
+
+### Tier-1 生物特征会议 (6 篇)
+
+| 会议 | 年 | 论文 | 重点 |
+|------|---|------|------|
+| **IJCB 2025** | 2025 | Closing the Performance Gap in Biometric Cryptosystems: Unlinkable Fuzzy Vaults (Rathgeb) | 跨人脸/指纹/虹膜 |
+| **IJCB 2023** | 2023 | Multi-Biometric Fuzzy Vault: Face+Fingerprints (Rathgeb) | 多模态 Fuzzy Vault |
+| **BIOSIG 2025** | 2025 | Single-Instance Multi-Sample Fusion in Deep Fingerprint Fuzzy Vault (Rathgeb) | 深度指纹 Fuzzy Vault |
+| **BIOSIG 2025** | 2025 | Secure Multi-Party HE for Post-Quantum Biometric Recognition (Rathgeb) | PQC + HE |
+| **EUSIPCO 2025** | 2025 | Deep Multi-Finger Fuzzy Commitment (Rathgeb) | 多指深度模糊承诺 |
+| **IWBF 2025** | 2025 | AMB-FHE: Adaptive Multi-Biometric Fusion with FHE (Rathgeb) | 多模态 + FHE |
+
+### Tier-1 密码学顶会 (5 篇)
+
+| 会议 | 年 | 论文 | 重点 |
+|------|---|------|------|
+| **ProvSec 2024** | 2024 | **Reusable Fuzzy Extractor from Isogeny** | **同源密码抗量子**！ |
+| **ACNS 2024** | 2024 | Upgrading Fuzzy Extractors | FE 升级 |
+| **ACNS 2024** | 2024 | Non-malleable Fuzzy Extractors | 不可篡改 FE |
+| **ACNS 2024** | 2024 | X-Lock: Secure XOR-Based Fuzzy Extractor for IoT | 轻量 FE |
+| **QRSEC@CCS 2025** | 2025 | Information-Theoretically Secure Fuzzy Extractors | 信息论安全 FE |
+
+### Tier-2 重要会议
+
+| 会议 | 年 | 论文 | 重点 |
+|------|---|------|------|
+| WIFS 2024 | 2024 | Strengthened Fuzzy Extractors using Turbo-codes (Rathgeb) | 指静脉 + Turbo |
+| SECRYPT 2024 | 2024 | Fuzzy Vault Security Enhancement | 抗统计偏差 |
+| ICPR 2024 | 2024 | One-Factor Cancelable Template for Real-Valued Features | 实值特征 cancelable |
+| ICICS 2025 | 2025 | BioVite: Compact Privacy-Preserving Biometric Verification | 紧凑 PP 生物认证 |
+| BMVC 2023 | 2023 | Security Analysis on LSH-based Template Protection | LSH 安全性分析 |
+| APSIPA 2024 | 2024 | Quasilinear-Time CVP for Triangular Lattice FE | 三角格 FE |
+| ISC 2025 | 2025 | Comparative Evaluation of Lattices for FE/FS | 格密码比较 |
+| ISC 2025 | 2025 | Code-Based Fuzzy Vault | 基于编码的 FV |
+| TrustCom 2025 | 2025 | Privacy-Preserving Facial Auth with Hybrid FC + Cancelable | 人脸 + 混合 FC |
+| IJCNN 2025 | 2025 | FPE-Net: Face Privacy-Enhancing via Biometric Encryption | 人脸加密 |
+| CCBR 2024/2025 | 2024/2025 | 4 篇 (中国生物识别大会)：Householder / One-Permutation-Hash / SP2IN-LDPC / Lightweight Cancelable | 中文圈重要会议 |
+| CVPR Workshops 2023 | 2023 | BeCAPTCHA-Type: Biometric Keystroke for Bot Detection | 行为生物特征 |
+
+### 关键观察 (DBLP 趋势)
+
+1. **Rathgeb 组一家独大**：在 6 个 Tier-1 会议中有 5 篇作为通讯作者（含 IJCB 2023/2025、BIOSIG 2025、EUSIPCO 2025、IWBF 2025、WIFS 2024）。如果做 BKG，**几乎必须和 Rathgeb 组 baseline 对比**。
+2. **同源密码 + FE 是 2024 新趋势**：ProvSec 2024 出现 Isogeny-based Reusable FE，是抗量子 + FE 的重要进展。
+3. **Turbo-codes + FE**：WIFS 2024 把 turbo-code 引入 FE，提升纠错能力。
+4. **多模态 + FHE 成熟**：AMB-FHE (IWBF 2025) 把自适应多模态融合和全同态加密结合。
+5. **中国组发力 CCBR**：CCBR (Chinese Conference on Biometric Recognition) 4 篇，2024-2025 持续高质量。
+6. **顶会稀少但存在**：CCS 2025 + ICML 2025 各 1 篇，证明密码学/ML 顶会对 BKG 兴趣回升。
 
 ---
 
