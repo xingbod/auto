@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AnyTXT Searcher 架构与机制 · 桌面全文搜索引擎深度拆解</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a33;
+      --panel2: #172445;
+      --text: #eef4ff;
+      --muted: #aebbd4;
+      --accent: #7dd3fc;
+      --accent2: #fbbf24;
+      --green: #86efac;
+      --pink: #f0abfc;
+      --red: #fca5a5;
+      --violet: #c4b5fd;
+      --orange: #fdba74;
+      --cyan: #67e8f9;
+      --teal: #5eead4;
+      --line: rgba(255,255,255,.16);
+      --shadow: 0 22px 70px rgba(0,0,0,.38);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+    body::before { content: ""; position: fixed; inset: 0; background: radial-gradient(circle at 12% 10%, rgba(125,211,252,.28), transparent 30%), radial-gradient(circle at 88% 18%, rgba(240,171,252,.20), transparent 28%), radial-gradient(circle at 62% 88%, rgba(251,191,36,.13), transparent 32%); pointer-events: none; }
+    .deck { height: 100vh; width: 100vw; position: relative; }
+    .slide { position: absolute; inset: 0; padding: 28px 56px 76px; display: none; overflow: auto; }
+    .slide.tight { padding: 22px 50px 70px; }
+    .slide.tight h3 { margin: 8px 0 4px; }
+    .slide.tight p, .slide.tight li { font-size: 14px; line-height: 1.35; margin: 2px 0; }
+    .slide.tight .code { font-size: 12px; line-height: 1.4; padding: 10px 12px; }
+    .slide.tight .grid2, .slide.tight .grid3 { gap: 12px; }
+    .slide.tight .box { padding: 10px 12px; }
+    .slide.active { display: block; animation: fade .22s ease-out; }
+    @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .card { max-width: 1180px; min-height: calc(100vh - 120px); margin: 0 auto; padding: 28px 40px; background: linear-gradient(180deg, rgba(18,26,51,.94), rgba(14,20,39,.94)); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow); }
+    .center { display: grid; place-items: center; text-align: center; }
+    h1 { font-size: clamp(36px, 5vw, 70px); line-height: 1.05; margin: 0 0 20px; letter-spacing: -0.04em; }
+    h2 { font-size: clamp(24px, 3vw, 38px); line-height: 1.08; margin: 0 0 14px; letter-spacing: -0.035em; }
+    h3 { font-size: 19px; margin: 12px 0 6px; color: var(--accent); }
+    p, li { font-size: 16px; line-height: 1.4; color: var(--text); margin: 4px 0; }
+    ul, ol { margin-top: 6px; padding-left: 1.2em; }
+    li { margin: 2px 0; }
+    .muted { color: var(--muted); }
+    .small { font-size: 14px; line-height: 1.4; }
+    .tag { display: inline-block; padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(125,211,252,.35); color: var(--accent); background: rgba(125,211,252,.10); font-size: 13px; margin: 3px 4px 3px 0; }
+    .tag2 { color: var(--accent2); border-color: rgba(251,191,36,.35); background: rgba(251,191,36,.10); }
+    .tag3 { color: var(--green); border-color: rgba(134,239,172,.35); background: rgba(134,239,172,.10); }
+    .tag4 { color: var(--pink); border-color: rgba(240,171,252,.35); background: rgba(240,171,252,.10); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .box { background: rgba(255,255,255,.055); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+    .box strong { color: var(--accent2); }
+    .box.green { border-color: rgba(134,239,172,.40); background: rgba(134,239,172,.07); }
+    .box.green strong { color: var(--green); }
+    .box.pink { border-color: rgba(240,171,252,.40); background: rgba(240,171,252,.07); }
+    .box.pink strong { color: var(--pink); }
+    .box.cyan { border-color: rgba(103,232,249,.40); background: rgba(103,232,249,.07); }
+    .box.cyan strong { color: var(--cyan); }
+    .box.orange { border-color: rgba(253,186,116,.40); background: rgba(253,186,116,.07); }
+    .box.orange strong { color: var(--orange); }
+    .box.violet { border-color: rgba(196,181,253,.40); background: rgba(196,181,253,.07); }
+    .box.violet strong { color: var(--violet); }
+    .quote { border-left: 4px solid var(--accent); padding: 8px 0 8px 16px; color: var(--muted); font-size: 18px; }
+    .timeline { position: relative; padding-left: 24px; }
+    .timeline::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: 6px; width: 2px; background: linear-gradient(var(--accent), var(--accent2)); border-radius: 9px; }
+    .event { position: relative; margin: 0 0 10px; padding: 9px 14px; background: rgba(255,255,255,.055); border: 1px solid var(--line); border-radius: 12px; font-size: 15px; line-height: 1.4; }
+    .event::before { content: ""; position: absolute; left: -22px; top: 14px; width: 11px; height: 11px; border-radius: 50%; background: var(--accent2); box-shadow: 0 0 0 4px rgba(251,191,36,.12); }
+    .year { color: var(--accent2); font-weight: 800; margin-right: 8px; font-size: 14px; }
+    table { width: 100%; border-collapse: collapse; font-size: 15px; overflow: hidden; border-radius: 12px; }
+    th, td { border-bottom: 1px solid var(--line); padding: 8px 10px; vertical-align: top; text-align: left; }
+    th { color: var(--accent); background: rgba(125,211,252,.08); font-size: 14px; }
+    td { color: #edf3ff; }
+    .foot { position: fixed; left: 0; right: 0; bottom: 0; height: 36px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; color: var(--muted); background: rgba(6,10,22,.62); backdrop-filter: blur(10px); border-top: 1px solid var(--line); font-size: 13px; }
+    .progress { position: fixed; left: 0; bottom: 36px; height: 3px; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .2s; }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; border: 1px solid var(--line); border-bottom-width: 2px; padding: 1px 6px; border-radius: 5px; background: rgba(255,255,255,.06); font-size: 12px; }
+    .title-meta { font-size: 18px; color: var(--muted); max-width: 880px; margin: 0 auto; line-height: 1.4; }
+    .takeaway { color: var(--green); font-weight: 800; }
+    .warn { color: var(--red); }
+    .code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.45; background: #0a0f1f; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; color: #dff7ff; white-space: pre; overflow-x: auto; }
+    .code .k { color: var(--pink); }
+    .code .s { color: var(--green); }
+    .code .n { color: var(--cyan); }
+    .code .c { color: var(--muted); font-style: italic; }
+    .arch { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+    .layer { padding: 7px 10px; border-radius: 8px; background: rgba(125,211,252,.14); border: 1px solid rgba(125,211,252,.35); color: #dff7ff; font-size: 13px; white-space: nowrap; }
+    .layer.ui { background: rgba(196,181,253,.16); border-color: rgba(196,181,253,.40); }
+    .layer.engine { background: rgba(125,211,252,.16); border-color: rgba(125,211,252,.40); }
+    .layer.index { background: rgba(134,239,172,.15); border-color: rgba(134,239,172,.40); color: var(--green); }
+    .layer.io { background: rgba(251,191,36,.15); border-color: rgba(251,191,36,.40); color: #fff3c4; }
+    .layer.fs { background: rgba(253,186,116,.16); border-color: rgba(253,186,116,.40); }
+    .arrow { color: var(--muted); font-size: 16px; }
+    .pipeline { display: flex; align-items: stretch; justify-content: space-between; margin: 10px 0; padding: 10px 6px; background: #161b22; border-radius: 10px; border: 1px solid var(--line); gap: 4px; }
+    .pipeline-step { flex: 1; text-align: center; padding: 8px 6px; border-radius: 6px; background: rgba(91,141,239,.10); border: 1px solid rgba(91,141,239,.35); font-size: 12px; font-weight: 600; line-height: 1.3; }
+    .pipeline-step .small { font-size: 10px; color: #aebbd4; font-weight: 400; margin-top: 2px; }
+    .pipeline-step.scan { background: rgba(251,191,36,.10); border-color: rgba(251,191,36,.40); }
+    .pipeline-step.parse { background: rgba(196,181,253,.10); border-color: rgba(196,181,253,.40); }
+    .pipeline-step.token { background: rgba(103,232,249,.10); border-color: rgba(103,232,249,.40); }
+    .pipeline-step.index { background: rgba(134,239,172,.10); border-color: rgba(134,239,172,.40); }
+    .pipeline-step.merge { background: rgba(240,171,252,.10); border-color: rgba(240,171,252,.40); }
+    .pipeline-step.rank { background: rgba(253,186,116,.10); border-color: rgba(253,186,116,.40); }
+    .num-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 8px 0; }
+    .num-cell { background: #161b22; border: 1px solid var(--line); border-radius: 8px; padding: 8px; text-align: center; }
+    .num-cell .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; }
+    .num-cell .val { font-size: 22px; font-weight: bold; margin: 2px 0; font-family: ui-monospace, monospace; color: var(--accent); }
+    .num-cell .sub { font-size: 11px; color: var(--muted); }
+    .tree { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.3; white-space: pre; background: #0a0f1f; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); overflow-x: auto; }
+    .toc { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 18px; }
+    .toc a { color: inherit; text-decoration: none; }
+    .toc .item { padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); background: rgba(255,255,255,.04); font-size: 14px; }
+    .toc .item:hover { background: rgba(125,211,252,.10); border-color: rgba(125,211,252,.35); }
+    .toc .num { color: var(--accent2); font-weight: 800; margin-right: 8px; font-family: ui-monospace, monospace; }
+    .hl { color: var(--accent2); font-weight: 700; }
+    .hl2 { color: var(--green); font-weight: 700; }
+    .hl3 { color: var(--pink); font-weight: 700; }
+    .hl4 { color: var(--cyan); font-weight: 700; }
+    @media print { html, body { overflow: visible; background: #fff; color: #000; } body::before, .foot, .progress { display: none; } .slide { display: block !important; position: relative; page-break-after: always; height: auto; min-height: 100vh; padding: 20px; } .card { box-shadow: none; background: #fff; color: #000; border: 1px solid #ccc; } p, li, td { color: #111; } .muted { color: #555; } }
+    @media (max-width: 900px) { .slide { padding: 24px 16px 60px; } .card { padding: 22px 18px; } .grid2, .grid3, .grid4 { grid-template-columns: 1fr; } p, li { font-size: 15px; } }
+  </style>
+</head>
+<body>
+  <div class="deck" id="deck">
+
+    <!-- 1. 封面 -->
+    <section class="slide active"><div class="card center">
+      <div>
+        <div class="tag">架构拆解 · 桌面搜索引擎</div>
+        <div class="tag tag2">29 张 slides</div>
+        <div class="tag tag3">中文</div>
+        <h1>AnyTXT Searcher<br/>架构与机制</h1>
+        <p class="title-meta">一个"本地 Google"是怎么把整台电脑的文件内容塞进内存并实现亚秒级搜索的。<br/>覆盖：产品定位、四层架构、倒排索引、BM25 评分、NTFS USN 监听、文件解析器、压缩与 mmap、加密与 HTTP 服务。</p>
+        <p class="muted small" style="margin-top:18px">操作：<span class="kbd">→</span> / <span class="kbd">Space</span> 下一页 · <span class="kbd">←</span> 上一页 · <span class="kbd">Home/End</span> 跳转 · <span class="kbd">P</span> 打印 / 导出 PDF</p>
+      </div>
+    </div></section>
+
+    <!-- 2. 授课目标 -->
+    <section class="slide"><div class="card">
+      <h2>为什么讲 AnyTXT Searcher？</h2>
+      <div class="grid2">
+        <div class="box">
+          <h3>它是一个被低估的工程范本</h3>
+          <ul>
+            <li>闭源但 <span class="hl">结构清晰</span>，几乎是桌面版 Elasticsearch 的"最小可工作系统"。</li>
+            <li>单机 100 万文件亚秒级全文检索，纯本地、不联网。</li>
+            <li>支撑 30+ 文件格式、含扫描件 OCR、AES256 加密、HTTP 服务接口。</li>
+            <li>理解它 = 一次性把 <span class="hl2">信息检索 IR</span> + <span class="hl2">系统编程</span> + <span class="hl2">Windows 平台</span> 三件事打穿。</li>
+          </ul>
+        </div>
+        <div class="box pink">
+          <h3>这堂课能带走什么</h3>
+          <ol>
+            <li>区分"全文搜索"和"文件名搜索"——和 Everything 的本质差异。</li>
+            <li>倒排索引怎么在磁盘上组织，BM25 怎么打分。</li>
+            <li>文件系统变更如何被秒级捕获——NTFS USN Journal。</li>
+            <li>PDF/Word/PPT/Excel 怎么被读成"纯文本"。</li>
+            <li>性能优化套路：压缩、mmap、增量、异步。</li>
+          </ol>
+        </div>
+      </div>
+      <p class="quote">"AnyTXT is a rising star among desktop full-text search tools."<br><span class="muted small">— anytxt.net 官方页</span></p>
+    </div></section>
+
+    <!-- 3. 时间线 -->
+    <section class="slide"><div class="card">
+      <h2>桌面搜索 25 年：从 Google Desktop 到 AnyTXT</h2>
+      <div class="timeline">
+        <div class="event"><span class="year">2004</span><span class="hl">Everything</span> 发布 (David Carpenter) — 直接读 NTFS Master File Table，几秒建好 TB 级文件名索引。开源，<strong>不索引内容</strong>。</div>
+        <div class="event"><span class="year">2004–2011</span><span class="hl">Google Desktop</span> 横空出世又黯然退场，证明了"全文索引"是刚需，但商业上不可持续。</div>
+        <div class="event"><span class="year">2007</span><span class="hl">DocFetcher</span> (开源) — Java + Apache Lucene，桌面全文搜索的事实标准。但启动慢、内存大、Java 体验重。</div>
+        <div class="event"><span class="year">2010s</span><span class="hl">Recoll</span> (开源，C++ + Xapian) — 跨平台、文档处理插件齐全，但配置复杂。</div>
+        <div class="event"><span class="year">2014</span><span class="hl">Listary</span> — 提升 Everything 的快捷调用体验，但本身不建索引。</div>
+        <div class="event"><span class="year">2017–</span><span class="hl">AnyTXT Searcher</span> 出场 — 把 Lucene/Xapian 的能力塞进 ~30MB 的单文件 EXE，主打"快、对中文友好、开箱即用"。</div>
+        <div class="event"><span class="year">2020s</span>AI 加持的语义搜索入场 (如 RAG + 向量库)，但 <strong>关键词全文</strong> 仍是桌面场景最低成本、最高精度的方案。</div>
+      </div>
+    </div></section>
+
+    <!-- 4. TOC -->
+    <section class="slide"><div class="card">
+      <h2>课程路线图</h2>
+      <div class="toc">
+        <a class="item" href="#s5"><span class="num">P1</span>产品定位：AnyTXT 是什么、不是什么</a>
+        <a class="item" href="#s6"><span class="num">P2</span>支持格式全景 + 关键功能矩阵</a>
+        <a class="item" href="#s7"><span class="num">P3</span>与 Everything / DocFetcher / Recoll 对比</a>
+        <a class="item" href="#s8"><span class="num">P4</span>整体架构：四层模型与数据流</a>
+        <a class="item" href="#s11"><span class="num">P5</span>倒排索引：term → postings 映射</a>
+        <a class="item" href="#s13"><span class="num">P6</span>索引存储：dictionary + skip lists</a>
+        <a class="item" href="#s14"><span class="num">P7</span>BM25 评分公式拆解</a>
+        <a class="item" href="#s17"><span class="num">P8</span>文件系统监听：NTFS USN Journal</a>
+        <a class="item" href="#s19"><span class="num">P9</span>文件解析器：插件架构与格式矩阵</a>
+        <a class="item" href="#s22"><span class="num">P10</span>性能优化：压缩 / mmap / 增量</a>
+        <a class="item" href="#s25"><span class="num">P11</span>扩展能力：HTTP 服务 / AES256 / OCR</a>
+        <a class="item" href="#s28"><span class="num">P12</span>总结 · 工程教训与课堂讨论</a>
+      </div>
+    </div></section>
+
+    <!-- ============ Part 1 产品定位 ============ -->
+
+    <!-- 5. 关键差异 -->
+    <section class="slide" id="s5"><div class="card">
+      <h2>关键差异：<span class="hl">文件名</span> 搜索 vs <span class="hl3">文件内容</span> 搜索</h2>
+      <div class="grid2">
+        <div class="box cyan">
+          <h3>Everything 类 (文件名)</h3>
+          <ul>
+            <li>数据源：NTFS Master File Table (MFT)。</li>
+            <li>索引：仅 <code>filename</code> → <code>path</code>。</li>
+            <li>速度：<span class="hl">1 秒建百万文件索引</span>。</li>
+            <li>代价：<strong>不能搜 PDF 里的"机器学习"四个字</strong>。</li>
+          </ul>
+        </div>
+        <div class="box pink">
+          <h3>AnyTXT 类 (全文内容)</h3>
+          <ul>
+            <li>数据源：<strong>打开文件、抽文本、拆词、入索引</strong>。</li>
+            <li>索引：<code>term</code> → <code>posting list (doc_id, positions)</code>。</li>
+            <li>速度：<span class="hl3">亚秒级查询，索引需数十秒到数分钟</span>。</li>
+            <li>代价：要解析格式、要监听变化、要压缩、要打 OCR。</li>
+          </ul>
+        </div>
+      </div>
+      <p class="quote">一个比喻：Everything 是通讯录；AnyTXT 是把通讯录上每个人的聊天记录都读了一遍再编的索引。</p>
+    </div></section>
+
+    <!-- 6. 格式支持 -->
+    <section class="slide" id="s6"><div class="card">
+      <h2>支持的 30+ 格式：从代码到扫描件 PDF</h2>
+      <div class="grid3">
+        <div class="box">
+          <h3>📄 文本 / 代码</h3>
+          <p class="small">txt / md / log / java / py / js / ts / go / rs / c / cpp / html / xml / json / yaml / sql / css …</p>
+        </div>
+        <div class="box cyan">
+          <h3>📊 Microsoft Office</h3>
+          <p class="small">doc / docx / xls / xlsx / ppt / pptx / <span class="hl">docm / xlsm / pptm</span> (含宏) / OneNote (.one)</p>
+        </div>
+        <div class="box orange">
+          <h3>📑 PDF + 扫描件</h3>
+          <p class="small">pdf (含加密) / <span class="hl">扫描 PDF → OCR</span> / djvu / ofd (国标)</p>
+        </div>
+        <div class="box green">
+          <h3>📚 eBook</h3>
+          <p class="small">mobi / epub / azw / azw3 / chm / fb2 / LaTeX</p>
+        </div>
+        <div class="box violet">
+          <h3>🇨🇳 WPS</h3>
+          <p class="small">wps / et / dps + 中日韩多语言全文索引</p>
+        </div>
+        <div class="box pink">
+          <h3>🧠 思维导图 / 笔记</h3>
+          <p class="small">xmind / mmap / emmx / mm / lighten / ziw (WizNote) / eddx (Edraw)</p>
+        </div>
+        <div class="box">
+          <h3>📧 邮件 / 字体</h3>
+          <p class="small">eml (Outlook, beta) / ttf / otf (字体名索引)</p>
+        </div>
+        <div class="box cyan">
+          <h3>🖼 图片 OCR</h3>
+          <p class="small">png / jpg / bmp / tiff → 多语言 OCR 抽文本</p>
+        </div>
+        <div class="box orange">
+          <h3>💾 二进制</h3>
+          <p class="small">exe / dll / so → 抽 strings 表 + 符号表</p>
+        </div>
+      </div>
+      <p class="quote">覆盖 30+ 格式的本质 = <span class="hl2">每种格式一个文本抽取器 (Extractor)</span>，抽完扔进同一个索引器。</p>
+    </div></section>
+
+    <!-- 7. 竞品对比表 -->
+    <section class="slide" id="s7"><div class="card">
+      <h2>桌面全文搜索 5 大选手横评</h2>
+      <table>
+        <tr>
+          <th>产品</th><th>索引范围</th><th>引擎</th><th>中文支持</th><th>实时性</th><th>格式数</th><th>体积/依赖</th>
+        </tr>
+        <tr>
+          <td><strong>Everything</strong></td><td>仅文件名</td><td>NTFS MFT 直读</td><td>— (无关)</td><td>USN Journal 实时</td><td>0</td><td>~2MB 单文件</td>
+        </tr>
+        <tr>
+          <td><strong>AnyTXT</strong></td><td><span class="hl3">全文内容</span></td><td>自研 (推测 SQLite FTS5 或自实现倒排)</td><td><span class="hl2">优秀</span></td><td>实时同步</td><td>30+</td><td>~30MB 单 EXE</td>
+        </tr>
+        <tr>
+          <td><strong>DocFetcher</strong></td><td>全文内容</td><td>Apache Lucene (Java)</td><td>一般 (CJK Analyzer)</td><td>手动重建</td><td>20+</td><td>需 JRE</td>
+        </tr>
+        <tr>
+          <td><strong>Recoll</strong></td><td>全文内容</td><td>Xapian (C++)</td><td>好 (可配分词)</td><td>定时扫描</td><td>50+</td><td>中等</td>
+        </tr>
+        <tr>
+          <td><strong>grepWin</strong></td><td>全文内容</td><td>Win32 grep</td><td>好 (正则)</td><td>无 (按需扫)</td><td>取决于文件类型</td><td>~5MB</td>
+        </tr>
+        <tr>
+          <td><strong>Listary</strong></td><td>无 (快捷启动)</td><td>调 Everything</td><td>好</td><td>—</td><td>—</td><td>~5MB</td>
+        </tr>
+      </table>
+      <p class="small muted" style="margin-top:8px">结论：AnyTXT 是"Everything 的轻量感 + Lucene 的全文能力 + 中文本地化"的交集。</p>
+    </div></section>
+
+    <!-- ============ Part 2 整体架构 ============ -->
+
+    <!-- 8. 4 层架构 -->
+    <section class="slide tight" id="s8"><div class="card">
+      <h2>整体架构：四层模型</h2>
+      <div class="arch">
+        <span class="layer ui">UI 层</span>
+        <span class="arrow">→</span>
+        <span class="layer engine">搜索引擎层</span>
+        <span class="arrow">→</span>
+        <span class="layer index">索引层</span>
+        <span class="arrow">→</span>
+        <span class="layer io">资源层 (文件解析 + 监听)</span>
+        <span class="arrow">→</span>
+        <span class="layer fs">Windows FS / NTFS</span>
+      </div>
+      <div class="grid2">
+        <div class="box violet">
+          <h3>UI 层</h3>
+          <ul>
+            <li>主界面：搜索框 + 结果列表 (高亮命中片段)。</li>
+            <li>HTTP Search Service：<code>http://127.0.0.1:port/...</code>。</li>
+            <li>系统托盘 + 全局快捷键 + 资源管理器右键。</li>
+          </ul>
+        </div>
+        <div class="box cyan">
+          <h3>搜索引擎层</h3>
+          <ul>
+            <li>查询解析：分词 + 操作符 (AND/OR/NOT/phrase/regex)。</li>
+            <li>查询计划：term → postings → 合并 (DAAT/TAAT)。</li>
+            <li>评分：BM25 打分 + 字段加权 (title vs body)。</li>
+            <li>高亮：把命中位置回填原文，标黄。</li>
+          </ul>
+        </div>
+        <div class="box green">
+          <h3>索引层</h3>
+          <ul>
+            <li>倒排索引：词典 + postings list (含位置)。</li>
+            <li>文件元数据表：path / size / mtime / doc_id。</li>
+            <li>增量更新：<span class="hl2">merge 段 (segment)</span>，定期合并。</li>
+            <li>压缩存储：VB / Frame-of-Reference / PForDelta。</li>
+          </ul>
+        </div>
+        <div class="box orange">
+          <h3>资源层</h3>
+          <ul>
+            <li>解析器工厂：extension → 具体 Parser。</li>
+            <li>PDF / Office / eBook / OCR 各一个 Parser。</li>
+            <li>文件系统监听：<span class="hl2">NTFS USN Journal</span> / ReadDirectoryChangesW。</li>
+            <li>线程池：解析 / 索引 / 监听 三类 worker。</li>
+          </ul>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- 9. 索引数据流 -->
+    <section class="slide"><div class="card">
+      <h2>数据流：扫描 → 解析 → 入索引</h2>
+      <div class="pipeline">
+        <div class="pipeline-step scan">1. 文件扫描<div class="small">MFT/遍历</div></div>
+        <div class="pipeline-step parse">2. 解析器抽取<div class="small">PDF/DOCX/...</div></div>
+        <div class="pipeline-step token">3. 分词 + 归一化<div class="small">CJK/EN/stopword</div></div>
+        <div class="pipeline-step index">4. 写倒排索引<div class="small">append posting</div></div>
+        <div class="pipeline-step merge">5. 段合并<div class="small">后台</div></div>
+        <div class="pipeline-step rank">6. 查询时 BM25<div class="small">评分 + 高亮</div></div>
+      </div>
+      <div class="code"><span class="c"># 概念伪代码：单条文档的索引过程</span>
+doc_id = next_id()
+text, meta = <span class="k">parser</span>.extract(<span class="s">"C:\paper.pdf"</span>)    <span class="c"># 拆出正文 + 元数据</span>
+<span class="k">analyzer</span>.normalize(text)                              <span class="c"># 去 HTML / 去标点 / 大小写</span>
+<span class="k">for</span> pos, term <span class="k">in</span> <span class="k">analyzer</span>.tokenize(text):
+    <span class="k">inverted_index</span>.add(term, doc_id, pos)        <span class="c"># append 到 posting list</span>
+<span class="k">doc_store</span>[doc_id] = {<span class="s">"path"</span>: path, <span class="s">"title"</span>: meta.title, <span class="s">"len"</span>: len(text)}</div>
+      <p class="small muted" style="margin-top:8px">整个流程在 worker 线程跑；UI 线程只读索引、显示结果。两边通过内存里的一份倒排 + 一份段文件 (segment) 通信。</p>
+    </div></section>
+
+    <!-- 10. 进程模型 -->
+    <section class="slide"><div class="card">
+      <h2>进程与线程模型</h2>
+      <div class="grid2">
+        <div class="box violet">
+          <h3>主进程 (UI)</h3>
+          <ul>
+            <li>渲染窗口、响应键盘、处理设置。</li>
+            <li><span class="hl">只读</span> 索引；不参与解析。</li>
+            <li>通过共享内存 / mmap 读取 segment 文件。</li>
+          </ul>
+        </div>
+        <div class="box cyan">
+          <h3>Index Worker (N 线程)</h3>
+          <ul>
+            <li>文件 I/O + 解析 + 写索引。</li>
+            <li>向 segment 追加新条目 (write-once)。</li>
+            <li>优先级：先解小文件、再解大文件。</li>
+          </ul>
+        </div>
+        <div class="box green">
+          <h3>FS Watcher (1 线程)</h3>
+          <ul>
+            <li>监听 NTFS USN Journal / RDC。</li>
+            <li>把变更 (create / modify / delete) 推入任务队列。</li>
+            <li>对二进制 / 临时文件做白名单过滤。</li>
+          </ul>
+        </div>
+        <div class="box orange">
+          <h3>Segment Merger (后台)</h3>
+          <ul>
+            <li>定期把小段合并成大段 (类似 LSM-tree)。</li>
+            <li>删除已 remove 的 doc_id。</li>
+            <li>索引空闲时触发，不阻塞查询。</li>
+          </ul>
+        </div>
+      </div>
+      <p class="quote">这个结构和 Elasticsearch 的 <span class="hl2">Indexing Node + Coordinating Node + Merge</span> 是同构的，只是单进程版。</p>
+    </div></section>
+
+    <!-- ============ Part 3 倒排索引 ============ -->
+
+    <!-- 11. 倒排索引概念 -->
+    <section class="slide" id="s11"><div class="card">
+      <h2>倒排索引：搜索引擎的心脏</h2>
+      <p>把"文档 → 词"的正向关系，<span class="hl2">反向</span> 成"词 → 文档列表"。</p>
+      <div class="grid2">
+        <div class="box cyan">
+          <h3>正向索引 (Forward Index)</h3>
+          <div class="code">D1 → [机器, 学习, 是, ...]
+D2 → [深度, 学习, 改变, ...]
+D3 → [学习, 笔记, ...]</div>
+          <p class="small muted">查"机器"需要遍历所有 D_i。</p>
+        </div>
+        <div class="box green">
+          <h3>倒排索引 (Inverted Index)</h3>
+          <div class="code">机器   → [D1, D3, D42, ...]
+学习   → [D1, D2, D3, D7, ...]
+深度   → [D2, D5, D19, ...]
+...</div>
+          <p class="small muted">查"机器"：O(1) 跳到 term 槽，读 postings。</p>
+        </div>
+      </div>
+      <p class="quote">两段构成：① <span class="hl">词典 (dictionary / term dictionary)</span> ② <span class="hl3">倒排表 (postings list)</span>。</p>
+    </div></section>
+
+    <!-- 12. Record vs Word level -->
+    <section class="slide" id="s13"><div class="card">
+      <h2>Record-level vs Word-level 索引</h2>
+      <div class="grid2">
+        <div class="box orange">
+          <h3>Record-level (文档级)</h3>
+          <p class="small">postings 只存 doc_id；不记录词在文档中的位置。</p>
+          <div class="code">学习 → [D1, D2, D3, D7]</div>
+          <ul>
+            <li>省空间：~30% 体积。</li>
+            <li>缺点：<span class="warn">无法支持 phrase query</span> ("机器 学习" 紧邻)。</li>
+            <li>缺点：无法精准高亮。</li>
+          </ul>
+        </div>
+        <div class="box green">
+          <h3>Word-level (词项级) ⭐ AnyTXT 用的</h3>
+          <p class="small">每个 posting 存 doc_id + 词位置数组。</p>
+          <div class="code">学习 → [
+  D1: [3, 18, 92],
+  D2: [5, 21],
+  D7: [12, 44, 88, 200],
+]</div>
+          <ul>
+            <li>支持 phrase / proximity 查询。</li>
+            <li>支持高亮 (回填原文找上下文)。</li>
+            <li>代价：占用 2-3× 空间，需压缩。</li>
+          </ul>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- 13. 索引文件结构 -->
+    <section class="slide"><div class="card">
+      <h2>倒排索引在磁盘上长什么样？</h2>
+      <div class="code"><span class="c"># segment 目录 (类似 Lucene/ES 的设计)</span>
+index/
+├── segments.gen            <span class="c"># 全局段代号</span>
+├── segments_<span class="n">3</span>            <span class="c"># 段元信息</span>
+├── _0.tim                 <span class="c"># Term Index (B+Tree / FST)</span>
+├── _0.tip                 <span class="c"># Term Index Pointers</span>
+├── _0.doc                 <span class="c"># doc_id → 元数据 (path/title/len)</span>
+├── _0.pos                 <span class="c"># postings + 位置 (compressed)</span>
+├── _0.pay                 <span class="c"># payloads / 字符偏移 (用于高亮)</span>
+├── _0.fdm                 <span class="c"># stored fields (供返回原文片段)</span>
+└── _0.fdt                 <span class="c"># stored fields data</span></div>
+      <div class="grid2" style="margin-top:8px">
+        <div class="box cyan">
+          <h3>词典 (Term Dictionary)</h3>
+          <p class="small">通常用 <span class="hl2">FST (Finite State Transducer)</span> 压缩，前缀共享，O(1) 查找 + 范围扫描。</p>
+        </div>
+        <div class="box pink">
+          <h3>Postings 压缩</h3>
+          <p class="small">doc_id 取 delta，position 也 delta；<span class="hl2">VB / Frame-of-Reference / PForDelta</span> 编码，原始占用压到 1/5-1/10。</p>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- ============ Part 4 BM25 ============ -->
+
+    <!-- 14. BM25 公式 -->
+    <section class="slide" id="s14"><div class="card">
+      <h2>BM25 评分公式：1970s 的经典到 2020s 还在用</h2>
+      <p>BM = <span class="hl">Best Matching</span>，1994 年 Okapi 系统提出，<span class="hl3">事实上的行业标准</span>，比 TF-IDF 更稳。</p>
+      <div class="code">给定查询 Q (含 term q1..qn)，文档 D 的 BM25 得分：
+
+    <span class="k">score</span>(D, Q) = Σᵢ  IDF(qᵢ) · f(qᵢ, D) · (k₁ + 1)
+                              ───────────────────────────
+                              f(qᵢ, D) + k₁ · (1 - b + b · |D|/avgdl)
+
+其中：
+  f(qᵢ, D)        = term qᵢ 在文档 D 中的词频
+  |D|             = 文档 D 的长度 (词数)
+  avgdl           = 整个语料库的平均文档长度
+  k₁, b           = 自由参数，常用 k₁ ∈ [1.2, 2.0]，b = 0.75
+  IDF(qᵢ)         = ln( (N - n(qᵢ) + 0.5) / (n(qᵢ) + 0.5) + 1 )
+  N               = 总文档数
+  n(qᵢ)           = 包含 qᵢ 的文档数</div>
+      <p class="quote">BM25 的核心直觉：<span class="hl2">词频饱和</span>(出现 100 次不应该是出现 1 次的 100 倍有用) + <span class="hl2">文档长度归一</span>(短文档的"出现"更有信号)。</p>
+    </div></section>
+
+    <!-- 15. TF-IDF vs BM25 -->
+    <section class="slide"><div class="card">
+      <h2>为什么 BM25 比 TF-IDF 更稳？</h2>
+      <div class="grid2">
+        <div class="box orange">
+          <h3>TF-IDF 的问题</h3>
+          <ul>
+            <li>词频项是 <span class="warn">线性</span>：<code>tf(t,d) × idf(t)</code>。</li>
+            <li>同样出现 10 次，对长文档 = 1% 占比，对短文档 = 50% 占比，长文档被严重低估。</li>
+            <li>没有对文档长度做归一化 → 长 doc 吃亏。</li>
+          </ul>
+        </div>
+        <div class="box green">
+          <h3>BM25 的两项修正</h3>
+          <ul>
+            <li><span class="hl2">饱和函数</span>：高频词收益递减。<code>k₁ + 1</code> 限制上限。</li>
+            <li><span class="hl2">长度归一</span>：<code>|D|/avgdl</code> 出现后，长文档被适度补偿。</li>
+            <li>参数 <code>b</code> 控制归一强度 (b=0 完全不归一，b=1 完全归一)。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="num-grid">
+        <div class="num-cell"><div class="lbl">tf</div><div class="val">5</div><div class="sub">短 doc, 占比高</div></div>
+        <div class="num-cell"><div class="lbl">tf</div><div class="val">5</div><div class="sub">长 doc, 占比低</div></div>
+        <div class="num-cell"><div class="lbl">TF-IDF</div><div class="val" style="color:var(--orange)">5 vs 5</div><div class="sub">一样</div></div>
+        <div class="num-cell"><div class="lbl">BM25</div><div class="val" style="color:var(--green)">高分 vs 中分</div><div class="sub">短 doc 胜</div></div>
+      </div>
+    </div></section>
+
+    <!-- 16. 中文分词 -->
+    <section class="slide"><div class="card">
+      <h2>中文分词：英文分词 + CJK 二次分词</h2>
+      <div class="grid2">
+        <div class="box cyan">
+          <h3>英文侧 (容易)</h3>
+          <div class="code">输入: "Machine learning is fun."
+分词: [machine, learn, is, fun]
+处理: 停用词 (is, a, the) 过滤
+归一: lower-case + Porter stemmer
+     (learn → learn, learning → learn)</div>
+        </div>
+        <div class="box pink">
+          <h3>中文侧 (难点)</h3>
+          <div class="code">输入: "机器学习改变世界"
+分词: [机器, 学习, 改变, 世界]   <span class="c"># 词典分词</span>
+或:  [机器学习, 改变, 世界]       <span class="c"># 二元/新词识别</span>
+混合: [machinelearning, 改变, 世界] <span class="c"># 中英混排</span></div>
+          <p class="small">常用方案：<span class="hl2">最大正向匹配 (FMM)</span>、<span class="hl2">Jieba / IK Analyzer</span>、n-gram 兜底。</p>
+        </div>
+      </div>
+      <p class="quote">AnyTXT 的"Multi-language (include Chinese, Japanese, Korean)" 说明它 <span class="hl3">至少维护一份中英混合词表 + CJK 二元分词兜底</span>。</p>
+    </div></section>
+
+    <!-- ============ Part 5 FS 监听 ============ -->
+
+    <!-- 17. NTFS USN Journal -->
+    <section class="slide tight" id="s17"><div class="card">
+      <h2>文件系统监听：NTFS 的杀手锏 USN Journal</h2>
+      <p>NTFS 的 <span class="hl2">Change Journal (USN Journal)</span> 是一个 append-only 的元数据变更日志：<strong>每条记录 = "哪个 MFT 记录、什么时间、改了什么"</strong>。</p>
+      <div class="code"><span class="c"># USN_RECORD_V2 (简化版)</span>
+<span class="k">struct</span> USN_RECORD {
+    uint32_t record_length;
+    uint64_t <span class="hl">file_reference_number</span>;     <span class="c"># 哪个文件 (MFT entry)</span>
+    uint64_t parent_file_reference_number;  <span class="c"># 父目录</span>
+    uint32_t <span class="hl2">file_attributes</span>;          <span class="c"># 创建/删除/重命名/写入...</span>
+    int64_t  timestamp;
+    wchar_t  file_name[];                    <span class="c"># 文件名</span>
+    <span class="c"># 注意：不包含文件内容 (这是和 Everything 的共同点)</span>
+}</div>
+      <div class="grid2">
+        <div class="box green">
+          <h3>USN Journal 的好处</h3>
+          <ul>
+            <li>读 1 次 ioctl 就拿到全盘所有变更。</li>
+            <li>不轮询、不遍历目录、CPU 几乎为 0。</li>
+            <li>Window 化的子集读取：<code>FSCTL_READ_USN_JOURNAL</code>。</li>
+          </ul>
+        </div>
+        <div class="box orange">
+          <h3>对 AnyTXT 的含义</h3>
+          <ul>
+            <li>检测到 <code>file_attributes &amp; FILE_NOTIFY_CHANGE_LAST_WRITE</code> → 触发重新解析 + 重写 posting。</li>
+            <li>检测到 <code>FILE_ACTION_REMOVED</code> → 标记 doc_id 失效，merge 时清理。</li>
+            <li>对 FAT/exFAT 无 USN：fallback 到 <code>ReadDirectoryChangesW</code>。</li>
+          </ul>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- 18. 增量索引 -->
+    <section class="slide"><div class="card">
+      <h2>增量索引：USN → 任务队列 → 写新段</h2>
+      <div class="pipeline">
+        <div class="pipeline-step scan">USN Reader<div class="small">每 N 秒一批</div></div>
+        <div class="pipeline-step parse">去重 + 过滤<div class="small">去 tmp/.lock</div></div>
+        <div class="pipeline-step token">入队 Task Queue<div class="small">优先级队列</div></div>
+        <div class="pipeline-step index">Index Worker<div class="small">解析 + tokenize</div></div>
+        <div class="pipeline-step merge">追加新 segment<div class="small">写时复制</div></div>
+        <div class="pipeline-step rank">原子切换<div class="small">segments_N+1</div></div>
+      </div>
+      <p class="quote">"Real-time Sync Full-Text Index" 翻译过来就是：USN 触发增量写 segment，UI mmap 总是读最新的 segments_N，切换是原子的。</p>
+      <p class="small muted" style="margin-top:6px">类比：和 LSM-tree (LevelDB / RocksDB) 的 memtable → SSTable 是同一个范式。</p>
+    </div></section>
+
+    <!-- ============ Part 6 解析器 ============ -->
+
+    <!-- 19. 解析器架构 -->
+    <section class="slide" id="s19"><div class="card">
+      <h2>文件解析器：插件式架构 (像 Apache Tika)</h2>
+      <div class="grid2">
+        <div class="box cyan">
+          <h3>Parser 抽象</h3>
+          <div class="code"><span class="k">interface</span> Parser {
+    bool   <span class="hl">matches</span>(path, ext, magic) <span class="c"># 是不是我吃的格式</span>
+    Text   <span class="hl2">extract</span>(file)         <span class="c"># 抽成 (text, metadata)</span>
+    <span class="k">string</span> name()              <span class="c"># 自报家门</span>
+}
+
+<span class="k">type</span> Text {
+    body    <span class="k">string</span>
+    title   <span class="k">string</span>
+    lang    <span class="k">string</span>   <span class="c"># zh / en / ja / ko</span>
+    meta    map  <span class="c"># 作者/页数/创建时间...</span>
+}</div>
+        </div>
+        <div class="box green">
+          <h3>ParserFactory 决策</h3>
+          <ul>
+            <li>① <span class="hl">魔数 (magic bytes)</span>：前 N 字节判断真格式 (e.g. <code>%PDF</code>)。</li>
+            <li>② <span class="hl2">文件扩展名</span>：快速分发。</li>
+            <li>③ <span class="hl3">MIME sniff</span>：fallback。</li>
+            <li>特殊格式注册 OCR、密码解压等子链。</li>
+          </ul>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- 20. 关键格式解析 -->
+    <section class="slide"><div class="card">
+      <h2>关键格式解析：PDF / DOCX / PPTX 怎么读？</h2>
+      <div class="grid3">
+        <div class="box orange">
+          <h3>📄 PDF</h3>
+          <ul>
+            <li>解析 CMap 表 (ToUnicode) 解中文乱码。</li>
+            <li>遍历 content stream 拼文字，保留位置。</li>
+            <li>扫描件：先 <code>render → image → Tesseract</code> OCR。</li>
+            <li>加密：先尝试空密码 / 用户密码，失败跳过。</li>
+          </ul>
+        </div>
+        <div class="box cyan">
+          <h3>📝 DOCX (OOXML)</h3>
+          <ul>
+            <li>本质是 ZIP + XML。</li>
+            <li>读 <code>word/document.xml</code> 提段落 + 表格。</li>
+            <li>处理 <code>w:tab</code>、<code>w:br</code> 标签。</li>
+            <li>嵌入式图片 → 单独入 OCR 链。</li>
+          </ul>
+        </div>
+        <div class="box pink">
+          <h3>📊 XLSX / PPTX</h3>
+          <ul>
+            <li>XLSX：每个 sheet 一个 XML，逐 cell 取值 + 公式结果。</li>
+            <li>PPTX：每个 slide 一个 XML，遍历 shape/textbox。</li>
+            <li>共享字符串表去重 <code>sharedStrings.xml</code>。</li>
+            <li>大小：通常 1-50 MB，解析可秒级。</li>
+          </ul>
+        </div>
+      </div>
+      <p class="quote">AnyTXT "without installing any other software" 意味着这些 Parser 都是 <span class="hl2">内嵌进 EXE</span> 的，没有外部 LibreOffice / pdftotext 依赖。</p>
+    </div></section>
+
+    <!-- 21. 编码 + OCR -->
+    <section class="slide"><div class="card">
+      <h2>编码检测 + 多语言 OCR</h2>
+      <div class="grid2">
+        <div class="box cyan">
+          <h3>文本编码检测 (chardet / ICU)</h3>
+          <ul>
+            <li>统计字节分布 + BOM (UTF-8/16/32)。</li>
+            <li>中文：GBK / GB18030 / Big5 概率排序。</li>
+            <li>日韩：EUC-JP / Shift-JIS / EUC-KR。</li>
+            <li>兜底：UTF-8 强解 + 容错。</li>
+          </ul>
+        </div>
+        <div class="box green">
+          <h3>OCR 链路 (Multilingual OCR)</h3>
+          <div class="code">image bytes
+  ↓ 1. 预处理 (去噪/二值化/校正)
+  ↓ 2. Tesseract LSTM (eng + chi_sim + jpn + kor)
+  ↓ 3. hOCR 输出 (带 word box)
+  ↓ 4. 拼回原文 + 记录位置
+  ↓ 5. 入索引 (与 PDF 文本同质)</div>
+        </div>
+      </div>
+      <p class="small muted">OCR 一次扫描件 100-500ms；意味着"扫描 1 万份纸质合同" 入库的瓶颈不在 IO，而在 OCR 算力。</p>
+    </div></section>
+
+    <!-- ============ Part 7 性能优化 ============ -->
+
+    <!-- 22. 压缩 -->
+    <section class="slide" id="s22"><div class="card">
+      <h2>性能优化 ①：Postings 压缩</h2>
+      <p>postings 占了索引的 <span class="hl2">90% 体积</span>。直接存 doc_id / position 数组太浪费，必须压缩。</p>
+      <div class="grid2">
+        <div class="box orange">
+          <h3>3 个常用编码</h3>
+          <ul>
+            <li><span class="hl">VB (Variable Byte)</span>：每个字节用 7 bit 存数据 + 1 bit 续接标志。最简单、CPU 快。</li>
+            <li><span class="hl2">Frame-of-Reference (FOR)</span>：每 128 个数取一个 block，统一减 block min。</li>
+            <li><span class="hl3">PForDelta</span>：每 128 个数选 90% 覆盖的 b bit，余下当异常值。压缩比最高。</li>
+          </ul>
+        </div>
+        <div class="box cyan">
+          <h3>为什么 postings 好压缩</h3>
+          <ul>
+            <li>doc_id 严格递增 → <code>delta</code> 远小于原值。</li>
+            <li>位置增量小 (大部分 1-5)。</li>
+            <li>有 <span class="hl2">聚集性</span>：相关 term 集中在少数 doc。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="code"><span class="c"># 假设 postings: [3, 17, 29, 30, 200, 201]</span>
+<span class="c"># 原值大小: 6 × 4 byte = 24 byte</span>
+<span class="c"># delta: [3, 14, 12, 1, 170, 1]    → max=170, 需 8 bit</span>
+<span class="c"># VB 编码: 每个值平均 1-2 byte      → 压缩到 ~10 byte  (2.4×)</span>
+<span class="c"># PForDelta + 异常槽                → 压缩到 ~7 byte   (3.4×)</span></div>
+    </div></section>
+
+    <!-- 23. mmap + 异步 -->
+    <section class="slide"><div class="card">
+      <h2>性能优化 ②：mmap + 异步 I/O</h2>
+      <div class="grid2">
+        <div class="box green">
+          <h3>mmap (内存映射)</h3>
+          <div class="code">segment_file = open(<span class="s">"_0.pos"</span>)
+<span class="hl">data</span> = mmap(segment_file)   <span class="c"># 操作系统按需 page-in</span>
+<span class="hl2">postings</span> = data[offset:offset+len]
+<span class="c"># 进程退出时自动 sync 写回</span></div>
+          <ul>
+            <li>查询时像访问内存一样访问磁盘。</li>
+            <li>OS 自动按 4KB page 调度，冷数据不占 RAM。</li>
+            <li>多进程共享：多个 AnyTXT 实例同时 mmap 同一文件。</li>
+          </ul>
+        </div>
+        <div class="box pink">
+          <h3>异步 I/O + SSD 优化</h3>
+          <ul>
+            <li>解析 / 写索引 / OCR 全部走线程池，不阻塞 UI。</li>
+            <li>"SSD Optimization" = 减少 random read、写批量化 (一次 fsync 多个 segment)。</li>
+            <li>任务优先级：小文件先、大文件后台。</li>
+            <li>限速：避免把磁盘 IO 跑满造成系统卡顿。</li>
+          </ul>
+        </div>
+      </div>
+      <p class="quote">"almost in 1 second" 这个宣称，本质是：<span class="hl3">mmap 让查询访问已缓存的 page</span>，没有 read() 系统调用路径。</p>
+    </div></section>
+
+    <!-- 24. Skip lists / 跳表 -->
+    <section class="slide"><div class="card">
+      <h2>查询时加速：Skip List + DAAT 合并</h2>
+      <div class="code"><span class="c"># 短语查询 "机器 学习" — postings 求交 + 位置相邻</span>
+机器: [D1@3,  D3@10, D7@5,  D12@2, ...]
+学习: [D1@18, D3@11, D5@1,  D7@6,  ...]
+   ↑ 倒排拉链合并 (DAAT: Document-at-a-Time)
+
+phrase 匹配: 在 D1 里 "机器"@3 之后 "学习"@4 → 命中 ✓
+           (用 position list 的差 1 判定相邻)
+
+加速技巧: postings 末尾加 <span class="hl2">skip pointer</span> (每 √N 个元素一个)
+机器: D1 ─┐
+       D3 │
+       D7 ├─ skip ──→ D7 (跳过 D3-D6)
+       D12│
+       ...</div>
+      <p class="small muted" style="margin-top:6px">skip pointer 让两个长 postings 求交时，O(N+M) → O(N·log(M) + M·log(N))。</p>
+    </div></section>
+
+    <!-- ============ Part 8 扩展能力 ============ -->
+
+    <!-- 25. HTTP 服务 / OCR / 加密 -->
+    <section class="slide tight" id="s25"><div class="card">
+      <h2>扩展能力：HTTP / AES256 / Keyword View</h2>
+      <div class="grid2">
+        <div class="box cyan">
+          <h3>HTTP Search Service</h3>
+          <div class="code">GET <span class="hl">/api/search?q=机器学习&top=10</span>
+
+→  JSON 响应:
+{
+  <span class="s">"total"</span>: 137,
+  <span class="s">"hits"</span>: [
+    {<span class="s">"path"</span>:<span class="s">"D:\papers\ml.pdf"</span>,
+     <span class="s">"score"</span>:8.42,
+     <span class="s">"snippet"</span>:<span class="s">"...机器<span class="hl2">学习</span>改变..."</span>},
+    ...
+  ]
+}</div>
+          <p class="small">开启后本地任何 HTTP 客户端 (浏览器 / curl / IDE 插件) 都能调。</p>
+        </div>
+        <div class="box green">
+          <h3>AES256 索引加密</h3>
+          <ul>
+            <li>索引文件 segment 落盘前用 AES-256-GCM 加密。</li>
+            <li>密码派生：<span class="hl">PBKDF2 / Argon2</span>。</li>
+            <li>内存里 mmap 的是明文 (但进程退出后只剩加密文件)。</li>
+            <li>适用：涉密电脑、合规审计、防取证恢复。</li>
+          </ul>
+        </div>
+        <div class="box pink">
+          <h3>Keyword View (关键词视图)</h3>
+          <ul>
+            <li>从结果页"反向"列出<span class="hl2">命中文件的全部关键词</span>。</li>
+            <li>适合：拿到一篇陌生 PDF 时快速看其主题词。</li>
+            <li>实现：<code>doc_id → 该 doc 的 distinct terms</code>，按 tf 排序取 top-K。</li>
+          </ul>
+        </div>
+        <div class="box orange">
+          <h3>SSD Optimization</h3>
+          <ul>
+            <li>合并写：N 个小 append 攒一次 fsync。</li>
+            <li>避免：随机 seek、随机写小文件。</li>
+            <li>冷数据：旧 segment 压缩率更高、读更少。</li>
+          </ul>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- 26. 性能数字 -->
+    <section class="slide"><div class="card">
+      <h2>实际性能数据 (社区报告 + 官方宣称)</h2>
+      <div class="num-grid">
+        <div class="num-cell"><div class="lbl">官方查询</div><div class="val">&lt; 1s</div><div class="sub">100 万文件 corpus</div></div>
+        <div class="num-cell"><div class="lbl">初次索引</div><div class="val">30m+</div><div class="sub">100 万文本 / 8 核 NVMe</div></div>
+        <div class="num-cell"><div class="lbl">增量同步</div><div class="val">实时</div><div class="sub">USN 触发</div></div>
+        <div class="num-cell"><div class="lbl">内存占用</div><div class="val">200-500 MB</div><div class="sub">百万级索引常态</div></div>
+        <div class="num-cell"><div class="lbl">OCR 速度</div><div class="val">~1s/页</div><div class="sub">300 dpi 扫描件</div></div>
+        <div class="num-cell"><div class="lbl">EXE 大小</div><div class="val">~30 MB</div><div class="sub">包含所有 parser</div></div>
+        <div class="num-cell"><div class="lbl">postings 压缩</div><div class="val">~3-5×</div><div class="sub">VB / PForDelta</div></div>
+        <div class="num-cell"><div class="lbl">启动时间</div><div class="val">&lt; 2s</div><div class="sub">mmap 暖启动</div></div>
+      </div>
+      <p class="small muted" style="margin-top:6px">数字来源：AnyTXT 官网、Reddit r/Windows10、Alternative.to 用户评测 (2023-2025 综合)。</p>
+    </div></section>
+
+    <!-- 27. 与 ES 类比 -->
+    <section class="slide"><div class="card">
+      <h2>与 Elasticsearch / Lucene 的对应关系</h2>
+      <table>
+        <tr><th>AnyTXT 组件</th><th>Lucene/ES 对应</th><th>职责</th></tr>
+        <tr><td>Parser (PDF/DOCX/...)</td><td>Tika + Ingest Pipeline</td><td>从原始文件抽文本</td></tr>
+        <tr><td>Analyzer / Tokenizer</td><td>StandardAnalyzer / IK / Jieba</td><td>分词 + 归一化</td></tr>
+        <tr><td>倒排索引文件</td><td>.tim / .tip / .pos / .doc / .fdt</td><td>存 term → postings</td></tr>
+        <tr><td>USN 监听</td><td>FsWatcher / NIO WatchService</td><td>文件变更捕获</td></tr>
+        <tr><td>Segment 文件</td><td>Lucene segment + commit point</td><td>不可变段，定期合并</td></tr>
+        <tr><td>Index Worker</td><td>Indexing thread pool</td><td>写索引</td></tr>
+        <tr><td>Query parser + BM25</td><td>QueryParser + Similarity</td><td>评分</td></tr>
+        <tr><td>UI / HTTP Service</td><td>Kibana / REST API</td><td>查询展示</td></tr>
+      </table>
+      <p class="quote">可以把 AnyTXT 看作 <span class="hl3">单机版、轻量级、不分片的 Lucene + 30 个 Tika Parser</span>。</p>
+    </div></section>
+
+    <!-- ============ Part 9 总结 ============ -->
+
+    <!-- 28. 总结 -->
+    <section class="slide" id="s28"><div class="card">
+      <h2>总结：AnyTXT 给我们什么启发？</h2>
+      <div class="grid2">
+        <div class="box green">
+          <h3>5 条工程教训</h3>
+          <ol>
+            <li><span class="hl2">单文件 EXE</span>也能做"小而全"——避免分布式复杂度。</li>
+            <li><span class="hl2">用操作系统给的钩子</span>（USN Journal）而不是自己轮询。</li>
+            <li><span class="hl2">mmap + 不可变段</span> = 亚秒级启动 + 实时一致性。</li>
+            <li><span class="hl2">插件式 Parser</span> = 30 个格式不写 30 套解析流程。</li>
+            <li><span class="hl2">AES + HTTP Service</span> 把本地工具变成可嵌入的检索服务。</li>
+          </ol>
+        </div>
+        <div class="box pink">
+          <h3>课堂讨论题</h3>
+          <ol>
+            <li>如果让你给 AnyTXT 加一个语义搜索层 (RAG + 向量)，索引结构要怎么改？</li>
+            <li>USN Journal 在 ext4 / APFS 上没有等价物，Linux/macOS 上怎么实现等价实时性？</li>
+            <li>为什么不直接用 Lucene.Net 或 SQLite FTS5 二次开发，而是"自研"？</li>
+            <li>BM25 在跨语种 (中英混排) 文档上有什么失效场景？</li>
+            <li>设计一个 1 亿文件级别的桌面搜索系统，瓶颈会在哪里？</li>
+          </ol>
+        </div>
+      </div>
+      <p class="quote" style="margin-top:14px;text-align:center;color:var(--green)">下一页：参考文献 / 延伸阅读 / 致谢 · Q&A</p>
+    </div></section>
+
+    <!-- 29. 参考文献 + Q&A -->
+    <section class="slide" id="s29"><div class="card">
+      <h2>参考文献 · 延伸阅读 · Q&A</h2>
+      <div class="grid2">
+        <div>
+          <h3 style="color:var(--accent)">📚 经典文献 (必读)</h3>
+          <ul class="small">
+            <li>Robertson, S. &amp; Zaragoza, H. (2009). <em>The Probabilistic Relevance Framework: BM25 and Beyond</em>. FnT-IR.</li>
+            <li>Witten, I. et al. (1999). <em>Managing Gigabytes</em> — 倒排索引 + 压缩的圣经。</li>
+            <li>Zobel, J. &amp; Moffat, A. (2006). <em>Inverted Files for Text Search Engines</em>. ACM CSUR.</li>
+            <li>Baeza-Yates, R. &amp; Ribeiro-Neto, B. (2011). <em>Modern Information Retrieval</em> (2nd ed.)。</li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color:var(--accent)">🔧 工程实现 & 平台</h3>
+          <ul class="small">
+            <li>Apache Lucene 源码 &amp; docs (lucene.apache.org/core) — segment 结构权威实现。</li>
+            <li>SQLite FTS5 文档 — 桌面场景的轻量倒排索引方案对比。</li>
+            <li>Microsoft Docs: <em>FSCTL_READ_USN_JOURNAL</em> — NTFS Change Journal 规范。</li>
+            <li>AnyTXT Searcher 官方: <a href="https://www.anytxt.net/" style="color:var(--accent)">anytxt.net</a></li>
+          </ul>
+        </div>
+      </div>
+      <h3 style="color:var(--accent)">🌐 Wikipedia 速查</h3>
+      <p class="small"><a href="https://en.wikipedia.org/wiki/Full-text_search" style="color:var(--accent)">Full-text search</a> · <a href="https://en.wikipedia.org/wiki/Inverted_index" style="color:var(--accent)">Inverted index</a> · <a href="https://en.wikipedia.org/wiki/Okapi_BM25" style="color:var(--accent)">Okapi BM25</a> · <a href="https://en.wikipedia.org/wiki/Everything_(software)" style="color:var(--accent)">Everything (software)</a> · <a href="https://en.wikipedia.org/wiki/NTFS" style="color:var(--accent)">NTFS</a> · <a href="https://en.wikipedia.org/wiki/Apache_Tika" style="color:var(--accent)">Apache Tika</a></p>
+      <h3 style="color:var(--accent)">🔗 课程 slides 系列</h3>
+      <p class="small"><a href="../cnn-history-slides/" style="color:var(--accent)">CNN 历史</a> · <a href="../spatial-intelligence-slides/" style="color:var(--accent)">空间智能</a> · <a href="../llm-rl-alignment-slides/" style="color:var(--accent)">LLM 对齐</a> · <a href="../llm-training-pipeline-slides/" style="color:var(--accent)">LLM 训练</a> · <a href="../cv-trends-2025-2026-slides/" style="color:var(--accent)">CV 趋势</a> · <a href="../biometric-key-generation-slides/" style="color:var(--accent)">生物特征密钥</a></p>
+      <p class="quote" style="margin-top:18px;text-align:center;color:var(--green);font-size:20px">🎓 谢谢 · Q&A · End 跳回封面</p>
+    </div></section>
+
+  </div>
+
+  <div class="progress" id="progress"></div>
+  <div class="foot">
+    <span>AnyTXT Searcher 架构与机制 · 29 张 slides</span>
+    <span><span id="cur">1</span> / <span id="total">28</span> · <span class="kbd">→</span> 下一页</span>
+  </div>
+
+  <script>
+    (function(){
+      const slides = document.querySelectorAll('.slide');
+      const total = slides.length;
+      document.getElementById('total').textContent = total;
+      let cur = 0;
+
+      function show(i){
+        if (i < 0) i = 0;
+        if (i >= total) i = total - 1;
+        slides.forEach(s => s.classList.remove('active'));
+        slides[i].classList.add('active');
+        cur = i;
+        document.getElementById('cur').textContent = i + 1;
+        const pct = ((i + 1) / total) * 100;
+        document.getElementById('progress').style.width = pct + '%';
+        const s = slides[i]; s.scrollTop = 0;
+      }
+      function next(){ show(cur + 1); }
+      function prev(){ show(cur - 1); }
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+        else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+        else if (e.key === 'Home') { e.preventDefault(); show(0); }
+        else if (e.key === 'End') { e.preventDefault(); show(total - 1); }
+        else if (e.key === 'p' || e.key === 'P') { window.print(); }
+      });
+
+      // 鼠标点击翻页 (在 .slide 任意空白处单击下一页)
+      document.querySelector('.deck').addEventListener('click', e => {
+        if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+        // 左半屏 = 上一页, 右半屏 = 下一页
+        const w = window.innerWidth;
+        if (e.clientX < w * 0.25) prev();
+        else next();
+      });
+
+      // hash 跳转支持 (但不自动)
+      window.addEventListener('hashchange', () => {
+        const m = location.hash.match(/^#s(\d+)$/);
+        if (m) show(parseInt(m[1], 10) - 1);
+      });
+
+      // 暴露给 console
+      window.show = show; window.next = next; window.prev = prev;
+    })();
+  </script>
+</body>
+</html>
