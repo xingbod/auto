@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>社会科学的扎根理论 · 一页讲清楚</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    /* 4 大类色系 (与系列页配套, 走人文/学术色) */
+    --core:    #0f766e;          /* 核心思想  : 深绿松石 */
+    --core-soft: #f0fdfa;
+    --core-deep: #134e4a;
+
+    --code:    #b45309;          /* 编码流程  : 琥珀棕 */
+    --code-soft: #fffbeb;
+    --code-deep: #78350f;
+
+    --tech:    #be185d;          /* 核心技术  : 玫红 */
+    --tech-soft: #fdf2f8;
+    --tech-deep: #831843;
+
+    --school:  #4338ca;          /* 学术流派  : 靛蓝 */
+    --school-soft: #eef2ff;
+    --school-deep: #312e81;
+
+    --red: #ef4444;
+    --red-soft: #fef2f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 36px 44px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 600px 200px at top right, #f0fdfa 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at bottom left, #fff7ed 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--core-deep);
+    background: var(--core-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  header h1 .q {
+    color: var(--core-deep);
+  }
+  header .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  header .chip {
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  header .chip b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Section base ---------- */
+  section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+  section:last-of-type { border-bottom: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .sec-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sec-head .en {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .c1 .sec-num { background: var(--core); }
+  .c2 .sec-num { background: var(--code); }
+  .c3 .sec-num { background: var(--tech); }
+  .c4 .sec-num { background: var(--school); }
+  .c5 .sec-num { background: var(--red); }
+
+  p { color: var(--ink-2); margin-bottom: 8px; }
+  p strong { color: var(--ink); font-weight: 700; }
+  p .hl { background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px; }
+
+  /* ---------- Overview ---------- */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ov {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    background: white;
+  }
+  .ov .ico { font-size: 26px; margin-bottom: 6px; display: block; }
+  .ov .name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .ov .en { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ov.a { background: var(--core-soft); border-color: #99f6e4; }
+  .ov.b { background: var(--code-soft); border-color: #fde68a; }
+  .ov.c { background: var(--tech-soft); border-color: #fbcfe8; }
+  .ov.d { background: var(--school-soft); border-color: #c7d2fe; }
+
+  /* ---------- Compare box (Section 01) ---------- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .cmp {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    background: white;
+  }
+  .cmp.q { background: #f3f4f6; border-color: #d1d5db; }
+  .cmp.gt { background: var(--core-soft); border-color: #99f6e4; }
+  .cmp .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .cmp .head .pill {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .cmp.q .pill { background: #6b7280; color: white; }
+  .cmp.gt .pill { background: var(--core); color: white; }
+  .cmp .flow {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 8px 10px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .cmp ul { list-style: none; font-size: 13px; color: var(--ink-2); }
+  .cmp ul li {
+    padding: 3px 0 3px 16px;
+    position: relative;
+  }
+  .cmp ul li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    color: var(--ink-3);
+    font-weight: 800;
+  }
+  .cmp ul li b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Coding flow (Section 02) ---------- */
+  .coding {
+    display: grid;
+    grid-template-columns: 1fr 14px 1fr 14px 1fr;
+    gap: 6px;
+    align-items: stretch;
+    margin: 8px 0 6px;
+  }
+  .code-step {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 12px 10px;
+    background: white;
+  }
+  .code-step.l1 { background: #fef3c7; border-color: #fde68a; }
+  .code-step.l2 { background: #fed7aa; border-color: #fdba74; }
+  .code-step.l3 { background: #fecaca; border-color: #fca5a5; }
+  .code-step .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .code-step .head .num {
+    width: 20px; height: 20px;
+    border-radius: 5px;
+    background: var(--code);
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .code-step .head .name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .code-step .head .en {
+    font-size: 10px;
+    color: var(--ink-3);
+    margin-left: auto;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .code-step .body {
+    font-size: 12.5px;
+    color: var(--ink-2);
+    line-height: 1.45;
+  }
+  .code-step .body b { color: var(--ink); font-weight: 700; }
+  .code-step .body code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 0 4px;
+    font-size: 11.5px;
+  }
+  .code-step .output {
+    margin-top: 6px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .code-step .output b { color: var(--code-deep); font-weight: 700; font-family: inherit; }
+  .arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-3);
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .paradigm {
+    background: white;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--code);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+    margin-top: 6px;
+  }
+  .paradigm b { color: var(--code-deep); font-weight: 700; }
+  .paradigm .chain {
+    margin-top: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: var(--ink);
+  }
+
+  /* ---------- Tech cards 2x3 (Section 03) ---------- */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .tc {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .tc .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .tc .ico {
+    font-size: 18px;
+    line-height: 1;
+  }
+  .tc .name {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 13px;
+  }
+  .tc .en {
+    font-size: 10px;
+    color: var(--ink-3);
+    margin-left: auto;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .tc .body {
+    font-size: 12px;
+    color: var(--ink-2);
+    line-height: 1.45;
+  }
+  .tc .body b { color: var(--ink); font-weight: 700; }
+  .tc.c1 { background: var(--tech-soft); border-color: #fbcfe8; }
+  .tc.c2 { background: var(--tech-soft); border-color: #fbcfe8; }
+  .tc.c3 { background: var(--tech-soft); border-color: #fbcfe8; }
+  .tc.c4 { background: var(--tech-soft); border-color: #fbcfe8; }
+  .tc.c5 { background: var(--tech-soft); border-color: #fbcfe8; }
+  .tc.c6 { background: var(--tech-soft); border-color: #fbcfe8; }
+
+  /* ---------- Schools (Section 04) ---------- */
+  .schools {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .sc {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .sc.classic { background: var(--core-soft); border-color: #99f6e4; }
+  .sc.systematic { background: var(--code-soft); border-color: #fde68a; }
+  .sc.constructivist { background: var(--school-soft); border-color: #c7d2fe; }
+  .sc .head {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .sc .head .en {
+    font-size: 10.5px;
+    color: var(--ink-3);
+    margin-left: 4px;
+    font-weight: 500;
+  }
+  .sc .by {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+  .sc .meta-row {
+    font-size: 11.5px;
+    color: var(--ink-2);
+    margin-bottom: 4px;
+  }
+  .sc .meta-row b { color: var(--ink); font-weight: 700; }
+  .sc .key {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--line);
+    font-size: 11.5px;
+    color: var(--ink-2);
+    line-height: 1.4;
+  }
+  .sc .key b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Pitfalls (Section 05) ---------- */
+  .pitfall {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--red-soft);
+    border: 1px solid #fecaca;
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pitfall:last-child { margin-bottom: 0; }
+  .pitfall .x {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .pitfall .body { font-size: 13.5px; color: var(--ink-2); }
+  .pitfall .body .bad {
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 1.5px;
+  }
+  .pitfall .body .fix {
+    display: block;
+    margin-top: 4px;
+  }
+  .pitfall .body .fix b { color: #15803d; font-weight: 700; }
+
+  /* ---------- Footer summary ---------- */
+  footer {
+    padding: 28px 44px 36px;
+    background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+    border-top: 1px solid var(--line);
+  }
+  footer .title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  footer .points {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  footer .points li {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  footer .points li b {
+    display: block;
+    color: var(--core-deep);
+    font-size: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+  footer .oneliner {
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  footer .oneliner b { color: #fde68a; }
+  footer .stamp {
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  footer .credit {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    line-height: 1.6;
+  }
+  footer .credit b { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    header, section, footer { padding-left: 22px; padding-right: 22px; }
+    .overview, .schools, .footer .points { grid-template-columns: 1fr 1fr; }
+    .tech-grid { grid-template-columns: 1fr 1fr; }
+    .compare { grid-template-columns: 1fr; }
+    .coding { grid-template-columns: 1fr; }
+    .arrow { display: none; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =================== HEADER =================== -->
+  <header>
+    <span class="tag">QUALITATIVE · 社会科学方法论</span>
+    <h1>社会科学的<b>扎根理论</b>是什么？<br>
+        <span class="q">一张图讲清楚 Glaser &amp; Strauss 的定性研究法</span></h1>
+    <p class="subtitle">一套<b>从数据中归纳出理论</b>的定性研究方法 —— 与"假设-检验"范式相反，适合<b>探索未知领域</b>。</p>
+    <div class="meta">
+      <span class="chip">⏱ 阅读 <b>5 分钟</b></span>
+      <span class="chip">🎯 适合 <b>写论文 / 做质性研究</b></span>
+      <span class="chip">📚 出处 Glaser &amp; Strauss 1967</span>
+    </div>
+  </header>
+
+  <!-- =================== OVERVIEW =================== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">★</span>
+      <h2>先记住 4 个关键词</h2>
+      <span class="en">FOUR KEY CONCEPTS</span>
+    </div>
+    <p>扎根理论所有内容，<strong>只围绕这 4 个概念展开</strong>。</p>
+    <div class="overview">
+      <div class="ov a">
+        <span class="ico">🌱</span>
+        <div class="name">从数据中归纳</div>
+        <div class="en">Inductive</div>
+      </div>
+      <div class="ov b">
+        <span class="ico">🏷️</span>
+        <div class="name">三级编码</div>
+        <div class="en">3-Level Coding</div>
+      </div>
+      <div class="ov c">
+        <span class="ico">🔄</span>
+        <div class="name">持续比较</div>
+        <div class="en">Constant Compare</div>
+      </div>
+      <div class="ov d">
+        <span class="ico">🏁</span>
+        <div class="name">理论饱和</div>
+        <div class="en">Saturation</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 01: 核心思想 =================== -->
+  <section class="c1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>核心思想：自下而上"生长"出理论</h2>
+      <span class="en">INDUCTIVE THEORY BUILDING</span>
+    </div>
+    <p>传统定量研究是<span class="hl">先有理论，再去验证</span>。扎根理论反过来 ——<b>先有数据，再"长"出理论</b>。</p>
+
+    <div class="compare">
+      <div class="cmp q">
+        <div class="head">
+          <span class="pill">传统</span>
+          假设-检验范式
+        </div>
+        <div class="flow">
+          理论<br>
+          ↓<br>
+          提出假设<br>
+          ↓<br>
+          收集数据<br>
+          ↓<br>
+          验证 / 拒绝假设
+        </div>
+        <ul>
+          <li><b>起点:</b> 现成理论</li>
+          <li><b>数据:</b> 用来验证</li>
+          <li><b>产出:</b> 接受/拒绝</li>
+        </ul>
+      </div>
+      <div class="cmp gt">
+        <div class="head">
+          <span class="pill">GT</span>
+          扎根理论范式
+        </div>
+        <div class="flow">
+          收集数据<br>
+          ↓<br>
+          逐句编码 (打标签)<br>
+          ↓<br>
+          归类 → 类别<br>
+          ↓<br>
+          <b>涌现</b>出新理论
+        </div>
+        <ul>
+          <li><b>起点:</b> 原始数据</li>
+          <li><b>数据:</b> 用来归纳</li>
+          <li><b>产出:</b> 新理论</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:10px;font-size:12.5px;color:var(--ink-3);">
+      💡 Glaser 原话: <b>"All is data"</b> —— 不只访谈, 一切能反映现象的材料(田野笔记、文献、聊天)都算数据。
+    </p>
+  </section>
+
+  <!-- =================== 02: 三级编码 =================== -->
+  <section class="c2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>三级编码: 数据 → 概念 → 类别 → 理论</h2>
+      <span class="en">OPEN · AXIAL · SELECTIVE</span>
+    </div>
+    <p>整个方法的核心动作。三个层次<b>循环往复</b>，不是直线走完。</p>
+
+    <div class="coding">
+      <div class="code-step l1">
+        <div class="head">
+          <span class="num">1</span>
+          <span class="name">开放编码</span>
+          <span class="en">Open</span>
+        </div>
+        <div class="body">
+          <b>逐句/逐段</b>打标签, 把数据<b>拆碎</b>成离散的概念。
+        </div>
+        <div class="output">产出: <b>初始概念</b> (~100-300 个)</div>
+      </div>
+      <div class="arrow">▶</div>
+      <div class="code-step l2">
+        <div class="head">
+          <span class="num">2</span>
+          <span class="name">轴心编码</span>
+          <span class="en">Axial</span>
+        </div>
+        <div class="body">
+          把概念<b>归类</b>, 用<b>范式模型</b>建立类别间关系。
+        </div>
+        <div class="output">产出: <b>类别 + 关系</b> (~10-30 个)</div>
+      </div>
+      <div class="arrow">▶</div>
+      <div class="code-step l3">
+        <div class="head">
+          <span class="num">3</span>
+          <span class="name">选择编码</span>
+          <span class="en">Selective</span>
+        </div>
+        <div class="body">
+          找到<b>核心类别</b>, 串起所有其他类别, 形成完整故事线。
+        </div>
+        <div class="output">产出: <b>核心类别 + 理论</b></div>
+      </div>
+    </div>
+
+    <div class="paradigm">
+      <b>范式模型</b> (Strauss-Corbin): 把每个类别放进 4 元素结构里看
+      <div class="chain">因果条件 → 现象 → 策略 → 后果</div>
+    </div>
+  </section>
+
+  <!-- =================== 03: 6 大核心技术 =================== -->
+  <section class="c3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>6 大核心技术: 让"归纳"真的能跑通</h2>
+      <span class="en">SIX KEY TECHNIQUES</span>
+    </div>
+    <p>光会三级编码还不够, 下面 6 个技术决定你能不能"扎得稳"。</p>
+
+    <div class="tech-grid">
+      <div class="tc c1">
+        <div class="head">
+          <span class="ico">🔁</span>
+          <span class="name">持续比较</span>
+          <span class="en">CONSTANT</span>
+        </div>
+        <div class="body">
+          <b>3 个层面同时比</b>: 数据↔数据、数据↔类别、类别↔类别。每一刻都在找异同。
+        </div>
+      </div>
+      <div class="tc c2">
+        <div class="head">
+          <span class="ico">🎯</span>
+          <span class="name">理论抽样</span>
+          <span class="en">THEORETICAL</span>
+        </div>
+        <div class="body">
+          <b>边分析边决定</b>下一批样本去哪儿找。不是先定样本量, 而是"理论指向哪就去哪"。
+        </div>
+      </div>
+      <div class="tc c3">
+        <div class="head">
+          <span class="ico">📝</span>
+          <span class="name">备忘录</span>
+          <span class="en">MEMOING</span>
+        </div>
+        <div class="body">
+          研究者的<b>"思考账本"</b>: 写灵感、疑问、假设。从初级码到高级理论都要写。
+        </div>
+      </div>
+      <div class="tc c4">
+        <div class="head">
+          <span class="ico">🛑</span>
+          <span class="name">理论饱和</span>
+          <span class="en">SATURATION</span>
+        </div>
+        <div class="body">
+          <b>收手信号</b>: 新数据不再产生新概念/类别/属性。<b>不是</b>"样本数到了"就停。
+        </div>
+      </div>
+      <div class="tc c5">
+        <div class="head">
+          <span class="ico">🧩</span>
+          <span class="name">范式模型</span>
+          <span class="en">PARADIGM</span>
+        </div>
+        <div class="body">
+          轴心编码的<b>脚手架</b>: 条件-现象-策略-后果, 帮你在杂乱的类别里找逻辑。
+        </div>
+      </div>
+      <div class="tc c6">
+        <div class="head">
+          <span class="ico">🔍</span>
+          <span class="name">理论敏感性</span>
+          <span class="en">SENSITIVITY</span>
+        </div>
+        <div class="body">
+          研究者的<b>"火眼金睛"</b>: 能识别数据中<b>有意义</b>的部分。需要文献+经验加持。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 04: 三个流派 =================== -->
+  <section class="c4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>三个流派: 60 年演化的 3 个版本</h2>
+      <span class="en">THREE SCHOOLS</span>
+    </div>
+    <p>扎根理论不是一套, 而是<b>一个家族</b>。三个主流派别, 哲学立场不同。</p>
+
+    <div class="schools">
+      <div class="sc classic">
+        <div class="head">经典派 <span class="en">Classic</span></div>
+        <div class="by">Glaser &amp; Strauss, 1967</div>
+        <div class="meta-row"><b>哲学:</b> 实证主义</div>
+        <div class="meta-row"><b>立场:</b> 理论"涌现"</div>
+        <div class="key">
+          <b>强调:</b> 理论从数据<b>自然浮现</b>, 研究者要"放手", 不强加预设
+        </div>
+      </div>
+      <div class="sc systematic">
+        <div class="head">系统派 <span class="en">Systematic</span></div>
+        <div class="by">Strauss &amp; Corbin, 1990</div>
+        <div class="meta-row"><b>哲学:</b> 后实证主义</div>
+        <div class="meta-row"><b>立场:</b> 理论"建构"</div>
+        <div class="key">
+          <b>强调:</b> 范式模型 + 编码程序, 给新手一套<b>可操作的步骤</b>
+        </div>
+      </div>
+      <div class="sc constructivist">
+        <div class="head">建构派 <span class="en">Constructivist</span></div>
+        <div class="by">Kathy Charmaz, 2006</div>
+        <div class="meta-row"><b>哲学:</b> 建构主义</div>
+        <div class="meta-row"><b>立场:</b> 共构现实</div>
+        <div class="key">
+          <b>强调:</b> 研究者与数据<b>共同建构</b>理论, 承认主观性
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 05: 误区 =================== -->
+  <section class="c5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>新手最常踩的 4 个坑</h2>
+      <span class="en">COMMON PITFALLS</span>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"扎根理论 = 自由编码 + 主题归纳"</span>
+        <span class="fix">👉 <b>必须有持续比较 + 理论抽样 + 备忘录</b>, 不是套个名字就完事, 否则退化成主题分析。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"抽完全部样本才开始分析"</span>
+        <span class="fix">👉 <b>边收集边分析</b>, 用前期分析指导后续抽样(理论抽样), 否则前期错误没机会修正。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"用 Strauss-Corbin 范式模型硬套所有类别"</span>
+        <span class="fix">👉 <b>经典派</b>反对过度结构化, <b>建构派</b>更灵活。选派别前先看你哲学立场, 不是哪个好用哪个。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"找不到核心类别就随便总结"</span>
+        <span class="fix">👉 <b>核心类别是反复涌现的概念, 不是选最大的</b>。它要能串起所有其他类别, 否则说明分析不到位。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTER =================== -->
+  <footer>
+    <div class="title">这一页先记住 · TL;DR</div>
+    <ul class="points">
+      <li><b>WHAT</b>从数据归纳理论, 反对"先有理论"</li>
+      <li><b>HOW</b>开放→轴心→选择 三级编码 + 6 大技术</li>
+      <li><b>WHEN</b>新主题、解释不了的现象、想理解"如何/为何"</li>
+    </ul>
+    <div class="oneliner">
+      <b>一句话总结：</b>扎根理论 = 用<b>三级编码 + 持续比较 + 理论抽样</b>，
+      从数据中"生长"出理论。适合<b>探索未知</b>，<b>不适合</b>验证已有理论。
+    </div>
+    <div class="stamp">图源：仿「一张图讲清楚」系列 · 参考 Glaser &amp; Strauss (1967)、Charmaz (2006)</div>
+    <div class="credit">
+      <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
