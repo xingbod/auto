@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>空间智能 (Spatial Intelligence) · 一页讲清楚</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    /* 4 大类色系 (空间/3D 配色) */
+    --idea:    #1e3a8a;          /* 核心思想  : 海军蓝 (深邃/3D) */
+    --idea-soft: #eff6ff;
+    --idea-deep: #1e3a8a;
+
+    --cap:     #0d9488;          /* 4 大能力  : 青绿 (感知) */
+    --cap-soft: #f0fdfa;
+    --cap-deep: #134e4a;
+
+    --tech:    #d97706;          /* 5 大技术  : 琥珀 (生成) */
+    --tech-soft: #fffbeb;
+    --tech-deep: #78350f;
+
+    --play:    #6d28d9;          /* 关键玩家  : 紫 (前沿) */
+    --play-soft: #f5f3ff;
+    --play-deep: #4c1d95;
+
+    --red: #ef4444;
+    --red-soft: #fef2f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 36px 44px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 600px 200px at top right, #eff6ff 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at bottom left, #f0fdfa 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--idea-deep);
+    background: var(--idea-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  header h1 .q {
+    color: var(--idea-deep);
+  }
+  header .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  header .chip {
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  header .chip b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Section base ---------- */
+  section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+  section:last-of-type { border-bottom: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .sec-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sec-head .en {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .c1 .sec-num { background: var(--idea); }
+  .c2 .sec-num { background: var(--cap); }
+  .c3 .sec-num { background: var(--tech); }
+  .c4 .sec-num { background: var(--play); }
+  .c5 .sec-num { background: var(--red); }
+
+  p { color: var(--ink-2); margin-bottom: 8px; }
+  p strong { color: var(--ink); font-weight: 700; }
+  p .hl { background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px; }
+
+  /* ---------- Overview ---------- */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ov {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    background: white;
+  }
+  .ov .ico { font-size: 26px; margin-bottom: 6px; display: block; }
+  .ov .name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .ov .en { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ov.a { background: var(--idea-soft); border-color: #bfdbfe; }
+  .ov.b { background: var(--cap-soft); border-color: #99f6e4; }
+  .ov.c { background: var(--tech-soft); border-color: #fde68a; }
+  .ov.d { background: var(--play-soft); border-color: #ddd6fe; }
+
+  /* ---------- Compare (Section 01) ---------- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .cmp {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    background: white;
+  }
+  .cmp.llm { background: #f3f4f6; border-color: #d1d5db; }
+  .cmp.si { background: var(--idea-soft); border-color: #bfdbfe; }
+  .cmp .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .cmp .head .pill {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .cmp.llm .pill { background: #6b7280; color: white; }
+  .cmp.si .pill { background: var(--idea); color: white; }
+  .cmp ul { list-style: none; font-size: 13px; color: var(--ink-2); }
+  .cmp ul li {
+    padding: 3px 0 3px 16px;
+    position: relative;
+  }
+  .cmp ul li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    color: var(--ink-3);
+    font-weight: 800;
+  }
+  .cmp ul li b { color: var(--ink); font-weight: 700; }
+
+  /* Fei-Fei Li framework */
+  .framework {
+    margin-top: 12px;
+    background: var(--idea-soft);
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .framework .head {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--idea-deep);
+    margin-bottom: 8px;
+  }
+  .framework .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .framework .cap {
+    background: white;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 8px 4px;
+    text-align: center;
+  }
+  .framework .cap .ico { font-size: 20px; }
+  .framework .cap .name { font-size: 11.5px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+  .framework .cap .en { font-size: 9.5px; color: var(--ink-3); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 1px; }
+
+  /* ---------- 4 Capabilities (Section 02) ---------- */
+  .caps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .cp {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .cp .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .cp .ico { font-size: 22px; }
+  .cp .name { font-weight: 700; color: var(--ink); font-size: 14px; }
+  .cp .en { font-size: 10.5px; color: var(--ink-3); margin-left: auto; letter-spacing: 0.04em; text-transform: uppercase; }
+  .cp .body { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+  .cp .body b { color: var(--ink); font-weight: 700; }
+  .cp .flow {
+    margin-top: 6px;
+    background: white;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--cap);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11.5px;
+    color: var(--cap-deep);
+  }
+  .cp.c1 { background: var(--cap-soft); border-color: #99f6e4; }
+  .cp.c2 { background: var(--cap-soft); border-color: #99f6e4; }
+  .cp.c3 { background: var(--tech-soft); border-color: #fde68a; }
+  .cp.c4 { background: var(--play-soft); border-color: #ddd6fe; }
+  .cp.c3 .flow { border-left-color: var(--tech); color: var(--tech-deep); }
+  .cp.c4 .flow { border-left-color: var(--play); color: var(--play-deep); }
+
+  /* ---------- Tech routes (Section 03) ---------- */
+  .techs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .th {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .th .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .th .ico { font-size: 18px; }
+  .th .name { font-weight: 700; color: var(--ink); font-size: 13.5px; }
+  .th .year {
+    margin-left: auto;
+    font-size: 10.5px;
+    color: var(--ink-3);
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-weight: 700;
+  }
+  .th .body { font-size: 12px; color: var(--ink-2); line-height: 1.4; }
+  .th .body b { color: var(--ink); font-weight: 700; }
+  .th .algos {
+    margin-top: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 10.5px;
+    color: var(--ink-2);
+  }
+  .th.t1, .th.t2, .th.t3, .th.t4, .th.t5 { background: var(--tech-soft); border-color: #fde68a; }
+  .th.t1 { background: var(--cap-soft); border-color: #99f6e4; }
+  .th.t2 { background: var(--cap-soft); border-color: #99f6e4; }
+  .th.t3 { background: var(--play-soft); border-color: #ddd6fe; }
+  .th.t4 { background: var(--tech-soft); border-color: #fde68a; }
+  .th.t5 { background: var(--tech-soft); border-color: #fde68a; }
+
+  /* Mini timeline */
+  .timeline {
+    margin-top: 10px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .timeline .title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .timeline pre {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    margin: 0;
+    overflow-x: auto;
+  }
+  .timeline pre .year { color: var(--idea-deep); font-weight: 700; }
+  .timeline pre .ev { color: var(--cap-deep); }
+  .timeline pre .ev-hot { color: var(--red); font-weight: 700; }
+
+  /* ---------- Players (Section 04) ---------- */
+  .players {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .pl {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .pl .head {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .pl .ico { font-size: 16px; }
+  .pl .list { list-style: none; }
+  .pl .list li {
+    font-size: 12px;
+    color: var(--ink-2);
+    padding: 3px 0;
+    line-height: 1.4;
+  }
+  .pl .list li b { color: var(--ink); font-weight: 700; }
+  .pl .list li .role {
+    display: inline-block;
+    font-size: 10.5px;
+    color: var(--play-deep);
+    background: var(--play-soft);
+    padding: 0 5px;
+    border-radius: 3px;
+    margin-left: 4px;
+    font-weight: 600;
+  }
+  .pl.lab { background: var(--play-soft); border-color: #ddd6fe; }
+  .pl.co { background: var(--cap-soft); border-color: #99f6e4; }
+  .pl.cn { background: var(--tech-soft); border-color: #fde68a; }
+
+  /* ---------- Pitfalls (Section 05) ---------- */
+  .pitfall {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--red-soft);
+    border: 1px solid #fecaca;
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pitfall:last-child { margin-bottom: 0; }
+  .pitfall .x {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .pitfall .body { font-size: 13.5px; color: var(--ink-2); }
+  .pitfall .body .bad {
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 1.5px;
+  }
+  .pitfall .body .fix {
+    display: block;
+    margin-top: 4px;
+  }
+  .pitfall .body .fix b { color: #15803d; font-weight: 700; }
+
+  /* ---------- Footer summary ---------- */
+  footer {
+    padding: 28px 44px 36px;
+    background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+    border-top: 1px solid var(--line);
+  }
+  footer .title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  footer .points {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  footer .points li {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  footer .points li b {
+    display: block;
+    color: var(--idea-deep);
+    font-size: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+  footer .oneliner {
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  footer .oneliner b { color: #bfdbfe; }
+  footer .stamp {
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  footer .credit {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    line-height: 1.6;
+  }
+  footer .credit b { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    header, section, footer { padding-left: 22px; padding-right: 22px; }
+    .overview, .footer .points { grid-template-columns: 1fr 1fr; }
+    .compare, .caps, .techs, .players { grid-template-columns: 1fr; }
+    .framework .row { grid-template-columns: 1fr 1fr; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =================== HEADER =================== -->
+  <header>
+    <span class="tag">SPATIAL · 3D / 4D</span>
+    <h1>空间智能 (Spatial Intelligence) 是什么？<br>
+        <span class="q">一张图讲清楚 4 大能力 + 5 大技术路线</span></h1>
+    <p class="subtitle">AI 不只懂 2D 文字 / 图像 —— 还要理解、推理、生成 <b>3D / 4D</b> 物理世界,这是具身 AI / AR / 自动驾驶的底层能力。</p>
+    <div class="meta">
+      <span class="chip">⏱ 阅读 <b>5 分钟</b></span>
+      <span class="chip">🎯 适合 <b>具身 / 3D 生成 / 综述</b></span>
+      <span class="chip">📚 出处 Fei-Fei Li 2024</span>
+    </div>
+  </header>
+
+  <!-- =================== OVERVIEW =================== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">★</span>
+      <h2>先记住 4 个关键词</h2>
+      <span class="en">FOUR KEY CONCEPTS</span>
+    </div>
+    <p>空间智能所有内容,<strong>只围绕这 4 个概念展开</strong>。</p>
+    <div class="overview">
+      <div class="ov a">
+        <span class="ico">🧊</span>
+        <div class="name">3D 理解</div>
+        <div class="en">3D / 4D</div>
+      </div>
+      <div class="ov b">
+        <span class="ico">👁️</span>
+        <div class="name">感知 + 推理</div>
+        <div class="en">Sense + Reason</div>
+      </div>
+      <div class="ov c">
+        <span class="ico">🎨</span>
+        <div class="name">3D 生成</div>
+        <div class="en">Generate</div>
+      </div>
+      <div class="ov d">
+        <span class="ico">🏢</span>
+        <div class="name">物理世界</div>
+        <div class="en">Physical World</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 01: 核心思想 =================== -->
+  <section class="c1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>核心思想:AI 不只懂文字,还要懂 3D 物理世界</h2>
+      <span class="en">FROM 2D TEXT TO 3D WORLD</span>
+    </div>
+    <p>人类天然有空间智能 (理解 3D 关系、物理直觉、空间导航), <b>AI 还在追赶</b>。2024 起 Fei-Fei Li 等推动"<b>空间智能</b>"成为新范式。</p>
+
+    <div class="compare">
+      <div class="cmp llm">
+        <div class="head">
+          <span class="pill">2D AI</span>
+          当前主流 LLM
+        </div>
+        <ul>
+          <li><b>数据:</b> 文字、图片、视频</li>
+          <li><b>理解:</b> 2D 平面关系</li>
+          <li><b>能力:</b> 文本生成、问答</li>
+          <li><b>代表:</b> GPT-4V · Gemini · Claude</li>
+        </ul>
+      </div>
+      <div class="cmp si">
+        <div class="head">
+          <span class="pill">3D AI</span>
+          空间智能
+        </div>
+        <ul>
+          <li><b>数据:</b> 3D 场景、点云、视频</li>
+          <li><b>理解:</b> 3D 空间 + 物理</li>
+          <li><b>能力:</b> 3D 感知 / 推理 / 生成</li>
+          <li><b>代表:</b> NeRF · 3DGS · Cosmos</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="framework">
+      <div class="head">Fei-Fei Li 4 大能力框架 (2024)</div>
+      <div class="row">
+        <div class="cap">
+          <div class="ico">👁️</div>
+          <div class="name">3D 感知</div>
+          <div class="en">Perceive</div>
+        </div>
+        <div class="cap">
+          <div class="ico">🧠</div>
+          <div class="name">3D 推理</div>
+          <div class="en">Reason</div>
+        </div>
+        <div class="cap">
+          <div class="ico">🎨</div>
+          <div class="name">3D 生成</div>
+          <div class="en">Generate</div>
+        </div>
+        <div class="cap">
+          <div class="ico">⏱️</div>
+          <div class="name">4D 动态</div>
+          <div class="en">4D Dynamic</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 02: 4 大能力 =================== -->
+  <section class="c2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>4 大核心能力:从感知到生成的闭环</h2>
+      <span class="en">PERCEIVE · REASON · GENERATE · 4D</span>
+    </div>
+    <p>空间智能的 4 个能力, 构成 <b>感知 → 推理 → 生成 → 4D 动态</b> 的能力阶梯:</p>
+
+    <div class="caps">
+      <div class="cp c1">
+        <div class="head">
+          <span class="ico">👁️</span>
+          <span class="name">3D 感知</span>
+          <span class="en">PERCEIVE</span>
+        </div>
+        <div class="body">
+          从 <b>2D 图像推断 3D 结构</b>: 深度估计、点云、相机位姿。
+        </div>
+        <div class="flow">2D 图像 → 深度图 / 点云 / 3DGS</div>
+      </div>
+
+      <div class="cp c2">
+        <div class="head">
+          <span class="ico">🧠</span>
+          <span class="name">3D 推理</span>
+          <span class="en">REASON</span>
+        </div>
+        <div class="body">
+          理解 <b>空间关系 + 物理直觉</b>: 上下左右、碰撞、支撑。
+        </div>
+        <div class="flow">3D 场景 + 任务 → 空间问答 / 路径</div>
+      </div>
+
+      <div class="cp c3">
+        <div class="head">
+          <span class="ico">🎨</span>
+          <span class="name">3D 生成</span>
+          <span class="en">GENERATE</span>
+        </div>
+        <div class="body">
+          从 <b>文本/图像生成 3D 资产</b>: 物体、场景、建筑。
+        </div>
+        <div class="flow">text / image → 3D 网格 / 3DGS</div>
+      </div>
+
+      <div class="cp c4">
+        <div class="head">
+          <span class="ico">⏱️</span>
+          <span class="name">4D 动态</span>
+          <span class="en">4D DYNAMIC</span>
+        </div>
+        <div class="body">
+          <b>3D + 时间</b>: 动态 3D 重建、视频生成 3D、物理仿真。
+        </div>
+        <div class="flow">视频 / 仿真 → 动态 3D 场景</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 03: 5 大技术 =================== -->
+  <section class="c3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>5 大技术路线:从经典 SLAM 到 4D 基础模型</h2>
+      <span class="en">FIVE TECHNICAL ROUTES</span>
+    </div>
+    <p>空间智能的技术栈, 从 2015 一直演化到 2024:</p>
+
+    <div class="techs">
+      <div class="th t1">
+        <div class="head">
+          <span class="ico">📷</span>
+          <span class="name">3D 重建</span>
+          <span class="year">2015+</span>
+        </div>
+        <div class="body">
+          从多张 2D 图像 <b>恢复 3D 结构</b>, 经典 SLAM/SfM 基础。
+        </div>
+        <div class="algos">NeRF · 3D Gaussian Splatting · SfM/MVS</div>
+      </div>
+
+      <div class="th t2">
+        <div class="head">
+          <span class="ico">📏</span>
+          <span class="name">3D 感知</span>
+          <span class="year">2017+</span>
+        </div>
+        <div class="body">
+          点云 / 3D 目标检测 / 深度估计, 自动驾驶核心模块。
+        </div>
+        <div class="algos">PointNet · VoteNet · MiDaS · DROID-SLAM</div>
+      </div>
+
+      <div class="th t3">
+        <div class="head">
+          <span class="ico">💬</span>
+          <span class="name">3D 推理</span>
+          <span class="year">2023+</span>
+        </div>
+        <div class="body">
+          3D 场景 <b>+ 语言</b> = 空间问答 / 路径规划 / 任务指令。
+        </div>
+        <div class="algos">SpatialVLM · 3D-LLM · LERF</div>
+      </div>
+
+      <div class="th t4">
+        <div class="head">
+          <span class="ico">🖌️</span>
+          <span class="name">3D 生成</span>
+          <span class="year">2022+</span>
+        </div>
+        <div class="body">
+          <b>文/图 → 3D</b>: diffusion + score distillation。
+        </div>
+        <div class="algos">DreamFusion · Magic3D · 3DGS-Diffusion</div>
+      </div>
+
+      <div class="th t5">
+        <div class="head">
+          <span class="ico">🎬</span>
+          <span class="name">4D 动态</span>
+          <span class="year">2024+</span>
+        </div>
+        <div class="body">
+          <b>3D + 时间</b>: 动态场景生成、物理仿真、世界模型。
+        </div>
+        <div class="algos">4DGS · Cosmos · World Labs · Odyssey</div>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="title">⏳ 关键技术里程碑</div>
+<pre><span class="year">2015</span>  <span class="ev">PointNet</span>      3D 点云深度学习开山
+<span class="year">2020</span>  <span class="ev">NeRF</span>          神经辐射场, 3D 重建革命
+<span class="year">2023</span>  <span class="ev">3DGS</span>          高质量实时 3D 渲染
+<span class="year">2023</span>  <span class="ev">SpatialVLM</span>    3D 场景 + 语言问答
+<span class="year">2024</span>  <span class="ev-hot">World Labs</span>  Fei-Fei Li 创业, 单图生 3D
+<span class="year">2024</span>  <span class="ev-hot">Cosmos</span>      NVIDIA 世界基础模型 (4D)
+<span class="year">2024</span>  <span class="ev">Spatial AI</span>   Fei-Fei Li 提出 "空间智能" 范式</pre>
+    </div>
+  </section>
+
+  <!-- =================== 04: 关键玩家 =================== -->
+  <section class="c4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>关键玩家:学术 + 西方 + 中国</h2>
+      <span class="en">KEY PLAYERS</span>
+    </div>
+    <p>三条战线在赛跑: <b>学术出基础 / 西方大公司砸钱 / 中国追应用</b>。</p>
+
+    <div class="players">
+      <div class="pl lab">
+        <div class="head">
+          <span class="ico">🎓</span>
+          顶尖实验室
+        </div>
+        <ul class="list">
+          <li><b>Fei-Fei Li</b> <span class="role">Stanford / World Labs</span> · 空间智能先驱</li>
+          <li><b>Ben Mildenhall</b> <span class="role">Google</span> · NeRF 发明人</li>
+          <li><b>Yann LeCun</b> <span class="role">Meta</span> · 世界模型 / JEPA</li>
+          <li><b>Leonidas Guibas</b> <span class="role">Stanford</span> · 3D 视觉 / 形状分析</li>
+          <li><b>Georgia Gkioxari</b> <span class="role">Meta FAIR</span> · 3D 感知</li>
+        </ul>
+      </div>
+
+      <div class="pl co">
+        <div class="head">
+          <span class="ico">🌎</span>
+          西方巨头 + 创业
+        </div>
+        <ul class="list">
+          <li><b>World Labs</b> <span class="role">$230M</span> · Fei-Fei Li 创业, 3D 大重建模型</li>
+          <li><b>NVIDIA Cosmos</b> <span class="role">4D 基础模型</span> · 物理仿真 + 视频生成</li>
+          <li><b>Google DeepMind</b> <span class="role">RT-2 / Genie 2</span> · 具身 + 世界模型</li>
+          <li><b>Odyssey</b> <span class="role">4D 视频</span> · 4DGS 商业化</li>
+          <li><b>Wayve / Tesla FSD</b> <span class="role">自动驾驶</span> · 3D 感知 + 世界模型</li>
+        </ul>
+      </div>
+
+      <div class="pl cn">
+        <div class="head">
+          <span class="ico">🇨🇳</span>
+          中国玩家
+        </div>
+        <ul class="list">
+          <li><b>大疆 DJI</b> <span class="role">硬件</span> · 无人机 + 全景相机</li>
+          <li><b>影石 Insta360</b> <span class="role">全景相机</span> · 360° 视频 → 3D</li>
+          <li><b>字节 豆包</b> <span class="role">3D 生成</span> · 文/图生 3D 资产</li>
+          <li><b>阿里 通义</b> <span class="role">3D 推理</span> · 3D 视觉问答</li>
+          <li><b>商汤 / 旷视</b> <span class="role">3D 感知</span> · 自动驾驶 / 机器人</li>
+          <li><b>蔚来 / 小鹏</b> <span class="role">智能驾驶</span> · 3D 占用网络</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 05: 误区 =================== -->
+  <section class="c5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>新手最常踩的 4 个坑</h2>
+      <span class="en">COMMON PITFALLS</span>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"空间智能 = 3D 视觉"</span>
+        <span class="fix">👉 <b>3D 视觉只是感知</b>。空间智能还包括推理 + 生成 + 4D, 是更广的能力集合。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"NeRF / 3DGS 已经够好"</span>
+        <span class="fix">👉 <b>难编辑、难动画、慢渲染</b>。3D 资产进入工业流程还要解决格式互转、纹理、UV 拆分。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"用 LiDAR 就够了"</span>
+        <span class="fix">👉 <b>LiDAR 贵、稀疏、室外为主</b>。视觉方案 (单图 / 视频 → 3D) 才是室内 + 普惠方向。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"4D 生成 = 视频生成"</span>
+        <span class="fix">👉 <b>视频是 2D + 时间, 4D 是 3D + 时间</b>。Sora 是视频, 不是 4D —— 4D 多了"可从任意视角看"的特性。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTER =================== -->
+  <footer>
+    <div class="title">这一页先记住 · TL;DR</div>
+    <ul class="points">
+      <li><b>WHAT</b>AI 理解 + 推理 + 生成 3D/4D 世界</li>
+      <li><b>HOW</b>NeRF / 3DGS / Cosmos / 3D-LLM</li>
+      <li><b>WHO</b>Fei-Fei Li · World Labs · NVIDIA Cosmos</li>
+    </ul>
+    <div class="oneliner">
+      <b>一句话总结:</b>空间智能 = AI 理解、推理、生成 <b>3D / 4D 物理世界</b> 的能力,
+      Fei-Fei Li 框架的 4 大能力 + <b>World Labs / NVIDIA Cosmos</b> 是 2024 的标志事件。
+    </div>
+    <div class="stamp">图源:仿「一张图讲清楚」系列 · 参考 Fei-Fei Li (2024) Spatial Intelligence 演讲、Mildenhall (2020) NeRF、Kerbl (2023) 3DGS</div>
+    <div class="credit">
+      <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
