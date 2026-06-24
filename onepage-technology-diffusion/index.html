@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>技术扩散理论 · 一页讲清楚</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    /* 4 大类色系 (扩散/传播配色) */
+    --idea:    #155e75;          /* 核心思想  : 深青 (传播/经典) */
+    --idea-soft: #ecfeff;
+    --idea-deep: #164e63;
+
+    --theory:  #ea580c;          /* 5 大理论  : 橙 (创新/突破) */
+    --theory-soft: #fff7ed;
+    --theory-deep: #9a3412;
+
+    --adopt:   #047857;          /* 5 类采纳  : 翠绿 (扩散) */
+    --adopt-soft: #ecfdf5;
+    --adopt-deep: #064e3b;
+
+    --chasm:   #7c3aed;          /* 鸿沟/颠覆 : 紫 (挑战) */
+    --chasm-soft: #f5f3ff;
+    --chasm-deep: #4c1d95;
+
+    --red: #dc2626;
+    --red-soft: #fef2f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 36px 44px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 600px 200px at top right, #ecfeff 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at bottom left, #fff7ed 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--idea-deep);
+    background: var(--idea-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  header h1 .q {
+    color: var(--idea-deep);
+  }
+  header .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  header .chip {
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  header .chip b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Section base ---------- */
+  section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+  section:last-of-type { border-bottom: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .sec-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sec-head .en {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .c1 .sec-num { background: var(--idea); }
+  .c2 .sec-num { background: var(--theory); }
+  .c3 .sec-num { background: var(--adopt); }
+  .c4 .sec-num { background: var(--chasm); }
+  .c5 .sec-num { background: var(--red); }
+
+  p { color: var(--ink-2); margin-bottom: 8px; }
+  p strong { color: var(--ink); font-weight: 700; }
+  p .hl { background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px; }
+
+  /* ---------- Overview ---------- */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ov {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    background: white;
+  }
+  .ov .ico { font-size: 26px; margin-bottom: 6px; display: block; }
+  .ov .name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .ov .en { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ov.a { background: var(--idea-soft); border-color: #a5f3fc; }
+  .ov.b { background: var(--theory-soft); border-color: #fed7aa; }
+  .ov.c { background: var(--adopt-soft); border-color: #a7f3d0; }
+  .ov.d { background: var(--chasm-soft); border-color: #ddd6fe; }
+
+  /* ---------- Compare (Section 01) ---------- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .cmp {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    background: white;
+  }
+  .cmp.naive { background: #f3f4f6; border-color: #d1d5db; }
+  .cmp.smart { background: var(--idea-soft); border-color: #a5f3fc; }
+  .cmp .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .cmp .head .pill {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .cmp.naive .pill { background: #6b7280; color: white; }
+  .cmp.smart .pill { background: var(--idea); color: white; }
+  .cmp ul { list-style: none; font-size: 13px; color: var(--ink-2); }
+  .cmp ul li {
+    padding: 3px 0 3px 16px;
+    position: relative;
+  }
+  .cmp ul li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    color: var(--ink-3);
+    font-weight: 800;
+  }
+  .cmp ul li b { color: var(--ink); font-weight: 700; }
+
+  /* 4 elements */
+  .four-elem {
+    margin-top: 12px;
+    background: var(--idea-soft);
+    border: 1px solid #a5f3fc;
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .four-elem .head {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--idea-deep);
+    margin-bottom: 8px;
+  }
+  .four-elem .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .four-elem .e {
+    background: white;
+    border: 1px solid #a5f3fc;
+    border-radius: 8px;
+    padding: 8px 4px;
+    text-align: center;
+  }
+  .four-elem .e .ico { font-size: 20px; }
+  .four-elem .e .name { font-size: 12.5px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+  .four-elem .e .en { font-size: 9.5px; color: var(--ink-3); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 1px; }
+
+  /* ---------- 5 Theories (Section 02) ---------- */
+  .theories {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .th {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .th .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .th .year {
+    font-size: 10.5px;
+    color: var(--ink-3);
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-weight: 700;
+  }
+  .th .name { font-weight: 700; color: var(--ink); font-size: 13.5px; }
+  .th .ico { font-size: 22px; margin-left: auto; }
+  .th .body { font-size: 12px; color: var(--ink-2); line-height: 1.4; }
+  .th .body b { color: var(--ink); font-weight: 700; }
+  .th .key {
+    margin-top: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11.5px;
+    color: var(--theory-deep);
+    background: var(--theory-soft);
+    border-radius: 4px;
+    padding: 3px 6px;
+  }
+  .th.t1, .th.t2, .th.t3, .th.t4, .th.t5 { background: var(--theory-soft); border-color: #fed7aa; }
+
+  /* ---------- 5 Adopters (Section 03) ---------- */
+  .adopters {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .ad {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 6px;
+    text-align: center;
+    background: white;
+  }
+  .ad .pct {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ink);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .ad .name { font-size: 12.5px; font-weight: 700; color: var(--ink); margin-top: 1px; }
+  .ad .en { font-size: 9.5px; color: var(--ink-3); letter-spacing: 0.04em; text-transform: uppercase; }
+  .ad .desc { font-size: 10.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.3; }
+  .ad.a1 { background: #fef3c7; border-color: #fde68a; }   /* 创新者 - 暖黄 */
+  .ad.a1 .pct, .ad.a1 .name { color: #92400e; }
+  .ad.a2 { background: #fed7aa; border-color: #fdba74; }   /* 早期采纳者 - 橙 */
+  .ad.a2 .pct, .ad.a2 .name { color: #9a3412; }
+  .ad.a3 { background: #fecaca; border-color: #fca5a5; }   /* 早期大众 - 浅红 */
+  .ad.a3 .pct, .ad.a3 .name { color: #991b1b; }
+  .ad.a4 { background: #cbd5e1; border-color: #94a3b8; }   /* 晚期大众 - 灰 */
+  .ad.a4 .pct, .ad.a4 .name { color: #334155; }
+  .ad.a5 { background: #94a3b8; border-color: #64748b; }   /* 落后者 - 深灰 */
+  .ad.a5 { background: #94a3b8; border-color: #64748b; color: white; }
+  .ad.a5 .pct, .ad.a5 .name, .ad.a5 .en, .ad.a5 .desc { color: white; }
+
+  /* S-curve ASCII */
+  .scurve {
+    margin-top: 12px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .scurve .title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .scurve pre {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--ink-2);
+    margin: 0;
+    overflow-x: auto;
+  }
+  .scurve pre .ad1 { color: #92400e; font-weight: 700; }   /* 创新者 */
+  .scurve pre .ad2 { color: #9a3412; font-weight: 700; }   /* 早期采纳者 */
+  .scurve pre .ad3 { color: #991b1b; font-weight: 700; }   /* 早期大众 */
+  .scurve pre .ad4 { color: #475569; font-weight: 700; }   /* 晚期大众 */
+  .scurve pre .ad5 { color: #1e293b; font-weight: 700; }   /* 落后者 */
+  .scurve pre .chasm { color: var(--chasm-deep); font-weight: 700; }
+  .scurve pre .axis { color: var(--ink-3); }
+  .scurve pre .cur { color: var(--adopt-deep); }
+
+  /* ---------- 4 Elements + 5 Attributes (Section 04) ---------- */
+  .elements {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .el {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .el.el-elem { background: var(--idea-soft); border-color: #a5f3fc; }
+  .el.el-attr { background: var(--adopt-soft); border-color: #a7f3d0; }
+  .el .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .el .ico { font-size: 18px; }
+  .el .name { font-weight: 700; color: var(--ink); font-size: 13.5px; }
+  .el .en { font-size: 10.5px; color: var(--ink-3); margin-left: auto; letter-spacing: 0.04em; text-transform: uppercase; }
+  .el .body { font-size: 12px; color: var(--ink-2); line-height: 1.4; }
+  .el .body b { color: var(--ink); font-weight: 700; }
+  .el ul { margin-top: 6px; list-style: none; }
+  .el ul li {
+    font-size: 11.5px;
+    color: var(--ink-2);
+    padding: 2px 0 2px 12px;
+    position: relative;
+  }
+  .el ul li::before {
+    content: "·";
+    position: absolute;
+    left: 0;
+    color: var(--ink-3);
+    font-weight: 800;
+  }
+  .el ul li b { color: var(--ink); font-weight: 700; }
+  .el ul li .good { color: var(--adopt-deep); }
+  .el ul li .bad { color: var(--red); }
+
+  /* ---------- Pitfalls (Section 05) ---------- */
+  .pitfall {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--red-soft);
+    border: 1px solid #fecaca;
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pitfall:last-child { margin-bottom: 0; }
+  .pitfall .x {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .pitfall .body { font-size: 13.5px; color: var(--ink-2); }
+  .pitfall .body .bad {
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 1.5px;
+  }
+  .pitfall .body .fix {
+    display: block;
+    margin-top: 4px;
+  }
+  .pitfall .body .fix b { color: #15803d; font-weight: 700; }
+
+  /* ---------- Footer summary ---------- */
+  footer {
+    padding: 28px 44px 36px;
+    background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+    border-top: 1px solid var(--line);
+  }
+  footer .title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  footer .points {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  footer .points li {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  footer .points li b {
+    display: block;
+    color: var(--idea-deep);
+    font-size: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+  footer .oneliner {
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  footer .oneliner b { color: #a5f3fc; }
+  footer .stamp {
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  footer .credit {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    line-height: 1.6;
+  }
+  footer .credit b { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    header, section, footer { padding-left: 22px; padding-right: 22px; }
+    .overview, .footer .points { grid-template-columns: 1fr 1fr; }
+    .compare, .theories, .elements { grid-template-columns: 1fr; }
+    .adopters { grid-template-columns: 1fr 1fr; }
+    .four-elem .row { grid-template-columns: 1fr 1fr; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =================== HEADER =================== -->
+  <header>
+    <span class="tag">INNOVATION · DIFFUSION</span>
+    <h1>技术扩散理论是什么？<br>
+        <span class="q">一张图讲清楚 5 大经典模型 + 4 大扩散要素</span></h1>
+    <p class="subtitle">新技术<span class="hl">不是随机</span>被接受的 —— Rogers 1962 起, 5 大理论把"扩散"变成了可预测、可管理的科学。</p>
+    <div class="meta">
+      <span class="chip">⏱ 阅读 <b>5 分钟</b></span>
+      <span class="chip">🎯 适合 <b>创新 / 营销 / 战略</b></span>
+      <span class="chip">📚 出处 Rogers · Moore · Christensen</span>
+    </div>
+  </header>
+
+  <!-- =================== OVERVIEW =================== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">★</span>
+      <h2>先记住 4 个关键词</h2>
+      <span class="en">FOUR KEY CONCEPTS</span>
+    </div>
+    <p>技术扩散所有内容，<strong>只围绕这 4 个概念展开</strong>。</p>
+    <div class="overview">
+      <div class="ov a">
+        <span class="ico">🌊</span>
+        <div class="name">S 曲线扩散</div>
+        <div class="en">S-Curve</div>
+      </div>
+      <div class="ov b">
+        <span class="ico">👥</span>
+        <div class="name">5 类采纳者</div>
+        <div class="en">5 Adopters</div>
+      </div>
+      <div class="ov c">
+        <span class="ico">🌉</span>
+        <div class="name">鸿沟</div>
+        <div class="en">Chasm</div>
+      </div>
+      <div class="ov d">
+        <span class="ico">💥</span>
+        <div class="name">颠覆式创新</div>
+        <div class="en">Disruption</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 01: 核心思想 =================== -->
+  <section class="c1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>核心思想:扩散有规律,4 要素决定一切</h2>
+      <span class="en">DIFFUSION IS PREDICTABLE</span>
+    </div>
+    <p>Rogers 1962: 任何技术扩散都遵循 <b>4 要素</b>, 围绕这 4 个轴就能预测谁会采纳、什么时候采纳。</p>
+
+    <div class="compare">
+      <div class="cmp naive">
+        <div class="head">
+          <span class="pill">NAIVE</span>
+          朴素认知
+        </div>
+        <ul>
+          <li><b>想法:</b> 好产品 = 自然传播</li>
+          <li><b>预测:</b> 看不出来</li>
+          <li><b>策略:</b> 砸广告, 然后等</li>
+          <li><b>结果:</b> 90% 新品失败</li>
+        </ul>
+      </div>
+      <div class="cmp smart">
+        <div class="head">
+          <span class="pill">SMART</span>
+          扩散理论视角
+        </div>
+        <ul>
+          <li><b>想法:</b> 采纳是<b>社会过程</b>, 有曲线</li>
+          <li><b>预测:</b> 5 类采纳者 + S 曲线</li>
+          <li><b>策略:</b> 找对人群, 过鸿沟, 主流引爆</li>
+          <li><b>结果:</b> 知道何时该激进/保守</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="four-elem">
+      <div class="head">Rogers 4 要素 (缺一不可)</div>
+      <div class="row">
+        <div class="e">
+          <div class="ico">💡</div>
+          <div class="name">创新本身</div>
+          <div class="en">Innovation</div>
+        </div>
+        <div class="e">
+          <div class="ico">📡</div>
+          <div class="name">沟通渠道</div>
+          <div class="en">Channels</div>
+        </div>
+        <div class="e">
+          <div class="ico">⏱️</div>
+          <div class="name">时间</div>
+          <div class="en">Time</div>
+        </div>
+        <div class="e">
+          <div class="ico">🌐</div>
+          <div class="name">社会系统</div>
+          <div class="en">Social System</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 02: 5 大理论 =================== -->
+  <section class="c2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>5 大经典理论:从描述到数学到战略</h2>
+      <span class="en">FIVE CANONICAL THEORIES</span>
+    </div>
+    <p>5 个理论从不同角度回答"创新怎么传播", 越往后越实战:</p>
+
+    <div class="theories">
+      <div class="th t1">
+        <div class="head">
+          <span class="name">Rogers 扩散</span>
+          <span class="year">1962</span>
+          <span class="ico">🌊</span>
+        </div>
+        <div class="body">
+          <b>描述性框架</b>: 5 类采纳者 + S 曲线, 4 要素。
+        </div>
+        <div class="key">"Diffusion of Innovations"</div>
+      </div>
+
+      <div class="th t2">
+        <div class="head">
+          <span class="name">Bass 模型</span>
+          <span class="year">1969</span>
+          <span class="ico">📈</span>
+        </div>
+        <div class="body">
+          <b>数学化预测</b>: 两个参数 p (创新系数) + q (模仿系数)。
+        </div>
+        <div class="key">F(t) = [1-e^(-(p+q)t)] / [1+(q/p)e^(-(p+q)t)]</div>
+      </div>
+
+      <div class="th t3">
+        <div class="head">
+          <span class="name">Moore 鸿沟</span>
+          <span class="year">1991</span>
+          <span class="ico">🌉</span>
+        </div>
+        <div class="body">
+          早期采纳者 → 早期大众<b>有断层</b>, <b>90% 新技术死在这</b>。
+        </div>
+        <div class="key">"Crossing the Chasm"</div>
+      </div>
+
+      <div class="th t4">
+        <div class="head">
+          <span class="name">Christensen 颠覆</span>
+          <span class="year">1997</span>
+          <span class="ico">💥</span>
+        </div>
+        <div class="body">
+          低端/新市场颠覆, 性能从"<b>够用</b>"开始蚕食主流。
+        </div>
+        <div class="key">"The Innovator's Dilemma"</div>
+      </div>
+
+      <div class="th t5">
+        <div class="head">
+          <span class="name">Schumpeter 创造性破坏</span>
+          <span class="year">1942</span>
+          <span class="ico">♻️</span>
+        </div>
+        <div class="body">
+          <b>宏观经济学视角</b>: 创新 = 经济周期引擎, 旧产业被新产业取代。
+        </div>
+        <div class="key">"Creative Destruction"</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 03: 5 类采纳者 + S 曲线 =================== -->
+  <section class="c3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>5 类采纳者 + S 曲线:Rogers 核心框架</h2>
+      <span class="en">FIVE ADOPTER CATEGORIES</span>
+    </div>
+    <p>采纳过程是<b>分群</b>的 —— 不同人群在不同时间采纳, 各占不同百分比:</p>
+
+    <div class="adopters">
+      <div class="ad a1">
+        <div class="pct">2.5%</div>
+        <div class="name">创新者</div>
+        <div class="en">Innovators</div>
+        <div class="desc">冒险尝鲜, 经常是 geek / 局外人</div>
+      </div>
+      <div class="ad a2">
+        <div class="pct">13.5%</div>
+        <div class="name">早期采纳者</div>
+        <div class="en">Early Adopters</div>
+        <div class="desc">意见领袖, 受人尊敬, 敢为先</div>
+      </div>
+      <div class="ad a3">
+        <div class="pct">34%</div>
+        <div class="name">早期大众</div>
+        <div class="en">Early Majority</div>
+        <div class="desc">深思熟虑, 跟随意见领袖</div>
+      </div>
+      <div class="ad a4">
+        <div class="pct">34%</div>
+        <div class="name">晚期大众</div>
+        <div class="en">Late Majority</div>
+        <div class="desc">怀疑论者, 看到主流用才跟</div>
+      </div>
+      <div class="ad a5">
+        <div class="pct">16%</div>
+        <div class="name">落后者</div>
+        <div class="en">Laggards</div>
+        <div class="desc">传统保守, 不得不变才变</div>
+      </div>
+    </div>
+
+    <div class="scurve">
+      <div class="title">📈 S 曲线 + Moore 鸿沟</div>
+<pre><span class="axis">采纳率%</span>
+<span class="axis">100 ┤</span>                                          <span class="cur">──────</span>
+<span class="axis"> 90 ┤</span>                                    <span class="cur">───</span>╱─── <span class="ad4">晚期</span>
+<span class="axis"> 80 ┤</span>                                  <span class="cur">──</span>╱
+<span class="axis"> 70 ┤</span>                                <span class="cur">─</span>╱
+<span class="axis"> 60 ┤</span>                              <span class="cur">─</span>╱   <span class="ad3">早期大众</span>
+<span class="axis"> 50 ┤</span>                          <span class="cur">─</span>╱
+<span class="axis"> 40 ┤</span>                        <span class="cur">─</span>╱    <span class="ad2">早期采纳</span>
+<span class="axis"> 30 ┤</span>                  <span class="cur">──</span>╱
+<span class="axis"> 20 ┤</span>              <span class="cur">────</span>╱    <span class="chasm">⚡ 鸿沟 ⚡</span>   ← 90% 在这死
+<span class="axis"> 10 ┤</span>        <span class="cur">──</span>╱<span class="ad1">创新</span>
+<span class="axis">  0 ┼────┬────┬────┬────┬────┬────┬──→</span> 时间
+<span class="axis">     引入    成长    成熟    衰退</span></pre>
+    </div>
+  </section>
+
+  <!-- =================== 04: 4 要素 + 5 属性 =================== -->
+  <section class="c4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>4 要素 + 5 属性:什么决定扩散快慢?</h2>
+      <span class="en">FOUR ELEMENTS &amp; FIVE ATTRIBUTES</span>
+    </div>
+    <p>Rogers 把影响扩散的因素拆成 4 要素 + 5 属性, 用于<b>判断 / 加速</b>一项技术的传播:</p>
+
+    <div class="elements">
+      <div class="el el-elem">
+        <div class="head">
+          <span class="ico">🌐</span>
+          <span class="name">4 要素</span>
+          <span class="en">ELEMENTS</span>
+        </div>
+        <div class="body">回答"<b>什么在扩散</b>":</div>
+        <ul>
+          <li><b>创新</b> — 想法/实践/产品本身</li>
+          <li><b>渠道</b> — 大众媒体 / 人际 / 口碑</li>
+          <li><b>时间</b> — 决策过程 + 采纳速率</li>
+          <li><b>社会系统</b> — 网络 + 规范 + 意见领袖</li>
+        </ul>
+      </div>
+
+      <div class="el el-attr">
+        <div class="head">
+          <span class="ico">⚙️</span>
+          <span class="name">5 属性 (决定速率)</span>
+          <span class="en">ATTRIBUTES</span>
+        </div>
+        <div class="body">回答"<b>扩散多快</b>":</div>
+        <ul>
+          <li><span class="good">↑</span> <b>相对优势</b> — 比替代品好多少</li>
+          <li><span class="good">↑</span> <b>兼容性</b> — 跟现有习惯合得来</li>
+          <li><span class="bad">↑</span> <b>复杂性</b> — 越低越好 (反向)</li>
+          <li><span class="good">↑</span> <b>可试性</b> — 能不能先试再买</li>
+          <li><span class="good">↑</span> <b>可观察性</b> — 别人看得到结果吗</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 05: 误区 =================== -->
+  <section class="c5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>新手最常踩的 4 个坑</h2>
+      <span class="en">COMMON PITFALLS</span>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"创新者 = 早期采纳者"</span>
+        <span class="fix">👉 <b>完全不同</b>。创新者 (2.5%) 是 geek / 局外人, 早期采纳者 (13.5%) 是<b>意见领袖</b>。卖给创新者 = 没有口碑, 卖给意见领袖 = 有人传。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"产品好 = 自然传播"</span>
+        <span class="fix">👉 <b>90% 新产品死在鸿沟</b>。早期采纳者买 ≠ 早期大众买, 要靠<b>主流场景</b>才能过桥。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"S 曲线一定出现"</span>
+        <span class="fix">👉 <b>只在适合的技术上</b>出现。技术若跟现有习惯冲突大, 5 属性差, 可能永远爬不起来。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"颠覆 = 更好"</span>
+        <span class="fix">👉 <b>颠覆初期更差</b> (更便宜 / 更简单 / 性能差), 靠"够用"蚕食主流, 后来才反超。错把颠覆当升级 = 死。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTER =================== -->
+  <footer>
+    <div class="title">这一页先记住 · TL;DR</div>
+    <ul class="points">
+      <li><b>WHO</b>Rogers (S 曲线) + Moore (鸿沟) + Christensen (颠覆)</li>
+      <li><b>WHAT</b>5 类采纳者按 S 曲线时间顺序入场</li>
+      <li><b>WHY</b>90% 新品死在 Early Adopter → Early Majority 的鸿沟</li>
+    </ul>
+    <div class="oneliner">
+      <b>一句话总结:</b>技术扩散 = <b>4 要素 + 5 类采纳者 + S 曲线</b> 的社会过程,
+      Rogers 1962 起框架, Moore 强调<b>鸿沟</b>, Christensen 补充<b>颠覆</b> —— 理解这三层, 才能预判创新生死。
+    </div>
+    <div class="stamp">图源:仿「一张图讲清楚」系列 · 参考 Rogers (1962, 2003) Diffusion of Innovations · Moore (1991) Crossing the Chasm · Christensen (1997) Innovator's Dilemma · Bass (1969)</div>
+    <div class="credit">
+      <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
