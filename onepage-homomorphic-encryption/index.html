@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>同态加密 · 一页讲清楚</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    /* 4 大类色系 (密码学/隐私色) */
+    --idea:    #4338ca;          /* 核心思想  : 靛蓝 (密码学感) */
+    --idea-soft: #eef2ff;
+    --idea-deep: #312e81;
+
+    --type:    #0d9488;          /* 方案类型  : 深青 (隐私) */
+    --type-soft: #f0fdfa;
+    --type-deep: #134e4a;
+
+    --tech:    #b45309;          /* 关键技术  : 琥珀 (噪声) */
+    --tech-soft: #fffbeb;
+    --tech-deep: #78350f;
+
+    --app:     #be185d;          /* 应用场景  : 玫红 */
+    --app-soft: #fdf2f8;
+    --app-deep: #831843;
+
+    --red: #ef4444;
+    --red-soft: #fef2f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 36px 44px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 600px 200px at top right, #eef2ff 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at bottom left, #f0fdfa 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--idea-deep);
+    background: var(--idea-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  header h1 .q {
+    color: var(--idea-deep);
+  }
+  header .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  header .chip {
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  header .chip b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Section base ---------- */
+  section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+  section:last-of-type { border-bottom: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .sec-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sec-head .en {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .c1 .sec-num { background: var(--idea); }
+  .c2 .sec-num { background: var(--type); }
+  .c3 .sec-num { background: var(--tech); }
+  .c4 .sec-num { background: var(--app); }
+  .c5 .sec-num { background: var(--red); }
+
+  p { color: var(--ink-2); margin-bottom: 8px; }
+  p strong { color: var(--ink); font-weight: 700; }
+  p .hl { background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px; }
+
+  /* ---------- Overview ---------- */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ov {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    background: white;
+  }
+  .ov .ico { font-size: 26px; margin-bottom: 6px; display: block; }
+  .ov .name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .ov .en { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ov.a { background: var(--idea-soft); border-color: #c7d2fe; }
+  .ov.b { background: var(--type-soft); border-color: #99f6e4; }
+  .ov.c { background: var(--tech-soft); border-color: #fde68a; }
+  .ov.d { background: var(--app-soft); border-color: #fbcfe8; }
+
+  /* ---------- Hero equation (Section 01) ---------- */
+  .hero-eq {
+    background: linear-gradient(135deg, var(--idea-soft) 0%, #e0f2fe 100%);
+    border: 1px solid #c7d2fe;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin: 10px 0 12px;
+    text-align: center;
+  }
+  .hero-eq .eq {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 18px;
+    color: var(--ink);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+  }
+  .hero-eq .eq .l { color: var(--type-deep); }
+  .hero-eq .eq .r { color: var(--idea-deep); }
+  .hero-eq .eq .op { color: var(--ink-3); margin: 0 8px; font-weight: 400; }
+  .hero-eq .caption {
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: var(--ink-3);
+  }
+  .role-flow {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr 60px 1fr;
+    gap: 6px;
+    align-items: center;
+    margin-top: 12px;
+  }
+  .role {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 8px;
+    background: white;
+    text-align: center;
+  }
+  .role .ico { font-size: 20px; margin-bottom: 2px; display: block; }
+  .role .name { font-size: 12.5px; font-weight: 700; color: var(--ink); }
+  .role .sub { font-size: 10.5px; color: var(--ink-3); margin-top: 2px; }
+  .role-arrow {
+    text-align: center;
+    color: var(--ink-3);
+    font-size: 18px;
+  }
+  .role-arrow .l1 { color: var(--type-deep); font-weight: 700; }
+  .role-arrow .l2 { color: var(--idea-deep); font-weight: 700; }
+
+  /* ---------- Type cards (Section 02) ---------- */
+  .types {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .ty {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 10px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+  }
+  .ty .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .ty .head .num {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    color: white;
+    font-weight: 800;
+    font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ty.t1 .head .num { background: var(--type); }
+  .ty.t2 .head .num { background: var(--idea); }
+  .ty.t3 .head .num { background: var(--tech); }
+  .ty.t4 .head .num { background: var(--app); }
+  .ty .head .name {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 13px;
+  }
+  .ty .head .en {
+    font-size: 9.5px;
+    color: var(--ink-3);
+    margin-left: auto;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .ty .full {
+    font-size: 11.5px;
+    color: var(--ink-3);
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+  .ty .ops {
+    font-size: 11.5px;
+    color: var(--ink-2);
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .ty .ops b { color: var(--ink); font-weight: 700; }
+  .ty .algos {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 10.5px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 3px 5px;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+  .ty .speed {
+    margin-top: auto;
+    padding-top: 6px;
+    border-top: 1px dashed var(--line);
+    font-size: 11px;
+    color: var(--ink-2);
+  }
+  .ty .speed b { color: var(--ink); font-weight: 700; }
+  .ty .bar {
+    display: inline-block;
+    height: 6px;
+    background: var(--type);
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+  .ty.t1 .bar { background: var(--type); }
+  .ty.t2 .bar { background: var(--idea); }
+  .ty.t3 .bar { background: var(--tech); }
+  .ty.t4 .bar { background: var(--app); }
+
+  /* ---------- Noise section (Section 03) ---------- */
+  .noise-block {
+    background: var(--tech-soft);
+    border: 1px solid #fde68a;
+    border-left: 4px solid var(--tech);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .noise-block b { color: var(--tech-deep); font-weight: 700; }
+  .noise-block code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12.5px;
+    background: white;
+    border: 1px solid #fde68a;
+    border-radius: 4px;
+    padding: 1px 6px;
+  }
+  .noise-chart {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    margin: 10px 0 8px;
+  }
+  .noise-chart .title {
+    font-size: 12px;
+    color: var(--ink-3);
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .noise-chart pre {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--ink);
+    overflow-x: auto;
+    text-align: center;
+    margin: 0;
+  }
+  .noise-chart .low { color: var(--type-deep); font-weight: 700; }
+  .noise-chart .mid { color: var(--tech); font-weight: 700; }
+  .noise-chart .high { color: var(--red); font-weight: 700; }
+  .noise-chart .warn { color: var(--red); font-weight: 700; }
+  .bootstrap {
+    background: white;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--idea);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .bootstrap b { color: var(--idea-deep); font-weight: 700; }
+  .bootstrap .author { color: var(--ink-3); font-size: 12px; font-style: italic; }
+
+  /* ---------- Apps (Section 04) ---------- */
+  .apps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .app {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .app .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .app .ico { font-size: 18px; }
+  .app .name { font-weight: 700; color: var(--ink); font-size: 13.5px; }
+  .app .body { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+  .app.a1 { background: var(--app-soft); border-color: #fbcfe8; }
+  .app.a2 { background: var(--app-soft); border-color: #fbcfe8; }
+  .app.a3 { background: var(--app-soft); border-color: #fbcfe8; }
+  .app.a4 { background: var(--app-soft); border-color: #fbcfe8; }
+
+  .toolbox {
+    margin-top: 12px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .toolbox .title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .toolbox .items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .toolbox .chip {
+    font-size: 11.5px;
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: var(--app-soft);
+    border: 1px solid #fbcfe8;
+    color: var(--app-deep);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-weight: 600;
+  }
+  .toolbox .chip.lang { background: var(--idea-soft); border-color: #c7d2fe; color: var(--idea-deep); }
+  .toolbox .chip .role {
+    font-family: -apple-system, sans-serif;
+    font-size: 10px;
+    color: var(--ink-3);
+    margin-left: 4px;
+    font-weight: 400;
+  }
+
+  /* ---------- Pitfalls (Section 05) ---------- */
+  .pitfall {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--red-soft);
+    border: 1px solid #fecaca;
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pitfall:last-child { margin-bottom: 0; }
+  .pitfall .x {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .pitfall .body { font-size: 13.5px; color: var(--ink-2); }
+  .pitfall .body .bad {
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 1.5px;
+  }
+  .pitfall .body .fix {
+    display: block;
+    margin-top: 4px;
+  }
+  .pitfall .body .fix b { color: #15803d; font-weight: 700; }
+
+  /* ---------- Footer summary ---------- */
+  footer {
+    padding: 28px 44px 36px;
+    background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+    border-top: 1px solid var(--line);
+  }
+  footer .title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  footer .points {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  footer .points li {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  footer .points li b {
+    display: block;
+    color: var(--idea-deep);
+    font-size: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+  footer .oneliner {
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  footer .oneliner b { color: #c7d2fe; }
+  footer .stamp {
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  footer .credit {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    line-height: 1.6;
+  }
+  footer .credit b { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    header, section, footer { padding-left: 22px; padding-right: 22px; }
+    .overview, .footer .points { grid-template-columns: 1fr 1fr; }
+    .types { grid-template-columns: 1fr 1fr; }
+    .role-flow { grid-template-columns: 1fr; }
+    .role-arrow { display: none; }
+    .apps { grid-template-columns: 1fr; }
+    header h1 { font-size: 24px; }
+    .hero-eq .eq { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =================== HEADER =================== -->
+  <header>
+    <span class="tag">CRYPTO · 隐私计算</span>
+    <h1>同态加密是什么？<br>
+        <span class="q">一张图讲清楚「密文上直接算」的黑魔法</span></h1>
+    <p class="subtitle">让<b>第三方在看不见数据</b>的情况下完成计算 —— 云服务商拿到的是密文，算完还是密文，只有你能解密。</p>
+    <div class="meta">
+      <span class="chip">⏱ 阅读 <b>5 分钟</b></span>
+      <span class="chip">🎯 适合 <b>隐私计算 / 密码学入门</b></span>
+      <span class="chip">📚 出处 Gentry 2009 FHE 突破</span>
+    </div>
+  </header>
+
+  <!-- =================== OVERVIEW =================== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">★</span>
+      <h2>先记住 4 个关键词</h2>
+      <span class="en">FOUR KEY CONCEPTS</span>
+    </div>
+    <p>同态加密所有内容，<strong>只围绕这 4 个概念展开</strong>。</p>
+    <div class="overview">
+      <div class="ov a">
+        <span class="ico">🔐</span>
+        <div class="name">密文可算</div>
+        <div class="en">Compute on E(m)</div>
+      </div>
+      <div class="ov b">
+        <span class="ico">📊</span>
+        <div class="name">PHE / FHE</div>
+        <div class="en">4 Type Levels</div>
+      </div>
+      <div class="ov c">
+        <span class="ico">📈</span>
+        <div class="name">噪声管理</div>
+        <div class="en">Noise Budget</div>
+      </div>
+      <div class="ov d">
+        <span class="ico">🛡️</span>
+        <div class="name">隐私计算</div>
+        <div class="en">Privacy-preserving</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 01: 核心思想 =================== -->
+  <section class="c1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>核心思想：把"加锁的手"伸进保险箱</h2>
+      <span class="en">COMPUTE ON CIPHERTEXT</span>
+    </div>
+    <p>传统加密：想算数据 → <span class="hl">必须先解密</span> → 计算方看到明文。<br>
+       同态加密：<b>不解密也能算</b>，结果解密后 = 在明文上算的结果。</p>
+
+    <div class="hero-eq">
+      <div class="eq">
+        <span class="l">E(m<sub>1</sub>)</span>
+        <span class="op">+</span>
+        <span class="l">E(m<sub>2</sub>)</span>
+        <span class="op">=</span>
+        <span class="r">E(m<sub>1</sub> + m<sub>2</sub>)</span>
+      </div>
+      <div class="caption">同态性质: 在密文上做运算 = 在明文上做同一运算后再加密</div>
+    </div>
+
+    <div class="role-flow">
+      <div class="role">
+        <span class="ico">👤</span>
+        <div class="name">数据方</div>
+        <div class="sub">持有密钥</div>
+      </div>
+      <div class="role-arrow">
+        <div class="l1">密文</div>
+        <div>→</div>
+      </div>
+      <div class="role">
+        <span class="ico">☁️</span>
+        <div class="name">计算方</div>
+        <div class="sub">看不见明文</div>
+      </div>
+      <div class="role-arrow">
+        <div class="l2">结果</div>
+        <div>←</div>
+      </div>
+      <div class="role">
+        <span class="ico">🔓</span>
+        <div class="name">结果方</div>
+        <div class="sub">解密得答案</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 02: 4 大方案家族 =================== -->
+  <section class="c2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>4 大方案家族：能算什么算多深</h2>
+      <span class="en">PHE · SHE · LHE · FHE</span>
+    </div>
+    <p>同态加密不是一种方案，而是按"支持的操作种类和深度"分 4 个等级。</p>
+
+    <div class="types">
+      <div class="ty t1">
+        <div class="head">
+          <span class="num">1</span>
+          <span class="name">PHE</span>
+          <span class="en">Partial</span>
+        </div>
+        <div class="full">部分同态</div>
+        <div class="ops"><b>只支持一种</b>操作无限次</div>
+        <div class="algos">Paillier (加)<br>RSA, ElGamal (乘)</div>
+        <div class="speed">性能 <span class="bar" style="width:8px"></span><span class="bar" style="width:8px"></span><span class="bar" style="width:8px"></span><span class="bar" style="width:8px"></span><span class="bar" style="width:8px"></span> 极快</div>
+      </div>
+      <div class="ty t2">
+        <div class="head">
+          <span class="num">2</span>
+          <span class="name">SHE</span>
+          <span class="en">Somewhat</span>
+        </div>
+        <div class="full">有限同态</div>
+        <div class="ops">加 + 乘, <b>深度有限</b></div>
+        <div class="algos">早期 BGN<br>ElGamal 变种</div>
+        <div class="speed">性能 <span class="bar" style="width:8px"></span><span class="bar" style="width:8px"></span><span class="bar" style="width:8px"></span><span class="bar" style="width:8px"></span> 较快</div>
+      </div>
+      <div class="ty t3">
+        <div class="head">
+          <span class="num">3</span>
+          <span class="name">LHE</span>
+          <span class="en">Leveled</span>
+        </div>
+        <div class="full">分层同态</div>
+        <div class="ops">加 + 乘, <b>深度预先设</b></div>
+        <div class="algos">BGV · BFV<br>CKKS (浮点)</div>
+        <div class="speed">性能 <span class="bar" style="width:8px"></span><span class="bar" style="width:8px"></span><span class="bar" style="width:8px"></span> 慢</div>
+      </div>
+      <div class="ty t4">
+        <div class="head">
+          <span class="num">4</span>
+          <span class="name">FHE</span>
+          <span class="en">Fully</span>
+        </div>
+        <div class="full">全同态</div>
+        <div class="ops">任意电路, <b>无限深度</b></div>
+        <div class="algos">TFHE<br>BFV/BGV + bootstrap</div>
+        <div class="speed">性能 <span class="bar" style="width:8px"></span><span class="bar" style="width:8px"></span> 较慢</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 03: 噪声管理 =================== -->
+  <section class="c3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>关键技术：噪声管理 (Noise Budget)</h2>
+      <span class="en">NOISE BUDGET &amp; BOOTSTRAPPING</span>
+    </div>
+    <p>同态加密最大的"工程难题"是 <b>噪声</b>: 每次乘法都加噪, 噪声到顶 → 解密失败。</p>
+
+    <div class="noise-block">
+      <b>核心矛盾</b>: 想算的电路越深, 参数就得越大, 性能越差。
+      关系: <code>深度 ↑</code> → <code>参数 ↑</code> → <code>密文膨胀 ↑</code> → <code>速度 ↓</code>
+    </div>
+
+    <div class="noise-chart">
+      <div class="title">噪声预算随运算次数增长</div>
+<pre>噪声
+ ↑
+ │  ▓▓▓▓▓▓                                  ⚠ 超过阈值
+ │  ▓▓▓▓▓▓  ▓▓▓▓▓▓  ▓▓▓▓▓▓                 解密错误!
+ │  ▓▓▓▓▓▓  ▓▓▓▓▓▓  ▓▓▓▓▓▓  ▓▓▓▓▓▓  ▓▓▓▓▓▓
+ │  <span class="low">安全</span>  <span class="low">安全</span>  <span class="mid">警惕</span>  <span class="mid">警惕</span>  <span class="high">危险</span>  <span class="warn">爆掉</span>
+ │  ┴────┴────┴────┴────┴────┴────
+ │  E(m)  +    +    +    +    ×
+ │         ←─── 每次运算都加噪 ──→
+ └──────────────────────────────────→ 运算次数</pre>
+    </div>
+
+    <div class="bootstrap">
+      <b>Bootstrapping</b> <span class="author">(Gentry 2009 突破)</span>:
+      把"已经快爆掉"的密文,<b>再同态地跑一遍解密电路</b>, 得到一个<b>"满血复活"</b>的新密文。
+      代价: 单次 bootstrap 极慢, 是 FHE 的主要性能瓶颈。
+    </div>
+  </section>
+
+  <!-- =================== 04: 应用 + 工具栈 =================== -->
+  <section class="c4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>典型应用：FHE 在哪能用、怎么用</h2>
+      <span class="en">APPLICATIONS &amp; TOOLCHAIN</span>
+    </div>
+    <p>FHE 还<b>没有</b>"杀手级应用", 但 4 类场景在快速成熟:</p>
+
+    <div class="apps">
+      <div class="app a1">
+        <div class="head">
+          <span class="ico">🧠</span>
+          <span class="name">隐私 ML</span>
+        </div>
+        <div class="body">
+          在<b>加密数据</b>上训练/推理模型。CKKS 特别适合 (浮点近似)。
+          场景: 医疗 AI / 金融风控 / 跨机构联邦。
+        </div>
+      </div>
+      <div class="app a2">
+        <div class="head">
+          <span class="ico">☁️</span>
+          <span class="name">安全外包</span>
+        </div>
+        <div class="body">
+          把敏感数据加密后丢给云, 云算完返回密文, 用户本地解密。
+          场景: 加密数据库查询、机密基因分析。
+        </div>
+      </div>
+      <div class="app a3">
+        <div class="head">
+          <span class="ico">⛓️</span>
+          <span class="name">机密区块链</span>
+        </div>
+        <div class="body">
+          智能合约在<b>加密状态</b>下执行, 链上节点看不到交易明文。
+          场景: 机密 ERC20 / 链上拍卖 / 隐私 DeFi。
+        </div>
+      </div>
+      <div class="app a4">
+        <div class="head">
+          <span class="ico">🗳️</span>
+          <span class="name">隐私协议</span>
+        </div>
+        <div class="body">
+          电子投票 / 隐私拍卖 / 私有集合求交 (PSI)。
+          经典场景: 验证<b>某人是否在集合里</b>, 但不暴露集合内容。
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbox">
+      <div class="title">🛠️ 主流工具栈</div>
+      <div class="items">
+        <span class="chip">Microsoft SEAL <span class="role">C++</span></span>
+        <span class="chip">OpenFHE <span class="role">C++</span></span>
+        <span class="chip">HElib <span class="role">C++, IBM</span></span>
+        <span class="chip">TFHE-rs <span class="role">Rust</span></span>
+        <span class="chip">Concrete <span class="role">Rust, Zama</span></span>
+        <span class="chip lang">Lattigo <span class="role">Go</span></span>
+        <span class="chip lang">TenSEAL <span class="role">Python, PyTorch 桥</span></span>
+        <span class="chip lang">Pyfhel <span class="role">Python</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 05: 误区 =================== -->
+  <section class="c5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>新手最常踩的 4 个坑</h2>
+      <span class="en">COMMON PITFALLS</span>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"FHE 已经成熟, 可以随便用"</span>
+        <span class="fix">👉 <b>FHE 比明文慢 1000x–10000x</b>。先确认有没有更便宜的方案(MPC / TEE / DP), 别一上来就上 FHE。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"同态加密 = 零知识证明"</span>
+        <span class="fix">👉 <b>HE 是"在密文上算", ZKP 是"证明我知道"</b>。前者保护<b>数据</b>, 后者证明<b>陈述</b>, 用途完全不同。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"方案选错, CKKS 哪里都能用"</span>
+        <span class="fix">👉 <b>CKKS 只能算近似值</b>, 加密金额、投票计数要<b>精确</b>时用 BFV/BGV;算 ML 推理用 CKKS。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"数据加密了 = 绝对安全"</span>
+        <span class="fix">👉 <b>密钥在客户端, 客户端被攻破 = 全盘崩溃</b>。HE 只保护传输和计算, <b>不替代</b>密钥管理和访问控制。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTER =================== -->
+  <footer>
+    <div class="title">这一页先记住 · TL;DR</div>
+    <ul class="points">
+      <li><b>WHAT</b>在密文上算 = 在明文上算后再加密</li>
+      <li><b>4 TYPES</b>PHE / SHE / LHE / FHE 能力递增, 性能递减</li>
+      <li><b>KEY</b>噪声管理是核心难题, bootstrapping 是 FHE 的关键</li>
+    </ul>
+    <div class="oneliner">
+      <b>一句话总结：</b>同态加密 = 让第三方在<b>看不见数据</b>的前提下完成计算，
+      用 <b>PHE / LHE / FHE</b> 在"能算多少 vs 多快"之间做权衡。
+    </div>
+    <div class="stamp">图源：仿「一张图讲清楚」系列 · 参考 Gentry (2009)、CKKS (2017)、OpenFHE 文档</div>
+    <div class="credit">
+      <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
