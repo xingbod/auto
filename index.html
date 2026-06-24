@@ -7,62 +7,163 @@
   <style>
     :root {
       color-scheme: light dark;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   "PingFang SC", "Microsoft YaHei", sans-serif;
       line-height: 1.5;
     }
 
     body {
-      max-width: 720px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 48px 24px;
+      padding: 48px 24px 64px;
     }
 
     h1 {
-      margin-bottom: 8px;
+      margin: 0 0 6px;
       font-size: 2rem;
+      letter-spacing: -0.01em;
     }
 
-    p {
-      margin-top: 0;
-      color: #666;
+    p.lead {
+      margin: 0 0 32px;
+      color: #6e7781;
+      font-size: 0.95rem;
     }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .col h2 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin: 0 0 14px;
+      padding: 0 4px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .col h2 .en {
+      font-size: 0.72rem;
+      color: #afb8c1;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: none;
+    }
+
+    .col.slides h2   { color: #1f6feb; }
+    .col.onepage h2  { color: #8b5cf6; }
 
     ul {
       padding: 0;
+      margin: 0;
       list-style: none;
     }
-
-    li + li {
-      margin-top: 12px;
-    }
+    li + li { margin-top: 10px; }
 
     a {
-      display: block;
-      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px;
       border: 1px solid #d0d7de;
       border-radius: 10px;
       color: inherit;
       text-decoration: none;
+      transition: border-color 0.15s, transform 0.15s;
     }
-
-    a:hover,
-    a:focus-visible {
+    a:hover, a:focus-visible {
       border-color: #0969da;
       outline: none;
+    }
+    .col.onepage a:hover, .col.onepage a:focus-visible {
+      border-color: #8b5cf6;
+    }
+
+    .new {
+      display: inline-block;
+      color: #cf222e;
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      margin-left: auto;
+      padding: 2px 7px;
+      border: 1px solid #cf222e;
+      border-radius: 4px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.66rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      margin-left: auto;
+    }
+    .col.slides  .badge { color: #1f6feb; background: #ddf4ff; border: 1px solid #b6e3ff; }
+    .col.onepage .badge { color: #8b5cf6; background: #f3e8ff; border: 1px solid #ddd6fe; }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #eaeef2;
+      color: #8b949e;
+      font-size: 0.82rem;
+    }
+
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      a { border-color: #30363d; }
+      a:hover, a:focus-visible { border-color: #58a6ff; }
+      .col.onepage a:hover, .col.onepage a:focus-visible { border-color: #a78bfa; }
+      p.lead { color: #8b949e; }
+      .col h2 .en { color: #6e7681; }
+      .col.slides  .badge { background: #0d2d6b; border-color: #1f6feb; color: #79c0ff; }
+      .col.onepage .badge { background: #2e1065; border-color: #8b5cf6; color: #c4b5fd; }
+      footer { border-color: #21262d; }
     }
   </style>
 </head>
 <body>
   <h1>Auto 导航</h1>
-  <p>选择一个子项目：</p>
-  <ul>
-    <li><a href="anytxt-searcher-slides/">anytxt-searcher-slides <span style="color:#cf222e;font-size:0.85em;font-weight:600;margin-left:6px">NEW</span></a></li>
-    <li><a href="biometric-key-generation-slides/">biometric-key-generation-slides <span style="color:#cf222e;font-size:0.85em;font-weight:600;margin-left:6px">NEW</span></a></li>
-    <li><a href="cv-trends-2025-2026-slides/">cv-trends-2025-2026-slides</a></li>
-    <li><a href="cnn-history-slides/">cnn-history-slides</a></li>
-    <li><a href="spatial-intelligence-slides/">spatial-intelligence-slides</a></li>
-    <li><a href="llm-rl-alignment-slides/">llm-rl-alignment-slides</a></li>
-    <li><a href="llm-training-pipeline-slides/">llm-training-pipeline-slides</a></li>
-  </ul>
+  <p class="lead">教学 slides 与一页式信息图（one-page infographic）合集</p>
+
+  <div class="grid">
+
+    <!-- ========== SLIDES 列 ========== -->
+    <div class="col slides">
+      <h2>Slides<span class="en">授课用多页 slides 系列</span></h2>
+      <ul>
+        <li><a href="anytxt-searcher-slides/">anytxt-searcher-slides <span class="new">NEW</span></a></li>
+        <li><a href="biometric-key-generation-slides/">biometric-key-generation-slides <span class="new">NEW</span></a></li>
+        <li><a href="cv-trends-2025-2026-slides/">cv-trends-2025-2026-slides</a></li>
+        <li><a href="cnn-history-slides/">cnn-history-slides</a></li>
+        <li><a href="spatial-intelligence-slides/">spatial-intelligence-slides</a></li>
+        <li><a href="llm-rl-alignment-slides/">llm-rl-alignment-slides</a></li>
+        <li><a href="llm-training-pipeline-slides/">llm-training-pipeline-slides</a></li>
+      </ul>
+    </div>
+
+    <!-- ========== ONE-PAGE 列 ========== -->
+    <div class="col onepage">
+      <h2>One-Page<span class="en">一页讲清楚一个核心问题</span></h2>
+      <ul>
+        <li><a href="onepage-rl-principles/">强化学习的核心原理 <span class="new">NEW</span></a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <footer>
+    维护于 GitHub Pages · xingbod/auto · 添加新项目：在对应栏目追加 &lt;li&gt;&lt;a&gt; 即可
+  </footer>
 </body>
 </html>

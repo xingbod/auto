@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>强化学习的核心原理 · 一页讲清楚</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    --primary: #6366f1;     /* indigo: Agent */
+    --primary-soft: #eef2ff;
+    --primary-deep: #4338ca;
+
+    --teal: #14b8a6;        /* teal: Environment */
+    --teal-soft: #ecfdf5;
+    --teal-deep: #0f766e;
+
+    --amber: #f59e0b;       /* amber: Reward */
+    --amber-soft: #fffbeb;
+    --amber-deep: #b45309;
+
+    --violet: #8b5cf6;      /* violet: Policy */
+    --violet-soft: #f5f3ff;
+
+    --red: #ef4444;
+    --red-soft: #fef2f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 36px 44px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 600px 200px at top right, #ede9fe 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at bottom left, #ecfdf5 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary-deep);
+    background: var(--primary-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  header h1 .q {
+    color: var(--primary-deep);
+  }
+  header .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  header .chip {
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  header .chip b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Section base ---------- */
+  section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+  section:last-of-type { border-bottom: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .sec-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sec-head .en {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  /* color variants per section */
+  .c1 .sec-num { background: var(--primary); }
+  .c2 .sec-num { background: var(--teal); }
+  .c3 .sec-num { background: var(--amber); }
+  .c4 .sec-num { background: var(--violet); }
+  .c5 .sec-num { background: var(--red); }
+
+  p { color: var(--ink-2); margin-bottom: 8px; }
+  p strong { color: var(--ink); font-weight: 700; }
+  p .hl { background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px; }
+
+  /* ---------- Overview 4 cards ---------- */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ov {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    background: white;
+  }
+  .ov .ico {
+    font-size: 26px;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .ov .name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .ov .en {
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .ov.a { background: var(--primary-soft); border-color: #c7d2fe; }
+  .ov.b { background: var(--teal-soft); border-color: #a7f3d0; }
+  .ov.c { background: var(--amber-soft); border-color: #fde68a; }
+  .ov.d { background: var(--violet-soft); border-color: #ddd6fe; }
+
+  /* ---------- Comparison cards (Section 01) ---------- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .cmp {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    background: white;
+  }
+  .cmp.sl { border-color: #c7d2fe; background: #f5f7ff; }
+  .cmp.rl { border-color: #fde68a; background: #fffbeb; }
+  .cmp .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .cmp .head .pill {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .cmp.sl .pill { background: var(--primary); color: white; }
+  .cmp.rl .pill { background: var(--amber); color: white; }
+  .cmp ul {
+    list-style: none;
+    font-size: 13.5px;
+    color: var(--ink-2);
+  }
+  .cmp ul li {
+    padding: 3px 0 3px 16px;
+    position: relative;
+  }
+  .cmp ul li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    color: var(--ink-3);
+    font-weight: 800;
+  }
+
+  /* ---------- Loop diagram (Section 02) ---------- */
+  .loop-wrap {
+    background: #fafafa;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 14px 8px;
+    margin: 8px 0 12px;
+  }
+  .loop-wrap svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+  .loop-caption {
+    font-size: 12.5px;
+    color: var(--ink-3);
+    text-align: center;
+    margin-top: 4px;
+  }
+  .formula-list {
+    display: grid;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .formula-list .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13.5px;
+    color: var(--ink-2);
+  }
+  .formula-list .row .lbl {
+    flex: 0 0 64px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .formula-list .row code {
+    flex: 1;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  /* ---------- Equation block (Section 03) ---------- */
+  .eq-grid {
+    display: grid;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .eq {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 12px;
+    align-items: start;
+    background: var(--amber-soft);
+    border: 1px solid #fde68a;
+    border-left: 4px solid var(--amber);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .eq .tag {
+    font-weight: 800;
+    color: var(--amber-deep);
+    font-size: 14px;
+  }
+  .eq .tag small {
+    display: block;
+    font-size: 10.5px;
+    color: var(--ink-3);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .eq .body { font-size: 13.5px; color: var(--ink-2); }
+  .eq .body code {
+    display: block;
+    margin: 4px 0 6px;
+    background: white;
+    border: 1px solid #fde68a;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  /* ---------- Methods table (Section 04) ---------- */
+  table.methods {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13.5px;
+    margin-top: 4px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  table.methods th, table.methods td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--line-2);
+    vertical-align: top;
+  }
+  table.methods th {
+    background: #f9fafb;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+  table.methods tr:last-child td { border-bottom: none; }
+  table.methods td .name {
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  table.methods td .name .badge {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    vertical-align: 1px;
+  }
+  .badge.vb { background: #dbeafe; color: #1e40af; }
+  .badge.pb { background: #fce7f3; color: #9d174d; }
+  .badge.ac { background: #ede9fe; color: #5b21b6; }
+  table.methods td .ex {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12.5px;
+    color: var(--ink-2);
+  }
+
+  /* ---------- Pitfalls (Section 05) ---------- */
+  .pitfall {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--red-soft);
+    border: 1px solid #fecaca;
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pitfall:last-child { margin-bottom: 0; }
+  .pitfall .x {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .pitfall .body { font-size: 13.5px; color: var(--ink-2); }
+  .pitfall .body .bad {
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 1.5px;
+  }
+  .pitfall .body .fix {
+    display: block;
+    margin-top: 4px;
+    color: var(--ink-2);
+  }
+  .pitfall .body .fix b {
+    color: #15803d;
+    font-weight: 700;
+  }
+
+  /* ---------- Footer summary ---------- */
+  footer {
+    padding: 28px 44px 36px;
+    background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+    border-top: 1px solid var(--line);
+  }
+  footer .title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  footer .points {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  footer .points li {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  footer .points li b {
+    display: block;
+    color: var(--primary-deep);
+    font-size: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+  footer .oneliner {
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  footer .oneliner b { color: #fde68a; }
+  footer .stamp {
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: right;
+    letter-spacing: 0.04em;
+  }
+
+  @media (max-width: 640px) {
+    header, section, footer { padding-left: 22px; padding-right: 22px; }
+    .overview { grid-template-columns: repeat(2, 1fr); }
+    .compare { grid-template-columns: 1fr; }
+    footer .points { grid-template-columns: 1fr; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =================== HEADER =================== -->
+  <header>
+    <span class="tag">CORE IDEA · 强化学习</span>
+    <h1>强化学习的核心原理是什么？<br>
+        <span class="q">一张图讲清楚 Agent / Environment / Reward / Policy</span></h1>
+    <p class="subtitle">理解 <b>Agent</b> 怎么在 <b>Environment</b> 中通过 <b>Reward</b> 信号，学到让累计回报最大化的 <b>Policy</b>。</p>
+    <div class="meta">
+      <span class="chip">⏱ 阅读 <b>5 分钟</b></span>
+      <span class="chip">🎯 适合 <b>入门 / 面试 / 速查</b></span>
+      <span class="chip">📚 参考 <b>Sutton &amp; Barto</b></span>
+    </div>
+  </header>
+
+  <!-- =================== OVERVIEW =================== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">★</span>
+      <h2>先记住 4 个核心要素</h2>
+      <span class="en">FOUR KEY ELEMENTS</span>
+    </div>
+    <p>强化学习世界里所有故事，<strong>只围绕这 4 个对象展开</strong>。</p>
+    <div class="overview">
+      <div class="ov a">
+        <span class="ico">🤖</span>
+        <div class="name">智能体</div>
+        <div class="en">Agent</div>
+      </div>
+      <div class="ov b">
+        <span class="ico">🌍</span>
+        <div class="name">环境</div>
+        <div class="en">Environment</div>
+      </div>
+      <div class="ov c">
+        <span class="ico">🎁</span>
+        <div class="name">奖励</div>
+        <div class="en">Reward</div>
+      </div>
+      <div class="ov d">
+        <span class="ico">📜</span>
+        <div class="name">策略</div>
+        <div class="en">Policy</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 01: WHAT IS RL =================== -->
+  <section class="c1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>RL 是什么？和监督学习有什么本质区别？</h2>
+      <span class="en">VS. SUPERVISED LEARNING</span>
+    </div>
+    <p>监督学习是 <strong>「看答案做题」</strong>，每道题都标好 (x, y) 对，学的是映射 f(x)→y。<br>
+       强化学习是 <strong>「打游戏刷分」</strong>，<span class="hl">没有标准答案</span>，只有好坏信号 (reward)，靠<span class="hl">反复试错</span>摸出门道。</p>
+
+    <div class="compare">
+      <div class="cmp sl">
+        <div class="head">
+          <span class="pill">SL</span>
+          监督学习
+        </div>
+        <ul>
+          <li>数据：<b>(输入, 标签) 对</b></li>
+          <li>目标：最小化预测误差</li>
+          <li>反馈：每步都有「正确答案」</li>
+          <li>类比：考前刷真题</li>
+        </ul>
+      </div>
+      <div class="cmp rl">
+        <div class="head">
+          <span class="pill">RL</span>
+          强化学习
+        </div>
+        <ul>
+          <li>数据：<b>(状态, 动作, 奖励) 序列</b></li>
+          <li>目标：最大化累计回报</li>
+          <li>反馈：只有「做得好不好」</li>
+          <li>类比：下棋赢了才加分</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 02: CORE LOOP =================== -->
+  <section class="c2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>核心循环：Agent 和 Environment 怎么「对话」？</h2>
+      <span class="en">THE AGENT–ENVIRONMENT LOOP</span>
+    </div>
+    <p>在时刻 t，Agent 看到状态 s<sub>t</sub>，按策略 π 选动作 a<sub>t</sub>，环境给出奖励 r<sub>t+1</sub> 和新状态 s<sub>t+1</sub>。循环往复。</p>
+
+    <div class="loop-wrap">
+      <svg viewBox="0 0 520 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agent-Environment loop">
+        <!-- Agent box -->
+        <rect x="40" y="100" width="140" height="80" rx="14"
+              fill="#eef2ff" stroke="#6366f1" stroke-width="2"/>
+        <text x="110" y="135" text-anchor="middle"
+              font-family="-apple-system, sans-serif" font-size="16" font-weight="700" fill="#4338ca">Agent</text>
+        <text x="110" y="155" text-anchor="middle"
+              font-family="-apple-system, sans-serif" font-size="11" fill="#6b7280">策略 π(a|s)</text>
+        <text x="110" y="170" text-anchor="middle"
+              font-family="ui-monospace, monospace" font-size="10.5" fill="#4338ca">π_θ</text>
+
+        <!-- Environment box -->
+        <rect x="340" y="100" width="140" height="80" rx="14"
+              fill="#ecfdf5" stroke="#14b8a6" stroke-width="2"/>
+        <text x="410" y="135" text-anchor="middle"
+              font-family="-apple-system, sans-serif" font-size="16" font-weight="700" fill="#0f766e">Environment</text>
+        <text x="410" y="155" text-anchor="middle"
+              font-family="-apple-system, sans-serif" font-size="11" fill="#6b7280">状态转移 P(s'|s,a)</text>
+        <text x="410" y="170" text-anchor="middle"
+              font-family="ui-monospace, monospace" font-size="10.5" fill="#0f766e">P, R</text>
+
+        <!-- Action arrow (top) -->
+        <defs>
+          <marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#6366f1"/>
+          </marker>
+          <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#14b8a6"/>
+          </marker>
+        </defs>
+        <line x1="180" y1="125" x2="340" y2="125" stroke="#6366f1" stroke-width="2" marker-end="url(#arrA)"/>
+        <text x="260" y="115" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="13" font-weight="700" fill="#4338ca">动作 a_t</text>
+
+        <!-- Reward + state arrow (bottom) -->
+        <line x1="340" y1="160" x2="180" y2="160" stroke="#14b8a6" stroke-width="2" marker-end="url(#arrB)"/>
+        <text x="260" y="180" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="13" font-weight="700" fill="#0f766e">奖励 r_{t+1}, 状态 s_{t+1}</text>
+
+        <!-- Time label -->
+        <text x="260" y="50" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="11" fill="#9ca3af">在时刻 t 重复</text>
+        <path d="M260,60 L260,90" stroke="#9ca3af" stroke-width="1" stroke-dasharray="3,3" fill="none"/>
+        <path d="M260,210 L260,235" stroke="#9ca3af" stroke-width="1" stroke-dasharray="3,3" fill="none"/>
+        <text x="260" y="252" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="11" fill="#9ca3af">轨迹: τ = (s₀,a₀,r₁,s₁,a₁,r₂,s₂, …)</text>
+      </svg>
+      <div class="loop-caption">这是强化学习里出现频率最高的一张图 —— 来自 Sutton &amp; Barto 教材第 3 章。</div>
+    </div>
+
+    <div class="formula-list">
+      <div class="row">
+        <span class="lbl">目标</span>
+        <code>max<sub>π</sub>  E<sub>τ~π</sub> [ Σ<sub>t=0</sub><sup>T</sup> γ<sup>t</sup> · r<sub>t+1</sub> ]</code>
+      </div>
+      <div class="row">
+        <span class="lbl">回报</span>
+        <code>G<sub>t</sub> = r<sub>t+1</sub> + γ·r<sub>t+2</sub> + γ²·r<sub>t+3</sub> + …  (0 ≤ γ &lt; 1)</code>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 03: KEY EQUATIONS =================== -->
+  <section class="c3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>3 个关键公式：把"学习价值"这件事讲明白</h2>
+      <span class="en">VALUE &amp; BELLMAN</span>
+    </div>
+    <p>RL 里几乎所有算法都在算/优化下面这 3 个量。</p>
+
+    <div class="eq-grid">
+      <div class="eq">
+        <div class="tag">状态价值<small>STATE VALUE</small></div>
+        <div class="body">
+          在策略 π 下，从状态 s 出发能拿到的<b>期望累计回报</b>。
+          <code>V<sup>π</sup>(s) = E<sub>π</sub> [ G<sub>t</sub> | s<sub>t</sub> = s ]</code>
+        </div>
+      </div>
+      <div class="eq">
+        <div class="tag">动作价值<small>ACTION VALUE</small></div>
+        <div class="body">
+          在状态 s 选动作 a 之后，再按 π 走能拿到的<b>期望累计回报</b>。
+          <code>Q<sup>π</sup>(s,a) = E<sub>π</sub> [ G<sub>t</sub> | s<sub>t</sub>=s, a<sub>t</sub>=a ]</code>
+        </div>
+      </div>
+      <div class="eq">
+        <div class="tag">贝尔曼最优方程<small>BELLMAN OPTIMALITY</small></div>
+        <div class="body">
+          <b>递归关系</b>：Q* = 立即奖励 + 折扣后<b>最优</b>未来价值。RL 一切算法的根。
+          <code>Q*(s,a) = E [ r + γ · max<sub>a'</sub> Q*(s',a') ]</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 04: THREE METHOD FAMILIES =================== -->
+  <section class="c4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>三大方法族：学什么、怎么学</h2>
+      <span class="en">VALUE-BASED · POLICY-BASED · ACTOR-CRITIC</span>
+    </div>
+    <p>不同算法其实都在解决同一道题 —— <strong>怎样让 Q 或 π 变得更好</strong>。按"学什么"分成 3 个家族：</p>
+
+    <table class="methods">
+      <thead>
+        <tr>
+          <th style="width: 22%">方法族</th>
+          <th style="width: 38%">核心思路</th>
+          <th style="width: 40%">代表算法</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="name">Value-based<span class="badge vb">值</span></div>
+            <div class="ex" style="color:var(--ink-3);font-size:11.5px;">学 Q 再选动作</div>
+          </td>
+          <td>维护一张 Q 表 / Q 网络，<br>选动作时取 <code>argmax<sub>a</sub> Q(s,a)</code></td>
+          <td class="ex">Q-Learning · DQN · Double DQN</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="name">Policy-based<span class="badge pb">策</span></div>
+            <div class="ex" style="color:var(--ink-3);font-size:11.5px;">直接学 π_θ</div>
+          </td>
+          <td>把策略参数化 π<sub>θ</sub>(a|s)，<br>直接用梯度上升优化期望回报</td>
+          <td class="ex">REINFORCE · TRPO · PPO</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="name">Actor-Critic<span class="badge ac">合</span></div>
+            <div class="ex" style="color:var(--ink-3);font-size:11.5px;">两者结合</div>
+          </td>
+          <td>Actor 选动作，Critic 估价值，<br>用价值当 baseline 降方差</td>
+          <td class="ex">A2C · A3C · SAC · TD3</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- =================== 05: PITFALLS =================== -->
+  <section class="c5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>新手最容易踩的 4 个坑</h2>
+      <span class="en">COMMON PITFALLS</span>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">上来就上 PPO / SAC</span>
+        <span class="fix">👉 <b>先从简单算法打 baseline</b>。CartPole 用 DQN / 交叉熵就够，稀疏奖励场景再考虑 PPO。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">指望几步就能看到回报</span>
+        <span class="fix">👉 <b>RL 试错成本高</b>，先看 reward 曲线是否上升，再考虑调超参；用 random baseline 校准。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">忽视探索 (exploration)</span>
+        <span class="fix">👉 <b>ε-greedy / 熵正则不能省</b>，否则策略会卡在局部最优，前期表现看起来"还行"但再也上不去了。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">Reward 设计越复杂越好</span>
+        <span class="fix">👉 <b>稀疏 reward + 合理 shaping &gt; 复杂 reward</b>；小心 reward hacking（智能体钻规则的漏洞）。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTER =================== -->
+  <footer>
+    <div class="title">这一页先记住 · TL;DR</div>
+    <ul class="points">
+      <li><b>WHAT</b>Agent 用试错和奖励信号学最优策略</li>
+      <li><b>LOOP</b>状态 → 动作 → 奖励 → 新状态，循环</li>
+      <li><b>FORMULA</b>贝尔曼方程是 RL 一切算法的根</li>
+    </ul>
+    <div class="oneliner">
+      <b>一句话总结：</b>强化学习 = Agent 在与 Environment 的持续交互中，
+      通过 Reward 信号学习最优 Policy，使<b>累计回报</b>最大化。
+    </div>
+    <div class="stamp">图源：仿「一张图讲清楚」系列 · 参考 Sutton &amp; Barto《强化学习导论》第 3 章</div>
+  </footer>
+
+</div>
+
+</body>
+</html>
