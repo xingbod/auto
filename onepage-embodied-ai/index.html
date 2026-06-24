@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>具身智能 (Embodied AI) · 一页讲清楚</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    /* 4 大类色系 (机器人/具身 AI 配色) */
+    --idea:    #c2410c;          /* 核心思想  : 橙 (机械) */
+    --idea-soft: #fff7ed;
+    --idea-deep: #7c2d12;
+
+    --paradigm: #047857;         /* 技术范式  : 翠绿 (学习) */
+    --paradigm-soft: #ecfdf5;
+    --paradigm-deep: #064e3b;
+
+    --system:  #475569;          /* 系统组成  : 板岩灰 (硬件) */
+    --system-soft: #f1f5f9;
+    --system-deep: #1e293b;
+
+    --data:    #6d28d9;          /* 数据流程  : 紫 (AI/数据) */
+    --data-soft: #f5f3ff;
+    --data-deep: #4c1d95;
+
+    --red: #ef4444;
+    --red-soft: #fef2f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 36px 44px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 600px 200px at top right, #fff7ed 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at bottom left, #f5f3ff 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--idea-deep);
+    background: var(--idea-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  header h1 .q {
+    color: var(--idea-deep);
+  }
+  header .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  header .chip {
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  header .chip b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Section base ---------- */
+  section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+  section:last-of-type { border-bottom: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .sec-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sec-head .en {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .c1 .sec-num { background: var(--idea); }
+  .c2 .sec-num { background: var(--paradigm); }
+  .c3 .sec-num { background: var(--system); }
+  .c4 .sec-num { background: var(--data); }
+  .c5 .sec-num { background: var(--red); }
+
+  p { color: var(--ink-2); margin-bottom: 8px; }
+  p strong { color: var(--ink); font-weight: 700; }
+  p .hl { background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px; }
+
+  /* ---------- Overview ---------- */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ov {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    background: white;
+  }
+  .ov .ico { font-size: 26px; margin-bottom: 6px; display: block; }
+  .ov .name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .ov .en { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ov.a { background: var(--idea-soft); border-color: #fed7aa; }
+  .ov.b { background: var(--paradigm-soft); border-color: #a7f3d0; }
+  .ov.c { background: var(--system-soft); border-color: #cbd5e1; }
+  .ov.d { background: var(--data-soft); border-color: #ddd6fe; }
+
+  /* ---------- Compare (Section 01) ---------- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .cmp {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    background: white;
+  }
+  .cmp.trad { background: #f3f4f6; border-color: #d1d5db; }
+  .cmp.emb { background: var(--idea-soft); border-color: #fed7aa; }
+  .cmp .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .cmp .head .pill {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .cmp.trad .pill { background: #6b7280; color: white; }
+  .cmp.emb .pill { background: var(--idea); color: white; }
+  .cmp ul { list-style: none; font-size: 13px; color: var(--ink-2); }
+  .cmp ul li {
+    padding: 3px 0 3px 16px;
+    position: relative;
+  }
+  .cmp ul li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    color: var(--ink-3);
+    font-weight: 800;
+  }
+  .cmp ul li b { color: var(--ink); font-weight: 700; }
+
+  /* Three elements block */
+  .three-elem {
+    margin-top: 12px;
+    background: var(--idea-soft);
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .three-elem .head {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--idea-deep);
+    margin-bottom: 8px;
+  }
+  .three-elem .row {
+    display: grid;
+    grid-template-columns: 1fr 12px 1fr 12px 1fr;
+    gap: 4px;
+    align-items: center;
+    text-align: center;
+  }
+  .three-elem .e {
+    background: white;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    padding: 10px 6px;
+  }
+  .three-elem .e .ico { font-size: 22px; }
+  .three-elem .e .name { font-size: 12.5px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+  .three-elem .e .sub { font-size: 10.5px; color: var(--ink-3); margin-top: 1px; }
+  .three-elem .plus {
+    color: var(--idea-deep);
+    font-weight: 800;
+    font-size: 18px;
+  }
+
+  /* ---------- Paradigm cards (Section 02) ---------- */
+  .paradigms {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .par {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .par .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .par .ico { font-size: 20px; }
+  .par .name { font-weight: 700; color: var(--ink); font-size: 14px; }
+  .par .en { font-size: 10.5px; color: var(--ink-3); margin-left: auto; letter-spacing: 0.04em; text-transform: uppercase; }
+  .par .body { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+  .par .body b { color: var(--ink); font-weight: 700; }
+  .par .algos {
+    margin-top: 6px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 3px 6px;
+    line-height: 1.4;
+  }
+  .par.p1 { background: var(--paradigm-soft); border-color: #a7f3d0; }
+  .par.p2 { background: var(--paradigm-soft); border-color: #a7f3d0; }
+  .par.p3 { background: var(--data-soft); border-color: #ddd6fe; }
+  .par.p4 { background: var(--idea-soft); border-color: #fed7aa; }
+
+  /* ---------- System loop (Section 03) ---------- */
+  .loop-diagram {
+    background: var(--system-soft);
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 8px 0 8px;
+    text-align: center;
+  }
+  .loop-diagram svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+  .loop-diagram .cap {
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-top: 6px;
+  }
+  .sys-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .sys-item {
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 6px;
+    text-align: center;
+  }
+  .sys-item .ico { font-size: 20px; }
+  .sys-item .name { font-size: 12px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+  .sys-item .ex { font-size: 10px; color: var(--ink-3); margin-top: 2px; line-height: 1.3; }
+
+  /* ---------- Data flow (Section 04) ---------- */
+  .dataflow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .df {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .df .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .df .ico { font-size: 18px; }
+  .df .name { font-weight: 700; color: var(--ink); font-size: 13.5px; }
+  .df .body { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+  .df .body b { color: var(--ink); font-weight: 700; }
+  .df.d1, .df.d2, .df.d3, .df.d4 { background: var(--data-soft); border-color: #ddd6fe; }
+
+  /* Process flow */
+  .process {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 12px;
+  }
+  .process .title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .process .steps {
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+  }
+  .process .step {
+    flex: 1;
+    background: var(--data-soft);
+    border: 1px solid #ddd6fe;
+    border-radius: 6px;
+    padding: 8px 6px;
+    text-align: center;
+  }
+  .process .step .num { font-size: 10px; color: var(--ink-3); font-weight: 700; }
+  .process .step .name { font-size: 11.5px; font-weight: 700; color: var(--ink); margin-top: 1px; }
+  .process .step .sub { font-size: 10px; color: var(--ink-3); margin-top: 1px; }
+  .process .arrow {
+    align-self: center;
+    color: var(--ink-3);
+    font-size: 14px;
+  }
+
+  /* ---------- Pitfalls (Section 05) ---------- */
+  .pitfall {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--red-soft);
+    border: 1px solid #fecaca;
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pitfall:last-child { margin-bottom: 0; }
+  .pitfall .x {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .pitfall .body { font-size: 13.5px; color: var(--ink-2); }
+  .pitfall .body .bad {
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 1.5px;
+  }
+  .pitfall .body .fix {
+    display: block;
+    margin-top: 4px;
+  }
+  .pitfall .body .fix b { color: #15803d; font-weight: 700; }
+
+  /* ---------- Footer summary ---------- */
+  footer {
+    padding: 28px 44px 36px;
+    background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+    border-top: 1px solid var(--line);
+  }
+  footer .title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  footer .points {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  footer .points li {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  footer .points li b {
+    display: block;
+    color: var(--idea-deep);
+    font-size: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+  footer .oneliner {
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  footer .oneliner b { color: #fed7aa; }
+  footer .stamp {
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  footer .credit {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    line-height: 1.6;
+  }
+  footer .credit b { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    header, section, footer { padding-left: 22px; padding-right: 22px; }
+    .overview, .footer .points { grid-template-columns: 1fr 1fr; }
+    .paradigms, .dataflow, .compare { grid-template-columns: 1fr; }
+    .sys-list { grid-template-columns: repeat(2, 1fr); }
+    .process .steps { flex-wrap: wrap; }
+    .process .step { flex: 0 0 calc(50% - 4px); }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =================== HEADER =================== -->
+  <header>
+    <span class="tag">ROBOTICS · AI</span>
+    <h1>具身智能 (Embodied AI) 是什么？<br>
+        <span class="q">一张图讲清楚「让 AI 长出身体」</span></h1>
+    <p class="subtitle">智能不只是<b>屏幕里的算法</b> —— 它必须长在<b>身体</b>上,在与物理世界的<b>感知-行动循环</b>中涌现。</p>
+    <div class="meta">
+      <span class="chip">⏱ 阅读 <b>5 分钟</b></span>
+      <span class="chip">🎯 适合 <b>VLA / 人形机器人 / 综述</b></span>
+      <span class="chip">📚 出处 Brooks 1986 · Pfeifer 1999</span>
+    </div>
+  </header>
+
+  <!-- =================== OVERVIEW =================== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">★</span>
+      <h2>先记住 4 个关键词</h2>
+      <span class="en">FOUR KEY CONCEPTS</span>
+    </div>
+    <p>具身智能所有内容,<strong>只围绕这 4 个概念展开</strong>。</p>
+    <div class="overview">
+      <div class="ov a">
+        <span class="ico">🦾</span>
+        <div class="name">身体 + 大脑</div>
+        <div class="en">Body + Mind</div>
+      </div>
+      <div class="ov b">
+        <span class="ico">🔄</span>
+        <div class="name">感知-行动</div>
+        <div class="en">Sense-Act Loop</div>
+      </div>
+      <div class="ov c">
+        <span class="ico">🛠️</span>
+        <div class="name">形态多样性</div>
+        <div class="en">Morphology</div>
+      </div>
+      <div class="ov d">
+        <span class="ico">🌍</span>
+        <div class="name">物理世界</div>
+        <div class="en">Real World</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 01: 核心思想 =================== -->
+  <section class="c1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>核心思想:身体是智能的一部分,不是外挂</h2>
+      <span class="en">EMBODIED COGNITION</span>
+    </div>
+    <p>传统 AI: 屏幕里跑模型, <span class="hl">没有身体</span>。具身 AI: <b>身体=传感器+执行器</b>,智能从"感知-行动"循环<b>涌现</b>。</p>
+
+    <div class="compare">
+      <div class="cmp trad">
+        <div class="head">
+          <span class="pill">传统</span>
+          无身体 AI
+        </div>
+        <ul>
+          <li><b>数据:</b> 文字、图片、代码</li>
+          <li><b>交互:</b> 屏幕、键盘、API</li>
+          <li><b>错误:</b> 最多答错,不会砸东西</li>
+          <li><b>代表:</b> LLM · CV · 传统机器人 pipeline</li>
+        </ul>
+      </div>
+      <div class="cmp emb">
+        <div class="head">
+          <span class="pill">EMBODIED</span>
+          具身 AI
+        </div>
+        <ul>
+          <li><b>数据:</b> 视觉、触觉、力、声音</li>
+          <li><b>交互:</b> 真实/仿真物理世界</li>
+          <li><b>错误:</b> 会摔杯子、撞墙、烧电机</li>
+          <li><b>代表:</b> Figure · Optimus · π0 · RT-2</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="three-elem">
+      <div class="head">具身 AI 三要素 (缺一不可)</div>
+      <div class="row">
+        <div class="e">
+          <div class="ico">🦾</div>
+          <div class="name">身体</div>
+          <div class="sub">形态 / 传感器 / 执行器</div>
+        </div>
+        <div class="plus">+</div>
+        <div class="e">
+          <div class="ico">🧠</div>
+          <div class="name">大脑</div>
+          <div class="sub">VLA 模型 / 策略</div>
+        </div>
+        <div class="plus">+</div>
+        <div class="e">
+          <div class="ico">🌍</div>
+          <div class="name">环境</div>
+          <div class="sub">真实 / 仿真物理世界</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 02: 4 大技术范式 =================== -->
+  <section class="c2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>4 大技术范式:怎么让 AI "学到"动作</h2>
+      <span class="en">IL · RL · VLA · WORLD MODEL</span>
+    </div>
+    <p>让 AI 在物理世界里干活,主流有 4 条学习路线,可叠加使用:</p>
+
+    <div class="paradigms">
+      <div class="par p1">
+        <div class="head">
+          <span class="ico">👀</span>
+          <span class="name">模仿学习</span>
+          <span class="en">IL</span>
+        </div>
+        <div class="body">
+          <b>看人演示</b>,直接学 "状态→动作" 映射。数据来自<b>遥操</b>或视频。
+        </div>
+        <div class="algos">Behavior Cloning · DAgger · ACT</div>
+      </div>
+      <div class="par p2">
+        <div class="head">
+          <span class="ico">🎯</span>
+          <span class="name">强化学习</span>
+          <span class="en">RL</span>
+        </div>
+        <div class="body">
+          在环境里<b>试错</b>,拿<b>奖励</b>。真实机贵,通常在<b>仿真</b>训,再 sim2real。
+        </div>
+        <div class="algos">PPO · SAC · TD3 · DrQ-v2</div>
+      </div>
+      <div class="par p3">
+        <div class="head">
+          <span class="ico">🤖</span>
+          <span class="name">VLA 模型</span>
+          <span class="en">VLA</span>
+        </div>
+        <div class="body">
+          <b>当下最主流</b>: VLM 扩展出 <b>action tokens</b>, 输入图像+指令, 输出动作。
+        </div>
+        <div class="algos">RT-2 · OpenVLA · π0 · Gato</div>
+      </div>
+      <div class="par p4">
+        <div class="head">
+          <span class="ico">🌀</span>
+          <span class="name">世界模型</span>
+          <span class="en">World Model</span>
+        </div>
+        <div class="body">
+          学一个<b>内部环境模拟器</b>, 在想象里 roll out, 减少真机交互。
+        </div>
+        <div class="algos">Dreamer v3 · GAIA-1 · IRIS</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 03: 系统组成 =================== -->
+  <section class="c3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>系统组成:一个具身 AI 由 5 部分拼成</h2>
+      <span class="en">5 COMPONENTS OF AN EMBODIED AGENT</span>
+    </div>
+    <p>形态、感知、大脑、执行、环境 —— 闭合成一个<b>感知-行动-反馈</b>的循环。</p>
+
+    <div class="loop-diagram">
+      <svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Embodied AI loop">
+        <defs>
+          <marker id="arrE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+          </marker>
+        </defs>
+
+        <!-- Env (left) -->
+        <rect x="20" y="80" width="100" height="80" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+        <text x="70" y="115" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="14" font-weight="700" fill="#7c2d12">环境</text>
+        <text x="70" y="135" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="11" fill="#6b7280">Environment</text>
+        <text x="70" y="150" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#7c2d12">真实 / 仿真</text>
+
+        <!-- Body (right) -->
+        <rect x="360" y="80" width="100" height="80" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+        <text x="410" y="115" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="14" font-weight="700" fill="#1e293b">身体</text>
+        <text x="410" y="135" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="11" fill="#6b7280">Body</text>
+        <text x="410" y="150" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#1e293b">形态 + 传感</text>
+
+        <!-- Brain (center top) -->
+        <rect x="190" y="30" width="100" height="70" rx="10" fill="#f5f3ff" stroke="#6d28d9" stroke-width="2"/>
+        <text x="240" y="62" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="14" font-weight="700" fill="#4c1d95">大脑</text>
+        <text x="240" y="80" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="11" fill="#6b7280">Brain (VLA)</text>
+        <text x="240" y="93" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#4c1d95">π(a | s, l)</text>
+
+        <!-- Act (center bottom) -->
+        <rect x="190" y="140" width="100" height="70" rx="10" fill="#ecfdf5" stroke="#047857" stroke-width="2"/>
+        <text x="240" y="172" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="14" font-weight="700" fill="#064e3b">行动</text>
+        <text x="240" y="190" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="11" fill="#6b7280">Actuator</text>
+        <text x="240" y="203" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#064e3b">电机 / 关节</text>
+
+        <!-- Arrows: Env -> Body (sensor input, top) -->
+        <line x1="120" y1="100" x2="190" y2="55" stroke="#475569" stroke-width="1.5" marker-end="url(#arrE)" stroke-dasharray="3,3"/>
+        <text x="155" y="65" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#6b7280">感知</text>
+
+        <!-- Brain -> Act (decision, down) -->
+        <line x1="240" y1="100" x2="240" y2="140" stroke="#6d28d9" stroke-width="1.5" marker-end="url(#arrE)"/>
+        <text x="295" y="124" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#6b7280">决策</text>
+
+        <!-- Act -> Body (actuation, right) -->
+        <line x1="290" y1="175" x2="360" y2="140" stroke="#047857" stroke-width="1.5" marker-end="url(#arrE)"/>
+        <text x="325" y="160" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#6b7280">控制</text>
+
+        <!-- Body -> Env (action effect, bottom) -->
+        <line x1="360" y1="180" x2="120" y2="180" stroke="#c2410c" stroke-width="1.5" marker-end="url(#arrE)"/>
+        <text x="240" y="198" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#6b7280">作用于环境</text>
+        <path d="M360,180 Q415,225 415,210" stroke="#c2410c" stroke-width="1.5" fill="none" marker-end="url(#arrE)"/>
+      </svg>
+      <div class="cap">感知 → 决策 → 控制 → 作用环境 → 新感知 (闭循环)</div>
+    </div>
+
+    <div class="sys-list">
+      <div class="sys-item">
+        <div class="ico">🦾</div>
+        <div class="name">形态</div>
+        <div class="ex">机械臂 / 四足 / 人形</div>
+      </div>
+      <div class="sys-item">
+        <div class="ico">👁️</div>
+        <div class="name">感知</div>
+        <div class="ex">RGB / Depth / 触觉</div>
+      </div>
+      <div class="sys-item">
+        <div class="ico">🧠</div>
+        <div class="name">大脑</div>
+        <div class="ex">VLA / 策略网络</div>
+      </div>
+      <div class="sys-item">
+        <div class="ico">⚙️</div>
+        <div class="name">执行</div>
+        <div class="ex">电机 / 关节驱动</div>
+      </div>
+      <div class="sys-item">
+        <div class="ico">🌍</div>
+        <div class="name">环境</div>
+        <div class="ex">真实 / 仿真</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 04: 数据 + 流程 =================== -->
+  <section class="c4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>数据 + 训练 + 部署:全流程 4 步</h2>
+      <span class="en">DATA · TRAIN · SIM · DEPLOY</span>
+    </div>
+    <p>具身 AI 项目落地,4 类数据来源 + 4 步流程:</p>
+
+    <div class="dataflow">
+      <div class="df d1">
+        <div class="head">
+          <span class="ico">🖐️</span>
+          <span class="name">真人遥操</span>
+        </div>
+        <div class="body">
+          人穿戴设备<b>远程操作</b>机器人, 收集 (state, action) 对。<b>最贵, 质量最高</b>。
+        </div>
+      </div>
+      <div class="df d2">
+        <div class="head">
+          <span class="ico">📹</span>
+          <span class="name">人类视频</span>
+        </div>
+        <div class="body">
+          YouTube / egocentric 视频, 通过 pose estimation 提取动作。<b>便宜, 但噪声大</b>。
+        </div>
+      </div>
+      <div class="df d3">
+        <div class="head">
+          <span class="ico">🎮</span>
+          <span class="name">仿真合成</span>
+        </div>
+        <div class="body">
+          Isaac Sim / MuJoCo / Genesis 批量跑, 一天能收<b>百万条</b>。<b>便宜, 但要过 sim2real</b>。
+        </div>
+      </div>
+      <div class="df d4">
+        <div class="head">
+          <span class="ico">🌐</span>
+          <span class="name">互联网图文</span>
+        </div>
+        <div class="body">
+          VLM 预训练数据 + 机器人混合训, 让 VLA 有<b>世界知识</b>。
+        </div>
+      </div>
+    </div>
+
+    <div class="process">
+      <div class="title">⚙️ 端到端开发流程</div>
+      <div class="steps">
+        <div class="step">
+          <div class="num">STEP 1</div>
+          <div class="name">数据收集</div>
+          <div class="sub">遥操 / 仿真 / 视频</div>
+        </div>
+        <div class="arrow">▶</div>
+        <div class="step">
+          <div class="num">STEP 2</div>
+          <div class="name">模型训练</div>
+          <div class="sub">VLA / IL / RL</div>
+        </div>
+        <div class="arrow">▶</div>
+        <div class="step">
+          <div class="num">STEP 3</div>
+          <div class="name">仿真验证</div>
+          <div class="sub">域随机化</div>
+        </div>
+        <div class="arrow">▶</div>
+        <div class="step">
+          <div class="num">STEP 4</div>
+          <div class="name">真机部署</div>
+          <div class="sub">sim2real + 安全护栏</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 05: 误区 =================== -->
+  <section class="c5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>新手最常踩的 4 个坑</h2>
+      <span class="en">COMMON PITFALLS</span>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"装上 LLM / VLM 就是具身智能"</span>
+        <span class="fix">👉 <b>没有身体闭环的 LLM 只是聊天机器人</b>。必须有<b>真实传感器 + 执行器 + 环境反馈</b>,否则是"无身 AI"。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"仿真里跑得好 = 真机能跑"</span>
+        <span class="fix">👉 <b>sim2real gap 是行业最大坑</b>。需要域随机化 (domain randomization) + 真实微调, 不是训完就直接上机。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"演示一次就能学会"</span>
+        <span class="fix">👉 <b>模仿学习需要大量<b>多样化</b>演示</b>。一次演示只能学"平均动作", 鲁棒性差, 长程任务容易跑偏。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"VLA 数据越多越好"</span>
+        <span class="fix">👉 <b>数据<b>质量</b>比数量重要</b>。失败案例、边界条件、指令多样性往往比"再多 10 倍普通演示"更有用。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTER =================== -->
+  <footer>
+    <div class="title">这一页先记住 · TL;DR</div>
+    <ul class="points">
+      <li><b>WHAT</b>身体 + 大脑 + 环境, 智能从交互涌现</li>
+      <li><b>HOW</b>IL / RL / VLA / World Model 4 大范式</li>
+      <li><b>KEY</b>sim2real + 数据质量是当前最大瓶颈</li>
+    </ul>
+    <div class="oneliner">
+      <b>一句话总结:</b>具身智能 = 给 AI 一个<b>身体</b>,让智能在<b>感知-行动循环</b>中涌现。
+      VLA 是当下最主流范式,<b>sim2real</b> 和<b>数据</b>是最大工程难题。
+    </div>
+    <div class="stamp">图源:仿「一张图讲清楚」系列 · 参考 Brooks (1986)、Pfeifer (1999)、RT-2 (2023)、π0 (2024)</div>
+    <div class="credit">
+      <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
