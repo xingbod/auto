@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>衰老的分子机制 · 一页讲清楚</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    /* 4 大类色系 (分子生物学/衰老配色) */
+    --idea:    #166534;          /* 核心思想  : 深绿 (生命) */
+    --idea-soft: #f0fdf4;
+    --idea-deep: #14532d;
+
+    --mark:    #b45309;          /* 12 标志   : 琥珀 (积累) */
+    --mark-soft: #fffbeb;
+    --mark-deep: #78350f;
+
+    --path:    #4338ca;          /* 关键通路  : 靛蓝 (基因) */
+    --path-soft: #eef2ff;
+    --path-deep: #312e81;
+
+    --treat:   #be185d;          /* 干预手段  : 玫红 (延寿) */
+    --treat-soft: #fdf2f8;
+    --treat-deep: #831843;
+
+    --red: #ef4444;
+    --red-soft: #fef2f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 36px 44px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 600px 200px at top right, #f0fdf4 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at bottom left, #fdf2f8 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--idea-deep);
+    background: var(--idea-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  header h1 .q {
+    color: var(--idea-deep);
+  }
+  header .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  header .chip {
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  header .chip b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Section base ---------- */
+  section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+  section:last-of-type { border-bottom: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .sec-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sec-head .en {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .c1 .sec-num { background: var(--idea); }
+  .c2 .sec-num { background: var(--mark); }
+  .c3 .sec-num { background: var(--path); }
+  .c4 .sec-num { background: var(--treat); }
+  .c5 .sec-num { background: var(--red); }
+
+  p { color: var(--ink-2); margin-bottom: 8px; }
+  p strong { color: var(--ink); font-weight: 700; }
+  p .hl { background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px; }
+
+  /* ---------- Overview ---------- */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ov {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    background: white;
+  }
+  .ov .ico { font-size: 26px; margin-bottom: 6px; display: block; }
+  .ov .name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .ov .en { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ov.a { background: var(--idea-soft); border-color: #bbf7d0; }
+  .ov.b { background: var(--mark-soft); border-color: #fde68a; }
+  .ov.c { background: var(--path-soft); border-color: #c7d2fe; }
+  .ov.d { background: var(--treat-soft); border-color: #fbcfe8; }
+
+  /* ---------- Compare (Section 01) ---------- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .cmp {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    background: white;
+  }
+  .cmp.prog { background: #f3f4f6; border-color: #d1d5db; }
+  .cmp.dmg { background: var(--idea-soft); border-color: #bbf7d0; }
+  .cmp .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .cmp .head .pill {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .cmp.prog .pill { background: #6b7280; color: white; }
+  .cmp.dmg .pill { background: var(--idea); color: white; }
+  .cmp ul { list-style: none; font-size: 13px; color: var(--ink-2); }
+  .cmp ul li {
+    padding: 3px 0 3px 16px;
+    position: relative;
+  }
+  .cmp ul li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    color: var(--ink-3);
+    font-weight: 800;
+  }
+  .cmp ul li b { color: var(--ink); font-weight: 700; }
+
+  /* Three categories */
+  .three-cat {
+    margin-top: 12px;
+    background: var(--idea-soft);
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .three-cat .head {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--idea-deep);
+    margin-bottom: 8px;
+  }
+  .three-cat .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .three-cat .cat {
+    background: white;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+  }
+  .three-cat .cat .name { font-size: 12.5px; font-weight: 700; color: var(--ink); }
+  .three-cat .cat .en { font-size: 10px; color: var(--ink-3); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 1px; }
+  .three-cat .cat .num { font-size: 16px; font-weight: 800; color: var(--mark-deep); margin-bottom: 2px; }
+
+  /* ---------- 12 Hallmarks grid (Section 02) ---------- */
+  .hallmarks {
+    margin-top: 8px;
+  }
+  .hm-cat {
+    margin-bottom: 12px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .hm-cat .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .hm-cat .head .badge {
+    font-size: 10.5px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 700;
+    color: white;
+  }
+  .hm-cat.c1 .head .badge { background: var(--mark); }
+  .hm-cat.c2 .head .badge { background: var(--path); }
+  .hm-cat.c3 .head .badge { background: var(--treat); }
+  .hm-cat .head .name {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 13.5px;
+  }
+  .hm-cat .head .en {
+    font-size: 10.5px;
+    color: var(--ink-3);
+    margin-left: auto;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .hm-cat .head .desc {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-left: 6px;
+    font-weight: 400;
+  }
+  .hm-cat .items {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+  .hm-cat.c1 .items .item { background: var(--mark-soft); border-color: #fde68a; }
+  .hm-cat.c2 .items .item { background: var(--path-soft); border-color: #c7d2fe; }
+  .hm-cat.c3 .items .item { background: var(--treat-soft); border-color: #fbcfe8; }
+  .hm-cat .item {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px;
+    text-align: center;
+  }
+  .hm-cat .item .num {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--ink-3);
+  }
+  .hm-cat .item .name {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 1px;
+    line-height: 1.3;
+  }
+
+  /* ---------- Pathways (Section 03) ---------- */
+  .pathways {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .pw {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .pw .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .pw .ico { font-size: 22px; }
+  .pw .name { font-weight: 700; color: var(--ink); font-size: 14px; }
+  .pw .en { font-size: 10.5px; color: var(--ink-3); margin-left: auto; letter-spacing: 0.04em; text-transform: uppercase; }
+  .pw .body { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+  .pw .body b { color: var(--ink); font-weight: 700; }
+  .pw .drug {
+    margin-top: 6px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 3px 6px;
+  }
+  .pw .drug b { color: var(--path-deep); font-family: inherit; }
+  .pw .effect {
+    margin-top: 6px;
+    font-size: 11.5px;
+    color: var(--treat-deep);
+    font-weight: 600;
+  }
+  .pw.p1 { background: var(--path-soft); border-color: #c7d2fe; }
+  .pw.p2 { background: var(--path-soft); border-color: #c7d2fe; }
+  .pw.p3 { background: var(--path-soft); border-color: #c7d2fe; }
+  .pw.p4 { background: var(--path-soft); border-color: #c7d2fe; }
+
+  /* ---------- Interventions (Section 04) ---------- */
+  .treatments {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .tr {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .tr .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .tr .ico { font-size: 18px; }
+  .tr .name { font-weight: 700; color: var(--ink); font-size: 13px; }
+  .tr .level {
+    margin-left: auto;
+    font-size: 9.5px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .tr.lvl-3 .level { background: #fecaca; color: #991b1b; }
+  .tr.lvl-2 .level { background: #fed7aa; color: #9a3412; }
+  .tr.lvl-1 .level { background: #fef3c7; color: #92400e; }
+  .tr .body { font-size: 11.5px; color: var(--ink-2); line-height: 1.4; margin-top: 4px; }
+  .tr .model {
+    margin-top: 4px;
+    font-size: 10.5px;
+    color: var(--ink-3);
+    font-style: italic;
+  }
+  .tr.t1, .tr.t2, .tr.t3, .tr.t4, .tr.t5, .tr.t6 { background: var(--treat-soft); border-color: #fbcfe8; }
+
+  .legend {
+    margin-top: 10px;
+    display: flex;
+    gap: 12px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+  }
+  .legend .item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .legend .dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+  }
+  .legend .dot.l3 { background: #fecaca; }
+  .legend .dot.l2 { background: #fed7aa; }
+  .legend .dot.l1 { background: #fef3c7; }
+
+  /* ---------- Pitfalls (Section 05) ---------- */
+  .pitfall {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--red-soft);
+    border: 1px solid #fecaca;
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pitfall:last-child { margin-bottom: 0; }
+  .pitfall .x {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .pitfall .body { font-size: 13.5px; color: var(--ink-2); }
+  .pitfall .body .bad {
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 1.5px;
+  }
+  .pitfall .body .fix {
+    display: block;
+    margin-top: 4px;
+  }
+  .pitfall .body .fix b { color: #15803d; font-weight: 700; }
+
+  /* ---------- Footer summary ---------- */
+  footer {
+    padding: 28px 44px 36px;
+    background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+    border-top: 1px solid var(--line);
+  }
+  footer .title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  footer .points {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  footer .points li {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  footer .points li b {
+    display: block;
+    color: var(--idea-deep);
+    font-size: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+  footer .oneliner {
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  footer .oneliner b { color: #bbf7d0; }
+  footer .stamp {
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  footer .credit {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    line-height: 1.6;
+  }
+  footer .credit b { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    header, section, footer { padding-left: 22px; padding-right: 22px; }
+    .overview, .footer .points { grid-template-columns: 1fr 1fr; }
+    .compare, .pathways, .treatments { grid-template-columns: 1fr; }
+    .three-cat .row { grid-template-columns: 1fr; }
+    .hm-cat .items { grid-template-columns: 1fr 1fr; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =================== HEADER =================== -->
+  <header>
+    <span class="tag">MOLECULAR BIOLOGY · 衰老</span>
+    <h1>衰老的分子机制是什么？<br>
+        <span class="q">一张图讲清楚 12 大标志 + 9 大干预靶点</span></h1>
+    <p class="subtitle">衰老<b>不是单一开关</b>，而是<b>12 大损伤机制</b>累积、相互交织的结果 —— 干预衰老, 就要对每一层机制下手。</p>
+    <div class="meta">
+      <span class="chip">⏱ 阅读 <b>6 分钟</b></span>
+      <span class="chip">🎯 适合 <b>生物 / 抗衰 / 综述</b></span>
+      <span class="chip">📚 出处 López-Otín 2013/2023</span>
+    </div>
+  </header>
+
+  <!-- =================== OVERVIEW =================== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">★</span>
+      <h2>先记住 4 个关键词</h2>
+      <span class="en">FOUR KEY CONCEPTS</span>
+    </div>
+    <p>衰老研究所有内容，<strong>只围绕这 4 个概念展开</strong>。</p>
+    <div class="overview">
+      <div class="ov a">
+        <span class="ico">🧬</span>
+        <div class="name">多通路损伤</div>
+        <div class="en">Multi-pathway</div>
+      </div>
+      <div class="ov b">
+        <span class="ico">🏷️</span>
+        <div class="name">12 大标志</div>
+        <div class="en">12 Hallmarks</div>
+      </div>
+      <div class="ov c">
+        <span class="ico">⚙️</span>
+        <div class="name">关键通路</div>
+        <div class="en">mTOR/AMPK</div>
+      </div>
+      <div class="ov d">
+        <span class="ico">💊</span>
+        <div class="name">已验证干预</div>
+        <div class="en">Validated</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 01: 核心思想 =================== -->
+  <section class="c1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>核心思想:衰老是多重伤害的叠加,不是单一开关</h2>
+      <span class="en">DAMAGE ACCUMULATION</span>
+    </div>
+    <p>主流观点 (López-Otín 2013/2023): 衰老是<b>多个独立损伤过程</b>同时累积, 互相加速, 没有单一"开关基因"。</p>
+
+    <div class="compare">
+      <div class="cmp prog">
+        <div class="head">
+          <span class="pill">错误</span>
+          "衰老是程序"
+        </div>
+        <ul>
+          <li><b>认为:</b> 有"衰老基因", 按时间表启动</li>
+          <li><b>证据:</b> 进化不选择"主动死"基因</li>
+          <li><b>代表:</b> 早期 Programmed Aging 假说</li>
+        </ul>
+      </div>
+      <div class="cmp dmg">
+        <div class="head">
+          <span class="pill">主流</span>
+          损伤累积
+        </div>
+        <ul>
+          <li><b>认为:</b> 损伤 > 修复 → 累积 → 功能下降</li>
+          <li><b>证据:</b> DNA 损伤/端粒/蛋白聚集等</li>
+          <li><b>代表:</b> López-Otín 12 Hallmarks 框架</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="three-cat">
+      <div class="head">12 大标志分 3 类 (López-Otín 2023)</div>
+      <div class="row">
+        <div class="cat">
+          <div class="num">5</div>
+          <div class="name">原发</div>
+          <div class="en">Primary</div>
+        </div>
+        <div class="cat">
+          <div class="num">3</div>
+          <div class="name">对抗</div>
+          <div class="en">Antagonistic</div>
+        </div>
+        <div class="cat">
+          <div class="num">4</div>
+          <div class="name">整合</div>
+          <div class="en">Integrative</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 02: 12 标志 =================== -->
+  <section class="c2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>12 大衰老标志:分 3 类、5+3+4</h2>
+      <span class="en">12 HALLMARKS OF AGING</span>
+    </div>
+    <p>每一类标志针对不同问题, 但<b>互相交织</b>形成一个恶化的循环。</p>
+
+    <div class="hallmarks">
+      <div class="hm-cat c1">
+        <div class="head">
+          <span class="badge">PRIMARY</span>
+          <span class="name">原发标志 (5)</span>
+          <span class="en">CAUSES</span>
+          <span class="desc">— 损伤的源头</span>
+        </div>
+        <div class="items">
+          <div class="item">
+            <div class="num">1</div>
+            <div class="name">基因组<br>不稳定</div>
+          </div>
+          <div class="item">
+            <div class="num">2</div>
+            <div class="name">端粒<br>磨损</div>
+          </div>
+          <div class="item">
+            <div class="num">3</div>
+            <div class="name">表观遗传<br>改变</div>
+          </div>
+          <div class="item">
+            <div class="num">4</div>
+            <div class="name">蛋白质<br>稳态丧失</div>
+          </div>
+          <div class="item">
+            <div class="num">5</div>
+            <div class="name">巨自噬<br>障碍</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hm-cat c2">
+        <div class="head">
+          <span class="badge">ANTAGONISTIC</span>
+          <span class="name">对抗标志 (3)</span>
+          <span class="en">RESPONSES</span>
+          <span class="desc">— 起初保护, 过度就伤</span>
+        </div>
+        <div class="items">
+          <div class="item">
+            <div class="num">6</div>
+            <div class="name">营养感应<br>失调</div>
+          </div>
+          <div class="item">
+            <div class="num">7</div>
+            <div class="name">线粒体<br>功能障碍</div>
+          </div>
+          <div class="item">
+            <div class="num">8</div>
+            <div class="name">细胞<br>衰老</div>
+          </div>
+          <div class="items-placeholder" style="display:none"></div>
+          <div class="items-placeholder" style="display:none"></div>
+        </div>
+      </div>
+
+      <div class="hm-cat c3">
+        <div class="head">
+          <span class="badge">INTEGRATIVE</span>
+          <span class="name">整合标志 (4)</span>
+          <span class="en">CULPRITS</span>
+          <span class="desc">— 最终的"元凶"</span>
+        </div>
+        <div class="items">
+          <div class="item">
+            <div class="num">9</div>
+            <div class="name">干细胞<br>耗竭</div>
+          </div>
+          <div class="item">
+            <div class="num">10</div>
+            <div class="name">细胞间<br>通讯改变</div>
+          </div>
+          <div class="item">
+            <div class="num">11</div>
+            <div class="name">慢性炎症<br>(inflammaging)</div>
+          </div>
+          <div class="item">
+            <div class="num">12</div>
+            <div class="name">菌群<br>失调</div>
+          </div>
+          <div class="items-placeholder" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 03: 4 大通路 =================== -->
+  <section class="c3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>4 大关键通路:延寿药的共同靶点</h2>
+      <span class="en">mTOR · AMPK · SIRTUINS · p53</span>
+    </div>
+    <p>目前所有"延寿药"几乎都打在这 4 条通路上, 其中 <b>mTOR / AMPK / Sirtuins</b> 是"长寿三件套"。</p>
+
+    <div class="pathways">
+      <div class="pw p1">
+        <div class="head">
+          <span class="ico">🍔</span>
+          <span class="name">mTOR 通路</span>
+          <span class="en">mTOR</span>
+        </div>
+        <div class="body">
+          <b>营养/生长信号</b>。激活→合成蛋白、抑制自噬; <b>抑制</b>→ 启动细胞清理。
+        </div>
+        <div class="drug"><b>代表药:</b> 雷帕霉素 (Rapamycin)</div>
+        <div class="effect">小鼠延寿 10-25%</div>
+      </div>
+
+      <div class="pw p2">
+        <div class="head">
+          <span class="ico">⚡</span>
+          <span class="name">AMPK 通路</span>
+          <span class="en">AMPK</span>
+        </div>
+        <div class="body">
+          <b>能量感应器</b>。能量低时激活 → 促自噬、产 ATP、降合成。
+        </div>
+        <div class="drug"><b>代表药:</b> 二甲双胍 (Metformin)</div>
+        <div class="effect">TAME 临床试验中</div>
+      </div>
+
+      <div class="pw p3">
+        <div class="head">
+          <span class="ico">🧬</span>
+          <span class="name">Sirtuins 家族</span>
+          <span class="en">SIRTUINS</span>
+        </div>
+        <div class="body">
+          <b>NAD+ 依赖的去乙酰酶</b>, 修复 DNA / 调代谢 / 影响线粒体。
+        </div>
+        <div class="drug"><b>代表:</b> NAD 前体 (NMN/NR)</div>
+        <div class="effect">证据有争议</div>
+      </div>
+
+      <div class="pw p4">
+        <div class="head">
+          <span class="ico">🛑</span>
+          <span class="name">p53 / p21 通路</span>
+          <span class="en">p53/p21</span>
+        </div>
+        <div class="body">
+          <b>DNA 损伤哨兵</b>。损伤严重时启动细胞衰老或凋亡, 防止癌变。
+        </div>
+        <div class="drug"><b>代表:</b> Senolytics (D+Q)</div>
+        <div class="effect">清衰老细胞</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 04: 6 大干预 =================== -->
+  <section class="c4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>6 大已验证的延寿干预</h2>
+      <span class="en">VALIDATED INTERVENTIONS</span>
+    </div>
+    <p>在<b>模型动物</b>里被反复验证延长寿命, 部分在<b>人类临床</b>推进中:</p>
+
+    <div class="treatments">
+      <div class="tr t1 lvl-3">
+        <div class="head">
+          <span class="ico">🍽️</span>
+          <span class="name">热量限制</span>
+          <span class="level">★ 3 颗</span>
+        </div>
+        <div class="body">降低 20-40% 摄入但不营养不良, 多数物种可延寿 30%+</div>
+        <div class="model">模型: 酵母 → 猴</div>
+      </div>
+      <div class="tr t2 lvl-3">
+        <div class="head">
+          <span class="ico">💊</span>
+          <span class="name">雷帕霉素</span>
+          <span class="level">★ 3 颗</span>
+        </div>
+        <div class="body">mTOR 抑制, 小鼠延寿 10-25%, 多个物种验证</div>
+        <div class="model">模型: 小鼠 (ITP 计划)</div>
+      </div>
+      <div class="tr t3 lvl-2">
+        <div class="head">
+          <span class="ico">💊</span>
+          <span class="name">二甲双胍</span>
+          <span class="level">★ 2 颗</span>
+        </div>
+        <div class="body">AMPK 激活, 降糖药老药, 抗衰数据强但寿命证据少</div>
+        <div class="model">模型: TAME 临床</div>
+      </div>
+      <div class="tr t4 lvl-2">
+        <div class="head">
+          <span class="ico">🧹</span>
+          <span class="name">Senolytics</span>
+          <span class="level">★ 2 颗</span>
+        </div>
+        <div class="body">清除衰老细胞。D+Q 鸡尾酒在小鼠延寿 36%</div>
+        <div class="model">模型: 小鼠 → 人小试</div>
+      </div>
+      <div class="tr t5 lvl-1">
+        <div class="head">
+          <span class="ico">🔄</span>
+          <span class="name">部分重编程</span>
+          <span class="level">★ 1 颗</span>
+        </div>
+        <div class="body">短期表达 Yamanaka 因子 (OSK), 让细胞"返老还童"</div>
+        <div class="model">模型: 小鼠 (有致癌风险)</div>
+      </div>
+      <div class="tr t6 lvl-1">
+        <div class="head">
+          <span class="ico">🧪</span>
+          <span class="name">基因治疗</span>
+          <span class="level">★ 1 颗</span>
+        </div>
+        <div class="body">过表达长寿基因 (Sirt6, TERT 等), 仅在动物验证</div>
+        <div class="model">模型: 小鼠</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="item"><span class="dot l3"></span> ★ 3 颗 = 强证据, 多物种验证</div>
+      <div class="item"><span class="dot l2"></span> ★ 2 颗 = 中等证据, 部分临床</div>
+      <div class="item"><span class="dot l1"></span> ★ 1 颗 = 早期, 动物实验</div>
+    </div>
+  </section>
+
+  <!-- =================== 05: 误区 =================== -->
+  <section class="c5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>新手最常踩的 4 个坑</h2>
+      <span class="en">COMMON PITFALLS</span>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"自由基 = 衰老元凶, 抗氧化剂万能"</span>
+        <span class="fix">👉 <b>ROS 同时有信号功能</b>。临床试验显示, 大剂量抗氧化剂 (VE/β-胡萝卜素) <b>不延寿, 反而可能有害</b>。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"端粒是衰老的唯一原因"</span>
+        <span class="fix">👉 <b>端粒只是 12 大标志之一</b>。多数体细胞端粒变短, 但干细胞、生殖细胞靠端粒酶维持, 衰老是多通路问题。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"衰老是基因程序, 必然按时间表死"</span>
+        <span class="fix">👉 <b>进化不选择"主动死"</b>。主流观点: 衰老是<b>损伤累积 + 修复衰退</b>, 是副作用, 不是目的。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"白藜芦醇 / NMN 一吃就延寿"</span>
+        <span class="fix">👉 <b>白藜芦醇: 早期轰动, 后被多家研究质疑</b>。NMN: 动物数据有, 人体延寿证据<b>几乎为零</b>。别只信补剂广告。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTER =================== -->
+  <footer>
+    <div class="title">这一页先记住 · TL;DR</div>
+    <ul class="points">
+      <li><b>WHAT</b>12 大损伤机制累积, 不是单一程序</li>
+      <li><b>HOW</b>mTOR/AMPK/Sirtuins 三大延寿靶点</li>
+      <li><b>WHAT NOW</b>雷帕霉素证据最强, 重编程最有想象</li>
+    </ul>
+    <div class="oneliner">
+      <b>一句话总结:</b>衰老 = <b>12 大损伤机制</b>(原发 5+对抗 3+整合 4)的累积,
+      可通过 <b>mTOR/AMPK/Sirtuins</b> 三大通路干预, 雷帕霉素和热量限制证据最强。
+    </div>
+    <div class="stamp">图源:仿「一张图讲清楚」系列 · 参考 López-Otín (2013, 2023 Hallmarks of Aging)、ITP 计划、TAME 试验</div>
+    <div class="credit">
+      <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
