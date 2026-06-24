@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>世界模型 (World Models) · 一页讲清楚</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    /* 4 大类色系 (想象/预测色) */
+    --idea:    #0e7490;          /* 核心思想  : 深青 (预测/深邃) */
+    --idea-soft: #ecfeff;
+    --idea-deep: #164e63;
+
+    --arch:    #4338ca;          /* 架构      : 靛蓝 (神经网络) */
+    --arch-soft: #eef2ff;
+    --arch-deep: #312e81;
+
+    --flow:    #e11d48;          /* 流派      : 玫红 (生动) */
+    --flow-soft: #fff1f2;
+    --flow-deep: #881337;
+
+    --app:     #c2410c;          /* 应用      : 橙 (落地) */
+    --app-soft: #fff7ed;
+    --app-deep: #7c2d12;
+
+    --red: #ef4444;
+    --red-soft: #fef2f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 36px 44px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 600px 200px at top right, #ecfeff 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at bottom left, #fff1f2 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--idea-deep);
+    background: var(--idea-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  header h1 .q {
+    color: var(--idea-deep);
+  }
+  header .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  header .chip {
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  header .chip b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Section base ---------- */
+  section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+  section:last-of-type { border-bottom: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .sec-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sec-head .en {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .c1 .sec-num { background: var(--idea); }
+  .c2 .sec-num { background: var(--arch); }
+  .c3 .sec-num { background: var(--flow); }
+  .c4 .sec-num { background: var(--app); }
+  .c5 .sec-num { background: var(--red); }
+
+  p { color: var(--ink-2); margin-bottom: 8px; }
+  p strong { color: var(--ink); font-weight: 700; }
+  p .hl { background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px; }
+
+  /* ---------- Overview ---------- */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ov {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    background: white;
+  }
+  .ov .ico { font-size: 26px; margin-bottom: 6px; display: block; }
+  .ov .name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .ov .en { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ov.a { background: var(--idea-soft); border-color: #a5f3fc; }
+  .ov.b { background: var(--arch-soft); border-color: #c7d2fe; }
+  .ov.c { background: var(--flow-soft); border-color: #fecdd3; }
+  .ov.d { background: var(--app-soft); border-color: #fed7aa; }
+
+  /* ---------- Compare (Section 01) ---------- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .cmp {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    background: white;
+  }
+  .cmp.mf { background: #f3f4f6; border-color: #d1d5db; }
+  .cmp.wm { background: var(--idea-soft); border-color: #a5f3fc; }
+  .cmp .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .cmp .head .pill {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .cmp.mf .pill { background: #6b7280; color: white; }
+  .cmp.wm .pill { background: var(--idea); color: white; }
+  .cmp ul { list-style: none; font-size: 13px; color: var(--ink-2); }
+  .cmp ul li {
+    padding: 3px 0 3px 16px;
+    position: relative;
+  }
+  .cmp ul li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    color: var(--ink-3);
+    font-weight: 800;
+  }
+  .cmp ul li b { color: var(--ink); font-weight: 700; }
+
+  .three-roles {
+    margin-top: 12px;
+    background: white;
+    border: 1px solid #a5f3fc;
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .three-roles .title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--idea-deep);
+    margin-bottom: 8px;
+  }
+  .three-roles .items {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .three-roles .item {
+    background: var(--idea-soft);
+    border: 1px solid #a5f3fc;
+    border-radius: 6px;
+    padding: 8px 6px;
+    text-align: center;
+  }
+  .three-roles .item .ico { font-size: 20px; }
+  .three-roles .item .name { font-size: 12px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+  .three-roles .item .sub { font-size: 10.5px; color: var(--ink-3); margin-top: 1px; }
+
+  /* ---------- Architecture (Section 02) ---------- */
+  .arch-svg {
+    background: var(--arch-soft);
+    border: 1px solid #c7d2fe;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 8px 0 8px;
+    text-align: center;
+  }
+  .arch-svg svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+  .arch-svg .cap {
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-top: 6px;
+  }
+
+  .modules {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .mod {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px;
+    background: white;
+  }
+  .mod .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .mod .ico { font-size: 18px; }
+  .mod .name { font-weight: 700; color: var(--ink); font-size: 12.5px; }
+  .mod .en { font-size: 9.5px; color: var(--ink-3); margin-left: auto; letter-spacing: 0.04em; text-transform: uppercase; }
+  .mod .body { font-size: 11.5px; color: var(--ink-2); line-height: 1.4; }
+  .mod .algos {
+    margin-top: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 10.5px;
+    color: var(--ink-2);
+  }
+
+  /* ---------- Two paradigms (Section 03) ---------- */
+  .paradigms {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .par {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .par.l1 { background: var(--flow-soft); border-color: #fecdd3; }
+  .par.l2 { background: var(--arch-soft); border-color: #c7d2fe; }
+  .par .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .par .ico { font-size: 20px; }
+  .par .name { font-weight: 700; color: var(--ink); font-size: 13.5px; }
+  .par .en { font-size: 10.5px; color: var(--ink-3); margin-left: auto; letter-spacing: 0.04em; text-transform: uppercase; }
+  .par .body { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+  .par .body b { color: var(--ink); font-weight: 700; }
+  .par .props {
+    list-style: none;
+    font-size: 12px;
+    color: var(--ink-2);
+    margin-top: 6px;
+  }
+  .par .props li {
+    padding: 2px 0 2px 16px;
+    position: relative;
+  }
+  .par .props li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    color: var(--ink-3);
+    font-weight: 800;
+  }
+  .par .algos {
+    margin-top: 8px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 3px 6px;
+    line-height: 1.5;
+  }
+  .par .algos b { color: var(--ink); font-family: inherit; }
+
+  /* ---------- Apps (Section 04) ---------- */
+  .apps {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .app {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .app .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .app .ico { font-size: 18px; }
+  .app .name { font-weight: 700; color: var(--ink); font-size: 13px; }
+  .app .body { font-size: 11.5px; color: var(--ink-2); line-height: 1.4; margin-top: 2px; }
+  .app .examples {
+    margin-top: 6px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 10.5px;
+    color: var(--ink-2);
+  }
+  .app.a1, .app.a2, .app.a3, .app.a4, .app.a5, .app.a6 { background: var(--app-soft); border-color: #fed7aa; }
+
+  /* ---------- Pitfalls (Section 05) ---------- */
+  .pitfall {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--red-soft);
+    border: 1px solid #fecaca;
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pitfall:last-child { margin-bottom: 0; }
+  .pitfall .x {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .pitfall .body { font-size: 13.5px; color: var(--ink-2); }
+  .pitfall .body .bad {
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 1.5px;
+  }
+  .pitfall .body .fix {
+    display: block;
+    margin-top: 4px;
+  }
+  .pitfall .body .fix b { color: #15803d; font-weight: 700; }
+
+  /* ---------- Footer summary ---------- */
+  footer {
+    padding: 28px 44px 36px;
+    background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+    border-top: 1px solid var(--line);
+  }
+  footer .title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  footer .points {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  footer .points li {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  footer .points li b {
+    display: block;
+    color: var(--idea-deep);
+    font-size: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+  footer .oneliner {
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  footer .oneliner b { color: #a5f3fc; }
+  footer .stamp {
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  footer .credit {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    line-height: 1.6;
+  }
+  footer .credit b { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    header, section, footer { padding-left: 22px; padding-right: 22px; }
+    .overview, .footer .points { grid-template-columns: 1fr 1fr; }
+    .compare, .paradigms { grid-template-columns: 1fr; }
+    .apps { grid-template-columns: 1fr 1fr; }
+    .modules { grid-template-columns: 1fr 1fr; }
+    .three-roles .items { grid-template-columns: 1fr; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =================== HEADER =================== -->
+  <header>
+    <span class="tag">MODEL-BASED · AI</span>
+    <h1>世界模型 (World Models) 是什么？<br>
+        <span class="q">一张图讲清楚「让 AI 在想象里做决策」</span></h1>
+    <p class="subtitle">让 AI 学一个<b>环境模拟器</b>，在"脑内"<b>想象</b>未来再行动 —— 大幅减少真实环境交互。</p>
+    <div class="meta">
+      <span class="chip">⏱ 阅读 <b>5 分钟</b></span>
+      <span class="chip">🎯 适合 <b>RL / 自动驾驶 / 视频生成</b></span>
+      <span class="chip">📚 出处 Ha &amp; Schmidhuber 2015</span>
+    </div>
+  </header>
+
+  <!-- =================== OVERVIEW =================== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">★</span>
+      <h2>先记住 4 个关键词</h2>
+      <span class="en">FOUR KEY CONCEPTS</span>
+    </div>
+    <p>世界模型所有内容，<strong>只围绕这 4 个概念展开</strong>。</p>
+    <div class="overview">
+      <div class="ov a">
+        <span class="ico">🧠</span>
+        <div class="name">环境模拟器</div>
+        <div class="en">P(s' | s, a)</div>
+      </div>
+      <div class="ov b">
+        <span class="ico">🔮</span>
+        <div class="name">想象未来</div>
+        <div class="en">Imagination</div>
+      </div>
+      <div class="ov c">
+        <span class="ico">♻️</span>
+        <div class="name">闭循环</div>
+        <div class="en">Closed Loop</div>
+      </div>
+      <div class="ov d">
+        <span class="ico">📉</span>
+        <div class="name">样本高效</div>
+        <div class="en">Sample Efficient</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 01: 核心思想 =================== -->
+  <section class="c1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>核心思想:在"脑内"开个小剧场</h2>
+      <span class="en">LEARN A SIMULATOR, PLAN IN IT</span>
+    </div>
+    <p>传统 RL: <span class="hl">必须在真环境里试错</span>, 慢且贵。<br>
+       世界模型: <b>先学一个模拟器</b>, 在脑内想象不同动作的后果, 再挑最好的执行。</p>
+
+    <div class="compare">
+      <div class="cmp mf">
+        <div class="head">
+          <span class="pill">MF RL</span>
+          Model-free RL
+        </div>
+        <ul>
+          <li><b>学什么:</b> 价值/策略</li>
+          <li><b>数据:</b> 真环境交互</li>
+          <li><b>样本:</b> 多 (百万级)</li>
+          <li><b>代表:</b> PPO · SAC · DQN</li>
+        </ul>
+      </div>
+      <div class="cmp wm">
+        <div class="head">
+          <span class="pill">WM</span>
+          World Model
+        </div>
+        <ul>
+          <li><b>学什么:</b> 环境动力学</li>
+          <li><b>数据:</b> 转移 (s,a,s')</li>
+          <li><b>样本:</b> 少 (千级) + 想象</li>
+          <li><b>代表:</b> Dreamer · IRIS · Sora</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="three-roles">
+      <div class="title">世界模型 3 大功能</div>
+      <div class="items">
+        <div class="item">
+          <div class="ico">🔮</div>
+          <div class="name">预测</div>
+          <div class="sub">Predict</div>
+        </div>
+        <div class="item">
+          <div class="ico">🧭</div>
+          <div class="name">规划</div>
+          <div class="sub">Plan</div>
+        </div>
+        <div class="item">
+          <div class="ico">🧠</div>
+          <div class="name">理解</div>
+          <div class="sub">Understand</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 02: 典型架构 =================== -->
+  <section class="c2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>典型架构:4 大模块闭环</h2>
+      <span class="en">ENCODER · DYNAMICS · DECODER · CONTROLLER</span>
+    </div>
+    <p>经典世界模型 (Ha &amp; Schmidhuber 2015) = 4 个模块首尾相连:</p>
+
+    <div class="arch-svg">
+      <svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="World Model architecture">
+        <defs>
+          <marker id="arrW" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#4338ca"/>
+          </marker>
+        </defs>
+
+        <!-- Observation (top-left) -->
+        <rect x="20" y="40" width="100" height="60" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+        <text x="70" y="68" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="13" font-weight="700" fill="#7c2d12">观察</text>
+        <text x="70" y="85" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#6b7280">o_t (image)</text>
+
+        <!-- Encoder -->
+        <rect x="160" y="40" width="90" height="60" rx="10" fill="#eef2ff" stroke="#4338ca" stroke-width="2"/>
+        <text x="205" y="68" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="13" font-weight="700" fill="#312e81">编码器</text>
+        <text x="205" y="85" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#4338ca">Encoder E</text>
+
+        <!-- Latent state (center) -->
+        <ellipse cx="320" cy="70" rx="60" ry="30" fill="#ecfeff" stroke="#0e7490" stroke-width="2"/>
+        <text x="320" y="68" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="13" font-weight="700" fill="#164e63">隐状态</text>
+        <text x="320" y="85" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#0e7490">s_t (latent)</text>
+
+        <!-- Dynamics (below state) -->
+        <rect x="200" y="140" width="120" height="50" rx="10" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+        <text x="260" y="162" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="13" font-weight="700" fill="#881337">动力学 D</text>
+        <text x="260" y="180" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#e11d48">s_{t+1} = D(s_t, a_t)</text>
+
+        <!-- Action (right) -->
+        <rect x="380" y="140" width="90" height="50" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+        <text x="425" y="162" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="13" font-weight="700" fill="#7c2d12">动作 a_t</text>
+        <text x="425" y="180" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#6b7280">Action</text>
+
+        <!-- Decoder (left bottom) -->
+        <rect x="20" y="140" width="120" height="50" rx="10" fill="#ecfdf5" stroke="#047857" stroke-width="2"/>
+        <text x="80" y="162" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="13" font-weight="700" fill="#064e3b">解码器</text>
+        <text x="80" y="180" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#047857">Decoder o = Dec(s)</text>
+
+        <!-- Arrows: obs -> encoder -->
+        <line x1="120" y1="70" x2="160" y2="70" stroke="#4338ca" stroke-width="1.5" marker-end="url(#arrW)"/>
+
+        <!-- encoder -> state -->
+        <line x1="250" y1="70" x2="260" y2="70" stroke="#4338ca" stroke-width="1.5" marker-end="url(#arrW)"/>
+
+        <!-- state -> dynamics (down) -->
+        <line x1="320" y1="100" x2="280" y2="140" stroke="#e11d48" stroke-width="1.5" marker-end="url(#arrW)"/>
+        <text x="305" y="125" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#6b7280">给 s_t</text>
+
+        <!-- action -> dynamics (right to down) -->
+        <line x1="380" y1="165" x2="320" y2="165" stroke="#c2410c" stroke-width="1.5" marker-end="url(#arrW)"/>
+        <text x="350" y="160" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#6b7280">给 a_t</text>
+
+        <!-- dynamics -> state (loop back, up) -->
+        <path d="M260,140 Q260,110 320,98" stroke="#e11d48" stroke-width="1.5" fill="none" stroke-dasharray="3,3" marker-end="url(#arrW)"/>
+        <text x="290" y="125" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#6b7280">出 s_{t+1}</text>
+
+        <!-- state -> decoder (down-left) -->
+        <line x1="280" y1="90" x2="100" y2="140" stroke="#047857" stroke-width="1.5" marker-end="url(#arrW)"/>
+        <text x="180" y="125" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#6b7280">重建观察</text>
+
+        <!-- Controller (right) -->
+        <rect x="400" y="40" width="80" height="60" rx="10" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+        <text x="440" y="68" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="13" font-weight="700" fill="#78350f">策略 π</text>
+        <text x="440" y="85" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#b45309">a = π(s)</text>
+
+        <!-- state -> controller -->
+        <line x1="380" y1="70" x2="400" y2="70" stroke="#b45309" stroke-width="1.5" marker-end="url(#arrW)"/>
+        <!-- controller -> action (down) -->
+        <line x1="440" y1="100" x2="440" y2="140" stroke="#b45309" stroke-width="1.5" marker-end="url(#arrW)"/>
+      </svg>
+      <div class="cap">核心循环: 观察 → 编码 → 隐状态 → 决策 → 动作 → 新状态 (闭循环)</div>
+    </div>
+
+    <div class="modules">
+      <div class="mod">
+        <div class="head">
+          <span class="ico">📷</span>
+          <span class="name">编码器 E</span>
+          <span class="en">ENC</span>
+        </div>
+        <div class="body">把高维观察 (图像) 压成低维 latent</div>
+        <div class="algos">VAE · VQ-VAE · CNN</div>
+      </div>
+      <div class="mod">
+        <div class="head">
+          <span class="ico">🌀</span>
+          <span class="name">动力学 D</span>
+          <span class="en">DYN</span>
+        </div>
+        <div class="body">(s_t, a_t) → s_{t+1},核心预测器</div>
+        <div class="algos">RSSM · Transformer · S4</div>
+      </div>
+      <div class="mod">
+        <div class="head">
+          <span class="ico">🖼️</span>
+          <span class="name">解码器 Dec</span>
+          <span class="en">DEC</span>
+        </div>
+        <div class="body">把 latent 还原成观察 (可视化/训练监督)</div>
+        <div class="algos">反卷积 · Diffusion</div>
+      </div>
+      <div class="mod">
+        <div class="head">
+          <span class="ico">🎮</span>
+          <span class="name">控制器 π</span>
+          <span class="en">CTRL</span>
+        </div>
+        <div class="body">在 latent space 选动作,可在想象里训</div>
+        <div class="algos">CEM · AC · Linear</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 03: 2 大流派 =================== -->
+  <section class="c3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>2 大流派:在哪一层建动力学</h2>
+      <span class="en">LATENT · PIXEL</span>
+    </div>
+    <p>按"<b>在哪一层预测下一状态</b>"分 2 大流派, 性能/质量取向不同:</p>
+
+    <div class="paradigms">
+      <div class="par l1">
+        <div class="head">
+          <span class="ico">🌀</span>
+          <span class="name">隐空间动力学</span>
+          <span class="en">LATENT</span>
+        </div>
+        <div class="body">
+          在<b>压缩后的 latent 空间</b>预测下一状态, decoder 只用于可视化/监督。
+        </div>
+        <ul class="props">
+          <li><b>优点:</b> 计算高效, 规划友好</li>
+          <li><b>缺点:</b> 视觉细节差</li>
+          <li><b>目标:</b> 决策 / 强化学习</li>
+        </ul>
+        <div class="algos"><b>代表:</b> Dreamer v1/v2/v3 · IRIS · PlaNet · DreamerV3</div>
+      </div>
+      <div class="par l2">
+        <div class="head">
+          <span class="ico">🎥</span>
+          <span class="name">像素空间动力学</span>
+          <span class="en">PIXEL</span>
+        </div>
+        <div class="body">
+          <b>直接在像素层</b>预测下一帧 (图像/视频), 不压缩 latent。
+        </div>
+        <ul class="props">
+          <li><b>优点:</b> 视觉质量高, 细节丰富</li>
+          <li><b>缺点:</b> 计算贵, 难精确规划</li>
+          <li><b>目标:</b> 视频生成 / 驾驶模拟</li>
+        </ul>
+        <div class="algos"><b>代表:</b> Sora · GAIA-1 · Veo · Wan</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 04: 应用 =================== -->
+  <section class="c4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>6 大应用:从游戏到 LLM Agent</h2>
+      <span class="en">APPLICATIONS</span>
+    </div>
+    <p>世界模型从游戏/机器人出发, 已经扩散到<b>视频生成、驾驶、LLM Agent 模拟</b>:</p>
+
+    <div class="apps">
+      <div class="app a1">
+        <div class="head">
+          <span class="ico">🎮</span>
+          <span class="name">游戏 / Atari</span>
+        </div>
+        <div class="body">在想象里 rollout 训练, 达到人类水平</div>
+        <div class="examples">Dreamer v3 · SimPLe</div>
+      </div>
+      <div class="app a2">
+        <div class="head">
+          <span class="ico">🤖</span>
+          <span class="name">机器人</span>
+        </div>
+        <div class="body">样本贵, 世界模型省真机交互</div>
+        <div class="examples">IRIS · DreamerV3-Real</div>
+      </div>
+      <div class="app a3">
+        <div class="head">
+          <span class="ico">🚗</span>
+          <span class="name">自动驾驶</span>
+        </div>
+        <div class="body">预测其他车/人轨迹, 危险场景演练</div>
+        <div class="examples">GAIA-1 · Tesla FSD · Wayve</div>
+      </div>
+      <div class="app a4">
+        <div class="head">
+          <span class="ico">🎬</span>
+          <span class="name">视频生成</span>
+        </div>
+        <div class="body">"如果接下几秒会怎样"</div>
+        <div class="examples">Sora · Veo · Wan · Kling</div>
+      </div>
+      <div class="app a5">
+        <div class="head">
+          <span class="ico">🧬</span>
+          <span class="name">科学模拟</span>
+        </div>
+        <div class="body">天气/分子/材料, 加速传统数值仿真</div>
+        <div class="examples">GenCast · AlphaFold 3</div>
+      </div>
+      <div class="app a6">
+        <div class="head">
+          <span class="ico">🤝</span>
+          <span class="name">LLM Agent 模拟</span>
+        </div>
+        <div class="body">用 LLM 模拟工具/环境反馈给 agent</div>
+        <div class="examples">AgentSim · ToolLLM</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 05: 误区 =================== -->
+  <section class="c5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>新手最常踩的 4 个坑</h2>
+      <span class="en">COMMON PITFALLS</span>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"世界模型 = 视频生成 (Sora)"</span>
+        <span class="fix">👉 <b>Sora 是世界模型的<b>视频生成子集</b></b>。世界模型更广: 还要支持规划/决策, 不只是"看着像"。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"世界模型 = 强化学习"</span>
+        <span class="fix">👉 <b>世界模型 ⊂ Model-based RL</b>。可以只用世界模型做预测/规划, 不一定套 RL; 也可纯生成, 不做决策。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"世界模型 = 完美预测器"</span>
+        <span class="fix">👉 <b>实际有累积误差</b>。长程 rollout 几分钟后会"跑偏", 要靠真数据定期校正, 不能完全靠想象。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"数据量大 = 世界模型好"</span>
+        <span class="fix">👉 <b>物理一致性比数据量重要</b>。不守物理的世界模型, 想象里 rollout 1000 步也找不到真解。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTER =================== -->
+  <footer>
+    <div class="title">这一页先记住 · TL;DR</div>
+    <ul class="points">
+      <li><b>WHAT</b>学一个环境模拟器, 在想象里做决策</li>
+      <li><b>4 模块</b>Encoder · Dynamics · Decoder · Controller</li>
+      <li><b>2 流派</b>Latent (Dreamer) / Pixel (Sora)</li>
+    </ul>
+    <div class="oneliner">
+      <b>一句话总结:</b>世界模型 = 让 AI 学一个<b>环境模拟器</b>,
+      在<b>脑内想象</b>里 rollout 决策。Dreamer v3 是 RL 标杆, <b>Sora</b> 是视频生成代表。
+    </div>
+    <div class="stamp">图源:仿「一张图讲清楚」系列 · 参考 Ha &amp; Schmidhuber (2015)、Dreamer v3 (2023)、Sora (2024)</div>
+    <div class="credit">
+      <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
