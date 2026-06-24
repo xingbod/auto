@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RL 算法的分类与特点 · 一页讲清楚</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    /* 三大方法族 (与 rl-principles 配套) */
+    --value:    #6366f1;  /* Value-based  : 紫蓝 */
+    --value-soft: #eef2ff;
+    --value-deep: #4338ca;
+
+    --policy:   #14b8a6;  /* Policy-based : 青绿 */
+    --policy-soft: #ecfdf5;
+    --policy-deep: #0f766e;
+
+    --ac:       #8b5cf6;  /* Actor-Critic : 紫色 */
+    --ac-soft:  #f5f3ff;
+    --ac-deep:  #6d28d9;
+
+    /* Model-based 强调色 */
+    --model:    #f59e0b;  /* Model-based  : 琥珀 */
+    --model-soft: #fffbeb;
+    --model-deep: #b45309;
+
+    --red: #ef4444;
+    --red-soft: #fef2f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 36px 44px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 600px 200px at top right, #ede9fe 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at bottom left, #fff7ed 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--value-deep);
+    background: var(--value-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  header h1 .q {
+    color: var(--value-deep);
+  }
+  header .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  header .chip {
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  header .chip b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Section base ---------- */
+  section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+  section:last-of-type { border-bottom: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .sec-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sec-head .en {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .c1 .sec-num { background: var(--value); }
+  .c2 .sec-num { background: var(--model); }
+  .c3 .sec-num { background: var(--policy); }
+  .c4 .sec-num { background: var(--ac); }
+  .c5 .sec-num { background: var(--red); }
+
+  p { color: var(--ink-2); margin-bottom: 8px; }
+  p strong { color: var(--ink); font-weight: 700; }
+  p .hl { background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px; }
+
+  /* ---------- Overview ---------- */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ov {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    background: white;
+  }
+  .ov .ico { font-size: 26px; margin-bottom: 6px; display: block; }
+  .ov .name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .ov .en { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ov.a { background: var(--value-soft); border-color: #c7d2fe; }
+  .ov.b { background: var(--model-soft); border-color: #fde68a; }
+  .ov.c { background: var(--policy-soft); border-color: #a7f3d0; }
+  .ov.d { background: var(--ac-soft); border-color: #ddd6fe; }
+
+  /* ---------- Method family cards (Section 01) ---------- */
+  .family {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .fam {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    background: white;
+  }
+  .fam .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .fam .head .swatch {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+  }
+  .fam .head .name {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+  }
+  .fam .head .badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: auto;
+  }
+  .fam.v { background: var(--value-soft); border-color: #c7d2fe; }
+  .fam.v .head .swatch { background: var(--value); }
+  .fam.v .head .badge { background: var(--value); color: white; }
+  .fam.p { background: var(--policy-soft); border-color: #a7f3d0; }
+  .fam.p .head .swatch { background: var(--policy); }
+  .fam.p .head .badge { background: var(--policy); color: white; }
+  .fam.a { background: var(--ac-soft); border-color: #ddd6fe; }
+  .fam.a .head .swatch { background: var(--ac); }
+  .fam.a .head .badge { background: var(--ac); color: white; }
+
+  .fam .idea {
+    font-size: 12.5px;
+    color: var(--ink-2);
+    margin-bottom: 8px;
+    line-height: 1.45;
+  }
+  .fam .props {
+    list-style: none;
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+  .fam .props li {
+    padding: 2px 0 2px 14px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .fam .props li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    color: var(--ink-3);
+    font-weight: 800;
+  }
+  .fam .props li b { color: var(--ink); font-weight: 700; }
+  .fam .algos {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--line);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .fam .algos b { color: var(--ink-2); font-family: inherit; }
+
+  /* ---------- 2D Matrix (Section 02) ---------- */
+  .matrix {
+    display: grid;
+    grid-template-columns: 90px 1fr 1fr;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 12.5px;
+  }
+  .mx-cell {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: white;
+    line-height: 1.45;
+  }
+  .mx-cell.head {
+    background: #f9fafb;
+    font-weight: 700;
+    color: var(--ink);
+    text-align: center;
+    font-size: 12.5px;
+  }
+  .mx-cell.row-label {
+    background: #f9fafb;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 12.5px;
+  }
+  .mx-cell.row-label .swatch {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    margin-right: 6px;
+    display: inline-block;
+  }
+  .mx-cell.v { background: var(--value-soft); border-color: #c7d2fe; }
+  .mx-cell.p { background: var(--policy-soft); border-color: #a7f3d0; }
+  .mx-cell.a { background: var(--ac-soft); border-color: #ddd6fe; }
+  .mx-cell .title {
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mx-cell .title .icon { font-size: 14px; }
+  .mx-cell .examples {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11.5px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+  .mx-cell .examples b { color: var(--ink); font-family: inherit; }
+
+  /* ---------- Policy axis (Section 03) ---------- */
+  .axis {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .ax {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    background: white;
+  }
+  .ax.on { background: #fef3c7; border-color: #fde68a; }
+  .ax.off { background: #dbeafe; border-color: #bfdbfe; }
+  .ax .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .ax.on .head .pill { background: var(--model); }
+  .ax.off .head .pill { background: var(--value); }
+  .ax .head .pill {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    color: white;
+    font-weight: 700;
+  }
+  .ax dl { margin: 0; font-size: 12.5px; }
+  .ax dl div { padding: 3px 0; display: grid; grid-template-columns: 76px 1fr; gap: 8px; }
+  .ax dl dt { color: var(--ink-3); font-weight: 600; }
+  .ax dl dd { color: var(--ink-2); margin: 0; }
+  .ax dl dd code {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 11.5px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  /* ---------- Decision tree (Section 04) ---------- */
+  .tree-wrap {
+    background: #fafafa;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    margin: 8px 0 12px;
+  }
+  .tree {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12.5px;
+    line-height: 1.5;
+    white-space: pre;
+    color: var(--ink);
+    overflow-x: auto;
+  }
+  .tree .q { color: var(--ink-3); }
+  .tree .a1 { color: var(--value-deep); font-weight: 700; }
+  .tree .a2 { color: var(--policy-deep); font-weight: 700; }
+  .tree .a3 { color: var(--ac-deep); font-weight: 700; }
+  .tree .a4 { color: var(--model-deep); font-weight: 700; }
+  .tree-caption {
+    font-size: 12.5px;
+    color: var(--ink-3);
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  /* ---------- Pitfalls ---------- */
+  .pitfall {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--red-soft);
+    border: 1px solid #fecaca;
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pitfall:last-child { margin-bottom: 0; }
+  .pitfall .x {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .pitfall .body { font-size: 13.5px; color: var(--ink-2); }
+  .pitfall .body .bad {
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 1.5px;
+  }
+  .pitfall .body .fix {
+    display: block;
+    margin-top: 4px;
+  }
+  .pitfall .body .fix b { color: #15803d; font-weight: 700; }
+
+  /* ---------- Footer summary ---------- */
+  footer {
+    padding: 28px 44px 36px;
+    background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+    border-top: 1px solid var(--line);
+  }
+  footer .title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  footer .points {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  footer .points li {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  footer .points li b {
+    display: block;
+    color: var(--value-deep);
+    font-size: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+  footer .oneliner {
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  footer .oneliner b { color: #fde68a; }
+  footer .stamp {
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  footer .credit {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    line-height: 1.6;
+  }
+  footer .credit b { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    header, section, footer { padding-left: 22px; padding-right: 22px; }
+    .overview, .family, .footer .points { grid-template-columns: 1fr 1fr; }
+    .axis { grid-template-columns: 1fr; }
+    .matrix { grid-template-columns: 80px 1fr 1fr; font-size: 11.5px; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =================== HEADER =================== -->
+  <header>
+    <span class="tag">CORE IDEA · 强化学习</span>
+    <h1>RL 算法怎么分类？<br>
+        <span class="q">一张图讲清楚 6 大主流算法族</span></h1>
+    <p class="subtitle">按 <b>「学什么 × 有没有环境模型 × 在/离策略」</b> 三个维度交叉看 —— 选算法 = 把这些维度跟你的任务对齐。</p>
+    <div class="meta">
+      <span class="chip">⏱ 阅读 <b>6 分钟</b></span>
+      <span class="chip">🎯 适合 <b>选型 / 面试 / 综述</b></span>
+      <span class="chip">🔗 配套 <b>onepage-rl-principles</b></span>
+    </div>
+  </header>
+
+  <!-- =================== OVERVIEW =================== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">★</span>
+      <h2>先记住 4 个分类维度</h2>
+      <span class="en">FOUR CLASSIFICATION AXES</span>
+    </div>
+    <p>RL 算法没有「最好」一说，只有「最匹配」。看算法时先问自己 4 个问题：</p>
+    <div class="overview">
+      <div class="ov a">
+        <span class="ico">🧠</span>
+        <div class="name">学什么</div>
+        <div class="en">Value / Policy / AC</div>
+      </div>
+      <div class="ov b">
+        <span class="ico">🗺️</span>
+        <div class="name">环境模型</div>
+        <div class="en">Model-free / Based</div>
+      </div>
+      <div class="ov c">
+        <span class="ico">📊</span>
+        <div class="name">数据来源</div>
+        <div class="en">On / Off-policy</div>
+      </div>
+      <div class="ov d">
+        <span class="ico">🎮</span>
+        <div class="name">动作空间</div>
+        <div class="en">Discrete / Continuous</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 01: 三大方法族深入 =================== -->
+  <section class="c1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>三大方法族：学什么、怎么学、各自的取舍</h2>
+      <span class="en">VALUE · POLICY · ACTOR-CRITIC</span>
+    </div>
+    <p>不同算法其实都在解决同一道题 —— <strong>怎样让 Q 或 π 变得更好</strong>。按"学什么"分成 3 个家族：</p>
+
+    <div class="family">
+      <div class="fam v">
+        <div class="head">
+          <span class="swatch"></span>
+          <span class="name">Value-based</span>
+          <span class="badge">值</span>
+        </div>
+        <div class="idea">维护一张 Q 表 / Q 网络，<br>选动作时取 <code>argmax<sub>a</sub> Q(s,a)</code></div>
+        <ul class="props">
+          <li><b>优点:</b> 训练稳定, 收敛快</li>
+          <li><b>缺点:</b> 难处理连续动作</li>
+          <li><b>关键:</b> ε-greedy 探索</li>
+        </ul>
+        <div class="algos"><b>代表:</b> Q-Learning · DQN · Double DQN · Dueling DQN · Rainbow</div>
+      </div>
+
+      <div class="fam p">
+        <div class="head">
+          <span class="swatch"></span>
+          <span class="name">Policy-based</span>
+          <span class="badge">策</span>
+        </div>
+        <div class="idea">把策略参数化 π<sub>θ</sub>(a|s),<br>直接用梯度上升优化期望回报</div>
+        <ul class="props">
+          <li><b>优点:</b> 自然支持连续/随机策略</li>
+          <li><b>缺点:</b> 高方差, 收敛慢</li>
+          <li><b>关键:</b> baseline 降方差</li>
+        </ul>
+        <div class="algos"><b>代表:</b> REINFORCE · TRPO · PPO</div>
+      </div>
+
+      <div class="fam a">
+        <div class="head">
+          <span class="swatch"></span>
+          <span class="name">Actor-Critic</span>
+          <span class="badge">合</span>
+        </div>
+        <div class="idea">Actor 选动作, Critic 估价值,<br>用价值当 baseline 降方差</div>
+        <ul class="props">
+          <li><b>优点:</b> 值+策 结合, 又稳又能连续</li>
+          <li><b>缺点:</b> 两个网络, 调参多</li>
+          <li><b>关键:</b> Actor-Critic 同步更新</li>
+        </ul>
+        <div class="algos"><b>代表:</b> A2C · A3C · SAC · TD3 · DDPG</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 02: 2D 分类矩阵 =================== -->
+  <section class="c2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>2D 矩阵：3 家族 × 2 模型假设 = 6 大算法族</h2>
+      <span class="en">METHOD × MODEL</span>
+    </div>
+    <p>把"<strong>学什么</strong>"和"<strong>有没有环境模型</strong>"两维度交叉, 一张表看清所有主流算法的位置：</p>
+
+    <div class="matrix">
+      <!-- Row 1: header -->
+      <div class="mx-cell head"></div>
+      <div class="mx-cell head">🚫 Model-free<br><span style="font-size:10.5px;font-weight:400;color:var(--ink-3);">不学环境动力学</span></div>
+      <div class="mx-cell head">🗺️ Model-based<br><span style="font-size:10.5px;font-weight:400;color:var(--ink-3);">学 P(s'|s,a) 和 R</span></div>
+
+      <!-- Row 2: Value-based -->
+      <div class="mx-cell row-label"><span class="swatch" style="background:var(--value)"></span>Value-based</div>
+      <div class="mx-cell v">
+        <div class="title"><span class="icon">🕹️</span>离散+小状态常用</div>
+        <div class="examples">
+          <b>DQN</b> · Double DQN<br>
+          Dueling DQN · Rainbow<br>
+          <span style="color:var(--ink-3);">Atari / 简单游戏</span>
+        </div>
+      </div>
+      <div class="mx-cell v">
+        <div class="title"><span class="icon">♟️</span>棋类/规则明确环境</div>
+        <div class="examples">
+          <b>AlphaZero</b> · MuZero<br>
+          MCTS + 价值网络<br>
+          <span style="color:var(--ink-3);">围棋 / 象棋 / Atari</span>
+        </div>
+      </div>
+
+      <!-- Row 3: Policy-based -->
+      <div class="mx-cell row-label"><span class="swatch" style="background:var(--policy)"></span>Policy-based</div>
+      <div class="mx-cell p">
+        <div class="title"><span class="icon">🤖</span>连续控制标配</div>
+        <div class="examples">
+          <b>REINFORCE</b><br>
+          <b>PPO</b> · TRPO<br>
+          <span style="color:var(--ink-3);">机器人步态 / 游戏</span>
+        </div>
+      </div>
+      <div class="mx-cell p">
+        <div class="title"><span class="icon">🔮</span>小众, 实验多</div>
+        <div class="examples">
+          <b>MBPO</b><br>
+          PETS · STEVE<br>
+          <span style="color:var(--ink-3);">样本贵时探索</span>
+        </div>
+      </div>
+
+      <!-- Row 4: Actor-Critic -->
+      <div class="mx-cell row-label"><span class="swatch" style="background:var(--ac)"></span>Actor-Critic</div>
+      <div class="mx-cell a">
+        <div class="title"><span class="icon">⚡</span>工业最主流</div>
+        <div class="examples">
+          <b>SAC</b> · TD3 · DDPG<br>
+          A2C · A3C<br>
+          <span style="color:var(--ink-3);">机械臂 / 自动驾驶 / LLM RLHF</span>
+        </div>
+      </div>
+      <div class="mx-cell a">
+        <div class="title"><span class="icon">🌍</span>世界模型方向</div>
+        <div class="examples">
+          <b>Dreamer</b> v1/v2/v3<br>
+          World Models · IRIS<br>
+          <span style="color:var(--ink-3);">视觉控制 / 模拟器</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 03: 在策略 vs 离策略 =================== -->
+  <section class="c3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>在策略 vs 离策略：用谁的轨迹来学</h2>
+      <span class="en">ON-POLICY · OFF-POLICY</span>
+    </div>
+    <p>这个轴跟前两维<strong>正交</strong>：同一个算法可以是在/离策略，区别是<span class="hl">评估/改进策略时用的数据是不是当前策略自己采的</span>。</p>
+
+    <div class="axis">
+      <div class="ax on">
+        <div class="head">
+          <span class="pill">ON</span>
+          在策略 (On-policy)
+        </div>
+        <dl>
+          <div><dt>数据</dt><dd>必须用<b>当前 π</b> 采的轨迹</dd></div>
+          <div><dt>样本效率</dt><dd><b>低</b> —— 每改一次 π, 旧数据就废了</dd></div>
+          <div><dt>稳定性</dt><dd><b>高</b> —— 数据分布跟策略一致</dd></div>
+          <div><dt>代表</dt><dd><code>SARSA</code> · <code>REINFORCE</code> · <code>PPO</code> · <code>A2C</code></dd></div>
+          <div><dt>典型场景</dt><dd>LLM RLHF · 仿真器无限采样</dd></div>
+        </dl>
+      </div>
+
+      <div class="ax off">
+        <div class="head">
+          <span class="pill">OFF</span>
+          离策略 (Off-policy)
+        </div>
+        <dl>
+          <div><dt>数据</dt><dd>可以用<b>任何</b>策略(甚至人)采的轨迹</dd></div>
+          <div><dt>样本效率</dt><dd><b>高</b> —— 经验回放池反复用</dd></div>
+          <div><dt>稳定性</dt><dd><b>中</b> —— 需 importance sampling 或 replay</dd></div>
+          <div><dt>代表</dt><dd><code>Q-Learning</code> · <code>DQN</code> · <code>SAC</code> · <code>TD3</code> · <code>DDPG</code></dd></div>
+          <div><dt>典型场景</dt><dd>样本贵 · 历史数据 · 探索/评估分离</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 04: 决策树 =================== -->
+  <section class="c4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>实战选算法：一张决策树走一遍</h2>
+      <span class="en">DECISION TREE</span>
+    </div>
+    <p>面对新任务，按下面 3 问 1 选，最快 30 秒定位候选算法：</p>
+
+    <div class="tree-wrap">
+<pre class="tree"><span class="q">Q1. 环境模型 (P, R) 已知吗?</span>
+│
+├── <span class="a4">已知 / 容易学</span>  →  Model-based
+│     ├── 离散状态/动作  →  <span class="a1">AlphaZero</span> · <span class="a1">MuZero</span> (MCTS + 价值网)
+│     └── 视觉/复杂       →  <span class="a3">Dreamer v3</span> · <span class="a3">IRIS</span>
+│
+└── <span class="q">未知</span>  →  Model-free
+      │
+      <span class="q">Q2. 动作空间是离散还是连续?</span>
+      │
+      ├── 离散  →  <span class="a1">DQN 家族</span> (Double · Dueling · Rainbow) · <span class="a2">PPO</span>
+      │
+      └── 连续  →  <span class="q">Q3. 追求样本效率还是稳定性?</span>
+                   │
+                   ├── 样本效率优先  →  <span class="a3">SAC</span> · <span class="a3">TD3</span> (off-policy)
+                   │
+                   ├── 训练稳定优先  →  <span class="a2">PPO</span> · <span class="a2">TRPO</span> (on-policy)
+                   │
+                   └── 不确定 / 通用  →  <span class="a2">PPO</span> (默认选择, 再调)
+</pre>
+      <div class="loop-caption">树中 4 种颜色对应 4 大算法族: <span style="color:var(--value-deep);font-weight:700;">■</span> Value-based · <span style="color:var(--policy-deep);font-weight:700;">■</span> Policy-based · <span style="color:var(--ac-deep);font-weight:700;">■</span> Actor-Critic · <span style="color:var(--model-deep);font-weight:700;">■</span> Model-based</div>
+    </div>
+  </section>
+
+  <!-- =================== 05: 误区 =================== -->
+  <section class="c5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>新手选算法最容易踩的 4 个坑</h2>
+      <span class="en">COMMON PITFALLS</span>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">「PPO 是银弹, 默认就用 PPO」</span>
+        <span class="fix">👉 <b>PPO 在大模型/仿真器上很稳, 但样本贵时 SAC/TD3 效率高出 10×+</b>。看数据成本选。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">「DQN 必学, 学完就能搞定一切」</span>
+        <span class="fix">👉 <b>DQN 只擅长离散动作 + 小状态空间</b>。机械臂、自动驾驶等连续控制场景直接选 SAC/TD3/PPO。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">「Model-based 一定比 Model-free 强」</span>
+        <span class="fix">👉 <b>强在样本效率, 弱在模型不准会被骗</b>。模型质量差时, model-based 甚至比不过 model-free baseline。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">「On-policy 样本效率低 = 一定差」</span>
+        <span class="fix">👉 <b>样本无限时 on-policy 反而更稳</b>。仿真器 + 高速环境 (游戏/机器人 sim) 优先考虑 PPO。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTER =================== -->
+  <footer>
+    <div class="title">这一页先记住 · TL;DR</div>
+    <ul class="points">
+      <li><b>WHAT</b>RL 算法 = 3 家族 × 2 模型假设 × 在/离策略</li>
+      <li><b>MATRIX</b>6 大算法族各有适用场景, 没有银弹</li>
+      <li><b>HOW</b>按"模型已知?→动作空间?→样本贵?" 3 问 1 选</li>
+    </ul>
+    <div class="oneliner">
+      <b>一句话总结：</b>RL 算法分类 = (<b>学什么</b>) × (<b>有没有环境模型</b>) × (<b>在/离策略</b>) 多维度交叉构成，
+      选算法 = 把这些维度跟你的<b>数据成本 + 动作空间 + 探索需求</b>对齐。
+    </div>
+    <div class="stamp">图源：仿「一张图讲清楚」系列 · 配套 onepage-rl-principles</div>
+    <div class="credit">
+      <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
