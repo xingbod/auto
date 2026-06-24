@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>再年轻化的可能路径 · 一页讲清楚</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    /* 4 大类色系 (年轻化/未来感配色) */
+    --idea:    #7c3aed;          /* 核心思想  : 紫 (逆转/未来) */
+    --idea-soft: #f5f3ff;
+    --idea-deep: #4c1d95;
+
+    --tech:    #0d9488;          /* 5 大技术  : 青绿 (分子) */
+    --tech-soft: #f0fdfa;
+    --tech-deep: #134e4a;
+
+    --emerg:   #d97706;          /* 3 大新兴  : 琥珀 (前沿) */
+    --emerg-soft: #fffbeb;
+    --emerg-deep: #78350f;
+
+    --actor:   #e11d48;          /* 关键玩家  : 玫红 (人/公司) */
+    --actor-soft: #fff1f2;
+    --actor-deep: #881337;
+
+    --red: #ef4444;
+    --red-soft: #fef2f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 36px 44px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 600px 200px at top right, #f5f3ff 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at bottom left, #f0fdfa 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--idea-deep);
+    background: var(--idea-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  header h1 .q {
+    color: var(--idea-deep);
+  }
+  header .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  header .chip {
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  header .chip b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Section base ---------- */
+  section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+  section:last-of-type { border-bottom: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .sec-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sec-head .en {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .c1 .sec-num { background: var(--idea); }
+  .c2 .sec-num { background: var(--tech); }
+  .c3 .sec-num { background: var(--emerg); }
+  .c4 .sec-num { background: var(--actor); }
+  .c5 .sec-num { background: var(--red); }
+
+  p { color: var(--ink-2); margin-bottom: 8px; }
+  p strong { color: var(--ink); font-weight: 700; }
+  p .hl { background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px; }
+
+  /* ---------- Overview ---------- */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ov {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    background: white;
+  }
+  .ov .ico { font-size: 26px; margin-bottom: 6px; display: block; }
+  .ov .name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .ov .en { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ov.a { background: var(--idea-soft); border-color: #ddd6fe; }
+  .ov.b { background: var(--tech-soft); border-color: #99f6e4; }
+  .ov.c { background: var(--emerg-soft); border-color: #fde68a; }
+  .ov.d { background: var(--actor-soft); border-color: #fecdd3; }
+
+  /* ---------- Compare (Section 01) ---------- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .cmp {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    background: white;
+  }
+  .cmp.anti { background: #f3f4f6; border-color: #d1d5db; }
+  .cmp.rej { background: var(--idea-soft); border-color: #ddd6fe; }
+  .cmp .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .cmp .head .pill {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .cmp.anti .pill { background: #6b7280; color: white; }
+  .cmp.rej .pill { background: var(--idea); color: white; }
+  .cmp ul { list-style: none; font-size: 13px; color: var(--ink-2); }
+  .cmp ul li {
+    padding: 3px 0 3px 16px;
+    position: relative;
+  }
+  .cmp ul li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    color: var(--ink-3);
+    font-weight: 800;
+  }
+  .cmp ul li b { color: var(--ink); font-weight: 700; }
+
+  /* Age arrow visualization */
+  .age-arrow {
+    margin-top: 12px;
+    background: white;
+    border: 1px solid #ddd6fe;
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .age-arrow .head {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--idea-deep);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .age-arrow .scale {
+    display: grid;
+    grid-template-columns: 50px 1fr 1fr 50px;
+    gap: 0;
+    align-items: center;
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+  .age-arrow .scale .num {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink);
+    text-align: center;
+  }
+  .age-arrow .scale .arrow {
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-3);
+    font-weight: 700;
+    font-size: 22px;
+    position: relative;
+  }
+  .age-arrow .scale .anti-age {
+    background: linear-gradient(90deg, #6b7280 0%, #6b7280 100%);
+    color: white;
+    border-radius: 13px 0 0 13px;
+  }
+  .age-arrow .scale .rejuv {
+    background: linear-gradient(90deg, var(--idea) 0%, var(--idea-deep) 100%);
+    color: white;
+    border-radius: 0 13px 13px 0;
+  }
+  .age-arrow .cap {
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+
+  /* ---------- Tech routes grid (Section 02) ---------- */
+  .routes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .rt {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .rt .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .rt .ico { font-size: 22px; }
+  .rt .name { font-weight: 700; color: var(--ink); font-size: 13.5px; }
+  .rt .en { font-size: 10.5px; color: var(--ink-3); margin-left: auto; letter-spacing: 0.04em; text-transform: uppercase; }
+  .rt .stars { margin-left: auto; font-size: 10px; color: var(--emerg); font-weight: 700; }
+  .rt .body { font-size: 12px; color: var(--ink-2); line-height: 1.45; }
+  .rt .body b { color: var(--ink); font-weight: 700; }
+  .rt .mech {
+    margin-top: 6px;
+    background: white;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--tech);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 11.5px;
+    color: var(--tech-deep);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .rt .risk {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--ink-3);
+  }
+  .rt .risk b { color: var(--red); font-weight: 700; }
+  .rt.r1, .rt.r2, .rt.r3, .rt.r4, .rt.r5 { background: var(--tech-soft); border-color: #99f6e4; }
+
+  /* ---------- Emerging (Section 03) ---------- */
+  .emerging {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .em {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .em .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .em .ico { font-size: 20px; }
+  .em .name { font-weight: 700; color: var(--ink); font-size: 13px; }
+  .em .level {
+    margin-left: auto;
+    font-size: 9.5px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .em.lvl-1 .level { background: #fef3c7; color: #92400e; }
+  .em .body { font-size: 12px; color: var(--ink-2); line-height: 1.4; margin-top: 4px; }
+  .em .example {
+    margin-top: 6px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 10.5px;
+    color: var(--ink-2);
+  }
+  .em.e1, .em.e2, .em.e3 { background: var(--emerg-soft); border-color: #fde68a; }
+
+  /* ---------- Players (Section 04) ---------- */
+  .players {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .pl {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .pl .head {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .pl .ico { font-size: 16px; }
+  .pl .list { list-style: none; }
+  .pl .list li {
+    font-size: 12px;
+    color: var(--ink-2);
+    padding: 3px 0;
+    line-height: 1.4;
+  }
+  .pl .list li b { color: var(--ink); font-weight: 700; }
+  .pl .list li .role {
+    display: inline-block;
+    font-size: 10.5px;
+    color: var(--actor-deep);
+    background: var(--actor-soft);
+    padding: 0 5px;
+    border-radius: 3px;
+    margin-left: 4px;
+    font-weight: 600;
+  }
+  .pl.lab { background: var(--tech-soft); border-color: #99f6e4; }
+  .pl.co { background: var(--actor-soft); border-color: #fecdd3; }
+
+  /* ---------- Pitfalls (Section 05) ---------- */
+  .pitfall {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--red-soft);
+    border: 1px solid #fecaca;
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pitfall:last-child { margin-bottom: 0; }
+  .pitfall .x {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .pitfall .body { font-size: 13.5px; color: var(--ink-2); }
+  .pitfall .body .bad {
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 1.5px;
+  }
+  .pitfall .body .fix {
+    display: block;
+    margin-top: 4px;
+  }
+  .pitfall .body .fix b { color: #15803d; font-weight: 700; }
+
+  /* ---------- Footer summary ---------- */
+  footer {
+    padding: 28px 44px 36px;
+    background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+    border-top: 1px solid var(--line);
+  }
+  footer .title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  footer .points {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  footer .points li {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  footer .points li b {
+    display: block;
+    color: var(--idea-deep);
+    font-size: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+  footer .oneliner {
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  footer .oneliner b { color: #c4b5fd; }
+  footer .stamp {
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  footer .credit {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    line-height: 1.6;
+  }
+  footer .credit b { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    header, section, footer { padding-left: 22px; padding-right: 22px; }
+    .overview, .footer .points { grid-template-columns: 1fr 1fr; }
+    .compare, .routes, .players { grid-template-columns: 1fr; }
+    .emerging { grid-template-columns: 1fr; }
+    .age-arrow .scale { grid-template-columns: 1fr; gap: 4px; }
+    .age-arrow .scale .num, .age-arrow .scale .arrow { display: none; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =================== HEADER =================== -->
+  <header>
+    <span class="tag">LONGEVITY · 抗衰前沿</span>
+    <h1>再年轻化 (Rejuvenation) 的可能路径？<br>
+        <span class="q">一张图讲清楚 5 大技术路线 + 10 大关键玩家</span></h1>
+    <p class="subtitle">不只是<b>慢下来</b>(抗衰), 还要<b>倒回去</b>(再年轻化) —— 多个技术路线并行, 谁先跑通?</p>
+    <div class="meta">
+      <span class="chip">⏱ 阅读 <b>6 分钟</b></span>
+      <span class="chip">🎯 适合 <b>长寿研究 / 综述 / 投资</b></span>
+      <span class="chip">📚 出处 Sinclair · Belmonte · Horvath</span>
+    </div>
+  </header>
+
+  <!-- =================== OVERVIEW =================== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">★</span>
+      <h2>先记住 4 个关键词</h2>
+      <span class="en">FOUR KEY CONCEPTS</span>
+    </div>
+    <p>再年轻化所有内容,<strong>只围绕这 4 个概念展开</strong>。</p>
+    <div class="overview">
+      <div class="ov a">
+        <span class="ico">⏪</span>
+        <div class="name">让时间倒流</div>
+        <div class="en">Reverse Bio-Age</div>
+      </div>
+      <div class="ov b">
+        <span class="ico">🧪</span>
+        <div class="name">多技术并行</div>
+        <div class="en">5 Routes</div>
+      </div>
+      <div class="ov c">
+        <span class="ico">⚗️</span>
+        <div class="name">早期但快</div>
+        <div class="en">Early & Fast</div>
+      </div>
+      <div class="ov d">
+        <span class="ico">💰</span>
+        <div class="name">资本涌入</div>
+        <div class="en">$Billions</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 01: 核心思想 =================== -->
+  <section class="c1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>核心思想:从"抗衰"到"逆转"</h2>
+      <span class="en">ANTI-AGING vs REJUVENATION</span>
+    </div>
+    <p>抗衰: 让衰老<span class="hl">慢一点</span>(80 岁身体像 60 岁)。<br>
+       再年轻化: 让生物年龄<span class="hl">真正回退</span>(60 岁身体像 40 岁)。</p>
+
+    <div class="compare">
+      <div class="cmp anti">
+        <div class="head">
+          <span class="pill">ANTI-AGING</span>
+          抗衰 (慢下来)
+        </div>
+        <ul>
+          <li><b>目标:</b> 降低衰老速度</li>
+          <li><b>方法:</b> CR、雷帕霉素、NAD+</li>
+          <li><b>效果:</b> 延长<b>健康寿命</b></li>
+          <li><b>成熟度:</b> 已有临床证据</li>
+        </ul>
+      </div>
+      <div class="cmp rej">
+        <div class="head">
+          <span class="pill">REJUVENATION</span>
+          再年轻化 (倒回去)
+        </div>
+        <ul>
+          <li><b>目标:</b> 让生物年龄<b>数值变小</b></li>
+          <li><b>方法:</b> 重编程、Senolytics</li>
+          <li><b>效果:</b> 逆转<b>已发生的损伤</b></li>
+          <li><b>成熟度:</b> 动物已验证, 人在路上</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="age-arrow">
+      <div class="head">生物年龄 (Bio-Age) 的两种干预方向</div>
+      <div class="scale">
+        <div class="num">20</div>
+        <div class="arrow anti-age">← 抗衰: 拉慢斜率</div>
+        <div class="arrow rejuv">再年轻化: 弯回去 ↶</div>
+        <div class="num">80</div>
+      </div>
+      <div class="cap">纵轴: 真实生理年龄 / 横轴: 出生后的时间 (非线形示意)</div>
+    </div>
+  </section>
+
+  <!-- =================== 02: 5 大技术路线 =================== -->
+  <section class="c2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>5 大主流技术路线</h2>
+      <span class="en">FIVE TECHNICAL ROUTES</span>
+    </div>
+    <p>目前最被看好的 5 条路径, ★ 越多 = 离人体临床越近:</p>
+
+    <div class="routes">
+      <div class="rt r1">
+        <div class="head">
+          <span class="ico">🧹</span>
+          <span class="name">清除衰老细胞</span>
+          <span class="stars">★★ 临床中</span>
+        </div>
+        <div class="body">
+          <b>Senolytics</b>: 用小分子药物选择性杀死衰老细胞, 不伤健康细胞。
+        </div>
+        <div class="mech">D + Q (Dasatinib + Quercetin)</div>
+        <div class="risk">人体小试进行中; <b>暂无寿命数据</b>。</div>
+      </div>
+
+      <div class="rt r2">
+        <div class="head">
+          <span class="ico">🔄</span>
+          <span class="name">部分重编程</span>
+          <span class="stars">★ 动物验证</span>
+        </div>
+        <div class="body">
+          <b>Yamanaka 因子</b>短期表达, 把表观遗传时钟<b>重置</b>, 不回到干细胞。
+        </div>
+        <div class="mech">OSK (Oct4 + Sox2 + Klf4)</div>
+        <div class="risk">长期表达会<b>致畸胎瘤</b>, 时间窗需精确。</div>
+      </div>
+
+      <div class="rt r3">
+        <div class="head">
+          <span class="ico">🧬</span>
+          <span class="name">基因治疗</span>
+          <span class="stars">★ 动物验证</span>
+        </div>
+        <div class="body">
+          <b>AAV 递送</b>长寿基因, 长期表达。Sirt6 过表达小鼠延寿 20%+。
+        </div>
+        <div class="mech">AAV-Sirt6 / AAV-TERT</div>
+        <div class="risk"><b>不可逆</b>, 价格贵, 致癌风险待评估。</div>
+      </div>
+
+      <div class="rt r4">
+        <div class="head">
+          <span class="ico">💧</span>
+          <span class="name">血液 / 血浆因子</span>
+          <span class="stars">★ 早期</span>
+        </div>
+        <div class="body">
+          <b>年轻血浆 / 异体共生</b>: 鉴定关键年轻因子 (GDF11, TIMP2), 单独补充。
+        </div>
+        <div class="mech">GDF11 · TIMP2 · klotho</div>
+        <div class="risk">哪些因子是<b>真正关键</b>还没定论。</div>
+      </div>
+
+      <div class="rt r5">
+        <div class="head">
+          <span class="ico">⚡</span>
+          <span class="name">NAD+ 恢复</span>
+          <span class="stars">★★ 已上市</span>
+        </div>
+        <div class="body">
+          补充 <b>NAD+ 前体</b> (NMN/NR) 重新激活 Sirtuins 家族, 修复 DNA。
+        </div>
+        <div class="mech">NMN / NR / NRH</div>
+        <div class="risk">动物效果有, 人体延寿证据<b>几乎为零</b>。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 03: 3 大新兴方向 =================== -->
+  <section class="c3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>3 大新兴方向:更早期的可能性</h2>
+      <span class="en">EMERGING DIRECTIONS</span>
+    </div>
+    <p>5 大主流之外, 还有 3 条更早期的路线, 长期想象空间大:</p>
+
+    <div class="emerging">
+      <div class="em e1 lvl-1">
+        <div class="head">
+          <span class="ico">🔋</span>
+          <span class="name">线粒体治疗</span>
+          <span class="level">★ 1 颗</span>
+        </div>
+        <div class="body">
+          激活 <b>mitophagy</b>(线粒体自噬)清除受损线粒体, 或直接递送健康线粒体。
+        </div>
+        <div class="example">Urolithin A · MitoQ</div>
+      </div>
+
+      <div class="em e2 lvl-1">
+        <div class="head">
+          <span class="ico">🍽️</span>
+          <span class="name">CR 模拟物</span>
+          <span class="level">★ 1 颗</span>
+        </div>
+        <div class="body">
+          <b>不饿</b>也能模仿热量限制: 雷帕霉素、二甲双胍、亚精胺 (Spermidine)。
+        </div>
+        <div class="example">Rapamycin · Metformin</div>
+      </div>
+
+      <div class="em e3 lvl-1">
+        <div class="head">
+          <span class="ico">🧫</span>
+          <span class="name">器官 / 细胞替换</span>
+          <span class="level">★ 1 颗</span>
+        </div>
+        <div class="body">
+          体外培养<b>类器官 / 3D 生物打印</b>, 替换衰老器官; 或自体 iPSC 移植。
+        </div>
+        <div class="example">Organoids · 3D Bioprint</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 04: 关键玩家 =================== -->
+  <section class="c4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>关键玩家:实验室 + 公司</h2>
+      <span class="en">KEY PLAYERS</span>
+    </div>
+    <p>两条战线在赛跑: 学术实验室出基础发现, 创业公司推临床化。</p>
+
+    <div class="players">
+      <div class="pl lab">
+        <div class="head">
+          <span class="ico">🎓</span>
+          顶尖实验室
+        </div>
+        <ul class="list">
+          <li><b>David Sinclair</b> <span class="role">Harvard</span> · NAD+, OSK, 信息论衰老</li>
+          <li><b>Juan Carlos Belmonte</b> <span class="role">Altos Labs</span> · 部分重编程先驱</li>
+          <li><b>Steve Horvath</b> <span class="role">UCLA</span> · 表观遗传时钟发明人</li>
+          <li><b>Conboy 实验室</b> <span class="role">Berkeley</span> · 异体共生/年轻血浆</li>
+          <li><b>Vera Gorbunova</b> <span class="role">Rochester</span> · Sirt6, 裸鼹鼠长寿</li>
+          <li><b>Manuel Serrano</b> <span class="role">IRB Barcelona</span> · 细胞衰老机制</li>
+        </ul>
+      </div>
+
+      <div class="pl co">
+        <div class="head">
+          <span class="ico">🏢</span>
+          关键公司
+        </div>
+        <ul class="list">
+          <li><b>Altos Labs</b> <span class="role">$3B 融资</span> · 重编程, Bezos 投资</li>
+          <li><b>Calico</b> <span class="role">Google 子公司</span> · 基础研究, 长线</li>
+          <li><b>Unity Biotechnology</b> <span class="role">NASDAQ: UBX</span> · Senolytics</li>
+          <li><b>Turn Biotechnologies</b> <span class="role">mRNA-OSK</span> · 重编程递送</li>
+          <li><b>Oisín Biotechnologies</b> <span class="role">基因治疗</span> · 衰老细胞清除</li>
+          <li><b>Retro Biosciences</b> <span class="role">$180M</span> · Sam Altman 投资</li>
+          <li><b>Elevian</b> <span class="role">年轻血浆</span> · GDF11 靶点</li>
+          <li><b>Insilico Medicine</b> <span class="role">AI 制药</span> · 抗衰靶点发现</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 05: 误区 =================== -->
+  <section class="c5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>新手最常踩的 4 个坑</h2>
+      <span class="en">COMMON PITFALLS</span>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"再年轻化 = 抗衰"</span>
+        <span class="fix">👉 <b>抗衰是慢下来, 再年轻化是<b>回退</b></b>。后者需要的不是药物, 是能<b>逆转已发生损伤</b>的技术, 难度高一个数量级。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"实验室有效果 = 马上能用"</span>
+        <span class="fix">👉 <b>小鼠延寿 ≠ 人体延寿</b>。从动物到人体一般需要 10-15 年 + 数十亿美元。Senolytics 也只是"开始小试"。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"重编程 = 完美解药"</span>
+        <span class="fix">👉 <b>长期表达 Yamanaka 因子 = 致畸胎瘤</b>。如何精准控制时间窗和组织特异性, 是目前最大难题。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"NMN / 补剂 = 抗衰万能药"</span>
+        <span class="fix">👉 <b>补剂市场过度营销</b>。NMN 老鼠延寿数据 ≠ 人体数据, FDA 也未批准任何"延寿"适应症。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTER =================== -->
+  <footer>
+    <div class="title">这一页先记住 · TL;DR</div>
+    <ul class="points">
+      <li><b>WHAT</b>从慢下来到回退, 5 大技术路线并行</li>
+      <li><b>WHO</b>Sinclair / Belmonte 领跑, Altos 融资 30 亿</li>
+      <li><b>WHEN</b>Senolytics 最早, 重编程最有想象</li>
+    </ul>
+    <div class="oneliner">
+      <b>一句话总结:</b>再年轻化 = <b>清除衰老细胞 + 重编程 + 基因治疗 + 血液因子 + NAD+</b> 多线并行,
+      Senolytics 离临床最近, 部分重编程<b>想象空间最大</b>。距"真的让人类返老还童"<b>仍有 10+ 年</b>。
+    </div>
+    <div class="stamp">图源:仿「一张图讲清楚」系列 · 参考 Sinclair Lab (Harvard)、Altos Labs、Buck Institute</div>
+    <div class="credit">
+      <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
