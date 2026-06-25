@@ -1,0 +1,2023 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>模型量化技术发展与研究机会 — DONG XINGBO</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-2: #161b22;
+      --bg-3: #1c2128;
+      --line: #30363d;
+      --ink: #e6edf3;
+      --ink-2: #adbac7;
+      --ink-3: #8b949e;
+      --blue: #5b8def;
+      --green: #10b981;
+      --orange: #f59e0b;
+      --purple: #a78bfa;
+      --pink: #ec4899;
+      --red: #ef4444;
+      --cyan: #22d3ee;
+      --yellow: #eab308;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 15px; line-height: 1.5;
+      overflow: hidden;
+    }
+    /* Slides */
+    .slide {
+      position: absolute; inset: 0;
+      padding: 32px 64px 88px;
+      display: none; flex-direction: column;
+      overflow: hidden;
+    }
+    .slide.active { display: flex; }
+    .slide.tight { padding: 22px 50px 70px; }
+    .slide.tight h1 { font-size: 26px; margin: 0 0 10px; }
+    .slide.tight h2 { font-size: 22px; margin: 0 0 8px; }
+    .slide.tight h3 { font-size: 16px; margin: 6px 0 4px; }
+    .slide.tight p, .slide.tight li { font-size: 13.5px; line-height: 1.4; margin: 2px 0; }
+    .slide.tight .box { padding: 3px 8px; font-size: 12px; }
+    .slide.tight .pipeline-step { font-size: 11px; padding: 6px 4px; }
+    .slide.tight .num-cell .val { font-size: 16px; }
+    .slide.tight .num-cell .lbl { font-size: 9.5px; }
+    .slide.tight .card { padding: 8px 12px; margin: 3px 0; }
+    .slide.tight .card h3 { font-size: 14px; margin: 0 0 4px; }
+    .slide.tight .card li { font-size: 12px; line-height: 1.4; margin: 1px 0; }
+    .slide.tight .threecol { gap: 10px; margin: 4px 0; }
+    h1 { font-size: 30px; margin: 0 0 14px; letter-spacing: -0.01em; }
+    h2 { font-size: 24px; margin: 4px 0 12px; color: var(--ink); }
+    h3 { font-size: 17px; margin: 8px 0 6px; color: var(--ink-2); font-weight: 600; }
+    p { margin: 4px 0; color: var(--ink-2); }
+    ul, ol { margin: 4px 0 4px 20px; padding: 0; color: var(--ink-2); }
+    li { margin: 2px 0; }
+    .gray { color: var(--ink-3); }
+    .small { font-size: 12px; }
+    code {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      background: var(--bg-3); padding: 1px 6px; border-radius: 3px;
+      font-size: 0.9em; color: var(--orange);
+    }
+    /* Component library */
+    .box {
+      display: inline-block; padding: 4px 10px; border-radius: 5px;
+      font-weight: 600; font-size: 13px; margin: 1px 3px; border: 1px solid;
+      line-height: 1.4;
+    }
+    .box.model    { background: rgba(91,141,239,0.15);  color: #5b8def; border-color: #5b8def; }
+    .box.alg      { background: rgba(167,139,250,0.15); color: #a78bfa; border-color: #a78bfa; }
+    .box.system   { background: rgba(34,211,238,0.15);  color: #22d3ee; border-color: #22d3ee; }
+    .box.data     { background: rgba(139,148,158,0.15); color: #8b949e; border-color: #8b949e; }
+    .box.eval     { background: rgba(16,185,129,0.15);  color: #10b981; border-color: #10b981; }
+    .box.warn     { background: rgba(245,158,11,0.15);  color: #f59e0b; border-color: #f59e0b; }
+    .box.bad      { background: rgba(239,68,68,0.15);   color: #ef4444; border-color: #ef4444; }
+    .box.good     { background: rgba(34,197,94,0.15);   color: #22c55e; border-color: #22c55e; }
+    .box.idea     { background: rgba(236,72,153,0.15);  color: #ec4899; border-color: #ec4899; }
+    /* Pipeline */
+    .pipeline {
+      display: flex; align-items: center; justify-content: space-between;
+      margin: 8px 0; padding: 12px 8px; background: var(--bg-2);
+      border-radius: 8px; border: 1px solid var(--line); gap: 4px;
+    }
+    .pipeline-step {
+      flex: 1; text-align: center; padding: 10px 4px; border-radius: 5px;
+      background: rgba(91,141,239,0.1); border: 1px solid #5b8def;
+      font-size: 12.5px; font-weight: 600;
+    }
+    .pipeline-step .small { font-size: 10px; color: #8b949e; font-weight: 400; margin-top: 2px; }
+    .pipeline-step.alg    { background: rgba(167,139,250,0.1); border-color: #a78bfa; }
+    .pipeline-step.system { background: rgba(34,211,238,0.1);  border-color: #22d3ee; }
+    .pipeline-step.eval   { background: rgba(16,185,129,0.1);  border-color: #10b981; }
+    .pipeline-step.warn   { background: rgba(245,158,11,0.1);  border-color: #f59e0b; }
+    .pipeline-arrow { color: var(--ink-3); font-size: 18px; padding: 0 4px; }
+    /* Decision tree */
+    .tree {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px;
+      white-space: pre; background: var(--bg-2); padding: 12px 16px; border-radius: 5px;
+      border: 1px solid var(--line); line-height: 1.4; color: var(--ink-2);
+      margin: 8px 0; overflow-x: auto;
+    }
+    /* Num grid */
+    .num-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 8px 0;
+    }
+    .num-grid.col3 { grid-template-columns: repeat(3, 1fr); }
+    .num-cell {
+      background: var(--bg-2); border: 1px solid var(--line); border-radius: 5px;
+      padding: 8px; text-align: center;
+    }
+    .num-cell .lbl { font-size: 10.5px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
+    .num-cell .val { font-size: 20px; font-weight: bold; margin: 3px 0; font-family: ui-monospace, monospace; }
+    .num-cell .sub { font-size: 10px; color: var(--ink-3); }
+    .num-cell.highlight { border-color: var(--blue); background: rgba(91,141,239,0.08); }
+    .num-cell.warn { border-color: var(--orange); background: rgba(245,158,11,0.08); }
+    .num-cell.good { border-color: var(--green); background: rgba(16,185,129,0.08); }
+    /* Table */
+    .table {
+      width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 13px;
+    }
+    .table th, .table td {
+      padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: left;
+      color: var(--ink-2);
+    }
+    .table th {
+      background: var(--bg-2); color: var(--ink); font-weight: 600; font-size: 12.5px;
+    }
+    .table tr:hover td { background: var(--bg-2); }
+    /* Cover */
+    .cover {
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; height: 100%;
+    }
+    .cover h1 {
+      font-size: 44px; margin: 0 0 12px;
+      background: linear-gradient(135deg, #5b8def 0%, #a78bfa 50%, #ec4899 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cover .sub { font-size: 18px; color: var(--ink-2); margin: 4px 0; }
+    .cover .meta { font-size: 13px; color: var(--ink-3); margin-top: 18px; }
+    /* Nav bar */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: rgba(13,17,23,0.85); border-bottom: 1px solid var(--line);
+      padding: 6px 16px; display: flex; justify-content: space-between; align-items: center;
+      z-index: 100; backdrop-filter: blur(8px);
+      font-size: 12px; color: var(--ink-3);
+    }
+    .navbar .progress {
+      position: absolute; bottom: 0; left: 0; height: 2px;
+      background: linear-gradient(90deg, #5b8def, #a78bfa);
+      transition: width 0.2s;
+    }
+    .navbar button {
+      background: transparent; border: 1px solid var(--line); color: var(--ink-2);
+      padding: 3px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;
+    }
+    .navbar button:hover { background: var(--bg-2); color: var(--ink); }
+    /* Page number footer (above copyright bar) */
+    .pageinfo {
+      position: fixed; bottom: 32px; right: 18px; z-index: 1000;
+      color: var(--ink-3); font-size: 12px; font-family: ui-monospace, monospace;
+    }
+    /* Hint */
+    .hint {
+      position: fixed; bottom: 32px; left: 18px; z-index: 1000;
+      color: var(--ink-3); font-size: 11px;
+    }
+    /* Two-col layout */
+    .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 6px 0; }
+    .threecol { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 6px 0; }
+    .card {
+      background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px;
+      padding: 12px 14px; margin: 4px 0;
+    }
+    .card h3 { margin: 0 0 6px; color: var(--ink); font-size: 14.5px; }
+    .card .meta { color: var(--ink-3); font-size: 11.5px; margin-bottom: 4px; }
+    .card p, .card li { font-size: 12.5px; line-height: 1.45; }
+    /* Quote */
+    .quote {
+      border-left: 3px solid var(--blue); padding: 6px 14px; margin: 6px 0;
+      color: var(--ink-2); font-style: italic; font-size: 13px; background: var(--bg-2);
+    }
+    /* Era tag */
+    .era {
+      display: inline-block; padding: 2px 8px; border-radius: 3px;
+      background: var(--bg-3); border: 1px solid var(--line);
+      color: var(--ink-2); font-size: 11.5px; font-weight: 600;
+    }
+    /* Stat bar */
+    .bar {
+      display: flex; align-items: center; gap: 8px; margin: 3px 0;
+    }
+    .bar .lbl { width: 130px; font-size: 12px; color: var(--ink-2); }
+    .bar .fill { height: 14px; background: var(--blue); border-radius: 2px; }
+    .bar .val { font-size: 11.5px; color: var(--ink-3); font-family: ui-monospace, monospace; }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <span>📘 模型量化技术发展与研究机会</span>
+    <span>
+      <button onclick="prev()">‹ Prev</button>
+      <span id="pageinfo" style="margin: 0 8px;">1 / 43</span>
+      <button onclick="next()">Next ›</button>
+      <button onclick="printMode()" style="margin-left: 6px;">🖨 Print</button>
+    </span>
+    <div class="progress" id="progress" style="width: 2.3%;"></div>
+  </div>
+  <div class="hint">← / → 翻页 · Home/End 跳首尾 · P 打印</div>
+
+  <!-- ========== 1. 封面 ========== -->
+  <section class="slide active" data-num="1">
+    <div class="cover">
+      <div class="era">深度学习 · 模型压缩 · 部署优化</div>
+      <h1 style="margin-top: 24px;">模型量化技术发展与研究机会</h1>
+      <p class="sub">从 INT8 到 1.58-bit LLM：方法演进、代表工作、潜在方向</p>
+      <p class="sub" style="font-size: 15px; color: var(--ink-3); margin-top: 6px;">
+        Model Quantization: Technology Evolution and Research Opportunities
+      </p>
+      <div style="margin-top: 28px; display: flex; gap: 10px;">
+        <span class="box model">算法</span>
+        <span class="box system">系统</span>
+        <span class="box eval">部署</span>
+        <span class="box idea">Idea 矩阵</span>
+      </div>
+      <p class="meta">2026 · 43 张 slides · 52 篇代表作 · 669 篇 OpenAlex 抓取</p>
+    </div>
+  </section>
+
+  <!-- ========== 2. 学习目标 ========== -->
+  <section class="slide" data-num="2">
+    <h1>学习目标</h1>
+    <p>通过这 43 张 slides 梳理模型量化的技术脉络,并识别 5 个可发文章的研究方向。</p>
+    <div class="threecol" style="margin-top: 12px;">
+      <div class="card">
+        <h3>① 看清技术地图</h3>
+        <p class="meta">基础概念 → PTQ → QAT → LLM 量化</p>
+        <ul>
+          <li>对称/非对称、per-tensor/channel/group</li>
+          <li>weight/activation/KV/gradient 量化</li>
+          <li>PTQ vs QAT vs 量化微调 取舍</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>② 抓住代表工作</h3>
+        <p class="meta">从 2018 PACT 到 2025 EfficientQAT</p>
+        <ul>
+          <li>经典三件:PACT 720 引 / LSQ 296 引 / DSQ 457 引</li>
+          <li>LLM 里程碑:QLoRA 496 / GPTQ 130 / AWQ 172</li>
+          <li>前沿方向:BitNet b1.58 / FlatQuant / QuaRot</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>③ 找可发文章 idea</h3>
+        <p class="meta">5 个交叉方向 · 目标会议明确</p>
+        <ul>
+          <li>量化 × 多模态 / 联邦 / 边缘</li>
+          <li>量化 × 安全 / 隐私 / 推理</li>
+          <li>1-bit LLM × 系统协同 / 持续学习</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 14px;">
+      量化 = 把 FP32/FP16 权重/激活映射到低位宽整数或低精度浮点,在几乎不损失精度的前提下,把模型体积/显存/算力压缩 4-16 倍,推理速度提升 1.5-4 倍。
+    </div>
+  </section>
+
+  <!-- ========== 3. 量化全景图 ========== -->
+  <section class="slide" data-num="3">
+    <h1>量化全景图(2023-2026, 669 篇抓取)</h1>
+    <div class="num-grid">
+      <div class="num-cell highlight">
+        <div class="lbl">LLM 量化</div>
+        <div class="val">352</div>
+        <div class="sub">占 53% 主导</div>
+      </div>
+      <div class="num-cell">
+        <div class="lbl">硬件/部署</div>
+        <div class="val">203</div>
+        <div class="sub">edge / NPU / GPU</div>
+      </div>
+      <div class="num-cell">
+        <div class="lbl">PTQ</div>
+        <div class="val">137</div>
+        <div class="sub">post-training</div>
+      </div>
+      <div class="num-cell">
+        <div class="lbl">异常值问题</div>
+        <div class="val">105</div>
+        <div class="sub">outlier handling</div>
+      </div>
+      <div class="num-cell">
+        <div class="lbl">QAT</div>
+        <div class="val">66</div>
+        <div class="sub">quantization-aware</div>
+      </div>
+      <div class="num-cell">
+        <div class="lbl">Q 微调/PEFT</div>
+        <div class="val">53</div>
+        <div class="sub">QLoRA / LoRA</div>
+      </div>
+      <div class="num-cell">
+        <div class="lbl">二值/极低比特</div>
+        <div class="val">50</div>
+        <div class="sub">BNN / 1-bit LLM</div>
+      </div>
+      <div class="num-cell">
+        <div class="lbl">视觉 Transformer</div>
+        <div class="val">46</div>
+        <div class="sub">ViT / Swin / DETR</div>
+      </div>
+    </div>
+    <div class="threecol" style="margin-top: 10px;">
+      <div class="card">
+        <h3>三条核心趋势</h3>
+        <ul>
+          <li><b class="good">1.</b> LLM 量化占绝对主导,核心挑战是 <span class="box warn">outlier</span></li>
+          <li><b class="good">2.</b> 从 <span class="box data">INT8</span> → <span class="box data">INT4</span> → <span class="box warn">INT2</span> → <span class="box warn">1.58 bit</span></li>
+          <li><b class="good">3.</b> 算法-系统协同设计:QServe / T-MAC</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>关键观察</h3>
+        <ul>
+          <li>QLoRA 2023 = <b>496 引</b>(量化的全网最高引)</li>
+          <li>1-bit LLM (BitNet b1.58) 2024 = <b>37 引</b>,2025 引爆</li>
+          <li>旋转类 (QuaRot / SpinQuant) 2024 = <b>3+6 引</b>,新范式</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>数据来源</h3>
+        <ul>
+          <li>OpenAlex: 30 关键词 × 50 条 = 669 篇去重</li>
+          <li>arXiv: 32 个里程碑论文精确元数据</li>
+          <li>分类: <span class="box data">cs.LG</span> + <span class="box data">cs.CV</span> + <span class="box data">cs.AR</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 4. 量化数学定义 ========== -->
+  <section class="slide" data-num="4">
+    <h1>量化的数学定义</h1>
+    <p>把 <code>FP32/FP16</code> 浮点张量 <code>x</code> 映射到 <code>INT8/INT4</code> 等低位宽整数的可逆变换。</p>
+    <div class="twocol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>对称量化 <span class="box model">INT8</span></h3>
+        <p style="font-family: ui-monospace, monospace; font-size: 13px; color: var(--cyan);">
+          scale = max(|x|) / (2<sup>b-1</sup> - 1)<br>
+          x<sub>q</sub> = clamp(round(x / scale), -2<sup>b-1</sup>, 2<sup>b-1</sup>-1)
+        </p>
+        <ul>
+          <li>零点是 0,适合权重(分布对称)</li>
+          <li>硬件友好:TensorRT / TFLite 默认</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>非对称量化 <span class="box model">UINT8</span></h3>
+        <p style="font-family: ui-monospace, monospace; font-size: 13px; color: var(--cyan);">
+          scale = (max - min) / (2<sup>b</sup> - 1)<br>
+          zero_point = round(-min / scale)<br>
+          x<sub>q</sub> = clamp(round(x / scale) + zp, 0, 2<sup>b</sup>-1)
+        </p>
+        <ul>
+          <li>零点 ≠ 0,适合激活值(ReLU 后分布偏正)</li>
+          <li>精度略高,需存储 zero_point</li>
+        </ul>
+      </div>
+    </div>
+    <div class="threecol" style="margin-top: 10px;">
+      <div class="card">
+        <h3>数值格式</h3>
+        <p class="meta">整数 vs 浮点</p>
+        <ul>
+          <li><b>INT8</b>:推理最常用,4× 压缩</li>
+          <li><b>INT4</b>:LLM 部署主流,8× 压缩</li>
+          <li><b>FP8</b>:E4M3 / E5M2,训练推理均用</li>
+          <li><b>FP4</b>:NVIDIA/MX 格式,2024 起步</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心矛盾</h3>
+        <p class="meta">精度 vs 效率</p>
+        <ul>
+          <li>位宽越低 → 体积/算力越省</li>
+          <li>位宽越低 → 量化误差越大</li>
+          <li>LLM 在 INT4 已够用,INT2 / 1-bit 仍有精度挑战</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>误差来源</h3>
+        <p class="meta">三件事毁掉精度</p>
+        <ul>
+          <li><b class="bad">outlier</b>:少数大值霸占 scale</li>
+          <li><b class="bad">rounding</b>:四舍五入丢精度</li>
+          <li><b class="bad">distribution shift</b>:训练 vs 推理分布差</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 5. 量化粒度 ========== -->
+  <section class="slide" data-num="5">
+    <h1>量化粒度:per-tensor → per-token → per-group</h1>
+    <p>粒度越细,精度越高,计算/存储开销也越大。LLM 量化普遍在 <span class="box good">per-group(128/64)</span> 取得最佳平衡。</p>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th style="width: 14%;">粒度</th><th style="width: 18%;">scale 数</th><th style="width: 22%;">精度</th><th style="width: 22%;">开销</th><th style="width: 24%;">典型场景</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="box data">per-tensor</span></td>
+            <td>1 个 / tensor</td>
+            <td><span class="box bad">低</span></td>
+            <td>极低</td>
+            <td>早期 CNN,INT8 推理</td>
+          </tr>
+          <tr>
+            <td><span class="box data">per-channel</span></td>
+            <td>C 个 (output 维度)</td>
+            <td><span class="box warn">中</span></td>
+            <td>低</td>
+            <td>CNN weight 量化标配</td>
+          </tr>
+          <tr>
+            <td><span class="box data">per-token</span></td>
+            <td>每个 token 一个</td>
+            <td><span class="box good">高</span></td>
+            <td>中</td>
+            <td>LLM activation 量化</td>
+          </tr>
+          <tr>
+            <td><span class="box data">per-group</span></td>
+            <td>每 g 个元素一组(典型 g=128/64)</td>
+            <td><span class="box good">高</span></td>
+            <td>中-高</td>
+            <td>GPTQ / AWQ / LLM.int8() 默认</td>
+          </tr>
+          <tr>
+            <td><span class="box data">sub-channel</span></td>
+            <td>亚 channel 级</td>
+            <td><span class="box good">高</span></td>
+            <td>高</td>
+            <td>FP8 训练 / Fine-grained</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>经验法则</b>:LLM 量化时,weight 用 per-group (g=128),activation 用 per-token(或 per-dynamic),KV cache 用 per-head / per-token。这是 2023 年以来 LLM 量化的"标配三件套"。
+    </div>
+  </section>
+
+  <!-- ========== 6. 量化目标 ========== -->
+  <section class="slide" data-num="6">
+    <h1>量化什么?4 类对象 × 4 类方法</h1>
+    <p>量化的对象决定了挑战类型。LLM 时代,KV cache 和 activation 的量化比 weight 更难。</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>① Weight 量化</h3>
+        <p class="meta">最成熟 · 收益最直接</p>
+        <ul>
+          <li>W4A16 / W4A8 / W3A16 是 LLM 主流</li>
+          <li>技术:GPTQ / AWQ / OmniQuant</li>
+          <li>难点:outlier channel,需 special handling</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>② Activation 量化</h3>
+        <p class="meta">推理时最不稳定</p>
+        <ul>
+          <li>动态范围大,异常值集中</li>
+          <li>技术:SmoothQuant / OmniQuant / AffineQuant</li>
+          <li>难点:在线统计 vs 离线校准</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>③ KV Cache 量化</h3>
+        <p class="meta">长上下文核心瓶颈</p>
+        <ul>
+          <li>显存随 sequence length 线性增长</li>
+          <li>技术:KIVI / KVQuant / ZipCache</li>
+          <li>难点:Key 通道异常值,Value 平稳</li>
+        </ul>
+      </div>
+    </div>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>④ Gradient 量化</h3>
+        <p class="meta">分布式训练必需</p>
+        <ul>
+          <li>FP8 训练已成大模型标配</li>
+          <li>技术:ZeRO / FP8 all-reduce</li>
+          <li>难点:通信 vs 收敛</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>⑤ Attention 量化</h3>
+        <p class="meta">新兴</p>
+        <ul>
+          <li>Attention map 量化</li>
+          <li>Q @ K^T / softmax 量化</li>
+          <li>难点:Softmax 对极端值敏感</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>⑥ Embedding 量化</h3>
+        <p class="meta">被低估的优化点</p>
+        <ul>
+          <li>大 embedding table 占用大量显存</li>
+          <li>技术:Product Quantization / Binary</li>
+          <li>难点:vocabulary size 大,outlier 多</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 7. 方案分类树 ========== -->
+  <section class="slide" data-num="7">
+    <h1>方案分类树:什么时候用什么方法?</h1>
+    <p>从"训不训练"和"有没数据"两个维度,把方案切成 4 象限。</p>
+    <div class="tree">你的场景是什么?
+
+├── 【有完整训练数据 + 可重训】 ──→ QAT (Quantization-Aware Training)
+│   ├── 经典: PACT(2018) / LSQ(2019) / DSQ(2019)
+│   ├── 通用: LSQ+ / QAT with KS(2022)
+│   └── LLM: LLM-QAT(2024) / EfficientQAT(2024)
+│
+├── 【无训练数据 + 有少量校准集】 ──→ PTQ (Post-Training Quantization)
+│   ├── CNN: BRECQ(2021) / PD-Quant(2023)
+│   ├── ViT:  RepQ-ViT(2023) / I-ViT(2023)
+│   ├── LLM:  GPTQ(2022) / AWQ(2023) / SmoothQuant(2022)
+│   └── 扩散: PTQD(2023) / Q-Diffusion(2023)
+│
+├── 【有权重 + 需要微调】 ──→ 量化 + PEFT
+│   ├── QLoRA(2023) 4-bit base + LoRA adapter
+│   ├── QA-LoRA(2023) / LoftQ(2023)
+│   └── LLM-QAT(2024) data-free distillation
+│
+└── 【从头训练 + 极致压缩】 ──→ 低比特原生训练
+    ├── 1.58-bit: BitNet b1.58(2024) ⭐
+    ├── 1-bit:    BitNet(2023)
+    └── 1-bit Adam: 1-bit LLM 大规模训练
+</div>
+    <div class="quote" style="margin-top: 8px;">
+      2023-2026 的主流:<b>PTQ + 少量 calibration</b>(99% 工业场景),<b>QLoRA</b>(微调场景),<b>1-bit 训练</b>(新前沿)。QAT 仅在精度要求极高时用。
+    </div>
+  </section>
+
+  <!-- ========== 8. PTQ 概述 ========== -->
+  <section class="slide" data-num="8">
+    <h1>训练后量化 PTQ:不训模型的压缩范式</h1>
+    <p>PTQ 是工业界最常用的方案:训练好的 FP 模型,只用 <b>几百到几千个样本</b> 做 calibration,直接得到低比特模型。</p>
+    <div class="pipeline">
+      <div class="pipeline-step">FP32 预训练模型<span class="small">teacher</span></div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step alg">收集激活统计量<span class="small">min/max/percentile</span></div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step alg">计算 scale/zero_point<span class="small">calibration</span></div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step">量化权重 + 插入 fake-quant<span class="small">inference-ready</span></div>
+    </div>
+    <div class="threecol" style="margin-top: 12px;">
+      <div class="card">
+        <h3>优势</h3>
+        <ul>
+          <li><b class="good">✓</b> 无需训练数据(可 data-free)</li>
+          <li><b class="good">✓</b> 几分钟到几小时出模型</li>
+          <li><b class="good">✓</b> 适合 LLM 等大模型</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>挑战</h3>
+        <ul>
+          <li><b class="bad">✗</b> 极低比特(INT4 / INT2)精度差</li>
+          <li><b class="bad">✗</b> 依赖 calibration set 质量</li>
+          <li><b class="bad">✗</b> 异常值敏感</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>关键技术点</h3>
+        <ul>
+          <li>校准算法:MinMax / Percentile / KL / MSE</li>
+          <li>逐层 / 逐块重建:BRECQ 思想</li>
+          <li>混合精度:敏感层保留 FP</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 9. PTQ 经典流程 ========== -->
+  <section class="slide tight" data-num="9">
+    <h1>PTQ 的核心算法步骤</h1>
+    <p>从 calibration 到得到 INT 模型,4 步流程。</p>
+    <div class="pipeline">
+      <div class="pipeline-step">1. 选择量化粒度<span class="small">per-tensor/channel/group</span></div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step alg">2. 校准 scale/zero_point<span class="small">minmax / KL / histogram</span></div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step alg">3. 量化权重 / 激活<span class="small">fake-quant / rounding</span></div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step eval">4. 评测 + 调优<span class="small">校准集 / 验证集</span></div>
+    </div>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>① MinMax 校准</h3>
+        <p class="meta">最简单 · 工业默认</p>
+        <p style="font-family: ui-monospace, monospace; font-size: 12px;">
+          scale = max(|x|) / 127<br>
+          zp = 0 (对称)
+        </p>
+        <p class="small">优点:快速 / 缺点:outlier 毁掉精度</p>
+      </div>
+      <div class="card">
+        <h3>② Percentile 校准</h3>
+        <p class="meta">截断 outlier</p>
+        <p style="font-family: ui-monospace, monospace; font-size: 12px;">
+          clip = percentile(x, 99.99)<br>
+          scale = clip / 127
+        </p>
+        <p class="small">SmoothQuant 内部用类似思路</p>
+      </div>
+      <div class="card">
+        <h3>③ KL 散度校准</h3>
+        <p class="meta">TensorRT 默认</p>
+        <p style="font-family: ui-monospace, monospace; font-size: 12px;">
+          min KL(FP_hist || INT_hist)<br>
+          选择最优 threshold T
+        </p>
+        <p class="small">数学最优 / 计算略慢</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>④ 优化方向(2023+)</h3>
+      <p>· <b>AdaRound(2020)</b>:每个 weight 学 soft-rounding · <b>BRECQ(2021)</b>:block 重建,跨层优化 · <b>PD-Quant(2023)</b>:用预测差异度指标找敏感层 · <b>BitSplit(2020)</b>:可微 PTQ</p>
+    </div>
+  </section>
+
+  <!-- ========== 10. BRECQ ========== -->
+  <section class="slide" data-num="10">
+    <h1>代表作 · BRECQ(2021)· 49 引</h1>
+    <p class="gray">Pushing the Limit of Post-Training Quantization by Block Reconstruction</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>传统 PTQ 只逐层优化,没考虑层间依赖</li>
+          <li>cross-layer 误差累积,精度差</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心思想</h3>
+        <ul>
+          <li>把模型切成 <b>block</b>(2-3 层一组)</li>
+          <li>在每个 block 内部,重建输出分布</li>
+          <li>用 L2 距离 + 激活相似度作为 loss</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>贡献</h3>
+        <ul>
+          <li>4-bit ResNet-18 ImageNet 首次 <b>无损</b></li>
+          <li>首次证明 block-level PTQ 优于 layer-level</li>
+          <li>开启 block-reconstruction 系列工作</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:PTQ 的"层"应该比单层大,比整模型小。<b>block 重建</b> 思想被 PD-Quant / BQ-Nets 等多篇后续工作继承。
+    </div>
+  </section>
+
+  <!-- ========== 11. PD-Quant ========== -->
+  <section class="slide" data-num="11">
+    <h1>代表作 · PD-Quant(2023)· 67 引</h1>
+    <p class="gray">Post-Training Quantization Based on Prediction Difference Metric</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>混合精度 PTQ 关键:如何判断层敏感度?</li>
+          <li>传统方法:参数量 / Hessian 迹 / SNR</li>
+          <li>这些指标和最终精度相关性弱</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心思想</h3>
+        <ul>
+          <li>直接用 <b>预测差异</b>(prediction difference)作指标</li>
+          <li>对每层尝试不同 bit width,看对最终输出的影响</li>
+          <li>引入超网 / 搜索算法分配 bit</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>贡献</h3>
+        <ul>
+          <li>首个用 "end-to-end prediction" 而非 "中间特征" 评估敏感度</li>
+          <li>ResNet-50 / MobileNet 在 4-bit 显著优于 BRECQ</li>
+          <li>提出 <b>PD-Quant 搜索算法</b> 自动分配 bit</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:混合精度 PTQ 的"敏感度指标"本身是个研究问题。"预测差异"是比 Hessian 迹更直接的代理指标。
+    </div>
+  </section>
+
+  <!-- ========== 12. 扩散模型 PTQ ========== -->
+  <section class="slide" data-num="12">
+    <h1>前沿:扩散模型的 PTQ</h1>
+    <p>Stable Diffusion 推理 20-50 步,每步 UNet,极慢。量化是刚需。</p>
+    <div class="twocol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>PTQD(2023)· 13 引</h3>
+        <p class="meta">Post-Training Quantization for Diffusion Models</p>
+        <ul>
+          <li>发现:扩散模型各时间步误差敏感性差异巨大</li>
+          <li>提出:时间步相关的混合精度</li>
+          <li>关键 insight:前面几步对噪声敏感,需保留 FP</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Q-Diffusion(2023)· 112 引</h3>
+        <p class="meta">Quantizing Diffusion Models</p>
+        <ul>
+          <li>首个端到端 PTQ 流水线 for Stable Diffusion</li>
+          <li>对 UNet 各组件分别量化(权重 / 激活 / shortcut)</li>
+          <li>校准噪声样本,跨时间步共享 scale</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>挑战</h3>
+      <p>· 扩散模型迭代 20-50 步,误差累积放大 · 不同时间步激活分布差异极大 · 文本条件(text embedding)难量化 · 评分蒸馏(guidance scale)放大误差</p>
+    </div>
+    <div class="quote" style="margin-top: 6px;">
+      <b>2024 趋势</b>:<span class="box idea">时间步自适应 bit 分配</span> + <span class="box idea">CFG 兼容量化</span>。这仍是一个有空间的方向。
+    </div>
+  </section>
+
+  <!-- ========== 13. QAT + STE ========== -->
+  <section class="slide" data-num="13">
+    <h1>量化感知训练 QAT + STE</h1>
+    <p>QAT 在训练阶段就模拟量化误差,让模型"适应"低精度。核心是让梯度穿过不可微的 round 操作。</p>
+    <div class="card" style="margin-top: 6px;">
+      <h3>STE: Straight-Through Estimator</h3>
+      <p style="font-family: ui-monospace, monospace; font-size: 13px; color: var(--cyan);">
+        forward:  y = round(x) · scale<br>
+        backward: ∂L/∂x ≈ ∂L/∂y   (把 round 看作恒等映射)
+      </p>
+      <p class="small">QAT 的灵魂:让不可微的量化在反向传播中"直传",从而端到端可训练。</p>
+    </div>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>QAT 完整流程</h3>
+        <p class="meta">5 步</p>
+        <ul>
+          <li>① 准备 FP 预训练模型</li>
+          <li>② 插入 fake-quant 节点</li>
+          <li>③ 少量 epoch 微调(1-3 epoch)</li>
+          <li>④ 评估 INT 模型精度</li>
+          <li>⑤ 导出推理引擎</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心难点</h3>
+        <ul>
+          <li><b class="bad">STE 误差</b>:round 不是恒等映射,前向与反向不一致</li>
+          <li><b class="bad">梯度消失</b>:超低比特(INT2 / 1-bit)梯度极小</li>
+          <li><b class="bad">训练成本</b>:QAT 仍需完整数据集 + 多 epoch</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2024+ 趋势</h3>
+        <ul>
+          <li><b class="good">✓</b> LLM-QAT(2024):data-free QAT for LLM</li>
+          <li><b class="good">✓</b> EfficientQAT(2024):block-wise 训练</li>
+          <li><b class="good">✓</b> BitDistiller(2024):QAT + 蒸馏</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 14. PACT ========== -->
+  <section class="slide" data-num="14">
+    <h1>经典 · PACT(2018)· 720 引</h1>
+    <p class="gray">Parameterized Clipping Activation for Quantized Neural Networks · Cho & Kung</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>激活分布的 outlier 让 INT8 精度崩溃</li>
+          <li>固定 clip 阈值无法适配不同层</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心思想</h3>
+        <ul>
+          <li>把 <b>clip 阈值</b> 设为 <b>可学习参数</b></li>
+          <li>每个 activation channel 一个 clip 值</li>
+          <li>训练时与权重一起被优化</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>贡献 & 影响</h3>
+        <ul>
+          <li>首个 <b>可学习激活 clip</b> 的 QAT 方案</li>
+          <li>ImageNet ResNet-20 2-bit 几乎无损</li>
+          <li>被 LSQ / PACT+ / DSQ 等大量后续工作继承</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:量化参数(阈值/clip 值/步长)本身可以学习,这打开了"可微量化"的大门。
+    </div>
+  </section>
+
+  <!-- ========== 15. LSQ ========== -->
+  <section class="slide" data-num="15">
+    <h1>经典 · LSQ(2019)· 296 引</h1>
+    <p class="gray">Learned Step Size Quantization · Esser et al. (Facebook)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>PACT 只学 clip,step size 仍固定</li>
+          <li>step size 对量化误差影响大,需要自适应</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心思想</h3>
+        <ul>
+          <li>把 <b>量化步长 s</b> 设为 <b>可学习参数</b></li>
+          <li>对 weight 和 activation 分别学 s</li>
+          <li>引入梯度 scaling,避免 s 训练不稳定</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>贡献 & 影响</h3>
+        <ul>
+          <li>ImageNet 首次 3-bit ResNet 接近 FP 精度</li>
+          <li>成为 QAT 的"事实标准"基线</li>
+          <li>LSQ+ (2020) 进一步支持 mix-precision</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:把"step size"作为可学习参数,虽然简单,却极大释放了 QAT 的精度。BitDistiller(2024) / EfficientQAT(2024) 都继承这一思想。
+    </div>
+  </section>
+
+  <!-- ========== 16. LLM-QAT / EfficientQAT ========== -->
+  <section class="slide" data-num="16">
+    <h1>前沿 · LLM-QAT(2024)· 107 引 + EfficientQAT(2024)· 20 引</h1>
+    <p class="gray">把 QAT 搬到大模型时代</p>
+    <div class="twocol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>LLM-QAT(2024)· Meta</h3>
+        <p class="meta">Data-Free QAT for LLM</p>
+        <ul>
+          <li>挑战:LLM 没有训练数据可用</li>
+          <li>用 FP 模型自生成数据(self-distillation)</li>
+          <li>对 attention / FFN / KV cache 全量化</li>
+          <li>LLaMA-2 7B 在 INT4 上 perplexity 接近 FP16</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>EfficientQAT(2024)· 20 引</h3>
+        <p class="meta">Block-wise QAT 加速</p>
+        <ul>
+          <li>挑战:LLM 端到端 QAT 显存爆炸</li>
+          <li>把模型切成 block,block 内独立 QAT</li>
+          <li>两阶段:先 PTQ 初始化,再 block-wise QAT</li>
+          <li>LLaMA-2 70B INT2 在单卡 A100 即可训练</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>共同 insight</h3>
+      <p>· LLM 的 QAT 必须 <b>避免端到端</b>,block-wise + 自生成数据是关键 · <b>两阶段 PTQ → QAT</b> 是高效范式 · 蒸馏 + QAT 结合能进一步提精度(BitDistiller 2024)</p>
+    </div>
+  </section>
+
+  <!-- ========== 17. LLM 量化挑战 ========== -->
+  <section class="slide" data-num="17">
+    <h1>LLM 量化的特殊挑战</h1>
+    <p>传统 CNN 的 PTQ/QAT 套路搬到 LLM 上,直接失效。原因有三:</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>① Activation Outlier</h3>
+        <p class="meta">少数大值霸占 scale</p>
+        <ul>
+          <li>LLM 激活有 <b>重尾分布</b>(heavy-tailed)</li>
+          <li>少数 channel 异常值达 100× 中位数</li>
+          <li>直接 MinMax 量化 → 整张图被"压扁"</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>② 模型规模</h3>
+        <p class="meta">7B-405B 参数</p>
+        <ul>
+          <li>端到端 QAT 显存爆炸</li>
+          <li>梯度反传占资源</li>
+          <li>需要 block-wise / PEFT 方案</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>③ Calibration 难</h3>
+        <p class="meta">依赖少量样本</p>
+        <ul>
+          <li>Transformer attention 复杂</li>
+          <li>LayerNorm / Softmax 不易量化</li>
+          <li>分布 shift 在 autoregressive 时累积</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>LLM 量化的"第一性原理"</b>:<b>outlier 是头号敌人</b>。所有 SOTA 方法(AWQ / SmoothQuant / OmniQuant)核心都是在 <b>不同维度</b> 处理 outlier。
+    </div>
+  </section>
+
+  <!-- ========== 18. LLM.int8() ========== -->
+  <section class="slide" data-num="18">
+    <h1>代表作 · LLM.int8()(2022)· 114 引</h1>
+    <p class="gray">8-bit Matrix Multiplication for Transformers at Scale · Dettmers et al.</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>175B GPT-3 在 INT8 推理会崩</li>
+          <li>outlier 维度 (~0.1% feature)毁掉精度</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心方案</h3>
+        <ul>
+          <li><b>Vector-wise Quantization</b>:内积分两半</li>
+          <li>· outlier 维度 → FP16 矩阵乘</li>
+          <li>· 普通维度 → INT8 矩阵乘</li>
+          <li>· 两部分加和</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>贡献 & 局限</h3>
+        <ul>
+          <li><b>首次</b> 让 >6B LLM 跑 INT8 不掉点</li>
+          <li>bitsandbytes 库沿用至今</li>
+          <li><b>局限</b>:混合精度有 ~20% 速度损耗</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>"outlier-aware mixed-precision"</b> 思想是后续所有 LLM 量化方法的"种子"。AWQ / SmoothQuant / OmniQuant 都在不同维度发展这个思想。
+    </div>
+  </section>
+
+  <!-- ========== 19. GPTQ ========== -->
+  <section class="slide" data-num="19">
+    <h1>代表作 · GPTQ(2022)· 130 引</h1>
+    <p class="gray">Accurate Post-Training Quantization for Generative Pre-trained Transformers · Frantar et al. (ICLR 2023)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>传统 OBQ(Optimal Brain Quantization)对 LLM 太慢</li>
+          <li>OBQ 逐个 weight 优化,无法扩展到 175B</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心方案</h3>
+        <ul>
+          <li>用 <b>二阶信息</b>(Hessian 逆)做列方向量化</li>
+          <li>逐列量化 + 误差补偿</li>
+          <li>利用 <b>Cholesky 分解</b> 高效求 Hessian 逆</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>贡献 & 影响</h3>
+        <ul>
+          <li>BLOOM-176B <b>3-bit</b> 推理 接近 FP16 精度</li>
+          <li>单卡 A100 几小时完成 175B 量化</li>
+          <li>AutoGPTQ / GPTQModel 等开源实现广泛使用</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:把二阶优化(scale-aware error compensation)扩展到 LLM 级别,是"算法可扩展性"的胜利。
+    </div>
+  </section>
+
+  <!-- ========== 20. SmoothQuant ========== -->
+  <section class="slide" data-num="20">
+    <h1>代表作 · SmoothQuant(2022)· 99 引</h1>
+    <p class="gray">Accurate and Efficient Post-Training Quantization for Large Language Models · Xiao et al. (MIT)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>LLM 激活 outlier 让 INT8 量化难</li>
+          <li>Outlier 通常出现在 <b>固定 channel</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心方案</h3>
+        <ul>
+          <li>数学恒等式:W·X = (W·diag(s)<sup>-1</sup>) · (diag(s)·X)</li>
+          <li>把 activation 的难度"迁移"到 weight</li>
+          <li>s 选为 <code>s = max(|X|)<sup>α</sup> / max(|W|)<sup>1-α</sup></code>,α=0.5</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>贡献 & 影响</h3>
+        <ul>
+          <li>OPT-175B / BLOOM-176B <b>W8A8</b> 几乎无损</li>
+          <li><b>无需训练数据</b>(纯 PTQ)</li>
+          <li>思路简单,工程化友好</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>"等量难度迁移"</b> 是处理 activation outlier 的优雅思路。OWQ / Outlier Suppression+ 等都继承。
+    </div>
+  </section>
+
+  <!-- ========== 21. AWQ ========== -->
+  <section class="slide" data-num="21">
+    <h1>代表作 · AWQ(2023)· 172 引</h1>
+    <p class="gray">Activation-aware Weight Quantization for LLM Compression · Lin et al. (MIT, GetMobile 2025)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>观察</h3>
+        <ul>
+          <li>LLM 权重中 <b>1% salient</b> channel 保护后,精度不掉</li>
+          <li>salient channel = activation 大的 channel</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心方案</h3>
+        <ul>
+          <li>用 activation 统计找 salient weight channel</li>
+          <li>对 salient channel 保留 <b>更高位宽</b>(per-group 量化)</li>
+          <li>或对 salient channel <b>scale up</b>(等价效果)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>贡献 & 影响</h3>
+        <ul>
+          <li>Llama-2 7B/13B/70B <b>4-bit</b> 几乎无损</li>
+          <li>推理速度提升 <b>3.6×</b></li>
+          <li>llm-awq 开源,TensorRT-LLM / vLLM 集成</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:"activation-aware" 是 LLM 量化最重要的设计原则之一。同类思想被 OWQ / OmniQuant / AffineQuant 继承。
+    </div>
+  </section>
+
+  <!-- ========== 22. QLoRA ========== -->
+  <section class="slide" data-num="22">
+    <h1>代表作 · QLoRA(2023)· 496 引</h1>
+    <p class="gray">Efficient Finetuning of Quantized LLMs · Dettmers et al. (华盛顿大学, NeurIPS 2023)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>目标</h3>
+        <ul>
+          <li>65B 模型 <b>单卡 48GB</b> 微调</li>
+          <li>保持 FP16 16-bit 任务性能</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>三大创新</h3>
+        <ul>
+          <li><b>① NF4</b>:4-bit NormalFloat,信息论最优</li>
+          <li><b>② Double Quant</b>:对量化常数再量化,省 0.4 bit/param</li>
+          <li><b>③ Paged Optimizers</b>:显存溢出自动分页到 CPU</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>贡献 & 影响</h3>
+        <ul>
+          <li><b>引用数 496</b> — 整个量化领域的全网最高引</li>
+          <li>Guanaco 模型 / 大量 PEFT 后续工作</li>
+          <li>bitsandbytes 库 4-bit base + LoRA 成为标配</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:量化不必是为了推理,<b>也是为了微调</b>。"量化 + PEFT"打开新维度。LoftQ / QA-LoRA 都在这个范式下。
+    </div>
+  </section>
+
+  <!-- ========== 23. OmniQuant ========== -->
+  <section class="slide" data-num="23">
+    <h1>代表作 · OmniQuant(2023)· 14 引 · ICLR 2024</h1>
+    <p class="gray">Omnidirectionally Calibrated Quantization for Large Language Models · Shao et al.</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>思路</h3>
+        <ul>
+          <li>把 PTQ 的超参(<b>clip ratio</b>、<b>scale</b>)做成 <b>可学习</b></li>
+          <li>但保持 <b>无训练数据</b>(data-free)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>两大模块</h3>
+        <ul>
+          <li><b>Learnable Weight Clipping (LWC)</b>:学每个 channel 的 clip</li>
+          <li><b>Learnable Equivalent Transformation (LET)</b>:学 affine 变换</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li>Llama-2 7B <b>W2A16</b>(2-bit 权重)→ 接近 FP16</li>
+          <li>多个 LLM 家族均 SOTA(2024-2025)</li>
+          <li>OmniQuant + GPTQ = 进一步提升</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>"PTQ + 可微调参"</b> 是介于 PTQ 和 QAT 之间的优雅中间地带。AffineQuant(2024) 是其改进版。
+    </div>
+  </section>
+
+  <!-- ========== 24. QuaRot / SpinQuant ========== -->
+  <section class="slide" data-num="24">
+    <h1>代表作 · QuaRot(2024)+ SpinQuant(2024)</h1>
+    <p class="gray">用旋转矩阵把 outlier 抹平</p>
+    <div class="twocol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>QuaRot(2024)· 3 引</h3>
+        <p class="meta">Outlier-Free 4-Bit Inference in Rotated LLMs · Ashkboos et al.</p>
+        <ul>
+          <li>用 <b>随机 Hadamard 旋转</b> 抹平 outlier</li>
+          <li>在 <b>每一层</b> 之前插入旋转矩阵</li>
+          <li>数学等价的变换,不改变输出</li>
+          <li>Llama-2 70B <b>W4A4</b> 几乎无损</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>SpinQuant(2024)· 6 引</h3>
+        <p class="meta">LLM Quantization with Learned Rotations · Liu et al. (Meta)</p>
+        <ul>
+          <li>把 QuaRot 的"随机旋转"换成 <b>学到的旋转</b></li>
+          <li>在 calibration set 上优化旋转矩阵</li>
+          <li>LLaMA-2 / LLaMA-3 / Mistral 均 SOTA</li>
+          <li>Meta 已开源,被生产系统采用</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>2024 新范式</b>:<b>几何变换(旋转/缩放)预处理</b> → 解决 outlier → 再量化。这是一条"治标治本"的新路线。
+    </div>
+  </section>
+
+  <!-- ========== 25. KV Cache 量化 KIVI ========== -->
+  <section class="slide" data-num="25">
+    <h1>代表作 · KIVI(2024)· 6 引 · ICLR 2024</h1>
+    <p class="gray">A Tuning-Free Asymmetric 2bit Quantization for KV Cache · Liu et al.</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>长上下文 LLM 推理时 <b>KV cache</b> 占显存大头</li>
+          <li>LLaMA-7B + 100K 上下文,KV 占 ~14GB</li>
+          <li>直接 KV 量化会掉点</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心观察</h3>
+        <ul>
+          <li>Key: 同一 channel 在不同 token 表现一致(都 outlier)</li>
+          <li>Value: 同一 token 在不同 channel 表现一致</li>
+          <li>两种分布特征 <b>完全不同</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>方案</h3>
+        <ul>
+          <li>Key: <b>per-channel</b> 量化(2-bit)</li>
+          <li>Value: <b>per-token</b> 量化(2-bit)</li>
+          <li>Tuning-free,直接 PTQ 应用</li>
+          <li>Llama 7B + 2-bit KV → 6.7× 显存压缩</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>延伸</b>:KVQuant(2024) / ZipCache(2024) / MiKV(2024) / KVQuant + KIVI 混合精度(2025)——这是 <span class="box good">长上下文 LLM 部署</span> 的核心战场。
+    </div>
+  </section>
+
+  <!-- ========== 26. 1-bit LLM BitNet b1.58 ========== -->
+  <section class="slide" data-num="26">
+    <h1>代表作 · BitNet b1.58(2024)· 37 引</h1>
+    <p class="gray">The Era of 1-bit LLMs: All Large Language Models are in 1.58 Bits · Ma et al. (微软)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>突破</h3>
+        <ul>
+          <li>1.58 bit/weight = {-1, 0, +1}</li>
+          <li>权重 <b>原生训练</b> 而非后量化</li>
+          <li>3B 模型 <b>超过</b> LLaMA 3B FP16 在多个任务</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>技术细节</h3>
+        <ul>
+          <li>激活用 8-bit,KV 用 4-bit</li>
+          <li>用 <b>sign()</b> 函数做前向,STE 做反向</li>
+          <li>三值权重的 entropy 比二值高(信息更多)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>意义 & 局限</h3>
+        <ul>
+          <li>开创 <b>"原生 1-bit LLM"</b> 新范式</li>
+          <li>bitnet.cpp 2025 推理速度 5-7× FP16</li>
+          <li><b>局限</b>:仍需大量 GPU 训练资源</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>为什么是 1.58</b>?三值 {-1, 0, +1} 的信息量 = log₂(3) ≈ 1.585 bit,刚好是 FP16 信息的 1/10。这是 <span class="box idea">信息论最优的极简选择</span>。
+    </div>
+  </section>
+
+  <!-- ========== 27. AffineQuant / FlatQuant ========== -->
+  <section class="slide" data-num="27">
+    <h1>前沿 · AffineQuant(2024)· 1 引 + FlatQuant(2024)· 2 引</h1>
+    <p class="gray">让量化参数"足够灵活"</p>
+    <div class="twocol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>AffineQuant(2024)· Li et al.</h3>
+        <p class="meta">Affine Transformation Quantization for LLMs</p>
+        <ul>
+          <li>把 OmniQuant 的 LET 模块换成 <b>任意 affine 变换</b></li>
+          <li>每个 layer 学一个 2×2 矩阵(channel 混合)</li>
+          <li>相当于学到了 <b>更灵活</b> 的 outlier 平移</li>
+          <li>Llama-2 7B W2A16 <b>PPL 6.13</b>(OmniQuant 是 6.49)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>FlatQuant(2024)· Sun et al.</h3>
+        <p class="meta">Flatness Matters for LLM Quantization</p>
+        <ul>
+          <li>关键 insight:<b>权重分布的"平坦度"</b> 影响量化难度</li>
+          <li>对 weight 和 activation 分别学 affine + 旋转</li>
+          <li>Llama-3 8B W4A4 接近 FP16(2025 刷新 SOTA)</li>
+          <li>开源,已被生产系统集成</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>趋势</b>:<b>"量化前的预处理"</b>(旋转、缩放、affine 变换)成为新前沿。从 GPTQ → SmoothQuant → AWQ → SpinQuant → FlatQuant,预处理越来越复杂、灵活。
+    </div>
+  </section>
+
+  <!-- ========== 28. QServe ========== -->
+  <section class="slide" data-num="28">
+    <h1>代表作 · QServe(2024)· 6 引</h1>
+    <p class="gray">W4A8KV4 Quantization and System Co-design for Efficient LLM Serving · Lin et al. (MIT)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>W4A16 算法好但 <b>推理慢</b></li>
+          <li>W4A4 算得快但精度差</li>
+          <li>需要 <b>算法-系统</b> 协同</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>方案</h3>
+        <ul>
+          <li>Weight <b>W4</b> + Activation <b>A8</b> + KV <b>KV4</b></li>
+          <li>设计 <b>Matmul 内核</b> 解耦 W4 加载与 A8 计算</li>
+          <li>端到端 <b>GPU 推理服务系统</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li>Llama-3 8B 1.5× throughput vs FP16</li>
+          <li>1.2× vs TensorRT-LLM W4A16</li>
+          <li>open-source github.com/mit-han-lab/qserve</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>"W4A8KV4" 这种非均匀 bit 配置</b>已成为 <span class="box system">生产级 LLM 服务</span> 的事实标准。算法-系统协同设计是 2024-2025 必经之路。
+    </div>
+  </section>
+
+  <!-- ========== 29. T-MAC ========== -->
+  <section class="slide" data-num="29">
+    <h1>代表作 · T-MAC(2024)· CPU 上的 LUT 量化</h1>
+    <p class="gray">CPU Renaissance for Table-based LLM Quantization · Wei et al. (微软)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>低比特 CPU 推理(INT4/INT2)需要特殊 SIMD 指令</li>
+          <li>传统 GEMM 路径在 <b>异构 CPU</b>(ARM/x86/RISC-V)难以统一</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>方案</h3>
+        <ul>
+          <li>把 weight 预计算成 <b>查找表</b>(LUT)</li>
+          <li>推理 = 查表 + 标量乘加</li>
+          <li>统一 CPU 指令集,无需 SIMD</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li>Llama-2 7B <b>2-bit</b> 在 Mac CPU 上 <b>30 token/s</b></li>
+          <li>在 RISC-V / ARM 上同样 SOTA</li>
+          <li>4-bit Llama 跑赢 llama.cpp FP16</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<span class="box system">算法-硬件协同</span> 不止于 GPU。<b>CPU 上的 LUT 量化</b>是边缘部署的新方向。
+    </div>
+  </section>
+
+  <!-- ========== 30. 视觉 Transformer 量化 ========== -->
+  <section class="slide" data-num="30">
+    <h1>视觉 Transformer 量化:ViT / Swin / DETR</h1>
+    <p>ViT 类模型的激活分布比 CNN 更难量化:heavy-tailed,outlier 严重。</p>
+    <div class="twocol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>I-ViT(2023)· 113 引</h3>
+        <p class="meta">Integer-only Quantization for Efficient ViT Inference</p>
+        <ul>
+          <li>首个 ViT 的 <b>纯整数量化</b> 推理方案</li>
+          <li>解决 Softmax / LayerNorm 的整数量化</li>
+          <li>DeiT-S 8-bit 几乎无损,INT-only 推理加速 3.6×</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>RepQ-ViT(2023)· 91 引</h3>
+        <p class="meta">Scale Reparameterization for PTQ of ViT</p>
+        <ul>
+          <li>核心:对 <b>Softmax / LayerNorm</b> 做 scale reparameterization</li>
+          <li>把 PTQ 难以处理的非线性模块"吸收"到线性层</li>
+          <li>DeiT-S 4-bit 仍保持高准确率</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>其他工作</h3>
+      <p>· <b>NoisyQuant(2023)</b>· 47 引 — 用量化噪声当"正则化",巧解 ViT 激活 heavy-tail · <b>Q-ViT(2022)</b> · <b>PTQ4ViT(2022)</b> · <b>FQ-ViT(2022)</b> · <b>Swin-Quant(2023)</b>(Swin Transformer 专用)</p>
+    </div>
+  </section>
+
+  <!-- ========== 31. 扩散模型量化 ========== -->
+  <section class="slide" data-num="31">
+    <h1>扩散模型量化:从 SD1.5 到 SD3 / FLUX</h1>
+    <p>扩散模型是迭代去噪,每步 1 个 UNet forward。量化能省 50%+ 时间。</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>Q-Diffusion(2023)· 112 引</h3>
+        <p class="meta">SD 端到端 PTQ 流水线</p>
+        <ul>
+          <li>对 UNet 权重量化 + shortcut 分支量化</li>
+          <li>校准数据用 noise sample</li>
+          <li>W4A8 SD1.5 FID 几乎不变</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>PTQD(2023)· 13 引</h3>
+        <p class="meta">时间步自适应量化</p>
+        <ul>
+          <li>发现各时间步误差敏感性差异巨大</li>
+          <li>前面步骤(t 较大)需更高位宽</li>
+          <li>W4A8 SD 接近 FP16 效果</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2024 进展</h3>
+        <ul>
+          <li><b>SD3 / FLUX</b>(DiT 架构)量化</li>
+          <li><b>Video-LDM</b> 量化</li>
+          <li><b>CFG(Classifier-Free Guidance)</b> 兼容量化</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>挑战</b>:<b>CFG 放大误差</b>(guidance scale 7.5 经常让 4-bit 失效)。<span class="box warn">CFG 兼容量化</span> 是 2024-2025 的 open problem。
+    </div>
+  </section>
+
+  <!-- ========== 32. 多模态 / VLM 量化 ========== -->
+  <section class="slide" data-num="32">
+    <h1>多模态 / VLM 量化:LLaVA / Qwen-VL / InternVL</h1>
+    <p>2024-2025 多模态 LLM 爆火,但视觉编码器 + LLM 的联合量化才刚起步。</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>挑战</h3>
+        <ul>
+          <li><b>ViT</b> 激活分布难量化(参考 slide 30)</li>
+          <li><b>LLM</b> 权重有 outlier(参考 slide 17)</li>
+          <li><b>Modality gap</b>:text 和 vision 分布差异</li>
+          <li><b>Projector</b>:cross-attention 难量化</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2024-2025 关键工作</h3>
+        <ul>
+          <li><b>LLM-QAT</b> 扩展到 LLaVA(2024)</li>
+          <li><b>Q-ViT</b> 系列做 ViT-side</li>
+          <li><b>MBQ</b>(Modality-Balanced Quantization)</li>
+          <li><b>MQuant</b>(2025) · <b>OptiVLM</b>(2025)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>研究机会</h3>
+        <ul>
+          <li>· 模态不平衡:ViT 量化误差传到 LLM</li>
+          <li>· 跨模态对齐的量化友好训练</li>
+          <li>· 视频 / 音频模态量化</li>
+          <li>· 实时多模态推理</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>2025+ 趋势</b>:<span class="box idea">多模态协同量化</span>、<span class="box idea">视频 LLM 量化</span>、<span class="box idea">VLM 的 KV cache 压缩</span>。
+    </div>
+  </section>
+
+  <!-- ========== 33. 年份趋势 ========== -->
+  <section class="slide" data-num="33">
+    <h1>研究热度趋势(2023-2026, OpenAlex 669 篇)</h1>
+    <p>2023-2024 是 LLM 量化的爆发期,2025 开始向 1-bit / 旋转类 / 系统协同转移。</p>
+    <div class="bar"><div class="lbl">2023</div><div class="fill" style="width: 280px; background: var(--blue);"></div><div class="val">213 篇 · GPTQ/AWQ/QLoRA</div></div>
+    <div class="bar"><div class="lbl">2024</div><div class="fill" style="width: 290px; background: var(--purple);"></div><div class="val">220 篇 · SmoothQuant 工业落地 / 旋转类出现</div></div>
+    <div class="bar"><div class="lbl">2025</div><div class="fill" style="width: 205px; background: var(--green);"></div><div class="val">155 篇 · 1-bit LLM / QAT-LLM / 系统协同</div></div>
+    <div class="bar"><div class="lbl">2026(预)</div><div class="fill" style="width: 110px; background: var(--orange);"></div><div class="val">81 篇 · 多模态 / 视频 / 长上下文</div></div>
+    <div class="threecol" style="margin-top: 14px;">
+      <div class="card">
+        <h3>2023 主旋律</h3>
+        <p class="meta">LLM 量化元年</p>
+        <ul>
+          <li>QLoRA(496 引) / AWQ(172) / GPTQ(130)</li>
+          <li>outlier 首次成为焦点</li>
+          <li>arXiv 预印本占主流</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2024 主旋律</h3>
+        <p class="meta">走向 4-bit / 旋转</p>
+        <ul>
+          <li>SmoothQuant / OmniQuant 工业落地</li>
+          <li>QuaRot / SpinQuant 旋转范式</li>
+          <li>BitNet b1.58 突破 1-bit</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2025+ 主旋律</h3>
+        <p class="meta">系统协同 + 新格式</p>
+        <ul>
+          <li>QServe / T-MAC 算法-系统协同</li>
+          <li>FP8 / FP4 / MX 格式普及</li>
+          <li>1-bit 训练(原生 BitNet)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 34. Idea 矩阵概述 ========== -->
+  <section class="slide" data-num="34">
+    <h1>可发文章的研究机会 · 5 大方向</h1>
+    <p>下面 5 个 idea 来自上面 30+ 篇代表工作 + 跨领域知识组合。每个 idea 给出目标 venue / 关键技术 / 难度。</p>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width: 5%;">#</th>
+            <th style="width: 30%;">Idea 方向</th>
+            <th style="width: 18%;">目标会议/期刊</th>
+            <th style="width: 17%;">关键起点</th>
+            <th style="width: 18%;">难度</th>
+            <th style="width: 12%;">时间窗</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>A</b></td>
+            <td>CFG 兼容的扩散模型量化</td>
+            <td><span class="box eval">CVPR 2026</span> <span class="box eval">ICCV 2026</span></td>
+            <td>PTQD(2023)</td>
+            <td>中</td>
+            <td>6-9 月</td>
+          </tr>
+          <tr>
+            <td><b>B</b></td>
+            <td>量化模型的成员推断攻击 / 隐私保护</td>
+            <td><span class="box eval">S&P 2026</span> <span class="box eval">USENIX 2026</span></td>
+            <td>OWQ(2024) + 隐私文献</td>
+            <td>中-高</td>
+            <td>9-12 月</td>
+          </tr>
+          <tr>
+            <td><b>C</b></td>
+            <td>1-bit LLM 的边缘设备部署</td>
+            <td><span class="box eval">MLSys 2026</span> <span class="box eval">ASPLOS 2026</span></td>
+            <td>BitNet b1.58 + T-MAC</td>
+            <td>高</td>
+            <td>12-15 月</td>
+          </tr>
+          <tr>
+            <td><b>D</b></td>
+            <td>多模态协同量化(ViT + LLM)</td>
+            <td><span class="box eval">NeurIPS 2026</span> <span class="box eval">ICML 2026</span></td>
+            <td>I-ViT + OmniQuant</td>
+            <td>中-高</td>
+            <td>9-12 月</td>
+          </tr>
+          <tr>
+            <td><b>E</b></td>
+            <td>量化友好的持续学习 / 终身学习</td>
+            <td><span class="box eval">ICLR 2026</span> <span class="box eval">TPAMI</span></td>
+            <td>EfficientQAT + 持续学习</td>
+            <td>高</td>
+            <td>12-18 月</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>优先级</b>:A(快出活) > B(易发) > D(可深) > C(需系统能力) > E(需长期积累)。下面 5 页展开。
+    </div>
+  </section>
+
+  <!-- ========== 35. Idea A ========== -->
+  <section class="slide" data-num="35">
+    <h1>Idea A · CFG 兼容的扩散模型量化</h1>
+    <p class="gray">目标:CVPR 2026 / ICCV 2026 · 难度:中 · 时间:6-9 月</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>CFG(Classifier-Free Guidance)放大量化误差</li>
+          <li>guidance scale 7.5 时,W4A8 SD1.5 FID 退化</li>
+          <li>主流 PTQD / Q-Diffusion 都 <b>忽略 CFG</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>技术路径</h3>
+        <ul>
+          <li>分析 CFG 输出 = ε_cond + s·(ε_cond - ε_uncond)</li>
+          <li>对 cond / uncond 两路分别量化</li>
+          <li>联合优化 scale,让 <b>误差在 CFG 后被抵消</b></li>
+          <li>或:动态 bit allocation based on guidance scale</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>实验设计</h3>
+        <ul>
+          <li>SD1.5 / SDXL / SD3 / FLUX</li>
+          <li>MS-COCO / PartiPrompt 评测</li>
+          <li>FID / CLIP-score / 推理速度</li>
+          <li>对比 PTQD / Q-Diffusion baseline</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>为什么能发</h3>
+      <p>· CFG 兼容量化是 <b>2024-2025 open problem</b>(FLUX 量化时尤其严重)· 现有方法只考虑单步去噪,不考虑 CFG 放大 · 代码基础:Q-Diffusion + diffusers 都有现成 pipeline</p>
+    </div>
+  </section>
+
+  <!-- ========== 36. Idea B ========== -->
+  <section class="slide" data-num="36">
+    <h1>Idea B · 量化模型的隐私攻击 / 防御</h1>
+    <p class="gray">目标:S&P 2026 / USENIX Security 2026 / TDSC · 难度:中-高 · 时间:9-12 月</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>量化模型权重是 <b>公开</b> 的(下载方便)</li>
+          <li>攻击者能否从量化权重反推 <b>训练数据</b>?</li>
+          <li>量化本身是否提供 <b>隐私保护</b>?</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>攻击面</h3>
+        <ul>
+          <li><b>MIA(成员推断)</b>:反推某数据是否在训练集</li>
+          <li><b>Model Inversion</b>:从权重反推训练样本</li>
+          <li><b>Quantization Leakage</b>:round 误差透露梯度信息</li>
+          <li><b>Quantization-aware</b> 隐私推断</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>防御 + 评估</h3>
+        <ul>
+          <li>差分隐私 + 量化结合(DP-QAT)</li>
+          <li>量化作为隐私机制(noise-aware quant)</li>
+          <li>构建 量化隐私 benchmark</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>为什么能发</h3>
+      <p>· <b>交叉领域</b>:量化 × 隐私,S&P 喜欢看新攻击面 · 现有工作(Wei et al. 2023 "Q-sniffer")只做 FP,没系统化 · <b>实用威胁</b>:HF Hub 上百万量化模型都是潜在攻击目标</p>
+    </div>
+  </section>
+
+  <!-- ========== 37. Idea C ========== -->
+  <section class="slide" data-num="37">
+    <h1>Idea C · 1-bit LLM 的边缘设备部署</h1>
+    <p class="gray">目标:MLSys 2026 / ASPLOS 2026 · 难度:高 · 时间:12-15 月</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>BitNet b1.58 用 5-7× 推理加速,但只验证 GPU</li>
+          <li>移动端 / IoT / 嵌入式设备(手机/树莓派)能否跑 1-bit LLM?</li>
+          <li>bitnet.cpp 2025 起步,生态不完善</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>技术路径</h3>
+        <ul>
+          <li>· 三值矩阵乘 (TMM) 的 ARM NEON 优化</li>
+          <li>· 1-bit 权重的稀疏化 + bit-packing</li>
+          <li>· 端侧 KV cache 压缩(2-bit + 滑动窗口)</li>
+          <li>· 端云协同:大模型在云,1-bit 在端</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>实验设计</h3>
+        <ul>
+          <li>测试:手机 / 树莓派 / Apple Silicon / 高通 NPU</li>
+          <li>1-bit BitNet b1.58 2B / 7B / 70B</li>
+          <li>功耗 / 内存 / 速度 / 精度全对比</li>
+          <li>对照:llama.cpp / T-MAC / MNN</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>为什么能发</h3>
+      <p>· MLSys 偏好 <b>系统 + 算法</b> 协同工作 · 1-bit LLM 是 2025 公认新范式,端侧部署 <b>几乎空白</b> · 实用价值:大模型真正"飞入寻常百姓家"</p>
+    </div>
+  </section>
+
+  <!-- ========== 38. Idea D ========== -->
+  <section class="slide" data-num="38">
+    <h1>Idea D · 多模态协同量化(ViT + LLM)</h1>
+    <p class="gray">目标:NeurIPS 2026 / ICML 2026 / CVPR 2026 · 难度:中-高 · 时间:9-12 月</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>VLM(LLaVA/Qwen-VL) 量化时,ViT 和 LLM <b>独立处理</b></li>
+          <li>ViT 量化误差 <b>累积</b> 到 LLM,放大掉点</li>
+          <li>Modality gap 让 calibration 困难</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>技术路径</h3>
+        <ul>
+          <li>· <b>Joint Calibration</b>:ViT + LLM 一起校准</li>
+          <li>· 模态平衡:让 ViT 和 LLM 量化误差相当</li>
+          <li>· Projector 量化友好设计</li>
+          <li>· 视觉 token 压缩:减少 VLM 的输入长度</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>实验设计</h3>
+        <ul>
+          <li>LLaVA-1.5 / Qwen2-VL / InternVL2</li>
+          <li>VQA / MMBench / MMMU 评测</li>
+          <li>W4A8 vs W4A16 baseline 对比</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>为什么能发</h3>
+      <p>· VLM 量化 2024-2025 <b>几乎空白</b>,<span class="box idea">蓝海</span> · NeurIPS 偏好 <b>新模型 + 新方法</b> · 代码基础:transformers + llm-compressor 都有</p>
+    </div>
+  </section>
+
+  <!-- ========== 39. Idea E ========== -->
+  <section class="slide" data-num="39">
+    <h1>Idea E · 量化友好的持续学习</h1>
+    <p class="gray">目标:ICLR 2026 / TPAMI · 难度:高 · 时间:12-18 月</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>LLM 持续学习会"灾难性遗忘"</li>
+          <li>量化 + 持续学习 <b>双重精度损失</b></li>
+          <li>现有工作各自独立</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>技术路径</h3>
+        <ul>
+          <li>· 任务感知的量化位宽分配</li>
+          <li>· 重要参数(遗忘敏感)在量化中保留高位</li>
+          <li>· 量化 + EWC / SI 等正则化结合</li>
+          <li>· 数据回放 + 量化感知重训</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>实验设计</h3>
+        <ul>
+          <li>Continual T5 / Continual LLaMA</li>
+          <li>15 个 NLU 任务序列</li>
+          <li>backward transfer / forward transfer 指标</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>为什么能发</h3>
+      <p>· 持续学习 + 量化 <b>几乎没人做</b> · 长期价值高:实用化 LLM 必须支持在线学习 + 边缘部署 · TPAMI 偏长文,可做系统化研究</p>
+    </div>
+  </section>
+
+  <!-- ========== 40. 发展脉络总结 ========== -->
+  <section class="slide" data-num="40">
+    <h1>发展脉络总结 · 一图看懂</h1>
+    <div class="pipeline" style="padding: 18px 12px;">
+      <div class="pipeline-step" style="flex: 1.2;">
+        2018-2019<br>
+        <span class="small">QAT 奠基</span><br>
+        <b>PACT 720引</b><br>
+        <b>LSQ 296引</b>
+      </div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step" style="flex: 1.2;">
+        2020-2021<br>
+        <span class="small">PTQ 成熟</span><br>
+        <b>BRECQ 49引</b><br>
+        <b>AdaRound</b>
+      </div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step alg" style="flex: 1.2;">
+        2022<br>
+        <span class="small">LLM 量化元年</span><br>
+        <b>GPTQ 130引</b><br>
+        <b>SmoothQuant 99引</b><br>
+        <b>LLM.int8() 114引</b>
+      </div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step alg" style="flex: 1.2;">
+        2023<br>
+        <span class="small">Activation-aware</span><br>
+        <b>AWQ 172引</b><br>
+        <b>QLoRA 496引</b><br>
+        <b>OmniQuant</b>
+      </div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step system" style="flex: 1.2;">
+        2024-2025<br>
+        <span class="small">旋转 + 1-bit + 系统</span><br>
+        <b>SpinQuant / FlatQuant</b><br>
+        <b>BitNet b1.58</b><br>
+        <b>QServe / T-MAC</b>
+      </div>
+    </div>
+    <div class="threecol" style="margin-top: 12px;">
+      <div class="card">
+        <h3>5 条主线</h3>
+        <ol>
+          <li><b>PTQ → QAT → QLoRA</b>:训练成本递减</li>
+          <li><b>INT8 → INT4 → INT2 → 1.58bit</b>:压缩率递增</li>
+          <li><b>静态 → outlier-aware → 旋转/affine</b>:预处理升级</li>
+          <li><b>通用 CNN → ViT → LLM → VLM</b>:模态扩展</li>
+          <li><b>算法 → 算法-系统协同</b>:落地导向</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>未解决问题</h3>
+        <ul>
+          <li><b class="bad">?</b> CFG 兼容的扩散模型量化</li>
+          <li><b class="bad">?</b> 多模态协同量化</li>
+          <li><b class="bad">?</b> 1-bit 模型的训练效率</li>
+          <li><b class="bad">?</b> 量化 + 持续学习</li>
+          <li><b class="bad">?</b> 量化 + 安全 / 隐私</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>3 个核心范式转变</h3>
+        <ul>
+          <li><b class="good">1.</b> 从"训后量化"到"原生低精度训练"(BitNet)</li>
+          <li><b class="good">2.</b> 从"独立量化"到"算法-系统协同"(QServe)</li>
+          <li><b class="good">3.</b> 从"单一指标"到"全栈优化"(PPL + 速度 + 内存 + 功耗)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 41. 实操建议 ========== -->
+  <section class="slide" data-num="41">
+    <h1>实操建议 · 如何进入这个方向</h1>
+    <p class="gray">从"知道"到"做出来"的最小路径</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>① 必读论文(3 周)</h3>
+        <ul>
+          <li>GPTQ / AWQ / SmoothQuant(算法三件套)</li>
+          <li>OmniQuant / FlatQuant / SpinQuant(2024 SOTA)</li>
+          <li>BitNet b1.58(1-bit 必读)</li>
+          <li>LLM.int8()(outlier 处理源头)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>② 必用工具(1 周上手)</h3>
+        <ul>
+          <li><b>llm-compressor</b>(vLLM 团队)</li>
+          <li><b>AutoGPTQ / GPTQModel</b></li>
+          <li><b>bitsandbytes</b>(QLoRA)</li>
+          <li><b>llm-awq</b>(AWQ)</li>
+          <li><b>transformer-engine</b>(FP8)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>③ 必跑实验(2-4 周)</h3>
+        <ul>
+          <li>Llama-3 8B W4A16 在 wikitext 上 PPL</li>
+          <li>Speed benchmark(vLLM vs TensorRT-LLM)</li>
+          <li>复现 AWQ 或 SmoothQuant 一次</li>
+          <li>在 VLM 上跑 1 次量化 baseline</li>
+        </ul>
+      </div>
+    </div>
+    <div class="twocol" style="margin-top: 10px;">
+      <div class="card">
+        <h3>代码资源 / 数据集</h3>
+        <ul>
+          <li>Wikitext-2 / C4 / Pile — 校准数据</li>
+          <li>Llama-3 / Qwen2.5 / Mistral — 模型</li>
+          <li>OpenCompass — 量化后 LLM 评测</li>
+          <li>lm-evaluation-harness — 标准化评测</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>投稿建议</h3>
+        <ul>
+          <li><b>CVPR / NeurIPS</b>:方法 + 视觉任务</li>
+          <li><b>ICLR / ICML</b>:理论 + LLM 通用</li>
+          <li><b>MLSys / ASPLOS</b>:系统 + 工程</li>
+          <li><b>TIFS / TPAMI</b>:安全 + 系统化</li>
+          <li><b>arXiv first</b>:占坑 + 收反馈</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 42. Q&A ========== -->
+  <section class="slide" data-num="42">
+    <h1>Q & A · 课堂讨论题</h1>
+    <div class="card" style="margin-top: 8px;">
+      <h3>3 道思考题</h3>
+      <ol>
+        <li><b>为什么 LLM 的 INT4 量化在 2022-2023 才"突然"可行?</b>
+          <p>从 GPTQ / LLM.int8() 到 AWQ,有什么关键技术突破?为什么 INT4 在 ResNet-50 上 2018 年就接近无损,但在 LLaMA-7B 上 2022 年才解决?</p>
+        </li>
+        <li><b>outlier 是问题还是特征?</b>
+          <p>SmoothQuant 把 outlier 难度"搬"到 weight,SpinQuant 用旋转"抹平"outlier,BitNet 直接"不要"outlier(原生 1-bit)。三种思路谁更本质?为什么?</p>
+        </li>
+        <li><b>1-bit LLM 真能取代 FP16 LLM 吗?</b>
+          <p>BitNet b1.58 在小模型上匹配 LLaMA,但 scaling 到 70B+ 是否仍成立?推理加速 5× vs 训练成本提升 3×,哪个更关键?</p>
+        </li>
+      </ol>
+    </div>
+    <div class="quote" style="margin-top: 10px;">
+      <b>思考</b>:这 5 个 idea(A-E)中,哪个最契合你的研究背景?我可以帮你细化方案、找 baseline、列 milestone。
+    </div>
+  </section>
+
+  <!-- ========== 43. 参考文献 ========== -->
+  <section class="slide tight" data-num="43">
+    <h1>参考文献 · 52 篇核心论文</h1>
+    <p class="gray">数据来源:OpenAlex 2023-2026 抓取 · 引用数为 OpenAlex 截至 2026-06</p>
+    <div class="threecol" style="margin-top: 6px;">
+      <div class="card">
+        <h3>经典 QAT / PTQ</h3>
+        <ul>
+          <li>PACT(2018) 720引 · Cho & Kung</li>
+          <li>DSQ(2019) 457引 · Gong et al.</li>
+          <li>LSQ(2019) 296引 · Esser et al.</li>
+          <li>AdaRound(2020) 50引 · Nagel et al.</li>
+          <li>BRECQ(2021) 49引 · Li et al.</li>
+          <li>PD-Quant(2023) 67引 · Liu et al.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>LLM 量化算法</h3>
+        <ul>
+          <li>LLM.int8()(2022) 114引</li>
+          <li>GPTQ(2022) 130引 · Frantar</li>
+          <li>SmoothQuant(2022) 99引</li>
+          <li>AWQ(2023) 172引</li>
+          <li>QLoRA(2023) 496引</li>
+          <li>OmniQuant(2023) 14引</li>
+          <li>SpQR(2023) 26引</li>
+          <li>SqueezeLLM(2023) 23引</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>旋转 / Affine / 1-bit</h3>
+        <ul>
+          <li>QuaRot(2024) 3引</li>
+          <li>SpinQuant(2024) 6引</li>
+          <li>FlatQuant(2024) 2引</li>
+          <li>AffineQuant(2024) 1引</li>
+          <li>BitNet(2023) 26引</li>
+          <li>BitNet b1.58(2024) 37引</li>
+          <li>PB-LLM(2024) 7引</li>
+          <li>BitDistiller(2024) 4引</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>系统 / 部署</h3>
+        <ul>
+          <li>QServe(2024) 6引 · Lin et al.</li>
+          <li>T-MAC(2024) · Wei et al.</li>
+          <li>KIVI(2024) 6引 · Liu et al.</li>
+          <li>Atom(2023) 23引 · Zhao et al.</li>
+          <li>OWQ(2024) 54引 · Lee et al.</li>
+          <li>FP8 Quantization(2022) 13引</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>ViT / 扩散 / 综述</h3>
+        <ul>
+          <li>I-ViT(2023) 113引</li>
+          <li>RepQ-ViT(2023) 91引</li>
+          <li>Q-Diffusion(2023) 112引</li>
+          <li>PTQD(2023) 13引</li>
+          <li>Survey(2022) 1042引 · Gholami</li>
+          <li>DNN Quantization Survey(2023) 196引</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>LLM-QAT 系列</h3>
+        <ul>
+          <li>LLM-QAT(2024) 107引 · Liu et al.</li>
+          <li>EfficientQAT(2024) 20引</li>
+          <li>LLM-FP4(2023) 38引</li>
+          <li>Outlier Suppression+(2023) 41引</li>
+          <li>Norm Tweaking(2023) · Li et al.</li>
+          <li>LLM.int4()(2023) · Frantar</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 6px;">
+      <b>数据来源</b>:OpenAlex API 30 关键词 × 50 条 = 669 篇去重 · arXiv abstract 补充 · 引用数 2026-06 截止。完整 PDF 链接请见 OpenAlex ID。
+    </div>
+  </section>
+
+  <!-- ========== 版权浮条(必加 · position: fixed) ========== -->
+  <div style="
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 5px 16px;
+    text-align: center;
+    font-size: 11px;
+    color: #6b7280;
+    background: rgba(250, 250, 250, 0.92);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    line-height: 1.4;
+    margin: 0;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  ">
+    <b style="color: #111827; font-weight: 600;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO
+  </div>
+
+  <script>
+    let cur = 0;
+    const slides = document.querySelectorAll('.slide');
+    function show(i) {
+      slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+      const el = document.getElementById('pageinfo');
+      if (el) el.textContent = (i + 1) + ' / ' + slides.length;
+      const bar = document.getElementById('progress');
+      if (bar) bar.style.width = ((i + 1) / slides.length * 100) + '%';
+      cur = i;
+    }
+    function next() { if (cur < slides.length - 1) show(cur + 1); }
+    function prev() { if (cur > 0) show(cur - 1); }
+    function printMode() { window.print(); }
+    function goFirst() { show(0); }
+    function goLast() { show(slides.length - 1); }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowRight' || e.key === ' ') { next(); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft') { prev(); e.preventDefault(); }
+      else if (e.key === 'Home') { goFirst(); }
+      else if (e.key === 'End') { goLast(); }
+      else if (e.key === 'p' || e.key === 'P') { printMode(); }
+    });
+    // 触摸滑动支持
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) { if (dx < 0) next(); else prev(); }
+    });
+    // 初始化
+    show(0);
+    // 暴露到 window
+    window.next = next; window.prev = prev;
+    window.goFirst = goFirst; window.goLast = goLast;
+    window.printMode = printMode;
+  </script>
+</body>
+</html>
