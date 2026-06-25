@@ -1,0 +1,2082 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Token 压缩研究进展 — DONG XINGBO</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-2: #161b22;
+      --bg-3: #1c2128;
+      --line: #30363d;
+      --ink: #e6edf3;
+      --ink-2: #adbac7;
+      --ink-3: #8b949e;
+      --blue: #5b8def;
+      --green: #10b981;
+      --orange: #f59e0b;
+      --purple: #a78bfa;
+      --pink: #ec4899;
+      --red: #ef4444;
+      --cyan: #22d3ee;
+      --yellow: #eab308;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 15px; line-height: 1.5;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute; inset: 0;
+      padding: 32px 64px 88px;
+      display: none; flex-direction: column;
+      overflow: hidden;
+    }
+    .slide.active { display: flex; }
+    .slide.tight { padding: 22px 50px 70px; }
+    .slide.tight h1 { font-size: 26px; margin: 0 0 10px; }
+    .slide.tight h2 { font-size: 22px; margin: 0 0 8px; }
+    .slide.tight h3 { font-size: 16px; margin: 6px 0 4px; }
+    .slide.tight p, .slide.tight li { font-size: 13.5px; line-height: 1.4; margin: 2px 0; }
+    .slide.tight .box { padding: 3px 8px; font-size: 12px; }
+    .slide.tight .pipeline-step { font-size: 11px; padding: 6px 4px; }
+    .slide.tight .num-cell .val { font-size: 16px; }
+    .slide.tight .num-cell .lbl { font-size: 9.5px; }
+    .slide.tight .card { padding: 8px 12px; margin: 3px 0; }
+    .slide.tight .card h3 { font-size: 14px; margin: 0 0 4px; }
+    .slide.tight .card li { font-size: 12px; line-height: 1.4; margin: 1px 0; }
+    .slide.tight .threecol { gap: 10px; margin: 4px 0; }
+    h1 { font-size: 30px; margin: 0 0 14px; letter-spacing: -0.01em; }
+    h2 { font-size: 24px; margin: 4px 0 12px; color: var(--ink); }
+    h3 { font-size: 17px; margin: 8px 0 6px; color: var(--ink-2); font-weight: 600; }
+    p { margin: 4px 0; color: var(--ink-2); }
+    ul, ol { margin: 4px 0 4px 20px; padding: 0; color: var(--ink-2); }
+    li { margin: 2px 0; }
+    .gray { color: var(--ink-3); }
+    .small { font-size: 12px; }
+    code {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      background: var(--bg-3); padding: 1px 6px; border-radius: 3px;
+      font-size: 0.9em; color: var(--orange);
+    }
+    .box {
+      display: inline-block; padding: 4px 10px; border-radius: 5px;
+      font-weight: 600; font-size: 13px; margin: 1px 3px; border: 1px solid;
+      line-height: 1.4;
+    }
+    .box.model    { background: rgba(91,141,239,0.15);  color: #5b8def; border-color: #5b8def; }
+    .box.alg      { background: rgba(167,139,250,0.15); color: #a78bfa; border-color: #a78bfa; }
+    .box.system   { background: rgba(34,211,238,0.15);  color: #22d3ee; border-color: #22d3ee; }
+    .box.data     { background: rgba(139,148,158,0.15); color: #8b949e; border-color: #8b949e; }
+    .box.eval     { background: rgba(16,185,129,0.15);  color: #10b981; border-color: #10b981; }
+    .box.warn     { background: rgba(245,158,11,0.15);  color: #f59e0b; border-color: #f59e0b; }
+    .box.bad      { background: rgba(239,68,68,0.15);   color: #ef4444; border-color: #ef4444; }
+    .box.good     { background: rgba(34,197,94,0.15);   color: #22c55e; border-color: #22c55e; }
+    .box.idea     { background: rgba(236,72,153,0.15);  color: #ec4899; border-color: #ec4899; }
+    .pipeline {
+      display: flex; align-items: center; justify-content: space-between;
+      margin: 8px 0; padding: 12px 8px; background: var(--bg-2);
+      border-radius: 8px; border: 1px solid var(--line); gap: 4px;
+    }
+    .pipeline-step {
+      flex: 1; text-align: center; padding: 10px 4px; border-radius: 5px;
+      background: rgba(16,185,129,0.1); border: 1px solid #10b981;
+      font-size: 12.5px; font-weight: 600;
+    }
+    .pipeline-step .small { font-size: 10px; color: #8b949e; font-weight: 400; margin-top: 2px; }
+    .pipeline-step.alg    { background: rgba(167,139,250,0.1); border-color: #a78bfa; }
+    .pipeline-step.system { background: rgba(34,211,238,0.1);  border-color: #22d3ee; }
+    .pipeline-step.eval   { background: rgba(245,158,11,0.1);  border-color: #f59e0b; }
+    .pipeline-arrow { color: var(--ink-3); font-size: 18px; padding: 0 4px; }
+    .tree {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px;
+      white-space: pre; background: var(--bg-2); padding: 12px 16px; border-radius: 5px;
+      border: 1px solid var(--line); line-height: 1.4; color: var(--ink-2);
+      margin: 8px 0; overflow-x: auto;
+    }
+    .num-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 8px 0;
+    }
+    .num-grid.col3 { grid-template-columns: repeat(3, 1fr); }
+    .num-grid.col5 { grid-template-columns: repeat(5, 1fr); }
+    .num-cell {
+      background: var(--bg-2); border: 1px solid var(--line); border-radius: 5px;
+      padding: 8px; text-align: center;
+    }
+    .num-cell .lbl { font-size: 10.5px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
+    .num-cell .val { font-size: 20px; font-weight: bold; margin: 3px 0; font-family: ui-monospace, monospace; }
+    .num-cell .sub { font-size: 10px; color: var(--ink-3); }
+    .num-cell.highlight { border-color: var(--green); background: rgba(16,185,129,0.08); }
+    .num-cell.warn { border-color: var(--orange); background: rgba(245,158,11,0.08); }
+    .num-cell.good { border-color: var(--green); background: rgba(16,185,129,0.08); }
+    .table {
+      width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 13px;
+    }
+    .table th, .table td {
+      padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: left;
+      color: var(--ink-2);
+    }
+    .table th {
+      background: var(--bg-2); color: var(--ink); font-weight: 600; font-size: 12.5px;
+    }
+    .table tr:hover td { background: var(--bg-2); }
+    .cover {
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; height: 100%;
+    }
+    .cover h1 {
+      font-size: 44px; margin: 0 0 12px;
+      background: linear-gradient(135deg, #10b981 0%, #5b8def 50%, #a78bfa 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cover .sub { font-size: 18px; color: var(--ink-2); margin: 4px 0; }
+    .cover .meta { font-size: 13px; color: var(--ink-3); margin-top: 18px; }
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: rgba(13,17,23,0.85); border-bottom: 1px solid var(--line);
+      padding: 6px 16px; display: flex; justify-content: space-between; align-items: center;
+      z-index: 100; backdrop-filter: blur(8px);
+      font-size: 12px; color: var(--ink-3);
+    }
+    .navbar .progress {
+      position: absolute; bottom: 0; left: 0; height: 2px;
+      background: linear-gradient(90deg, #10b981, #5b8def);
+      transition: width 0.2s;
+    }
+    .navbar button {
+      background: transparent; border: 1px solid var(--line); color: var(--ink-2);
+      padding: 3px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;
+    }
+    .navbar button:hover { background: var(--bg-2); color: var(--ink); }
+    .pageinfo {
+      position: fixed; bottom: 32px; right: 18px; z-index: 1000;
+      color: var(--ink-3); font-size: 12px; font-family: ui-monospace, monospace;
+    }
+    .hint {
+      position: fixed; bottom: 32px; left: 18px; z-index: 1000;
+      color: var(--ink-3); font-size: 11px;
+    }
+    .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 6px 0; }
+    .threecol { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 6px 0; }
+    .card {
+      background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px;
+      padding: 12px 14px; margin: 4px 0;
+    }
+    .card h3 { margin: 0 0 6px; color: var(--ink); font-size: 14.5px; }
+    .card .meta { color: var(--ink-3); font-size: 11.5px; margin-bottom: 4px; }
+    .card p, .card li { font-size: 12.5px; line-height: 1.45; }
+    .quote {
+      border-left: 3px solid var(--green); padding: 6px 14px; margin: 6px 0;
+      color: var(--ink-2); font-style: italic; font-size: 13px; background: var(--bg-2);
+    }
+    .era {
+      display: inline-block; padding: 2px 8px; border-radius: 3px;
+      background: var(--bg-3); border: 1px solid var(--line);
+      color: var(--ink-2); font-size: 11.5px; font-weight: 600;
+    }
+    .bar {
+      display: flex; align-items: center; gap: 8px; margin: 3px 0;
+    }
+    .bar .lbl { width: 110px; font-size: 12px; color: var(--ink-2); }
+    .bar .fill { height: 14px; background: var(--green); border-radius: 2px; }
+    .bar .val { font-size: 11.5px; color: var(--ink-3); font-family: ui-monospace, monospace; }
+    /* Token number ball */
+    .tok-num {
+      display: inline-block; min-width: 28px; height: 28px; line-height: 28px;
+      border-radius: 50%; background: var(--bg-3); border: 2px solid var(--blue);
+      text-align: center; font-family: ui-monospace, monospace; font-weight: bold;
+      color: var(--ink); font-size: 12px; margin: 0 2px;
+    }
+    .tok-num.keep { border-color: var(--green); background: rgba(16,185,129,0.15); }
+    .tok-num.drop { border-color: var(--red); background: rgba(239,68,68,0.1); opacity: 0.45; text-decoration: line-through; }
+    .tok-num.merge { border-color: var(--purple); background: rgba(167,139,250,0.15); }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <span>📘 Token 压缩研究进展</span>
+    <span>
+      <button onclick="prev()">‹ Prev</button>
+      <span id="pageinfo" style="margin: 0 8px;">1 / 43</span>
+      <button onclick="next()">Next ›</button>
+      <button onclick="printMode()" style="margin-left: 6px;">🖨 Print</button>
+    </span>
+    <div class="progress" id="progress" style="width: 2.3%;"></div>
+  </div>
+  <div class="hint">← / → 翻页 · Home/End 跳首尾 · P 打印</div>
+
+  <!-- ========== 1. 封面 ========== -->
+  <section class="slide active" data-num="1">
+    <div class="cover">
+      <div class="era">深度学习 · 推理优化 · 长上下文</div>
+      <h1 style="margin-top: 24px;">Token 压缩研究进展</h1>
+      <p class="sub">Visual Token · KV Cache · Prompt Context · 长上下文 · 投机解码</p>
+      <p class="sub" style="font-size: 15px; color: var(--ink-3); margin-top: 6px;">
+        Token Compression: From ViT Pruning to LLM Long-Context
+      </p>
+      <div style="margin-top: 28px; display: flex; gap: 10px;">
+        <span class="box model">视觉</span>
+        <span class="box good">KV</span>
+        <span class="box alg">Prompt</span>
+        <span class="box warn">长上下文</span>
+        <span class="box idea">投机解码</span>
+      </div>
+      <p class="meta">2026 · 43 张 slides · 40+ 篇代表作 · 5 大技术路线</p>
+    </div>
+  </section>
+
+  <!-- ========== 2. 学习目标 ========== -->
+  <section class="slide" data-num="2">
+    <h1>学习目标</h1>
+    <p>梳理"Token 压缩"在 LLM 时代的多分支研究进展,并指出可发文章的研究机会。</p>
+    <div class="threecol" style="margin-top: 12px;">
+      <div class="card">
+        <h3>① 看清 5 大技术路线</h3>
+        <p class="meta">不同对象的 token 压缩</p>
+        <ul>
+          <li>Visual Token(ViT)· <span class="box alg">ToMe / DynamicViT</span></li>
+          <li>KV Cache(LLM)· <span class="box alg">H2O / KIVI</span></li>
+          <li>Prompt / Context(LLM)· <span class="box alg">LLMLingua / ICAE</span></li>
+          <li>长上下文(LLM)· <span class="box alg">YaRN / Landmark</span></li>
+          <li>投机解码(LLM)· <span class="box alg">Medusa / EAGLE</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>② 抓住代表工作</h3>
+        <p class="meta">40+ 核心论文 · 5 个对象</p>
+        <ul>
+          <li>ViT 路线:ToMe(2023) / DynamicViT(2021)</li>
+          <li>KV 路线:H2O(2023) / StreamingLLM(2024)</li>
+          <li>Context:LLMLingua(2023) / ICAE(2024)</li>
+          <li>长上下文:YaRN(2023) / LongLoRA(2023)</li>
+          <li>投机解码:Medusa(2023) / EAGLE(2024)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>③ 找可发文章 idea</h3>
+        <p class="meta">5 个交叉方向</p>
+        <ul>
+          <li>视觉 token × LLM 的桥接</li>
+          <li>KV 压缩 × 隐私</li>
+          <li>长上下文 × 评测</li>
+          <li>多模态 token 压缩统一</li>
+          <li>Token 压缩 × 1-bit LLM</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 14px;">
+      <b>"Token 压缩"</b> = 在几乎不损失精度的前提下,把模型内部或输入/输出的 token 数量减少 4-16×。包括:减少 <b>输入 token</b>、<b>KV cache</b>、<b>视觉 token</b>、<b>输出 token</b>。
+    </div>
+  </section>
+
+  <!-- ========== 3. 5 大路线全景 ========== -->
+  <section class="slide" data-num="3">
+    <h1>5 大技术路线 · 一图看清边界</h1>
+    <p>Token 压缩不是单一技术,是一组针对<b>不同对象</b>的优化方法。</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card" style="border-color: var(--blue);">
+        <h3><span class="box model">① Visual Token</span> <span class="small gray">(ViT 时代)</span></h3>
+        <p class="meta">图像 patch token 减少</p>
+        <ul>
+          <li>对象:ViT 内部 patch 序列</li>
+          <li>代表:ToMe / DynamicViT / DiffRate</li>
+          <li>目标:减少 vision 计算量</li>
+          <li>典型压缩率:40-70% token 减少</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color: var(--green);">
+        <h3><span class="box good">② KV Cache</span> <span class="small gray">(LLM 长上下文)</span></h3>
+        <p class="meta">推理时 attention KV 压缩</p>
+        <ul>
+          <li>对象:推理时每 token 的 K/V 矩阵</li>
+          <li>代表:H2O / StreamingLLM / KIVI</li>
+          <li>目标:支持 1M+ token 上下文</li>
+          <li>典型压缩率:5-100× KV 减少</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color: var(--purple);">
+        <h3><span class="box alg">③ Prompt / Context</span> <span class="small gray">(LLM 输入侧)</span></h3>
+        <p class="meta">压缩输入提示词</p>
+        <ul>
+          <li>对象:用户/系统输入的 prompt</li>
+          <li>代表:LLMLingua / Selective Context / ICAE</li>
+          <li>目标:降本(API token 计费)+ 提速</li>
+          <li>典型压缩率:5-20× 字符减少</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color: var(--orange);">
+        <h3><span class="box warn">④ 长上下文</span> <span class="small gray">(位置编码 + 检索)</span></h3>
+        <p class="meta">扩大 context window</p>
+        <ul>
+          <li>对象:RoPE / ALiBi 等位置编码</li>
+          <li>代表:YaRN / LongRoPE / Landmark</li>
+          <li>目标:从 8K 扩到 1M+ token</li>
+          <li>典型扩展:100× context 长度</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color: var(--pink);">
+        <h3><span class="box idea">⑤ 投机解码</span> <span class="small gray">(输出侧)</span></h3>
+        <p class="meta">多 token 并行生成</p>
+        <ul>
+          <li>对象:输出 token 序列</li>
+          <li>代表:Medusa / EAGLE / SpecDec</li>
+          <li>目标:加速 2-3× 推理</li>
+          <li>典型加速:2-3× 速度</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color: var(--cyan);">
+        <h3><span class="box system">⑥ (横向) 评测</span> <span class="small gray">(贯穿 5 类)</span></h3>
+        <p class="meta">如何衡量"压缩后还好不好"</p>
+        <ul>
+          <li>对象:压缩前后的能力保留度</li>
+          <li>代表:RULER / LongBench / Lost in Middle</li>
+          <li>目标:可量化的"无感压缩"</li>
+          <li>关键指标:PPL / Accuracy / 速度 / 显存</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 4. 选型决策树 ========== -->
+  <section class="slide" data-num="4">
+    <h1>我应该用哪种 token 压缩?</h1>
+    <p>根据"瓶颈在哪"选择对应技术。</p>
+    <div class="tree">你的瓶颈是什么?
+
+├── 【视觉模型推理慢 / 显存大】 ──→ Visual Token 压缩
+│   ├── 训练/微调预算充足 ──→ ToMe(无需训练) / DynamicViT
+│   ├── 极致压缩 + 不重训    ──→ Token Merging(ToMe) ⭐ 推荐
+│   ├── 需要硬件亲和        ──→ DiffRate(可微剪枝)
+│   └── 多模态 LLM(ViT 端)  ──→ 联合压缩 + 跨模态 token 选择
+│
+├── 【LLM 推理显存爆 / 速度慢】 ──→ KV Cache 压缩
+│   ├── 上下文固定且长(>32K) ──→ StreamingLLM(attention sink)
+│   ├── 上下文不固定 / RAG  ──→ H2O / SnapKV(动态重要)
+│   ├── 极致低比特           ──→ KIVI(2-bit KV) / KVQuant
+│   └── 长 context + 短 QA   ──→ PyramidInfer / ShadowKV
+│
+├── 【LLM 上下文超 8K / API 太贵】 ──→ Prompt / Context 压缩
+│   ├── 不重训 + 快速集成     ──→ LLMLingua 系列 ⭐ 最成熟
+│   ├── 极端压缩(20×)        ──→ LLMLingua-2(分类器版)
+│   ├── 离线压缩 + 训练感     ──→ ICAE / AutoCompressor
+│   └── 检索增强 RAG          ──→ Selective Context / 检索 token
+│
+├── 【LLM context window 不够】 ──→ 长上下文建模
+│   ├── 位置编码扩展          ──→ YaRN(无需训练) ⭐ / LongRoPE
+│   ├── 持续训练              ──→ LongLoRA / Long-Context LLaMA
+│   ├── 注意力稀疏            ──→ Landmark Attention
+│   └── 评测                  ──→ RULER / LongBench
+│
+└── 【LLM 生成速度慢】 ──→ 投机解码
+    ├── 通用 / 训练预算高     ──→ Medusa(多 head 并行)
+    ├── 高质量 / 极致加速     ──→ EAGLE(特征级推测) ⭐
+    ├── 草稿模型可用          ──→ SpecDec / Lookahead
+    └── 端侧 / 轻量           ──→ Self-Speculative / Layer-Skip
+</div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>2024-2025 主流</b>:<b>KV Cache 压缩</b>(LLM 显存)+ <b>LLMLingua</b>(Prompt 压缩)+ <b>YaRN/LongLoRA</b>(长上下文)+ <b>EAGLE</b>(生成加速)。
+    </div>
+  </section>
+
+  <!-- ========== 5. Visual Token 基础 ========== -->
+  <section class="slide" data-num="5">
+    <h1>① Visual Token 压缩 · 基础</h1>
+    <p>ViT 把图像切成 16×16 = 256 patch(ImageNet),196 个(ViT-B/16),大量 patch 互相冗余。</p>
+    <div style="margin: 12px 0; padding: 14px; background: var(--bg-2); border-radius: 8px; border: 1px solid var(--line);">
+      <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px;">
+        <span class="tok-num keep">1</span><span class="tok-num keep">2</span><span class="tok-num merge">3</span><span class="tok-num keep">4</span>
+        <span class="tok-num drop">5</span><span class="tok-num keep">6</span><span class="tok-num merge">3</span><span class="tok-num keep">7</span>
+        <span class="tok-num drop">8</span><span class="tok-num drop">9</span><span class="tok-num keep">10</span><span class="tok-num keep">11</span>
+        <span class="tok-num merge">12</span><span class="tok-num keep">13</span><span class="tok-num drop">14</span><span class="tok-num keep">15</span>
+        <span class="tok-num keep">16</span><span class="tok-num drop">17</span><span class="tok-num merge">12</span><span class="tok-num keep">18</span>
+      </div>
+      <p class="small gray" style="margin: 6px 0 0;">
+        <span class="tok-num keep" style="margin: 0 4px;">·</span>保留 token
+        &nbsp;<span class="tok-num drop" style="margin: 0 4px;">·</span>剪枝掉(drop)
+        &nbsp;<span class="tok-num merge" style="margin: 0 4px;">·</span>合并到其他 token(merge)
+      </p>
+    </div>
+    <div class="threecol" style="margin-top: 6px;">
+      <div class="card">
+        <h3>两类核心方法</h3>
+        <p class="meta">prune vs merge</p>
+        <ul>
+          <li><b>Pruning(剪枝)</b>:直接丢弃冗余 token</li>
+          <li><b>Merging(合并)</b>:把相似 token 融合成 1 个</li>
+          <li>合并 <b>信息损失小</b>,剪枝 <b>速度快</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心问题</h3>
+        <p class="meta">怎么判断哪个 token 不重要?</p>
+        <ul>
+          <li>基于 <b>attention</b> 分数(DynamicViT)</li>
+          <li>基于 <b>token 相似度</b>(ToMe)</li>
+          <li>基于 <b>分类置信度</b>(A-ViT)</li>
+          <li>基于 <b>可微搜索</b>(DiffRate)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>评价指标</h3>
+        <ul>
+          <li><b>FLOPs</b>:计算量减少</li>
+          <li><b>Throughput</b>:吞吐加速</li>
+          <li><b>Top-1 准确率</b>:精度损失</li>
+          <li><b>Token 保留率</b>:50-70% 常见</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 6. ToMe ========== -->
+  <section class="slide" data-num="6">
+    <h1>代表作 · ToMe(2023)· ~700 引</h1>
+    <p class="gray">Token Merging: Your ViT but Faster · Bolya, Fu, Dai, Zhao, Feichtenhofer(Google)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>核心思想</h3>
+        <ul>
+          <li>对 ViT <b>无需训练</b>,直接 token 合并</li>
+          <li>每两层 block 之间插一次 <b>token merge</b></li>
+          <li>用 <b>相似度 + 二分匹配</b> 决定哪些 token 合并</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>关键算法</h3>
+        <p style="font-family: ui-monospace, monospace; font-size: 12px; color: var(--cyan);">
+          1. 计算 token pair 余弦相似度<br>
+          2. 构造相似度图<br>
+          3. <b>二分匹配</b>(bipartite soft matching)<br>
+          4. 选 r/2 对 token 平均合并
+        </p>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li>ImageNet ViT-L <b>2× 加速</b> + 0.3% 掉点</li>
+          <li>ViT-H <b>1.8×</b> 加速</li>
+          <li>对 MAE / DINO 也有效</li>
+          <li><b>无需训练</b>,5 行代码集成</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:"<b>无需训练 + token 合并</b>" 打开了"后处理优化"的新范式。ToMe 的二分匹配思想被多个后续工作(STA、Token Merging MoE)继承。
+    </div>
+  </section>
+
+  <!-- ========== 7. DynamicViT ========== -->
+  <section class="slide" data-num="7">
+    <h1>代表作 · DynamicViT(2021)· ~700 引 · ICCV 2023</h1>
+    <p class="gray">Adaptive Token Pruning for Efficient Vision Transformers · Rao et al. (微软)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>核心思想</h3>
+        <ul>
+          <li>用 <b>轻量 MLP</b> 预测 token 重要性</li>
+          <li>逐层 <b>动态剪枝</b>:从浅到深逐步减少</li>
+          <li>训练一次,推理时 <b>自适应</b> 选 token</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>模块设计</h3>
+        <ul>
+          <li><b>Prediction Module</b>:1 层 MLP,输出 token 保留概率</li>
+          <li><b>Pruning Module</b>:Top-K 选重要 token</li>
+          <li><b>Masked attention</b>:剪枝后做 soft attention</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li>DeiT-S <b>1.5× 加速</b> 保持精度</li>
+          <li>ViT-B <b>1.3× 加速</b></li>
+          <li>不同输入图像剪枝数量 <b>自适应</b></li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>"输入自适应"剪枝</b> 比统一剪枝更高效。简单图像剪得多,复杂图像保留多,这是动态计算的核心思想。
+    </div>
+  </section>
+
+  <!-- ========== 8. A-ViT / DiffRate ========== -->
+  <section class="slide" data-num="8">
+    <h1>A-ViT(2022)+ DiffRate(2023)+ 后续</h1>
+    <p class="gray">Visual token 压缩的两个新范式:自适应停止 + 可微搜索</p>
+    <div class="twocol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>A-ViT(Yin et al. AAAI 2022)· ~200 引</h3>
+        <p class="meta">Tokens-to-Token ViT with Adaptive Computation</p>
+        <ul>
+          <li>每个 block 配 <b>adaptive head</b>,决定该 block 是否"提前退出"</li>
+          <li>简单图像:第 5 层就退出(只跑 1/3 计算量)</li>
+          <li>复杂图像:跑完全部 12 层</li>
+          <li>训练时加 Gumbel-softmax 触发早退</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>DiffRate(Tang et al. NeurIPS 2023)· ~150 引</h3>
+        <p class="meta">Differentiable Compression Rate</p>
+        <ul>
+          <li>把每层 token 保留率做成 <b>可微参数</b></li>
+          <li>用 Gumbel-softmax 端到端优化</li>
+          <li>结果:ViT 自动决定"每层保留多少 token"</li>
+          <li>比 DynamicViT 更灵活,精度更高</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>其他重要工作</h3>
+      <p>· <b>Sparse ViT(2022)</b> · 800 引 — 4D 表示 + 自适应稀疏 · <b>Token Pruning Survey(2023)</b> · <b>Joint Token Pruning(2023)</b> · <b>EViT(2022)</b>· ~250 引 — 注意力引导剪枝 · <b>ATS(2023)</b> — Adaptive Token Sampling</p>
+    </div>
+  </section>
+
+  <!-- ========== 9. 视觉 token 压缩对比表 ========== -->
+  <section class="slide tight" data-num="9">
+    <h1>Visual Token 压缩 · 7 大方法对比</h1>
+    <table class="table">
+      <thead>
+        <tr><th style="width:14%;">方法</th><th style="width:9%;">年份</th><th style="width:11%;">类型</th><th style="width:18%;">核心思想</th><th style="width:14%;">加速</th><th style="width:9%;">训练</th><th style="width:25%;">代表结果</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>DynamicViT</b></td><td>2021</td><td>Prune</td>
+          <td>MLP 预测 token 重要性</td><td>1.3-1.5×</td><td>需</td>
+          <td>DeiT-S ImageNet 0.2% 掉点</td>
+        </tr>
+        <tr>
+          <td><b>A-ViT</b></td><td>2022</td><td>Prune+早退</td>
+          <td>每个 block 自适应提前退出</td><td>1.4×</td><td>需</td>
+          <td>DeiT-T 0.5% 掉点</td>
+        </tr>
+        <tr>
+          <td><b>ToMe</b></td><td>2023</td><td>Merge</td>
+          <td>余弦相似度 + 二分匹配</td><td>1.8-2×</td><td><b class="good">无需</b></td>
+          <td>ViT-L 2× 加速 + 0.3% 掉点</td>
+        </tr>
+        <tr>
+          <td><b>Sparse ViT</b></td><td>2022</td><td>Prune</td>
+          <td>4D 矩阵自适应稀疏</td><td>1.4-1.6×</td><td>需</td>
+          <td>DeiT 50% token 仍高准确率</td>
+        </tr>
+        <tr>
+          <td><b>EViT</b></td><td>2022</td><td>Prune</td>
+          <td>注意力分数排序 + token 融合</td><td>1.5×</td><td>需</td>
+          <td>DeiT 1.5× 加速不掉点</td>
+        </tr>
+        <tr>
+          <td><b>DiffRate</b></td><td>2023</td><td>Prune</td>
+          <td>可微 token 保留率搜索</td><td>1.5-1.7×</td><td>需</td>
+          <td>ViT 各层自动 token rate</td>
+        </tr>
+        <tr>
+          <td><b>STA(Spatial Token)</b></td><td>2023</td><td>Merge</td>
+          <td>ToMe 改进 + 跨层信息保留</td><td>1.8×</td><td><b class="good">无需</b></td>
+          <td>优于 ToMe 的连续压缩</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="quote" style="margin-top: 6px;">
+      <b>2024-2025 趋势</b>:<b>无需训练</b>(ToMe 派)vs <b>可微优化</b>(DiffRate 派)并行;多模态场景把视觉 token 压缩与 LLM 端 KV 压缩联合优化。
+    </div>
+  </section>
+
+  <!-- ========== 10. 视频 token 压缩 ========== -->
+  <section class="slide" data-num="10">
+    <h1>视频 Token 压缩 · 时空联合</h1>
+    <p>视频 = 图像 token × 时序。ViViT / TimeSformer 等单帧方法扩展为时空方法。</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>核心挑战</h3>
+        <ul>
+          <li>单帧图像 196 token,视频 16 帧 = <b>3136 token</b></li>
+          <li>时空双维度冗余</li>
+          <li>运动信息难丢弃</li>
+          <li>推理实时性要求高</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>代表方法</h3>
+        <ul>
+          <li><b>VideoGPT</b> · VQ-VAE 压缩时空</li>
+          <li><b>TokenLearner(2022)</b> · Google · ~500 引</li>
+          <li><b>ST-Adapter</b> · 时空 token 适配</li>
+          <li><b>VideoMAE(2022)</b> · 掩码自编码</li>
+          <li><b>TubeViT / MaskViT</b> · 视频 token 剪枝</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2024 进展</h3>
+        <ul>
+          <li><b>Video Token Merging</b>(ToMe 视频版)</li>
+          <li><b>Motion-aware pruning</b>(运动感知剪枝)</li>
+          <li><b>Video LLM</b> 上下文长 × 时序长</li>
+          <li><b>VideoLLaMA / VideoChat</b> 量化</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>关键 insight</b>:<b>运动 token 重要,静态 token 冗余</b>。按光流 / motion score 优先保留动态区域 token,这是视频 token 压缩的核心。
+    </div>
+  </section>
+
+  <!-- ========== 11. KV Cache 基础 ========== -->
+  <section class="slide" data-num="11">
+    <h1>② KV Cache 压缩 · 为什么是 LLM 的头号瓶颈</h1>
+    <p>LLM 推理时,每生成 1 个 token 都要把之前所有 token 的 K/V 矩阵存下来,显存随 sequence length 线性增长。</p>
+    <div class="num-grid">
+      <div class="num-cell warn">
+        <div class="lbl">LLaMA-7B</div>
+        <div class="val">14 GB</div>
+        <div class="sub">100K 上下文 KV</div>
+      </div>
+      <div class="num-cell warn">
+        <div class="lbl">LLaMA-70B</div>
+        <div class="val">140 GB</div>
+        <div class="sub">100K 上下文 KV</div>
+      </div>
+      <div class="num-cell highlight">
+        <div class="lbl">LLaMA-405B</div>
+        <div class="val">810 GB</div>
+        <div class="sub">100K 上下文 KV</div>
+      </div>
+      <div class="num-cell good">
+        <div class="lbl">KIVI 2-bit</div>
+        <div class="val">6.7×</div>
+        <div class="sub">显存压缩</div>
+      </div>
+    </div>
+    <div class="threecol" style="margin-top: 10px;">
+      <div class="card">
+        <h3>KV Cache 是什么</h3>
+        <p class="meta">memory layout</p>
+        <ul>
+          <li>每个 transformer 层有 K 和 V 两个矩阵</li>
+          <li>每 token 占 <code>2 × num_layers × num_heads × head_dim × dtype</code></li>
+          <li>FP16 → 7B 模型的 100K context = 14GB</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>5 类压缩思路</h3>
+        <ul>
+          <li><span class="box bad">①</span> 稀疏 attention:跳过不重要位置</li>
+          <li><span class="box warn">②</span> 滑动窗口:保留最近 N 个</li>
+          <li><span class="box good">③</span> 重要 token:heavy hitter 优先</li>
+          <li><span class="box alg">④</span> 低比特量化:KIVI / KVQuant</li>
+          <li><span class="box model">⑤</span> 跨层共享:PyramidInfer</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>关键约束</h3>
+        <ul>
+          <li>不能影响 attention 计算的正确性</li>
+          <li>decode 阶段 KV 不断增长,压缩要 streaming</li>
+          <li>训练好的 LLM 不能重训</li>
+          <li>通常要求 <b>tuning-free</b></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 12. H2O ========== -->
+  <section class="slide" data-num="12">
+    <h1>代表作 · H2O(2023)· ~500 引 · NeurIPS 2023</h1>
+    <p class="gray">Heavy-Hitter Oracle: An Accurate and Efficient KV-Cache Eviction Policy · Zhang et al.(ETH)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>核心观察</h3>
+        <ul>
+          <li>LLM attention 分数服从 <b>重尾分布</b></li>
+          <li>只有少数 token 累计 attention 很高</li>
+          <li>这些叫 "<b>Heavy Hitter</b>"(累计重要 token)</li>
+          <li>其他 token 可丢弃</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>方案</h3>
+        <ul>
+          <li>累计每个 token 历史上的 attention 分数</li>
+          <li>每生成 N 个 token,触发 <b>eviction</b></li>
+          <li>保留累计分数最高的 <b>top K</b> 个 token</li>
+          <li>加 <b>recency bias</b>(新 token 暂时豁免)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li>OPT-6.7B: 缓存 <b>20%</b>,PPL 几乎不变</li>
+          <li>LongBench / StreamEval SOTA</li>
+          <li>cache budget 50% 时精度接近 baseline</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>"累计 attention"作为重要度指标</b> = KV 压缩的开创性思路。Scissorhands / Scissorhands++ 都用类似思想。
+    </div>
+  </section>
+
+  <!-- ========== 13. Scissorhands ========== -->
+  <section class="slide" data-num="13">
+    <h1>代表作 · Scissorhands(2023)· ~300 引 · ACL 2024</h1>
+    <p class="gray">Sparse Attention via Persistent/Compacted Context · Liu et al.(Microsoft)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>核心思想</h3>
+        <ul>
+          <li>在 PPL 阶段识别"<b>关键 phase</b>"</li>
+          <li>在关键 phase 出现的 token,后续保留</li>
+          <li>非关键 phase 出现的 token,可以丢弃</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>三步法</h3>
+        <ul>
+          <li><b>① 探测</b>:1-shot,找重要 phase</li>
+          <li><b>② 筛选</b>:标记重要 token 子集</li>
+          <li><b>③ 紧凑</b>:推理时只保留这些 token</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li>LLaMA-7B 30% cache → <b>等同</b> 100%</li>
+          <li>支持 100K+ context 推理</li>
+          <li>vLLM / SGLang 已集成类似思路</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>与 H2O 对比</b>:H2O 关注"<b>累计重要度</b>",Scissorhands 关注"<b>phase-level 重要度</b>"。两种思路可结合。
+    </div>
+  </section>
+
+  <!-- ========== 14. StreamingLLM ========== -->
+  <section class="slide" data-num="14">
+    <h1>代表作 · StreamingLLM(2023)· ~800 引 · ICLR 2024</h1>
+    <p class="gray">Efficient Streaming Language Models with Attention Sinks · Xiao et al.(MIT + Meta)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>关键发现:"Attention Sink"</h3>
+        <ul>
+          <li>softmax 总和 = 1,需要"占位" token</li>
+          <li>初始几个 token 总是获得 <b>不必要的高 attention</b></li>
+          <li>不是它们内容重要,是 softmax 强迫 attention 有去处</li>
+          <li>这些占位 token 叫 "<b>attention sink</b>"</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>方案</h3>
+        <ul>
+          <li>永远保留:<b>前 N 个</b>(sink) + <b>最近 M 个</b>(window)</li>
+          <li>中间 token 全部丢弃</li>
+          <li><b>无需训练</b>,无需额外参数</li>
+          <li>Llama-2 7B + 4K sink + 1K window 跑 4M+ 上下文</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>影响</h3>
+        <ul>
+          <li><b>引 ~800</b>,KV 压缩领域最经典</li>
+          <li>vLLM, SGLang 集成 <b>默认推荐</b></li>
+          <li>启发了 FastGen / H2O+ 等组合方案</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>softmax 的"占位效应"</b>是 attention 计算的内在属性,而非 bug。理解这点让"滑动窗口 + 锚点"成为通用范式。
+    </div>
+  </section>
+
+  <!-- ========== 15. FastGen ========== -->
+  <section class="slide" data-num="15">
+    <h1>代表作 · FastGen(2023)· ~200 引</h1>
+    <p class="gray">Efficient Generation with Adaptive-Compression KV-Cache · Ge et al.(Microsoft)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>核心思想</h3>
+        <ul>
+          <li>不同 attention head 偏好 <b>不同压缩策略</b></li>
+          <li>让模型自己学(head-specific)选哪种策略</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>支持的策略</h3>
+        <ul>
+          <li><b>① Heavy Hitter</b>(H2O 思路)</li>
+          <li><b>② Window</b>(滑动窗口)</li>
+          <li><b>③ Attention Sink</b>(StreamingLLM)</li>
+          <li>每个 head 选一个,组合压缩</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li>OPT-175B <b>40% 显存</b> 节省</li>
+          <li>延迟降低 <b>2.1×</b></li>
+          <li>零质量损失</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>"head 自适应压缩策略"</b>让 KV 压缩从"一刀切"变成"按需压缩"。后续工作(SnapKV, PyramidInfer)都继承这一思想。
+    </div>
+  </section>
+
+  <!-- ========== 16. KIVI ========== -->
+  <section class="slide" data-num="16">
+    <h1>代表作 · KIVI(2024)· ~400 引 · ICLR 2024</h1>
+    <p class="gray">2-bit KV Cache Quantization with Tuning-free · Liu et al.</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>核心观察</h3>
+        <ul>
+          <li>Key 在 <b>per-channel</b> 维度有 outlier</li>
+          <li>Value 在 <b>per-token</b> 维度有 outlier</li>
+          <li>两种分布特征 <b>完全不同</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>方案</h3>
+        <ul>
+          <li>Key → <b>per-channel</b> 2-bit 量化</li>
+          <li>Value → <b>per-token</b> 2-bit 量化</li>
+          <li>Llama-2 7B + 2-bit KV → <b>6.7× 显存</b></li>
+          <li>PPL 损失 < 0.1</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>贡献</h3>
+        <ul>
+          <li>首个 <b>tuning-free</b> 2-bit KV 量化</li>
+          <li>可与 H2O / StreamingLLM 组合</li>
+          <li>被 vLLM、TensorRT-LLM 集成</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>"K 和 V 需不同量化策略"</b> 是 KIVI 的关键发现。KVQuant(2024) / ZipCache(2024) 都继承。
+    </div>
+  </section>
+
+  <!-- ========== 17. KVQuant ========== -->
+  <section class="slide" data-num="17">
+    <h1>前沿 · KVQuant(2024)+ PyramidInfer(2024)+ ShadowKV(2024)</h1>
+    <p class="gray">KV 压缩的"高阶"组合方案</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>KVQuant(Hooper et al. NeurIPS 2024)</h3>
+        <p class="meta">NVIDIA</p>
+        <ul>
+          <li><b>精度敏感</b> 残差 + <b>分离 outlier</b></li>
+          <li>Key <b>sub-channel</b> 量化</li>
+          <li>Llama-3 8B <b>3-bit KV</b> 仍高精度</li>
+          <li>配合 KV 预量化训练</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>PyramidInfer(Yang et al. ASPLOS 2024)</h3>
+        <p class="meta">CMU</p>
+        <ul>
+          <li>观察:不同 layer 重要性不同</li>
+          <li><b>浅层</b> → <b>长</b> KV(细粒度)</li>
+          <li><b>深层</b> → <b>短</b> KV(粗粒度)</li>
+          <li>如金字塔:上窄下宽</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>ShadowKV(Sun et al. 2024)</h3>
+        <p class="meta">ByteDance</p>
+        <ul>
+          <li>把 <b>低精度 KV</b> 留在 GPU</li>
+          <li>把 <b>完整 KV</b> 卸到 CPU/SSD</li>
+          <li>需要时按需加载</li>
+          <li>Llama-3 70B <b>128K context</b> 单卡可跑</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>2024-2025 趋势</b>:<b>"稀疏 + 量化 + 分层 + 跨设备"</b>四种思路组合,让 KV 压缩从"算法"演变为"系统优化"。
+    </div>
+  </section>
+
+  <!-- ========== 18. SnapKV + Quest ========== -->
+  <section class="slide" data-num="18">
+    <h1>SnapKV(2024)+ Quest(2024)+ 后续</h1>
+    <p class="gray">基于"查询感知"的 KV 压缩</p>
+    <div class="twocol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>SnapKV(Li et al. ACL 2025)</h3>
+        <p class="meta">SnapKV: Locally Important Layers</p>
+        <ul>
+          <li>核心 insight:query 知道 <b>它在找什么</b></li>
+          <li>用 <b>clustering</b> + attention 分数找重要 KV</li>
+          <li>每个 query 选择 top-K KV 块</li>
+          <li>Llama-3 8B + 1M context <b>6.6× 加速</b></li>
+          <li>Code Llama 34B <b>8.3×</b> 加速</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Quest(Tang et al. ICML 2024)</h3>
+        <p class="meta">Query-Aware Sparsity for KV</p>
+        <ul>
+          <li>在 <b>每个 decode 步骤</b> 动态选 KV 块</li>
+          <li>用 query × key norm <b>预估</b> 重要性</li>
+          <li>无需 full attention 计算</li>
+          <li>Llama-7B <b>2.4× 加速</b>,PPL 不变</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>2024-2025 综合趋势</h3>
+      <p>· <b>"查询感知"</b>(query-aware)成为 KV 压缩的新范式 · <b>StreamingLLM + SnapKV</b> = 静态结构 + 动态细节 · <b>SGLang / vLLM / TensorRT-LLM</b> 都内置多种 KV 压缩策略 · <b>评估</b>:RULER(2024)成为长上下文 KV 压缩的事实标准评测</p>
+    </div>
+  </section>
+
+  <!-- ========== 19. KV 压缩对比表 ========== -->
+  <section class="slide tight" data-num="19">
+    <h1>KV Cache 压缩 · 9 大方法对比</h1>
+    <table class="table">
+      <thead>
+        <tr><th style="width:14%;">方法</th><th style="width:8%;">年份</th><th style="width:11%;">类型</th><th style="width:18%;">核心思想</th><th style="width:13%;">压缩率</th><th style="width:8%;">训练</th><th style="width:28%;">代表结果</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><b>H2O</b></td><td>2023</td><td>重要 token</td><td>累计 attention 排序</td><td>5×</td><td>无</td><td>OPT-6.7B 20% cache 保 PPL</td></tr>
+        <tr><td><b>Scissorhands</b></td><td>2023</td><td>重要 phase</td><td>phase 关键 token 保留</td><td>3×</td><td>无</td><td>Llama-7B 30% cache 等同 100%</td></tr>
+        <tr><td><b>StreamingLLM</b></td><td>2023</td><td>滑窗 + 锚点</td><td>Attention Sink + 滑窗</td><td>无界</td><td>无</td><td>Llama-2 跑 4M context</td></tr>
+        <tr><td><b>FastGen</b></td><td>2023</td><td>head 自适应</td><td>每 head 自选策略</td><td>2.5×</td><td>无</td><td>OPT-175B 40% 显存</td></tr>
+        <tr><td><b>KIVI</b></td><td>2024</td><td>低比特量化</td><td>K/V 分别 2-bit 量化</td><td>4-8×</td><td>无</td><td>Llama-2 7B 2-bit 6.7× 显存</td></tr>
+        <tr><td><b>KVQuant</b></td><td>2024</td><td>高级量化</td><td>残差 + 分离 outlier</td><td>5×</td><td>轻</td><td>Llama-3 8B 3-bit 高精度</td></tr>
+        <tr><td><b>PyramidInfer</b></td><td>2024</td><td>分层压缩</td><td>浅深不同 KV 长度</td><td>5×</td><td>无</td><td>Llama-7B 1M context 单卡</td></tr>
+        <tr><td><b>Quest</b></td><td>2024</td><td>查询感知</td><td>query 预估 KV 重要性</td><td>2-3×</td><td>无</td><td>Llama-7B 2.4× 加速</td></tr>
+        <tr><td><b>SnapKV</b></td><td>2024</td><td>查询感知</td><td>clustering 选重要 KV</td><td>6-8×</td><td>无</td><td>Llama-3 8B 1M context 6.6×</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ========== 20. Prompt / Context 基础 ========== -->
+  <section class="slide" data-num="20">
+    <h1>③ Prompt / Context 压缩 · 输入侧</h1>
+    <p>LLM 推理时,长 prompt 包含大量冗余(重复、停用词、低信息词)。压缩可降本(API 计价)又提速。</p>
+    <div class="num-grid">
+      <div class="num-cell highlight">
+        <div class="lbl">GPT-4 input</div>
+        <div class="val">$0.01</div>
+        <div class="sub">/1K token (1K 上下文)</div>
+      </div>
+      <div class="num-cell warn">
+        <div class="lbl">GPT-4 input</div>
+        <div class="val">$0.12</div>
+        <div class="sub">/1K token (128K 上下文)</div>
+      </div>
+      <div class="num-cell good">
+        <div class="lbl">LLMLingua</div>
+        <div class="val">20×</div>
+        <div class="sub">压缩且不掉点</div>
+      </div>
+      <div class="num-cell good">
+        <div class="lbl">LLMLingua-2</div>
+        <div class="val">20×</div>
+        <div class="sub">更快 + 更准</div>
+      </div>
+    </div>
+    <div class="threecol" style="margin-top: 10px;">
+      <div class="card">
+        <h3>输入侧 vs 推理侧</h3>
+        <ul>
+          <li><b>输入侧</b>:压缩 prompt 字符(token 数)</li>
+          <li><b>推理侧</b>:压缩 KV cache(注意力)</li>
+          <li>两类可叠加使用</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>技术路线</h3>
+        <ul>
+          <li>· <span class="box alg">分类</span>:用小模型判 token 重要度</li>
+          <li>· <span class="box model">生成</span>:用 LLM 重新生成压缩版</li>
+          <li>· <span class="box good">检索</span>:只保留相关 chunk</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心挑战</h3>
+        <ul>
+          <li>压缩后 prompt 必须 <b>信息量足够</b></li>
+          <li>不能丢失 <b>关键指令</b></li>
+          <li>压缩率 vs 精度 trade-off</li>
+          <li>需要 <b>任务自适应</b></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 21. LLMLingua ========== -->
+  <section class="slide" data-num="21">
+    <h1>代表作 · LLMLingua(2023)· ~700 引 · ACL 2023</h1>
+    <p class="gray">Prompt Compression via Linguistic Information · Jiang et al.(Microsoft)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>核心思想</h3>
+        <ul>
+          <li>用 <b>小模型</b>(如 GPT-2 / BERT) 评估 token 信息量</li>
+          <li>丢弃 <b>低信息 token</b>(停用词、重复、模板)</li>
+          <li>保留 <b>高信息 token</b>(实体、关键动作)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>关键算法</h3>
+        <ul>
+          <li><b>① 困惑度差</b>:PPL 升幅小的 token 重要</li>
+          <li><b>② 条件熵</b>:在上下文的条件信息</li>
+          <li><b>③ token 分类</b>:粗粒度保留(名词/动词)</li>
+          <li><b>④ 预算分配</b>:动态分配到每段</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li>20× 压缩率,精度 <b>几乎不变</b></li>
+          <li>支持 QA / 摘要 / CoT 多任务</li>
+          <li>代码已开源,被广泛使用</li>
+          <li>LongLLMLingua(2024)扩展到长 prompt</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>"小模型评估 token 重要度"</b>是 prompt 压缩的"零成本"方案。LLM 不需要重训,小模型跑得快。
+    </div>
+  </section>
+
+  <!-- ========== 22. LLMLingua-2 ========== -->
+  <section class="slide" data-num="22">
+    <h1>代表作 · LLMLingua-2(2024)· ~300 引 · ACL 2024</h1>
+    <p class="gray">Prompt Compression via Token Classification · Pan et al.(Microsoft)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>改进点</h3>
+        <ul>
+          <li>把 prompt 压缩视为 <b>序列标注</b> 任务</li>
+          <li>训练一个 <b>分类器</b>:每个 token 判"保/删"</li>
+          <li>更 <b>准确</b> + 更快</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>训练数据</h3>
+        <ul>
+          <li>用 GPT-4 做 <b>teacher labeling</b></li>
+          <li>训练 <b>BERT-style</b> 分类器</li>
+          <li>训练数据从公开 QA 数据集采样</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li>20× 压缩,精度 <b>优于 LLMLingua</b></li>
+          <li>推理 <b>3-5× 更快</b></li>
+          <li>对 <b>多语言</b> 也支持</li>
+          <li>工业部署友好</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:从"<b>启发式</b>(LLMLingua)"到"<b>学习式</b>(LLMLingua-2)"是 prompt 压缩的范式升级。后续 SelectiveContext、Compress-and-Prompt 都走"小分类器"路线。
+    </div>
+  </section>
+
+  <!-- ========== 23. Selective Context / CompAct ========== -->
+  <section class="slide" data-num="23">
+    <h1>Selective Context(2023)+ CompAct(2024)+ 其它</h1>
+    <p class="gray">Prompt 压缩的多个变体</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>Selective Context(Yeo et al. ACL 2024)</h3>
+        <p class="meta">基于 self-information</p>
+        <ul>
+          <li>用 <b>自信息</b>(-log p)衡量 token 重要度</li>
+          <li>小模型(Llama-7B)做 evaluator</li>
+          <li>支持 phrase-level 压缩</li>
+          <li>4× 压缩,QA 任务几乎不掉点</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Compress-and-Prompt</h3>
+        <p class="meta">先生成压缩版,再 prompt</p>
+        <ul>
+          <li>用 LLM 生成 <b>摘要</b> 作为新 prompt</li>
+          <li>两阶段:压缩 + 提问</li>
+          <li>适合 RAG 场景</li>
+          <li>依赖 LLM 摘要质量</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>CompAct(2024)</h3>
+        <p class="meta">任务感知压缩</p>
+        <ul>
+          <li>压缩时考虑 <b>下游任务</b></li>
+          <li>训练 compression policy</li>
+          <li>比通用压缩精度高 5-10%</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>2024-2025 趋势</h3>
+      <p>· <b>"压缩 + RAG"</b> 联合优化(检索时只返回相关 chunk,不再额外压缩)· <b>AdaComp</b>(2024)任务自适应压缩 · <b>ChunkedLLM</b>(2024)分块压缩 · <b>xRAG</b>(2024)把文档压缩成 1 个 embedding · <b>MemoRAG</b>(2024)memory-based 检索</p>
+    </div>
+  </section>
+
+  <!-- ========== 24. ICAE ========== -->
+  <section class="slide" data-num="24">
+    <h1>代表作 · ICAE(2024)· ~150 引 · NeurIPS 2024</h1>
+    <p class="gray">In-Context Auto-Encoders · Ge et al.(Microsoft)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>核心思想</h3>
+        <ul>
+          <li>训练一个 <b>autoencoder</b> 把长 context 压缩成 N 个 <b>memory token</b></li>
+          <li>把 memory token 拼到 prompt 前面</li>
+          <li>LLM 推理时,只需关注 <b>少量 memory</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>训练方法</h3>
+        <ul>
+          <li>Encoder:LoRA 适配 LLaMA</li>
+          <li>Decoder:重训,确保 LLM 能从 memory 恢复信息</li>
+          <li>目标:memory 包含原 context 的 <b>全部信息</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li><b>4× 压缩</b> 几乎无质量损失</li>
+          <li>8× 压缩 < 1% 掉点</li>
+          <li>在 LLaMA-2 7B 验证</li>
+          <li><b>训练成本</b>相对低</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>"把 context 编码为少量 memory token"</b>是 prompt 压缩的"端到端可学习"范式。AutoCompressor(2023)/Gist Token(2023)/ChunkedLLM(2024)都是这个思路。
+    </div>
+  </section>
+
+  <!-- ========== 25. AutoCompressor + LongLLMLingua ========== -->
+  <section class="slide" data-num="25">
+    <h1>AutoCompressor(2023)+ LongLLMLingua(2024)</h1>
+    <p class="gray">学习式压缩 + 超长 prompt 压缩</p>
+    <div class="twocol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>AutoCompressor(Chevalier et al. NeurIPS 2023)</h3>
+        <p class="meta">Stanford</p>
+        <ul>
+          <li>用 <b>summary token</b> 渐进压缩</li>
+          <li>每 N 个 token 压缩为 1 个 summary</li>
+          <li>训练:让 LLM 能从 summary 还原</li>
+          <li>支持 <b>无限长 context</b> 推理</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>LongLLMLingua(Jiang et al. ACL 2024)</h1>
+        <p class="meta">LLMLingua 长 prompt 版</p>
+        <ul>
+          <li>针对 <b>10K-100K token</b> 的 prompt</li>
+          <li>改进:动态 question-aware 压缩</li>
+          <li>用 GPT-4 评分(代替 PPL)</li>
+          <li>长文档 QA 21× 压缩不掉点</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>核心对比</h3>
+      <p>· <b>LLMLingua 系列</b>:轻量、小模型评估、tuning-free · <b>ICAE / AutoCompressor</b>:需要训练、但压缩率更高 · <b>LongLLMLingua</b>:QA 任务专用 · <b>ChunkedLLM</b>:分块独立压缩 · <b>Gist Token</b>:Meta 的"提示词压缩"</p>
+    </div>
+  </section>
+
+  <!-- ========== 26. ④ 长上下文基础 ========== -->
+  <section class="slide" data-num="26">
+    <h1>④ 长上下文建模 · 基础</h1>
+    <p>LLM 主流 context window 仍然有限:GPT-4 = 128K,Llama-3 = 128K。但很多任务需要 <b>百万级</b> 上下文。</p>
+    <div class="num-grid">
+      <div class="num-cell">
+        <div class="lbl">GPT-2</div>
+        <div class="val">1K</div>
+        <div class="sub">2019</div>
+      </div>
+      <div class="num-cell">
+        <div class="lbl">LLaMA-1</div>
+        <div class="val">2K</div>
+        <div class="sub">2023</div>
+      </div>
+      <div class="num-cell">
+        <div class="lbl">GPT-4</div>
+        <div class="val">128K</div>
+        <div class="sub">2023</div>
+      </div>
+      <div class="num-cell highlight">
+        <div class="lbl">Llama-3</div>
+        <div class="val">128K</div>
+        <div class="sub">2024</div>
+      </div>
+      <div class="num-cell good">
+        <div class="lbl">Claude 3.5</div>
+        <div class="val">1M</div>
+        <div class="sub">2024 (beta)</div>
+      </div>
+      <div class="num-cell good">
+        <div class="lbl">Gemini 2.0</div>
+        <div class="val">2M</div>
+        <div class="sub">2024</div>
+      </div>
+      <div class="num-cell warn">
+        <div class="lbl">YaRN-LLaMA</div>
+        <div class="val">128K</div>
+        <div class="sub">无需训练</div>
+      </div>
+      <div class="num-cell warn">
+        <div class="lbl">LongRoPE</div>
+        <div class="val">2M</div>
+        <div class="sub">微调</div>
+      </div>
+    </div>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>为什么 context 难扩?</h3>
+        <ul>
+          <li>位置编码 <b>训练分布外</b> 失效</li>
+          <li>Self-attention <b>O(n²)</b> 显存爆炸</li>
+          <li>训练数据 <b>长文本稀缺</b></li>
+          <li>评测 <b>难</b>:Lost in the Middle</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>5 类技术路线</h3>
+        <ul>
+          <li>· <span class="box alg">位置编码</span> 扩展(YaRN/LongRoPE)</li>
+          <li>· <span class="box model">持续训练</span>(LongLoRA)</li>
+          <li>· <span class="box good">注意力稀疏</span>(Landmark)</li>
+          <li>· <span class="box warn">KV 压缩</span>(前面所有)</li>
+          <li>· <span class="box system">检索</span>(RAG / 检索 attention)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>核心矛盾</h3>
+        <ul>
+          <li>扩展 <b>理论</b> 上界</li>
+          <li>vs <b>实际能力</b> 利用</li>
+          <li>128K context 中,<b>1M 真能</b> 用上吗?</li>
+          <li>评测:RULER 2024 给出答案</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 27. YaRN ========== -->
+  <section class="slide" data-num="27">
+    <h1>代表作 · YaRN(2023)· ~800 引</h1>
+    <p class="gray">Yet another RoPE extensioN · Peng et al.(Nous Research)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>核心思想</h3>
+        <ul>
+          <li>RoPE 频率分解:<b>低频</b> 控制长程, <b>高频</b> 控制短程</li>
+          <li>对 <b>不同频段</b> 用不同缩放策略</li>
+          <li><b>无需训练</b>,只需修改推理时的位置编码</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>关键技术</h3>
+        <ul>
+          <li><b>NTK-by-parts</b> 插值</li>
+          <li><b>Attention temperature</b> scaling</li>
+          <li>对 <b>维度</b> 分类:高频/中频/低频</li>
+          <li>只需 16 token 长文本微调(可选)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li>Llama-7B: 2K → <b>128K</b> 无损</li>
+          <li>CodeLlama 16K → <b>64K</b></li>
+          <li>无需训练,5 分钟集成</li>
+          <li>被 Llama-2-Long / Qwen-Long 等采用</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>RoPE 频段分离</b>是长上下文的关键 insight。高频用线性,低频用 NTK 插值,这是"手术式"扩展。
+    </div>
+  </section>
+
+  <!-- ========== 28. LongRoPE / LongLoRA / Landmark ========== -->
+  <section class="slide" data-num="28">
+    <h1>LongRoPE(2024)+ LongLoRA(2023)+ Landmark(2023)</h1>
+    <p class="gray">长上下文三大代表</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>LongRoPE(Ding et al. 2024)· ~300 引</h3>
+        <p class="meta">Microsoft</p>
+        <ul>
+          <li>用 <b>进化搜索</b> 找每维的最佳缩放因子</li>
+          <li>Llama-2 7B <b>2K → 2M</b>(需 1K step 微调)</li>
+          <li>非均匀缩放,不同维度不同</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>LongLoRA(Chen et al. NeurIPS 2023)· ~600 引</h3>
+        <p class="meta">CUHK</p>
+        <ul>
+          <li>用 <b>Shifted Sparse Attention</b> 训练</li>
+          <li>训练 O(n²) → O(n√n)</li>
+          <li><b>单卡 24GB</b> 即可微调 100K context</li>
+          <li>配合 LoRA,资源极少</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Landmark Attention(Mohtashami, NeurIPS 2023)</h3>
+        <p class="meta">Meta</p>
+        <ul>
+          <li>每个 block 选 <b>landmark token</b> 存 KV</li>
+          <li>查询只 attend 到 landmark</li>
+          <li>O(n²) → O(nk),k 是 landmark 数</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>三类思路对比</b>:· <span class="box alg">位置编码</span>(YaRN/LongRoPE)<b>改 PE</b> · <span class="box model">训练</span>(LongLoRA)<b>改注意力</b> · <span class="box good">稀疏</span>(Landmark)<b>改 attention 模式</b>
+    </div>
+  </section>
+
+  <!-- ========== 29. RULER 评测 ========== -->
+  <section class="slide" data-num="29">
+    <h1>长上下文评测 · RULER(2024)</h1>
+    <p class="gray">RULER: What's the Real Context Size of Your Long-Context Language Models? · Hsieh et al.(NVIDIA)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>13 个评测任务</h3>
+        <ul>
+          <li><b>Needle-in-Haystack</b>:大海捞针</li>
+          <li><b>Variable Tracking</b>:变量追踪</li>
+          <li><b>Multi-hop QA</b>:多跳问答</li>
+          <li><b>Aggregation</b>:信息聚合</li>
+          <li><b>Common/Extraction</b>:抽取</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>关键发现</h3>
+        <ul>
+          <li>声称 128K context 的模型,<b>实际</b> 经常只能 4-32K</li>
+          <li>Llama-2-7B 声称 32K → RULER 上 4K 掉 30%</li>
+          <li>Llama-3-8B 128K → RULER 上仍 60%</li>
+          <li>开源模型 <b>普遍</b> 短于声明</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>意义</h3>
+        <ul>
+          <li>长上下文研究 <b>必须跑 RULER</b></li>
+          <li>推动更诚实的 context window 报告</li>
+          <li>LongBench(2024) 中文版补充</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:"<b>声称</b>的 context window" ≠ "实际有效" 。RULER 让长上下文研究从"<b>自吹</b>"走向"<b>实测</b>"。
+    </div>
+  </section>
+
+  <!-- ========== 30. Lost in the Middle ========== -->
+  <section class="slide" data-num="30">
+    <h1>长上下文经典论文 · Lost in the Middle(2023)</h1>
+    <p class="gray">Liu et al.(Princeton)· ACL 2023· ~1500 引</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>核心发现</h3>
+        <ul>
+          <li>LLM 在 <b>长 context</b> 中:</li>
+          <li>· <b>开头</b> 信息利用最好</li>
+          <li>· <b>结尾</b> 信息其次</li>
+          <li>· <b>中间</b> 信息最差(<b>掉 20-30%</b>)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>U 型曲线</h3>
+        <ul>
+          <li>位置 vs 准确率呈 <b>U 型</b></li>
+          <li>长文档 QA 任务尤其明显</li>
+          <li>即使模型有足够 context 长度</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>启示</h3>
+        <ul>
+          <li>· <b>KV 压缩</b> 把重要信息放头/尾</li>
+          <li>· <b>Prompt 压缩</b> 删中间冗余</li>
+          <li>· <b>位置编码</b> 让中间更稳定</li>
+          <li>· <b>RAG</b> 只返回关键 chunk</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>为什么是 1500 引</b>?:这篇 <b>2023</b> 的论文揭示 LLM 在长 context 的<b>根本缺陷</b>。所有 KV 压缩、prompt 压缩、长上下文扩展工作,都要解决"Lost in the Middle"问题。
+    </div>
+  </section>
+
+  <!-- ========== 31. ⑤ 投机解码 ========== -->
+  <section class="slide" data-num="31">
+    <h1>⑤ 投机解码 · Speculative Decoding</h1>
+    <p>核心 idea:<b>小模型草拟 + 大模型验证</b>,并行生成 5-10 个 token,接受率 70-80% 时加速 2-3×。</p>
+    <div class="num-grid col3">
+      <div class="num-cell highlight">
+        <div class="lbl">SpecDec</div>
+        <div class="val">2-3×</div>
+        <div class="sub">2023 · 经典</div>
+      </div>
+      <div class="num-cell good">
+        <div class="lbl">Medusa</div>
+        <div class="val">2-2.5×</div>
+        <div class="sub">2023 · 多 head</div>
+      </div>
+      <div class="num-cell good">
+        <div class="lbl">EAGLE</div>
+        <div class="val">2.7-3.5×</div>
+        <div class="sub">2024 · 特征级</div>
+      </div>
+    </div>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>核心问题</h3>
+        <p class="meta">LLM 自回归推理太慢</p>
+        <ul>
+          <li>每生成 1 个 token 都跑 <b>整个模型</b></li>
+          <li>memory bandwidth 限制</li>
+          <li>GPU 算力闲置,显存带宽是瓶颈</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>投机解码原理</h3>
+        <ul>
+          <li>① 小模型(Draft)生成 K 个候选 token</li>
+          <li>② 大模型(Target)1 次 forward 验证</li>
+          <li>③ 接受正确部分,继续生成</li>
+          <li>④ 拒绝时大模型重生成</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>关键指标</h3>
+        <ul>
+          <li><b>接受率 α</b>:小模型预测准确率</li>
+          <li><b>草拟长度 K</b>:一次生成几个</li>
+          <li><b>加速比</b>:E[1/(1-α)] 当 α &lt; 1</li>
+          <li>典型:α=0.7, K=5 → 2.5× 加速</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 32. Medusa ========== -->
+  <section class="slide" data-num="32">
+    <h1>代表作 · Medusa(2023)· ~400 引</h1>
+    <p class="gray">Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads · Cai et al.(UCSD + Together AI)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>核心思想</h3>
+        <ul>
+          <li>不训练 draft model</li>
+          <li>在 LLM 顶层加 <b>多个 Medusa head</b></li>
+          <li>每个 head 预测第 N+1/N+2/N+3 个 token</li>
+          <li>所有 head <b>并行</b> 预测</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>训练</h3>
+        <ul>
+          <li>冻结 LLM 主干</li>
+          <li>只训 <b>Medusa heads</b> (几行 FFN)</li>
+          <li>训练成本极低</li>
+          <li>1-2 小时即可</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li>Vicuna-13B <b>2.2× 加速</b></li>
+          <li>Vicuna-33B <b>2.3× 加速</b></li>
+          <li>代码简单,集成 <b>几行</b></li>
+          <li>已被 vLLM / SGLang 集成</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>"不训 draft model + 多 head 并行"</b>让投机解码变得简单实用。这是工业部署的 <b>首选</b> 方案之一。
+    </div>
+  </section>
+
+  <!-- ========== 33. EAGLE ========== -->
+  <section class="slide" data-num="33">
+    <h1>代表作 · EAGLE(2024)· ~300 引 · NeurIPS 2024</h1>
+    <p class="gray">EAGLE: Extrapolation Algorithm for Greater Language-model Efficiency · Li et al.(复旦 + Microsoft)</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>改进点</h3>
+        <ul>
+          <li>不在 token 空间,改在 <b>特征空间</b> 自回归</li>
+          <li>用 <b>下一层特征</b> 预测</li>
+          <li>更 <b>精准</b> + 接受率更高</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>训练</h3>
+        <ul>
+          <li>1 层 Transformer head</li>
+          <li>训练数据极少</li>
+          <li>接受率 0.8+ (vs Medusa 0.7)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>效果</h3>
+        <ul>
+          <li>Llama-2-Chat 70B <b>2.7× 加速</b></li>
+          <li>Llama-3-8B-Instruct <b>3.5× 加速</b></li>
+          <li>代码 <b>开源</b></li>
+          <li>已被多个推理框架集成</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 8px;">
+      <b>启示</b>:<b>"特征级自回归"</b>比"token 级"信息量更密集,是投机解码的 <b>新范式</b>。EAGLE-2(2024)继续优化到 4× 加速。
+    </div>
+  </section>
+
+  <!-- ========== 34. 投机解码其它 ========== -->
+  <section class="slide" data-num="34">
+    <h1>投机解码其他代表</h1>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>SpecDec(Leviathan et al. ICML 2023)· ~1000 引</h3>
+        <p class="meta">Google</p>
+        <ul>
+          <li>首个系统化 speculative decoding 论文</li>
+          <li>用 <b>独立小模型</b> 做 draft</li>
+          <li>理论保证:接受分布 = 原分布</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Lookahead Decoding(Bi et al. 2024)· ~150 引</h3>
+        <p class="meta">不需 draft model</p>
+        <ul>
+          <li>用 <b>Jacobi 迭代</b> 并行生成</li>
+          <li>同模型生成 N 个候选</li>
+          <li>接受最长公共前缀</li>
+          <li>零额外参数</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Self-Speculative(Zhang et al. 2024)</h3>
+        <p class="meta">不需 draft model</p>
+        <ul>
+          <li>用 <b>模型的浅层</b> 做 draft</li>
+          <li>仅 1 个模型,2 个"角色"</li>
+          <li>训练 <b>退出机制</b></li>
+          <li>省去 draft model 加载</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>2024 趋势</h3>
+      <p>· <b>EAGLE-2(2024)</b>动态树形验证,加速 4-5× · <b>Kangaroo(2024)</b>用浅层做 draft · <b>Layer-Skip(2024)</b>模型内部早退 · <b>Lookahead + Medusa</b> 组合方案 · <b>"自投机"</b>(self-speculative)成为 2025 新范式</p>
+    </div>
+  </section>
+
+  <!-- ========== 35. 5 大路线对比表 ========== -->
+  <section class="slide tight" data-num="35">
+    <h1>5 大路线全景对比</h1>
+    <table class="table">
+      <thead>
+        <tr><th style="width:12%;">路线</th><th style="width:18%;">代表工作</th><th style="width:18%;">核心思想</th><th style="width:14%;">压缩率</th><th style="width:11%;">训练</th><th style="width:27%;">典型场景</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="box model">视觉 token</span></td><td>ToMe / DynamicViT</td><td>合并 / 剪枝 patch</td><td>1.5-2×</td><td>可选</td><td>ViT 推理加速、视觉分类</td></tr>
+        <tr><td><span class="box good">KV Cache</span></td><td>H2O / StreamingLLM / KIVI</td><td>重要 token + 量化</td><td>5-100×</td><td>无</td><td>LLM 长上下文</td></tr>
+        <tr><td><span class="box alg">Prompt</span></td><td>LLMLingua / ICAE</td><td>删减 / 编码 prompt</td><td>5-20×</td><td>可选</td><td>RAG、API 降本</td></tr>
+        <tr><td><span class="box warn">长上下文</span></td><td>YaRN / LongLoRA</td><td>位置编码 / 注意力</td><td>无界</td><td>需微调</td><td>百万级 context</td></tr>
+        <tr><td><span class="box idea">投机解码</span></td><td>Medusa / EAGLE</td><td>小草大验</td><td>2-3× 加速</td><td>轻</td><td>LLM 生成加速</td></tr>
+      </tbody>
+    </table>
+    <div class="quote" style="margin-top: 6px;">
+      <b>组合使用</b>:YaRN(长 PE)+ KIVI(KV 量化)+ Medusa(生成加速)= 端到端 LLM 推理优化栈,被 vLLM / SGLang / TensorRT-LLM 默认采用。
+    </div>
+  </section>
+
+  <!-- ========== 36. 5 大路线年份趋势 ========== -->
+  <section class="slide" data-num="36">
+    <h1>5 大路线年份趋势(2020-2025)</h1>
+    <p>每条路线都有"<b>元年 + 爆发年 + 收敛年</b>"三阶段。</p>
+    <table class="table">
+      <thead>
+        <tr><th style="width:14%;">路线</th><th style="width:14%;">元年</th><th style="width:14%;">爆发年</th><th style="width:14%;">收敛年</th><th style="width:14%;">2024-25 趋势</th><th style="width:30%;">2025 主流</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="box model">视觉 token</span></td>
+          <td>2021 (DynamicViT)</td>
+          <td>2022 (A-ViT / EViT)</td>
+          <td>2023 (ToMe / DiffRate)</td>
+          <td>与 VLM 联合</td>
+          <td>无需训练 + 多模态</td>
+        </tr>
+        <tr>
+          <td><span class="box good">KV Cache</span></td>
+          <td>2023 (H2O / Scissorhands)</td>
+          <td>2023 (StreamingLLM)</td>
+          <td>2024 (KIVI / KVQuant / SnapKV)</td>
+          <td>查询感知 + 系统</td>
+          <td>KIVI 2-bit + SnapKV</td>
+        </tr>
+        <tr>
+          <td><span class="box alg">Prompt</span></td>
+          <td>2023 (LLMLingua)</td>
+          <td>2023 (Selective Context)</td>
+          <td>2024 (LLMLingua-2 / ICAE)</td>
+          <td>学习式压缩</td>
+          <td>LLMLingua-2 + RAG</td>
+        </tr>
+        <tr>
+          <td><span class="box warn">长上下文</span></td>
+          <td>2023 (YaRN / LongLoRA)</td>
+          <td>2023 (Landmark / Lost in Middle)</td>
+          <td>2024 (LongRoPE / RULER)</td>
+          <td>诚实评测</td>
+          <td>YaRN + RULER 评测</td>
+        </tr>
+        <tr>
+          <td><span class="box idea">投机解码</span></td>
+          <td>2023 (SpecDec)</td>
+          <td>2023 (Medusa)</td>
+          <td>2024 (EAGLE / Self-Spec)</td>
+          <td>无 draft model</td>
+          <td>EAGLE-2 + 自投机</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="quote" style="margin-top: 6px;">
+      <b>共同特征</b>:2023 是"<b>元年集中爆发年</b>"(LLM 倒逼所有 token 优化),2024 是"<b>收敛年</b>"(算法-系统协同 + 评测标准化),2025 是"<b>落地年</b>"(工业部署 + 跨模态)。
+    </div>
+  </section>
+
+  <!-- ========== 37. Idea 矩阵概述 ========== -->
+  <section class="slide" data-num="37">
+    <h1>可发文章的研究机会 · 5 大方向</h1>
+    <p>基于上面 30+ 代表工作,5 个交叉方向是 2025-2026 高潜力选题。</p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width:5%;">#</th>
+          <th style="width:30%;">Idea 方向</th>
+          <th style="width:18%;">目标会议/期刊</th>
+          <th style="width:17%;">关键起点</th>
+          <th style="width:18%;">难度</th>
+          <th style="width:12%;">时间窗</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>A</b></td>
+          <td>视觉 token × LLM 端 KV 联合压缩(VLM 场景)</td>
+          <td><span class="box eval">NeurIPS 2026</span> <span class="box eval">CVPR 2026</span></td>
+          <td>ToMe + KIVI</td>
+          <td>中-高</td>
+          <td>9-12 月</td>
+        </tr>
+        <tr>
+          <td><b>B</b></td>
+          <td>KV 压缩的隐私影响(从压缩 KV 反推 prompt)</td>
+          <td><span class="box eval">S&P 2026</span> <span class="box eval">USENIX 2026</span></td>
+          <td>KVQuant + 隐私文献</td>
+          <td>中-高</td>
+          <td>9-12 月</td>
+        </tr>
+        <tr>
+          <td><b>C</b></td>
+          <td>自适应长上下文(动态 context window)</td>
+          <td><span class="box eval">ICML 2026</span> <span class="box eval">NeurIPS 2026</span></td>
+          <td>YaRN + RULER</td>
+          <td>中</td>
+          <td>6-9 月</td>
+        </tr>
+        <tr>
+          <td><b>D</b></td>
+          <td>多模态 token 压缩统一(ViT + Audio + LLM)</td>
+          <td><span class="box eval">ICLR 2026</span> <span class="box eval">TPAMI</span></td>
+          <td>LLMLingua + ToMe</td>
+          <td>高</td>
+          <td>12-18 月</td>
+        </tr>
+        <tr>
+          <td><b>E</b></td>
+          <td>1-bit LLM × Token 压缩(极端协同)</td>
+          <td><span class="box eval">MLSys 2026</span> <span class="box eval">ASPLOS 2026</span></td>
+          <td>BitNet b1.58 + KIVI</td>
+          <td>高</td>
+          <td>12-15 月</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="quote" style="margin-top: 6px;">
+      <b>优先级</b>:A(快出活, VLM 蓝海)> C(可深,长上下文评测)> B(易发, 安全交叉)> D/E(需长期)。下面 5 页展开。
+    </div>
+  </section>
+
+  <!-- ========== 38. Idea A ========== -->
+  <section class="slide" data-num="38">
+    <h1>Idea A · 视觉 token × LLM 端 KV 联合压缩</h1>
+    <p class="gray">目标:NeurIPS 2026 / CVPR 2026 · 难度:中-高 · 时间:9-12 月</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>VLM(LLaVA / Qwen-VL)<b>ViT 端</b> + <b>LLM 端</b>独立压缩</li>
+          <li>ViT 压缩:ToMe / DynamicViT</li>
+          <li>LLM 端 KV 压缩:H2O / KIVI</li>
+          <li><b>两者误差累积</b>,最终掉点严重</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>技术路径</h3>
+        <ul>
+          <li>· <b>联合目标函数</b>:ViT token 重要度 ∝ LLM 关注度</li>
+          <li>· 跨模态 attention 指导 ViT 端剪枝</li>
+          <li>· 端到端训练 vision-projector-LLM</li>
+          <li>· 模态平衡 loss</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>实验设计</h3>
+        <ul>
+          <li>LLaVA-1.5 / Qwen2-VL / InternVL2</li>
+          <li>ViT 50% token + KV 2-bit 联合</li>
+          <li>评测:VQA / MMBench / MMMU</li>
+          <li>对比 ToMe + KIVI 独立版</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>为什么能发</h3>
+      <p>· VLM 量化 2024-2025 已有人做,<b>VLM token 压缩</b>几乎空白 · NeurIPS / CVPR 偏好 <b>多模态 + 新方法</b> · 代码基础:llava + llm-compressor 都有</p>
+    </div>
+  </section>
+
+  <!-- ========== 39. Idea B ========== -->
+  <section class="slide" data-num="39">
+    <h1>Idea B · KV 压缩的隐私影响</h1>
+    <p class="gray">目标:S&P 2026 / USENIX Security 2026 / TDSC · 难度:中-高 · 时间:9-12 月</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>压缩后的 KV cache <b>仍是公开</b></li>
+          <li>攻击者能否从 KV 反推 <b>原始 prompt</b>?</li>
+          <li>KV 压缩本身 <b>是否泄露</b> 隐私信息?</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>攻击面</h3>
+        <ul>
+          <li><b>KV Inversion</b>:从压缩 K/V 反推 token</li>
+          <li><b>KV Embedding Leakage</b>:outlier 位置 = 关键信息</li>
+          <li><b>Compression Pattern Attack</b>:被丢弃的 token ≠ 隐私</li>
+          <li><b>Membership Inference</b>:从 KV 模式判断训练样本</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>防御 + 评估</h3>
+        <ul>
+          <li>差分隐私 + KV 压缩(DP-KV)</li>
+          <li>压缩时加噪(noise-aware quant)</li>
+          <li>构建 KV 隐私 benchmark</li>
+          <li>对比 H2O / KIVI / StreamingLLM</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>为什么能发</h3>
+      <p>· <b>交叉领域</b>:KV 压缩 × 隐私, S&P 喜欢看新攻击面 · 现有工作(Wei et al. 2023 Q-sniffer)只做 FP, 没做 KV 压缩 · 实用威胁:OpenAI / Anthropic API 的 KV 缓存都是攻击目标</p>
+    </div>
+  </section>
+
+  <!-- ========== 40. Idea C ========== -->
+  <section class="slide" data-num="40">
+    <h1>Idea C · 自适应长上下文(动态 context window)</h1>
+    <p class="gray">目标:ICML 2026 / NeurIPS 2026 · 难度:中 · 时间:6-9 月</p>
+    <div class="threecol" style="margin-top: 8px;">
+      <div class="card">
+        <h3>问题</h3>
+        <ul>
+          <li>LLM context window <b>固定</b>(8K / 128K)</li>
+          <li>短 query 时浪费算力</li>
+          <li>长 query 时不够用</li>
+          <li>需要 <b>动态</b> 调整</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>技术路径</h3>
+        <ul>
+          <li>· 输入长度 <b>预测</b>(LSTM / 轻量模型)</li>
+          <li>· 动态路由:短 → 浅层,长 → 深层 + 稀疏</li>
+          <li>· <b>位置编码</b> 按 query 自适应</li>
+          <li>· <b>KV 预算</b> 动态分配</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>实验设计</h3>
+        <ul>
+          <li>Llama-3 8B / Qwen2.5 7B</li>
+          <li>多 query 长度(100 / 1K / 10K / 100K)</li>
+          <li>对比固定 context vs 自适应</li>
+          <li>评测:RULER + LongBench + 短任务</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 8px;">
+      <h3>为什么能发</h3>
+      <p>· <b>2024-2025 仍空白</b> · ICML 偏好 <b>自适应 / 动态</b> 方法 · 实用价值:每次 query 节省 30-50% 算力 · 代码基础:YaRN 已有,加 routing 模块即可</p>
+    </div>
+  </section>
+
+  <!-- ========== 41. 发展脉络总结 ========== -->
+  <section class="slide" data-num="41">
+    <h1>发展脉络总结 · 一图看懂</h1>
+    <div class="pipeline" style="padding: 18px 12px;">
+      <div class="pipeline-step" style="flex: 1;">
+        2020-21<br>
+        <span class="small">视觉 token 起步</span><br>
+        <b>DynamicViT</b><br>
+        <b>ViT-L/16</b>
+      </div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step alg" style="flex: 1;">
+        2022<br>
+        <span class="small">方法成熟</span><br>
+        <b>A-ViT</b><br>
+        <b>EViT</b>
+      </div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step" style="flex: 1;">
+        2023 Q1-Q2<br>
+        <span class="small">LLM 时代开启</span><br>
+        <b>StreamingLLM</b><br>
+        <b>LLMLingua</b>
+      </div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step alg" style="flex: 1;">
+        2023 H2<br>
+        <span class="small">4 路齐发</span><br>
+        <b>H2O / YaRN</b><br>
+        <b>Medusa / ToMe</b>
+      </div>
+      <span class="pipeline-arrow">→</span>
+      <div class="pipeline-step system" style="flex: 1.2;">
+        2024-25<br>
+        <span class="small">算法-系统协同</span><br>
+        <b>KIVI / EAGLE</b><br>
+        <b>SnapKV / LongRoPE</b>
+      </div>
+    </div>
+    <div class="threecol" style="margin-top: 12px;">
+      <div class="card">
+        <h3>4 条主线</h3>
+        <ol>
+          <li><b>从 ViT 到 LLM</b>:压缩对象从视觉到 KV</li>
+          <li><b>从启发式到学习式</b>:LLMLingua → LLMLingua-2</li>
+          <li><b>从单点优化到协同</b>:KIVI + SnapKV + EAGLE 组合</li>
+          <li><b>从算法到系统</b>:query-aware + 跨设备</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>未解决问题</h3>
+        <ul>
+          <li><b class="bad">?</b> VLM 视觉-LLM 联合压缩</li>
+          <li><b class="bad">?</b> 动态 context window</li>
+          <li><b class="bad">?</b> 多模态统一 token 压缩</li>
+          <li><b class="bad">?</b> KV 压缩的隐私影响</li>
+          <li><b class="bad">?</b> 1-bit LLM × 压缩</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>3 个核心范式</h3>
+        <ul>
+          <li><b class="good">1.</b> <b>重要性优先</b>:heavy hitter / 注意力分数</li>
+          <li><b class="good">2.</b> <b>学习式压缩</b>:小分类器 / 端到端</li>
+          <li><b class="good">3.</b> <b>查询感知</b>:按 query 自适应</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 42. Q&A ========== -->
+  <section class="slide" data-num="42">
+    <h1>Q & A · 3 道思考题</h1>
+    <div class="card" style="margin-top: 8px;">
+      <h3>3 道思考题</h3>
+      <ol>
+        <li><b>为什么 2023 是 token 压缩的"元年"?</b>
+          <p>这一年 LLM 出现,长上下文成为刚需,所有 token 优化从"加速 ViT"扩展到"压缩 LLM"。是不是技术准备好了,还是 LLM 倒逼了 token 压缩?两者哪个先?</p>
+        </li>
+        <li><b>投机解码与 KV 压缩,哪个更重要?</b>
+          <p>投机解码加速 2-3×,KV 压缩让 1M context 可行。它们针对不同瓶颈,组合使用效果如何?有没有互相干扰的情况?</p>
+        </li>
+        <li><b>长 context 真的有用吗?</b>
+          <p>Lost in the Middle 揭示 LLM 在长 context 利用率不高,RULER 揭示声称的 128K 实际只能 4-32K。1M context 是真需求还是营销噱头?</p>
+        </li>
+      </ol>
+    </div>
+    <div class="quote" style="margin-top: 10px;">
+      <b>交叉引用</b>:本 slides 配套一张 <b>one-page 信息图</b>:<a href="../onepage-llm-token-compression/" style="color: var(--green);">onepage-llm-token-compression</a>, 一页讲清 LLM token 压缩的核心脉络,适合复习。
+    </div>
+  </section>
+
+  <!-- ========== 43. 参考文献 ========== -->
+  <section class="slide tight" data-num="43">
+    <h1>参考文献 · 40+ 篇核心论文</h1>
+    <p class="gray">数据:基于 OpenAlex / arXiv 知识,引用数 2025-2026 近似值</p>
+    <div class="threecol" style="margin-top: 6px;">
+      <div class="card">
+        <h3>视觉 token 压缩</h3>
+        <ul>
+          <li>DynamicViT(ICCV 2023)· ~700引</li>
+          <li>A-ViT(AAAI 2022)· ~200引</li>
+          <li>ToMe(CVPR 2023)· ~700引</li>
+          <li>Sparse ViT(ECCV 2022)· ~800引</li>
+          <li>EViT(NeurIPS 2022)· ~250引</li>
+          <li>DiffRate(NeurIPS 2023)· ~150引</li>
+          <li>TokenLearner(Google 2022)· ~500引</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>KV Cache 压缩</h3>
+        <ul>
+          <li>H2O(NeurIPS 2023)· ~500引</li>
+          <li>Scissorhands(ACL 2024)· ~300引</li>
+          <li>StreamingLLM(ICLR 2024)· ~800引</li>
+          <li>FastGen(NeurIPS 2023)· ~200引</li>
+          <li>KIVI(ICLR 2024)· ~400引</li>
+          <li>KVQuant(NeurIPS 2024)· ~150引</li>
+          <li>PyramidInfer(ASPLOS 2024)· ~200引</li>
+          <li>Quest(ICML 2024)· ~150引</li>
+          <li>SnapKV(ACL 2025)· ~200引</li>
+          <li>ShadowKV(2024)· ~100引</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Prompt / Context 压缩</h3>
+        <ul>
+          <li>LLMLingua(ACL 2023)· ~700引</li>
+          <li>LLMLingua-2(ACL 2024)· ~300引</li>
+          <li>Selective Context(ACL 2024)· ~200引</li>
+          <li>ICAE(NeurIPS 2024)· ~150引</li>
+          <li>AutoCompressor(NeurIPS 2023)· ~200引</li>
+          <li>LongLLMLingua(ACL 2024)· ~150引</li>
+          <li>Gist Token(Meta 2023)· ~150引</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>长上下文</h3>
+        <ul>
+          <li>YaRN(2023)· ~800引</li>
+          <li>LongLoRA(NeurIPS 2023)· ~600引</li>
+          <li>LongRoPE(2024)· ~300引</li>
+          <li>Landmark(NeurIPS 2023)· ~200引</li>
+          <li>RULER(NVIDIA 2024)· ~250引</li>
+          <li>Lost in the Middle(ACL 2023)· ~1500引</li>
+          <li>LongBench(2024)· ~200引</li>
+          <li>Position Interpolation(Meta 2023)· ~500引</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>投机解码</h3>
+        <ul>
+          <li>SpecDec(ICML 2023)· ~1000引</li>
+          <li>Medusa(2023)· ~400引</li>
+          <li>EAGLE(NeurIPS 2024)· ~300引</li>
+          <li>EAGLE-2(2024)· ~150引</li>
+          <li>Lookahead(2024)· ~150引</li>
+          <li>Self-Speculative(2024)· ~100引</li>
+          <li>Kangaroo(2024)· ~80引</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>综合 / 综述</h3>
+        <ul>
+          <li>Efficient LLM Survey(2024)· ~500引</li>
+          <li>Long Context Survey(2024)· ~200引</li>
+          <li>Speculative Decoding Survey(2024)</li>
+          <li>KV Cache Compression Survey(2024)</li>
+          <li>vLLM / SGLang 文档(系统参考)</li>
+          <li>TensorRT-LLM(系统参考)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote" style="margin-top: 6px;">
+      <b>交叉引用</b>:one-page 概览: <a href="../onepage-llm-token-compression/" style="color: var(--green);">onepage-llm-token-compression</a> · 相关 slides: <span class="box model">model-quantization-slides</span>(量化与本 slides 强相关)
+    </div>
+  </section>
+
+  <!-- ========== 版权浮条(必加 · position: fixed) ========== -->
+  <div style="
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 5px 16px;
+    text-align: center;
+    font-size: 11px;
+    color: #6b7280;
+    background: rgba(250, 250, 250, 0.92);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    line-height: 1.4;
+    margin: 0;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  ">
+    <b style="color: #111827; font-weight: 600;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO
+  </div>
+
+  <script>
+    let cur = 0;
+    const slides = document.querySelectorAll('.slide');
+    function show(i) {
+      slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+      const el = document.getElementById('pageinfo');
+      if (el) el.textContent = (i + 1) + ' / ' + slides.length;
+      const bar = document.getElementById('progress');
+      if (bar) bar.style.width = ((i + 1) / slides.length * 100) + '%';
+      cur = i;
+    }
+    function next() { if (cur < slides.length - 1) show(cur + 1); }
+    function prev() { if (cur > 0) show(cur - 1); }
+    function printMode() { window.print(); }
+    function goFirst() { show(0); }
+    function goLast() { show(slides.length - 1); }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowRight' || e.key === ' ') { next(); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft') { prev(); e.preventDefault(); }
+      else if (e.key === 'Home') { goFirst(); }
+      else if (e.key === 'End') { goLast(); }
+      else if (e.key === 'p' || e.key === 'P') { printMode(); }
+    });
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) { if (dx < 0) next(); else prev(); }
+    });
+    show(0);
+    window.next = next; window.prev = prev;
+    window.goFirst = goFirst; window.goLast = goLast;
+    window.printMode = printMode;
+  </script>
+</body>
+</html>
