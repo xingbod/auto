@@ -32,8 +32,8 @@
 
     .grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 28px;
     }
 
     .col h2 {
@@ -57,6 +57,7 @@
 
     .col.slides h2   { color: #1f6feb; }
     .col.onepage h2  { color: #8b5cf6; }
+    .col.math h2     { color: #16a34a; }
 
     ul {
       padding: 0;
@@ -83,6 +84,9 @@
     .col.onepage a:hover, .col.onepage a:focus-visible {
       border-color: #8b5cf6;
     }
+    .col.math a:hover, .col.math a:focus-visible {
+      border-color: #16a34a;
+    }
 
     .new {
       display: inline-block;
@@ -107,6 +111,7 @@
     }
     .col.slides  .badge { color: #1f6feb; background: #ddf4ff; border: 1px solid #b6e3ff; }
     .col.onepage .badge { color: #8b5cf6; background: #f3e8ff; border: 1px solid #ddd6fe; }
+    .col.math    .badge { color: #16a34a; background: #dcfce7; border: 1px solid #bbf7d0; }
 
     /* ---- 按天分组 ---- */
     .day-group + .day-group { margin-top: 18px; }
@@ -128,6 +133,7 @@
     }
     .day-header.today { color: #1f6feb; }
     .col.onepage .day-header.today { color: #8b5cf6; }
+    .col.math .day-header.today { color: #16a34a; }
     .day-items { padding: 0; margin: 0; list-style: none; }
     .day-items li + li { margin-top: 8px; }
 
@@ -136,6 +142,7 @@
       .day-header .rel { color: #6e7681; }
       .day-header.today { color: #58a6ff; }
       .col.onepage .day-header.today { color: #a78bfa; }
+      .col.math .day-header.today { color: #3fb950; }
     }
 
     footer {
@@ -146,6 +153,10 @@
       font-size: 0.82rem;
     }
 
+    @media (max-width: 960px) {
+      .grid { grid-template-columns: 1fr 1fr; gap: 26px; }
+    }
+
     @media (max-width: 720px) {
       .grid { grid-template-columns: 1fr; gap: 24px; }
     }
@@ -154,10 +165,12 @@
       a { border-color: #30363d; }
       a:hover, a:focus-visible { border-color: #58a6ff; }
       .col.onepage a:hover, .col.onepage a:focus-visible { border-color: #a78bfa; }
+      .col.math a:hover, .col.math a:focus-visible { border-color: #3fb950; }
       p.lead { color: #8b949e; }
       .col h2 .en { color: #6e7681; }
       .col.slides  .badge { background: #0d2d6b; border-color: #1f6feb; color: #79c0ff; }
       .col.onepage .badge { background: #2e1065; border-color: #8b5cf6; color: #c4b5fd; }
+      .col.math    .badge { background: #14532d; border-color: #16a34a; color: #4ade80; }
       footer { border-color: #21262d; }
     }
   </style>
@@ -225,12 +238,8 @@
       <div class="day-group">
         <div class="day-header today">2026-06-25<span class="rel">今天</span></div>
         <ul class="day-items">
-          <li><a href="onepage-statistical-charts/">统计图三剑客 第八单元</a></li>
-          <li><a href="onepage-fraction-division/">分数除法 第五单元</a></li>
-          <li><a href="onepage-fraction-multiplication/">分数乘法 第三单元</a></li>
           <li><a href="onepage-llm-token-compression/">大模型/智能体 Token 压缩</a></li>
           <li><a href="onepage-model-quantization/">模型量化 (Quantization)</a></li>
-          <li><a href="onepage-fractions/">分数加减法 第一单元</a></li>
         </ul>
       </div>
 
@@ -249,6 +258,21 @@
           <li><a href="onepage-grounded-theory/">社会科学的扎根理论</a></li>
           <li><a href="onepage-rl-algorithms/">RL 算法的分类与特点</a></li>
           <li><a href="onepage-rl-principles/">强化学习的核心原理</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ========== 小学数学 列 ========== -->
+    <div class="col math">
+      <h2>小学数学<span class="en">Elementary School Math</span></h2>
+
+      <div class="day-group">
+        <div class="day-header today">2026-06-25<span class="rel">今天</span></div>
+        <ul class="day-items">
+          <li><a href="onepage-fractions/">分数加减法 第一单元</a></li>
+          <li><a href="onepage-fraction-multiplication/">分数乘法 第三单元</a></li>
+          <li><a href="onepage-fraction-division/">分数除法 第五单元</a></li>
+          <li><a href="onepage-statistical-charts/">统计图三剑客 第八单元</a></li>
         </ul>
       </div>
     </div>
