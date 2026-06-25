@@ -108,6 +108,36 @@
     .col.slides  .badge { color: #1f6feb; background: #ddf4ff; border: 1px solid #b6e3ff; }
     .col.onepage .badge { color: #8b5cf6; background: #f3e8ff; border: 1px solid #ddd6fe; }
 
+    /* ---- 按天分组 ---- */
+    .day-group + .day-group { margin-top: 18px; }
+    .day-header {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin: 0 4px 8px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: #57606a;
+    }
+    .day-header .rel {
+      font-size: 0.66rem;
+      font-weight: 500;
+      color: #afb8c1;
+      letter-spacing: 0.02em;
+    }
+    .day-header.today { color: #1f6feb; }
+    .col.onepage .day-header.today { color: #8b5cf6; }
+    .day-items { padding: 0; margin: 0; list-style: none; }
+    .day-items li + li { margin-top: 8px; }
+
+    @media (prefers-color-scheme: dark) {
+      .day-header { color: #8b949e; }
+      .day-header .rel { color: #6e7681; }
+      .day-header.today { color: #58a6ff; }
+      .col.onepage .day-header.today { color: #a78bfa; }
+    }
+
     footer {
       margin-top: 40px;
       padding-top: 20px;
@@ -141,39 +171,83 @@
     <!-- ========== SLIDES 列 ========== -->
     <div class="col slides">
       <h2>Slides<span class="en">授课用多页 slides 系列</span></h2>
-      <ul>
-        <li><a href="token-compression-slides/">token-compression-slides <span class="new">NEW</span></a></li>
-        <li><a href="model-quantization-slides/">model-quantization-slides <span class="new">NEW</span></a></li>
-        <li><a href="anytxt-searcher-slides/">anytxt-searcher-slides <span class="new">NEW</span></a></li>
-        <li><a href="biometric-key-generation-slides/">biometric-key-generation-slides <span class="new">NEW</span></a></li>
-        <li><a href="cv-trends-2025-2026-slides/">cv-trends-2025-2026-slides</a></li>
-        <li><a href="cnn-history-slides/">cnn-history-slides</a></li>
-        <li><a href="spatial-intelligence-slides/">spatial-intelligence-slides</a></li>
-        <li><a href="llm-rl-alignment-slides/">llm-rl-alignment-slides</a></li>
-        <li><a href="llm-training-pipeline-slides/">llm-training-pipeline-slides</a></li>
-      </ul>
+
+      <div class="day-group">
+        <div class="day-header today">2026-06-25<span class="rel">今天</span></div>
+        <ul class="day-items">
+          <li><a href="token-compression-slides/">token-compression-slides</a></li>
+          <li><a href="model-quantization-slides/">model-quantization-slides</a></li>
+        </ul>
+      </div>
+
+      <div class="day-group">
+        <div class="day-header">2026-06-23<span class="rel">2 天前</span></div>
+        <ul class="day-items">
+          <li><a href="anytxt-searcher-slides/">anytxt-searcher-slides</a></li>
+        </ul>
+      </div>
+
+      <div class="day-group">
+        <div class="day-header">2026-06-22<span class="rel">3 天前</span></div>
+        <ul class="day-items">
+          <li><a href="biometric-key-generation-slides/">biometric-key-generation-slides</a></li>
+        </ul>
+      </div>
+
+      <div class="day-group">
+        <div class="day-header">2026-06-21<span class="rel">4 天前</span></div>
+        <ul class="day-items">
+          <li><a href="cv-trends-2025-2026-slides/">cv-trends-2025-2026-slides</a></li>
+          <li><a href="llm-training-pipeline-slides/">llm-training-pipeline-slides</a></li>
+          <li><a href="llm-rl-alignment-slides/">llm-rl-alignment-slides</a></li>
+        </ul>
+      </div>
+
+      <div class="day-group">
+        <div class="day-header">2026-05-01<span class="rel">55 天前</span></div>
+        <ul class="day-items">
+          <li><a href="spatial-intelligence-slides/">spatial-intelligence-slides</a></li>
+        </ul>
+      </div>
+
+      <div class="day-group">
+        <div class="day-header">2026-04-29<span class="rel">57 天前</span></div>
+        <ul class="day-items">
+          <li><a href="cnn-history-slides/">cnn-history-slides</a></li>
+        </ul>
+      </div>
     </div>
 
     <!-- ========== ONE-PAGE 列 ========== -->
     <div class="col onepage">
       <h2>One-Page<span class="en">一页讲清楚一个核心问题</span></h2>
-      <ul>
-        <li><a href="onepage-rl-principles/">强化学习的核心原理</a></li>
-        <li><a href="onepage-rl-algorithms/">RL 算法的分类与特点</a></li>
-        <li><a href="onepage-grounded-theory/">社会科学的扎根理论</a></li>
-        <li><a href="onepage-homomorphic-encryption/">同态加密</a></li>
-        <li><a href="onepage-embodied-ai/">具身智能 (Embodied AI)</a></li>
-        <li><a href="onepage-world-models/">世界模型 (World Models)</a></li>
-        <li><a href="onepage-aging-mechanisms/">衰老的分子机制</a></li>
-        <li><a href="onepage-rejuvenation-paths/">再年轻化的可能路径</a></li>
-        <li><a href="onepage-agent-memory/">智能体记忆 (Agent Memory)</a></li>
-        <li><a href="onepage-spatial-intelligence/">空间智能 (Spatial Intelligence)</a></li>
-        <li><a href="onepage-yolov26/">YOLO26 (Ultralytics 2026)</a></li>
-        <li><a href="onepage-technology-diffusion/">技术扩散理论</a></li>
-        <li><a href="onepage-model-quantization/">模型量化 (Quantization)</a></li>
-        <li><a href="onepage-llm-token-compression/">大模型/智能体 Token 压缩</a></li>
-        <li><a href="onepage-fractions/">分数加减法 第一单元 <span class="new">NEW</span></a></li>
-      </ul>
+
+      <div class="day-group">
+        <div class="day-header today">2026-06-25<span class="rel">今天</span></div>
+        <ul class="day-items">
+          <li><a href="onepage-llm-token-compression/">大模型/智能体 Token 压缩</a></li>
+          <li><a href="onepage-model-quantization/">模型量化 (Quantization)</a></li>
+          <li><a href="onepage-fractions/">分数加减法 第一单元</a></li>
+        </ul>
+      </div>
+
+      <div class="day-group">
+        <div class="day-header">2026-06-24<span class="rel">昨天</span></div>
+        <ul class="day-items">
+          <li><a href="onepage-agent-memory/">智能体记忆 (Agent Memory)</a></li>
+          <li><a href="onepage-aging-mechanisms/">衰老的分子机制</a></li>
+          <li><a href="onepage-rejuvenation-paths/">再年轻化的可能路径</a></li>
+          <li><a href="onepage-world-models/">世界模型 (World Models)</a></li>
+          <li><a href="onepage-technology-diffusion/">技术扩散理论</a></li>
+          <li><a href="onepage-spatial-intelligence/">空间智能 (Spatial Intelligence)</a></li>
+          <li><a href="onepage-yolov26/">YOLO26 (Ultralytics 2026)</a></li>
+          <li><a href="onepage-embodied-ai/">具身智能 (Embodied AI)</a></li>
+          <li><a href="onepage-homomorphic-encryption/">同态加密</a></li>
+          <li><a href="onepage-grounded-theory/">社会科学的扎根理论</a></li>
+          <li><a href="onepage-rl-algorithms/">RL 算法的分类与特点</a></li>
+          <li><a href="onepage-rl-principles/">强化学习的核心原理</a></li>
+        </ul>
+      </div>
     </div>
 
   </div>
