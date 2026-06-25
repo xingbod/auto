@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模型量化 (Quantization) · 一页讲清楚</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    /* 4 大类色系 (工程/位运算配色) */
+    --idea:    #1e293b;          /* 核心思想  : 深石板 (技术/工程) */
+    --idea-soft: #f1f5f9;
+    --idea-deep: #0f172a;
+
+    --type:    #0284c7;          /* 2 大类型  : 天蓝 (位宽) */
+    --type-soft: #f0f9ff;
+    --type-deep: #0c4a6e;
+
+    --method:  #d97706;          /* 8 大方法  : 琥珀 (压缩) */
+    --method-soft: #fffbeb;
+    --method-deep: #78350f;
+
+    --perf:    #0d9488;          /* 性能对比  : 青绿 (加速) */
+    --perf-soft: #f0fdfa;
+    --perf-deep: #134e4a;
+
+    --red: #dc2626;
+    --red-soft: #fef2f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 36px 44px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 600px 200px at top right, #f0f9ff 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at bottom left, #fffbeb 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--idea-deep);
+    background: var(--idea-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  header h1 .q {
+    color: var(--idea-deep);
+  }
+  header .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  header .chip {
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  header .chip b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Section base ---------- */
+  section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+  section:last-of-type { border-bottom: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .sec-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sec-head .en {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .c1 .sec-num { background: var(--idea); }
+  .c2 .sec-num { background: var(--type); }
+  .c3 .sec-num { background: var(--method); }
+  .c4 .sec-num { background: var(--perf); }
+  .c5 .sec-num { background: var(--red); }
+
+  p { color: var(--ink-2); margin-bottom: 8px; }
+  p strong { color: var(--ink); font-weight: 700; }
+  p .hl { background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px; }
+
+  /* ---------- Overview ---------- */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ov {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    background: white;
+  }
+  .ov .ico { font-size: 26px; margin-bottom: 6px; display: block; }
+  .ov .name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .ov .en { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ov.a { background: var(--idea-soft); border-color: #cbd5e1; }
+  .ov.b { background: var(--type-soft); border-color: #bae6fd; }
+  .ov.c { background: var(--method-soft); border-color: #fde68a; }
+  .ov.d { background: var(--perf-soft); border-color: #99f6e4; }
+
+  /* ---------- Compare (Section 01) ---------- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .cmp {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    background: white;
+  }
+  .cmp.fp { background: #f3f4f6; border-color: #d1d5db; }
+  .cmp.int { background: var(--idea-soft); border-color: #cbd5e1; }
+  .cmp .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .cmp .head .pill {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .cmp.fp .pill { background: #6b7280; color: white; }
+  .cmp.int .pill { background: var(--idea-deep); color: white; }
+  .cmp ul { list-style: none; font-size: 13px; color: var(--ink-2); }
+  .cmp ul li {
+    padding: 3px 0 3px 16px;
+    position: relative;
+  }
+  .cmp ul li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    color: var(--ink-3);
+    font-weight: 800;
+  }
+  .cmp ul li b { color: var(--ink); font-weight: 700; }
+
+  /* 4 benefits */
+  .benefits {
+    margin-top: 12px;
+    background: var(--idea-soft);
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .benefits .head {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--idea-deep);
+    margin-bottom: 8px;
+  }
+  .benefits .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .benefits .b {
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 4px;
+    text-align: center;
+  }
+  .benefits .b .val {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--idea-deep);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .benefits .b .lbl {
+    font-size: 10.5px;
+    color: var(--ink-3);
+    margin-top: 2px;
+  }
+
+  /* ---------- 2 Types (Section 02) ---------- */
+  .types {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .ty {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .ty.t-ptq { background: var(--type-soft); border-color: #bae6fd; }
+  .ty.t-qat { background: var(--method-soft); border-color: #fde68a; }
+  .ty .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .ty .badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .ty.t-ptq .badge { background: var(--type); }
+  .ty.t-qat .badge { background: var(--method); }
+  .ty .name { font-weight: 700; color: var(--ink); font-size: 14px; }
+  .ty .en { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.04em; text-transform: uppercase; }
+  .ty .body { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+  .ty .body b { color: var(--ink); font-weight: 700; }
+  .ty .flow {
+    margin-top: 6px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11.5px;
+    color: var(--ink-2);
+  }
+  .ty .compare {
+    margin-top: 6px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    font-size: 11.5px;
+  }
+  .ty .compare .k { color: var(--ink-3); }
+  .ty .compare .v { color: var(--ink); font-weight: 600; }
+
+  /* Design choices */
+  .choices {
+    margin-top: 12px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .choices .title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .choices .items {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .choices .item {
+    background: var(--type-soft);
+    border: 1px solid #bae6fd;
+    border-radius: 6px;
+    padding: 6px 8px;
+    text-align: center;
+  }
+  .choices .item .name {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .choices .item .en { font-size: 9.5px; color: var(--ink-3); letter-spacing: 0.04em; text-transform: uppercase; }
+  .choices .item .desc { font-size: 11px; color: var(--ink-2); margin-top: 2px; }
+
+  /* ---------- 8 Methods (Section 03) ---------- */
+  .methods {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .mt {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: white;
+  }
+  .mt .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 3px;
+  }
+  .mt .ico { font-size: 18px; }
+  .mt .name { font-weight: 700; color: var(--ink); font-size: 13px; }
+  .mt .bits {
+    margin-left: auto;
+    font-size: 9.5px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: var(--method);
+    color: white;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .mt .body { font-size: 11.5px; color: var(--ink-2); line-height: 1.4; }
+  .mt .body b { color: var(--ink); font-weight: 700; }
+  .mt .use {
+    margin-top: 4px;
+    font-size: 10.5px;
+    color: var(--ink-3);
+    font-style: italic;
+  }
+  .mt.m1, .mt.m2, .mt.m3, .mt.m4, .mt.m5, .mt.m6, .mt.m7, .mt.m8 { background: var(--method-soft); border-color: #fde68a; }
+
+  /* ---------- Bit-width comparison (Section 04) ---------- */
+  .bit-table {
+    margin-top: 8px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    overflow-x: auto;
+  }
+  .bit-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .bit-table th, .bit-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line-2);
+    text-align: left;
+    vertical-align: middle;
+  }
+  .bit-table th {
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .bit-table td.bits {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-weight: 800;
+    color: var(--type-deep);
+    font-size: 13px;
+  }
+  .bit-table td.size {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    color: var(--ink-2);
+  }
+  .bit-table td.loss {
+    font-weight: 700;
+  }
+  .bit-table td.loss.l-low { color: #15803d; }
+  .bit-table td.loss.l-med { color: #d97706; }
+  .bit-table td.loss.l-high { color: var(--red); }
+  .bit-table td.use { color: var(--ink-2); font-size: 11.5px; }
+  .bit-table tr:last-child td { border-bottom: none; }
+
+  .scenario {
+    margin-top: 10px;
+    background: var(--perf-soft);
+    border: 1px solid #99f6e4;
+    border-left: 4px solid var(--perf);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+  }
+  .scenario b { color: var(--perf-deep); font-weight: 700; }
+  .scenario code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    background: white;
+    border: 1px solid #99f6e4;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 11.5px;
+  }
+
+  /* ---------- Pitfalls (Section 05) ---------- */
+  .pitfall {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--red-soft);
+    border: 1px solid #fecaca;
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pitfall:last-child { margin-bottom: 0; }
+  .pitfall .x {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .pitfall .body { font-size: 13.5px; color: var(--ink-2); }
+  .pitfall .body .bad {
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 1.5px;
+  }
+  .pitfall .body .fix {
+    display: block;
+    margin-top: 4px;
+  }
+  .pitfall .body .fix b { color: #15803d; font-weight: 700; }
+
+  /* ---------- Footer summary ---------- */
+  footer {
+    padding: 28px 44px 36px;
+    background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+    border-top: 1px solid var(--line);
+  }
+  footer .title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  footer .points {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  footer .points li {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  footer .points li b {
+    display: block;
+    color: var(--idea-deep);
+    font-size: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+  footer .oneliner {
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  footer .oneliner b { color: #bae6fd; }
+  footer .stamp {
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  footer .credit {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    line-height: 1.6;
+  }
+  footer .credit b { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    header, section, footer { padding-left: 22px; padding-right: 22px; }
+    .overview, .footer .points { grid-template-columns: 1fr 1fr; }
+    .compare, .types, .methods { grid-template-columns: 1fr; }
+    .benefits .row, .choices .items { grid-template-columns: 1fr 1fr; }
+    .bit-table { font-size: 11px; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =================== HEADER =================== -->
+  <header>
+    <span class="tag">ML SYSTEMS · COMPRESSION</span>
+    <h1>模型量化 (Quantization) 是什么？<br>
+        <span class="q">一张图讲清楚 2 大类型 + 8 大方法 + 6 大位宽</span></h1>
+    <p class="subtitle">把 <b>FP32 → INT8 / INT4</b> —— <span class="hl">模型大小 4-8x, 速度 2-4x</span>, 精度损失通常 <b>< 1%</b>。</p>
+    <div class="meta">
+      <span class="chip">⏱ 阅读 <b>5 分钟</b></span>
+      <span class="chip">🎯 适合 <b>LLM 部署 / 边缘推理</b></span>
+      <span class="chip">📚 出处 GPTQ · AWQ · SmoothQuant</span>
+    </div>
+  </header>
+
+  <!-- =================== OVERVIEW =================== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">★</span>
+      <h2>先记住 4 个关键词</h2>
+      <span class="en">FOUR KEY CONCEPTS</span>
+    </div>
+    <p>模型量化所有内容，<strong>只围绕这 4 个概念展开</strong>。</p>
+    <div class="overview">
+      <div class="ov a">
+        <span class="ico">🔢</span>
+        <div class="name">降精度</div>
+        <div class="en">FP32 → INT</div>
+      </div>
+      <div class="ov b">
+        <span class="ico">⚙️</span>
+        <div class="name">PTQ / QAT</div>
+        <div class="en">2 Routes</div>
+      </div>
+      <div class="ov c">
+        <span class="ico">📦</span>
+        <div class="name">4-8x 压缩</div>
+        <div class="en">Smaller</div>
+      </div>
+      <div class="ov d">
+        <span class="ico">⚡</span>
+        <div class="name">2-4x 加速</div>
+        <div class="en">Faster</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 01: 核心思想 =================== -->
+  <section class="c1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>核心思想:用更低精度存,牺牲极小精度换 4 大收益</h2>
+      <span class="en">LOWER PRECISION, BIG WINS</span>
+    </div>
+    <p>训练用 <b>FP32</b> (4 字节/参数), 推理可以压到 <b>INT8</b> (1 字节) 甚至 <b>INT4</b> (0.5 字节) —— 模型小 4-8 倍, 速度 2-4 倍。</p>
+
+    <div class="compare">
+      <div class="cmp fp">
+        <div class="head">
+          <span class="pill">FP32</span>
+          训练精度
+        </div>
+        <ul>
+          <li><b>位宽:</b> 32 bit 浮点</li>
+          <li><b>大小:</b> 7B 模型 ≈ <b>28 GB</b></li>
+          <li><b>用途:</b> 训练 / 高精度推理</li>
+          <li><b>代表:</b> 默认 LLM 训练</li>
+        </ul>
+      </div>
+      <div class="cmp int">
+        <div class="head">
+          <span class="pill">INT4</span>
+          量化后
+        </div>
+        <ul>
+          <li><b>位宽:</b> 4 bit 整数</li>
+          <li><b>大小:</b> 7B 模型 ≈ <b>3.5 GB</b></li>
+          <li><b>用途:</b> 边缘 / 消费级 GPU</li>
+          <li><b>代表:</b> GPTQ · AWQ · GGUF Q4</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="benefits">
+      <div class="head">4 大收益 (INT4 vs FP32, 同模型)</div>
+      <div class="row">
+        <div class="b">
+          <div class="val">8x</div>
+          <div class="lbl">模型大小 ↓</div>
+        </div>
+        <div class="b">
+          <div class="val">2-4x</div>
+          <div class="lbl">推理速度 ↑</div>
+        </div>
+        <div class="b">
+          <div class="val">4x</div>
+          <div class="lbl">内存带宽 ↓</div>
+        </div>
+        <div class="b">
+          <div class="val"><1%</div>
+          <div class="lbl">精度损失</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 02: 2 大类型 =================== -->
+  <section class="c2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>2 大技术路线:PTQ vs QAT</h2>
+      <span class="en">PTQ vs QAT</span>
+    </div>
+    <p>按"是否需要重训"分 2 大路线, <b>速度 ↔ 精度</b> 取舍:</p>
+
+    <div class="types">
+      <div class="ty t-ptq">
+        <div class="head">
+          <span class="badge">PTQ</span>
+          <span class="name">训练后量化</span>
+          <span class="en">POST-TRAINING</span>
+        </div>
+        <div class="body">
+          拿训好的 FP32 模型 + 几百张<b>校准数据</b>, <b>几分钟</b>出 INT 模型。
+        </div>
+        <div class="flow">FP32 模型 + 校准集 → INT8/INT4 → 部署</div>
+        <div class="compare">
+          <div class="k">耗时:</div><div class="v">几分钟~几小时</div>
+          <div class="k">损失:</div><div class="v">~0.5-1%</div>
+          <div class="k">代表:</div><div class="v">TensorRT · ONNX</div>
+          <div class="k">场景:</div><div class="v">快速部署</div>
+        </div>
+      </div>
+
+      <div class="ty t-qat">
+        <div class="head">
+          <span class="badge">QAT</span>
+          <span class="name">训练感知量化</span>
+          <span class="en">QUANTIZATION-AWARE</span>
+        </div>
+        <div class="body">
+          <b>训练时</b>就模拟量化算子, 模型<b>适配</b>量化误差, 精度高。
+        </div>
+        <div class="flow">FP32 → 插入 FakeQuant → 重训若干轮 → INT 模型</div>
+        <div class="compare">
+          <div class="k">耗时:</div><div class="v">几小时~几天</div>
+          <div class="k">损失:</div><div class="v"><0.1%</div>
+          <div class="k">代表:</div><div class="v">LSQ · torchao</div>
+          <div class="k">场景:</div><div class="v">精度要求高</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="choices">
+      <div class="title">⚙️ 3 大设计选择</div>
+      <div class="items">
+        <div class="item">
+          <div class="name">对称 vs 非对称</div>
+          <div class="en">SYM / ASYM</div>
+          <div class="desc">非对称对偏态分布更友好</div>
+        </div>
+        <div class="item">
+          <div class="name">粒度</div>
+          <div class="en">GRANULARITY</div>
+          <div class="desc">per-tensor / per-channel / per-group</div>
+        </div>
+        <div class="item">
+          <div class="name">静态 vs 动态</div>
+          <div class="en">STATIC / DYNAMIC</div>
+          <div class="desc">静态快 / 动态准</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 03: 8 大方法 =================== -->
+  <section class="c3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>8 大主流量化方法:从经典到 LLM 专用</h2>
+      <span class="en">EIGHT TECHNIQUES</span>
+    </div>
+    <p>主流生态里最常用的 8 种方法, 按"通用 → LLM 专用"排序:</p>
+
+    <div class="methods">
+      <div class="mt m1">
+        <div class="head">
+          <span class="ico">🎯</span>
+          <span class="name">INT8 PTQ</span>
+          <span class="bits">INT8</span>
+        </div>
+        <div class="body"><b>入门首选</b>, 4x 压缩, 精度损失 &lt; 0.5%, 几乎所有推理框架支持。</div>
+        <div class="use">CV / 小模型 / 通用部署</div>
+      </div>
+
+      <div class="mt m2">
+        <div class="head">
+          <span class="ico">📦</span>
+          <span class="name">GPTQ</span>
+          <span class="bits">INT4</span>
+        </div>
+        <div class="body"><b>二阶优化</b> OBD, LLM 量化标杆, <b>2-4x 压缩</b>。</div>
+        <div class="use">7B-70B LLM 单卡推理</div>
+      </div>
+
+      <div class="mt m3">
+        <div class="head">
+          <span class="ico">🛡️</span>
+          <span class="name">AWQ</span>
+          <span class="bits">INT4</span>
+        </div>
+        <div class="body"><b>保护重要 1% 权重</b> (激活感知), INT4 量化准度比 GPTQ 更好。</div>
+        <div class="use">LLM 边缘 / 端侧部署</div>
+      </div>
+
+      <div class="mt m4">
+        <div class="head">
+          <span class="ico">🌊</span>
+          <span class="name">SmoothQuant</span>
+          <span class="bits">INT8</span>
+        </div>
+        <div class="body"><b>迁移难度</b>: 激活难 → 权重量化, 解决 LLM 激活 outlier。</div>
+        <div class="use">LLM INT8 推理</div>
+      </div>
+
+      <div class="mt m5">
+        <div class="head">
+          <span class="ico">🪶</span>
+          <span class="name">QLoRA</span>
+          <span class="bits">NF4</span>
+        </div>
+        <div class="body"><b>4-bit base + LoRA</b> 微调, 65B 模型<b>单 GPU</b>可训。</div>
+        <div class="use">LLM 高效微调</div>
+      </div>
+
+      <div class="mt m6">
+        <div class="head">
+          <span class="ico">🦙</span>
+          <span class="name">GGUF / llama.cpp</span>
+          <span class="bits">Q2-Q8</span>
+        </div>
+        <div class="body"><b>多档位</b>量化 (Q2/Q3/Q4/Q5/Q6/Q8), CPU 也能跑 LLM。</div>
+        <div class="use">本地 LLM / Mac / 树莓派</div>
+      </div>
+
+      <div class="mt m7">
+        <div class="head">
+          <span class="ico">🧰</span>
+          <span class="name">bitsandbytes</span>
+          <span class="bits">8/4 bit</span>
+        </div>
+        <div class="body">HF 官方 4/8-bit 优化器 + LLM.int8(), <b>几行代码</b>接入。</div>
+        <div class="use">HuggingFace 生态</div>
+      </div>
+
+      <div class="mt m8">
+        <div class="head">
+          <span class="ico">🔥</span>
+          <span class="name">TensorRT / torchao</span>
+          <span class="bits">FP8/INT8</span>
+        </div>
+        <div class="body">NVIDIA 极致优化 / PyTorch 官方量化, 速度天花板。</div>
+        <div class="use">GPU 服务端高吞吐</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 04: 位宽对比 + 场景 =================== -->
+  <section class="c4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>6 大位宽对比:精度 / 大小 / 损失 / 场景</h2>
+      <span class="en">BIT-WIDTH COMPARISON</span>
+    </div>
+    <p>选哪个位宽, 关键看"<b>任务精度要求 + 硬件能力</b>"。下表是 7B 模型典型参考:</p>
+
+    <div class="bit-table">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 14%">位宽</th>
+            <th style="width: 12%">大小 (7B)</th>
+            <th style="width: 12%">精度损失</th>
+            <th style="width: 18%">吞吐</th>
+            <th style="width: 44%">典型场景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="bits">FP32</td>
+            <td class="size">28 GB</td>
+            <td class="loss l-low">0% (基线)</td>
+            <td>1x</td>
+            <td class="use">训练 / 服务器高精度</td>
+          </tr>
+          <tr>
+            <td class="bits">FP16</td>
+            <td class="size">14 GB</td>
+            <td class="loss l-low">&lt; 0.1%</td>
+            <td>2x</td>
+            <td class="use">GPU 训练 / 推理标准</td>
+          </tr>
+          <tr>
+            <td class="bits">BF16</td>
+            <td class="size">14 GB</td>
+            <td class="loss l-low">&lt; 0.1%</td>
+            <td>2x</td>
+            <td class="use">大模型训练 (稳定)</td>
+          </tr>
+          <tr>
+            <td class="bits">INT8</td>
+            <td class="size">7 GB</td>
+            <td class="loss l-low">~0.5%</td>
+            <td>3-4x</td>
+            <td class="use">CPU/GPU 通用推理</td>
+          </tr>
+          <tr>
+            <td class="bits">INT4</td>
+            <td class="size">3.5 GB</td>
+            <td class="loss l-med">~1-2%</td>
+            <td>4-6x</td>
+            <td class="use">LLM 端侧 / 消费级 GPU</td>
+          </tr>
+          <tr>
+            <td class="bits">NF4</td>
+            <td class="size">3.5 GB</td>
+            <td class="loss l-med">~1%</td>
+            <td>4-6x</td>
+            <td class="use">QLoRA 微调 (训练)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="scenario">
+      <b>实操场景对照:</b>
+      训练用 <code>BF16</code> · 端侧 LLM 推理用 <code>INT4 (GPTQ/AWQ/GGUF Q4)</code> ·
+      显存不够微调用 <code>NF4 (QLoRA)</code> · 极致吞吐用 <code>FP8 (H100/B200)</code> ·
+  </div>
+  </section>
+
+  <!-- =================== 05: 误区 =================== -->
+  <section class="c5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>新手最常踩的 4 个坑</h2>
+      <span class="en">COMMON PITFALLS</span>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"量化一定掉精度"</span>
+        <span class="fix">👉 <b>INT8 通常 &lt; 0.5% 损失</b>, 好的 INT4 也 &lt; 2%。先用 PTQ 校准, 大部分场景不需 QAT。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"INT4 一定比 INT8 好"</span>
+        <span class="fix">👉 <b>越激进越掉精</b>。敏感任务 (代码 / 数学) 优先 INT8, 创意任务 (对话) 才用 INT4。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"所有层同等量化"</span>
+        <span class="fix">👉 <b>首/尾层 + attention 敏感</b>。用 mixed-precision 跳过关键层, 或 AWQ/SmoothQuant 自动保护。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"PTQ 不需要校准数据"</span>
+        <span class="fix">👉 <b>校准数据直接决定量化质量</b>。要<b>代表业务场景</b>的几百~几千样本, 不能用 ImageNet 校准 LLM。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTER =================== -->
+  <footer>
+    <div class="title">这一页先记住 · TL;DR</div>
+    <ul class="points">
+      <li><b>WHAT</b>降位宽 (FP32→INT8/INT4), 4-8x 压缩, 2-4x 加速</li>
+      <li><b>HOW</b>PTQ 快 / QAT 准, 选 AWQ/GPTQ/QLoRA/GGUF</li>
+      <li><b>KEY</b>校准数据 + 敏感层保护 + outlier 处理</li>
+    </ul>
+    <div class="oneliner">
+      <b>一句话总结:</b>模型量化 = <b>FP32 → INT8/INT4</b> 压缩 + 加速,
+      PTQ (快) vs QAT (准) 二选一, 主流用 <b>GPTQ/AWQ/QLoRA/GGUF</b>, <b>校准数据</b>和 <b>outlier</b> 是关键。
+    </div>
+    <div class="stamp">图源:仿「一张图讲清楚」系列 · 参考 Frantar et al. (GPTQ 2022) · Lin et al. (AWQ 2023) · Xiao et al. (SmoothQuant 2022) · Dettmers et al. (QLoRA 2023)</div>
+    <div class="credit">
+      <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
