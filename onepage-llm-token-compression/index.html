@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大模型/智能体 Token 压缩技术 · 一页讲清楚</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    /* 4 大类色系 (LLM / token 压缩配色) */
+    --idea:    #1e293b;          /* 核心思想  : 深石板 (LLM 引擎) */
+    --idea-soft: #f1f5f9;
+    --idea-deep: #0f172a;
+
+    --class:   #c026d3;          /* 6 大类方法 : 紫红 (压缩/挑战) */
+    --class-soft: #fae8ff;
+    --class-deep: #86198f;
+
+    --tech:    #d97706;          /* 8 大代表   : 琥珀 (技术细节) */
+    --tech-soft: #fffbeb;
+    --tech-deep: #78350f;
+
+    --eff:     #0d9488;          /* 效率对比   : 青绿 (高效) */
+    --eff-soft: #f0fdfa;
+    --eff-deep: #134e4a;
+
+    --red: #dc2626;
+    --red-soft: #fef2f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 36px 44px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 600px 200px at top right, #fae8ff 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at bottom left, #fffbeb 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--idea-deep);
+    background: var(--idea-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  header h1 .q {
+    color: var(--idea-deep);
+  }
+  header .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  header .chip {
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  header .chip b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Section base ---------- */
+  section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+  section:last-of-type { border-bottom: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .sec-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sec-head .en {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .c1 .sec-num { background: var(--idea); }
+  .c2 .sec-num { background: var(--class); }
+  .c3 .sec-num { background: var(--tech); }
+  .c4 .sec-num { background: var(--eff); }
+  .c5 .sec-num { background: var(--red); }
+
+  p { color: var(--ink-2); margin-bottom: 8px; }
+  p strong { color: var(--ink); font-weight: 700; }
+  p .hl { background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px; }
+
+  /* ---------- Overview ---------- */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ov {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    background: white;
+  }
+  .ov .ico { font-size: 26px; margin-bottom: 6px; display: block; }
+  .ov .name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .ov .en { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ov.a { background: var(--idea-soft); border-color: #cbd5e1; }
+  .ov.b { background: var(--class-soft); border-color: #f5d0fe; }
+  .ov.c { background: var(--tech-soft); border-color: #fde68a; }
+  .ov.d { background: var(--eff-soft); border-color: #99f6e4; }
+
+  /* ---------- Section 01: 核心思想 ---------- */
+  .problem {
+    margin-top: 10px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .problem .title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .problem .items {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .problem .item {
+    background: var(--idea-soft);
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 6px;
+    text-align: center;
+  }
+  .problem .item .ico { font-size: 20px; }
+  .problem .item .name { font-size: 12px; font-weight: 700; color: var(--ink); margin-top: 1px; }
+  .problem .item .val { font-size: 13px; color: var(--idea-deep); font-family: ui-monospace, monospace; font-weight: 800; margin-top: 2px; }
+
+  /* vs quantization */
+  .vs {
+    margin-top: 10px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .vs .head {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .vs .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .vs .col {
+    background: var(--class-soft);
+    border: 1px solid #f5d0fe;
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+  .vs .col .name {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--class-deep);
+  }
+  .vs .col .body {
+    font-size: 11.5px;
+    color: var(--ink-2);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .vs .col .target {
+    margin-top: 4px;
+    font-size: 10.5px;
+    color: var(--ink-3);
+    font-family: ui-monospace, monospace;
+  }
+
+  /* ---------- 6 Categories (Section 02) ---------- */
+  .classes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .cl {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .cl .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .cl .num {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: var(--class);
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cl .ico { font-size: 20px; }
+  .cl .name { font-weight: 700; color: var(--ink); font-size: 13.5px; }
+  .cl .en { font-size: 10px; color: var(--ink-3); margin-left: auto; letter-spacing: 0.04em; text-transform: uppercase; }
+  .cl .body { font-size: 12px; color: var(--ink-2); line-height: 1.4; }
+  .cl .body b { color: var(--ink); font-weight: 700; }
+  .cl .where {
+    margin-top: 6px;
+    font-size: 10.5px;
+    color: var(--ink-3);
+    font-style: italic;
+  }
+  .cl .where b { color: var(--ink); font-style: normal; }
+  .cl.c1, .cl.c2, .cl.c3, .cl.c4, .cl.c5, .cl.c6 { background: var(--class-soft); border-color: #f5d0fe; }
+
+  /* ---------- 8 Methods (Section 03) ---------- */
+  .methods {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .md {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: white;
+  }
+  .md .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .md .ico { font-size: 18px; }
+  .md .name { font-weight: 700; color: var(--ink); font-size: 13px; }
+  .md .from {
+    margin-left: auto;
+    font-size: 9.5px;
+    color: var(--ink-3);
+    background: var(--tech-soft);
+    border: 1px solid #fde68a;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+  .md .body { font-size: 11.5px; color: var(--ink-2); line-height: 1.4; }
+  .md .body b { color: var(--ink); font-weight: 700; }
+  .md .rate {
+    margin-top: 4px;
+    display: flex;
+    gap: 6px;
+    font-size: 10.5px;
+  }
+  .md .rate .pill {
+    background: var(--tech-soft);
+    border: 1px solid #fde68a;
+    border-radius: 3px;
+    padding: 1px 5px;
+    color: var(--tech-deep);
+    font-family: ui-monospace, monospace;
+    font-weight: 600;
+  }
+  .md.m1, .md.m2, .md.m3, .md.m4, .md.m5, .md.m6, .md.m7, .md.m8 { background: var(--tech-soft); border-color: #fde68a; }
+
+  /* ---------- Compare 3 layers (Section 04) ---------- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .cm {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    background: white;
+  }
+  .cm .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .cm .ico { font-size: 22px; }
+  .cm .name { font-weight: 700; color: var(--ink); font-size: 13.5px; }
+  .cm .target {
+    font-size: 10.5px;
+    color: var(--ink-3);
+    font-family: ui-monospace, monospace;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 5px;
+    margin-left: auto;
+  }
+  .cm .body { font-size: 12px; color: var(--ink-2); line-height: 1.4; }
+  .cm .body b { color: var(--ink); font-weight: 700; }
+  .cm .methods-mini {
+    margin-top: 6px;
+    font-family: ui-monospace, monospace;
+    font-size: 10.5px;
+    color: var(--ink-2);
+    line-height: 1.4;
+  }
+  .cm.cm1 { background: var(--eff-soft); border-color: #99f6e4; }
+  .cm.cm2 { background: var(--class-soft); border-color: #f5d0fe; }
+  .cm.cm3 { background: var(--tech-soft); border-color: #fde68a; }
+
+  /* Compression trade-off visualization */
+  .tradeoff {
+    margin-top: 12px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .tradeoff .title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .tradeoff .items {
+    display: grid;
+    gap: 4px;
+  }
+  .tradeoff .row {
+    display: grid;
+    grid-template-columns: 140px 60px 1fr 1fr;
+    gap: 8px;
+    align-items: center;
+    font-size: 12px;
+  }
+  .tradeoff .name { font-weight: 600; color: var(--ink); }
+  .tradeoff .rate {
+    font-family: ui-monospace, monospace;
+    font-weight: 700;
+    color: var(--eff-deep);
+  }
+  .tradeoff .bar-bg {
+    height: 14px;
+    background: #f3f4f6;
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+  .tradeoff .bar {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .tradeoff .bar.speed { background: var(--eff); }
+  .tradeoff .bar.quality { background: var(--class); }
+  .tradeoff .loss {
+    font-family: ui-monospace, monospace;
+    font-size: 10.5px;
+    color: var(--ink-2);
+  }
+  .tradeoff .legend {
+    margin-top: 8px;
+    display: flex;
+    gap: 14px;
+    font-size: 10.5px;
+    color: var(--ink-3);
+  }
+  .tradeoff .legend .item { display: flex; align-items: center; gap: 4px; }
+  .tradeoff .legend .dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* ---------- Pitfalls (Section 05) ---------- */
+  .pitfall {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--red-soft);
+    border: 1px solid #fecaca;
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pitfall:last-child { margin-bottom: 0; }
+  .pitfall .x {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .pitfall .body { font-size: 13.5px; color: var(--ink-2); }
+  .pitfall .body .bad {
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 1.5px;
+  }
+  .pitfall .body .fix {
+    display: block;
+    margin-top: 4px;
+  }
+  .pitfall .body .fix b { color: #15803d; font-weight: 700; }
+
+  /* ---------- Footer summary ---------- */
+  footer {
+    padding: 28px 44px 36px;
+    background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+    border-top: 1px solid var(--line);
+  }
+  footer .title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  footer .points {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  footer .points li {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  footer .points li b {
+    display: block;
+    color: var(--idea-deep);
+    font-size: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+  footer .oneliner {
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  footer .oneliner b { color: #f5d0fe; }
+  footer .stamp {
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  footer .credit {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    text-align: center;
+    line-height: 1.6;
+  }
+  footer .credit b { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    header, section, footer { padding-left: 22px; padding-right: 22px; }
+    .overview, .footer .points { grid-template-columns: 1fr 1fr; }
+    .classes, .methods, .compare { grid-template-columns: 1fr; }
+    .problem .items, .vs .row { grid-template-columns: 1fr 1fr; }
+    .tradeoff .row { grid-template-columns: 100px 50px 1fr 1fr; font-size: 10.5px; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =================== HEADER =================== -->
+  <header>
+    <span class="tag">LLM / AGENT · TOKEN COMPRESSION</span>
+    <h1>大模型/智能体 Token 压缩技术是什么？<br>
+        <span class="q">一张图讲清楚 6 大类方法 + 8 大代表 + 3 层叠加</span></h1>
+    <p class="subtitle">长上下文是 LLM 的<span class="hl">成本 / 速度 / 内存 / 质量</span>四重灾难 —— 用 6 大类方法把 token 压下来, 让 LLM 又快又省。</p>
+    <div class="meta">
+      <span class="chip">⏱ 阅读 <b>5 分钟</b></span>
+      <span class="chip">🎯 适合 <b>LLM 部署 / Agent / RAG</b></span>
+      <span class="chip">📚 出处 LLMLingua · H2O · StreamingLLM</span>
+    </div>
+  </header>
+
+  <!-- =================== OVERVIEW =================== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">★</span>
+      <h2>先记住 4 个关键词</h2>
+      <span class="en">FOUR KEY CONCEPTS</span>
+    </div>
+    <p>Token 压缩所有内容，<strong>只围绕这 4 个概念展开</strong>。</p>
+    <div class="overview">
+      <div class="ov a">
+        <span class="ico">📜</span>
+        <div class="name">Token 太多</div>
+        <div class="en">Long Context</div>
+      </div>
+      <div class="ov b">
+        <span class="ico">✂️</span>
+        <div class="name">6 大类方法</div>
+        <div class="en">6 Categories</div>
+      </div>
+      <div class="ov c">
+        <span class="ico">🧪</span>
+        <div class="name">8 大代表</div>
+        <div class="en">8 Algorithms</div>
+      </div>
+      <div class="ov d">
+        <span class="ico">🔗</span>
+        <div class="name">3 层叠加</div>
+        <div class="en">Stack 3 Layers</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 01: 核心思想 =================== -->
+  <section class="c1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>核心思想:长上下文是 4 重灾难,6 类方法对症下药</h2>
+      <span class="en">LONG CONTEXT IS A 4-WAY DISASTER</span>
+    </div>
+    <p>100K-1M 上下文 = 贵 / 慢 / 内存大 / 还可能<b>lost-in-the-middle</b>。Token 压缩 = 减少送进 LLM 的 token, 不丢关键信息。</p>
+
+    <div class="problem">
+      <div class="title">📉 4 重灾难</div>
+      <div class="items">
+        <div class="item">
+          <div class="ico">💰</div>
+          <div class="name">成本</div>
+          <div class="val">∝ token</div>
+        </div>
+        <div class="item">
+          <div class="ico">🐢</div>
+          <div class="name">速度</div>
+          <div class="val">O(n²)</div>
+        </div>
+        <div class="item">
+          <div class="ico">💾</div>
+          <div class="name">内存</div>
+          <div class="val">KV cache</div>
+        </div>
+        <div class="item">
+          <div class="ico">🤯</div>
+          <div class="name">质量</div>
+          <div class="val">Lost middle</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vs">
+      <div class="head">📊 Token 压缩 vs 模型量化 (别混)</div>
+      <div class="row">
+        <div class="col">
+          <div class="name">Token 压缩</div>
+          <div class="body">减少<b>输入/中间</b> token 数量</div>
+          <div class="target">→ Prompt / KV / Attention</div>
+        </div>
+        <div class="col">
+          <div class="name">模型量化</div>
+          <div class="body">降低 token 的<b>位宽</b> (FP32→INT8)</div>
+          <div class="target">→ 权重 / 激活</div>
+        </div>
+        <div class="col">
+          <div class="name">叠加</div>
+          <div class="body"><b>两者正交</b>, 可同时用</div>
+          <div class="target">→ 4x 量化 × 8x 压缩 = 32x</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 02: 6 大类方法 =================== -->
+  <section class="c2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>6 大类方法:在 LLM 不同位置做减法</h2>
+      <span class="en">SIX CATEGORIES</span>
+    </div>
+    <p>按"在哪里减"分 6 类: 输入层、注意力层、记忆层, 越靠后越底层:</p>
+
+    <div class="classes">
+      <div class="cl c1">
+        <div class="head">
+          <span class="num">1</span>
+          <span class="ico">✂️</span>
+          <span class="name">Token 剪枝</span>
+          <span class="en">PRUNING</span>
+        </div>
+        <div class="body">
+          直接<b>丢掉不重要</b>的 token, 留下任务相关的。
+        </div>
+        <div class="where">👉 <b>位置:</b> 输入层 / 输出层</div>
+      </div>
+
+      <div class="cl c2">
+        <div class="head">
+          <span class="num">2</span>
+          <span class="ico">🔗</span>
+          <span class="name">Token 合并</span>
+          <span class="en">MERGING</span>
+        </div>
+        <div class="body">
+          把<b>相似 token 合并</b>成一个, 减少 token 数。
+        </div>
+        <div class="where">👉 <b>位置:</b> 中间层</div>
+      </div>
+
+      <div class="cl c3">
+        <div class="head">
+          <span class="num">3</span>
+          <span class="ico">📦</span>
+          <span class="name">提示压缩</span>
+          <span class="en">PROMPT COMPRESSION</span>
+        </div>
+        <div class="body">
+          送 LLM 之前先用<b>小模型打分</b>, 删掉无信息 token。
+        </div>
+        <div class="where">👉 <b>位置:</b> 送入 LLM 之前</div>
+      </div>
+
+      <div class="cl c4">
+        <div class="head">
+          <span class="num">4</span>
+          <span class="ico">📝</span>
+          <span class="name">上下文摘要</span>
+          <span class="en">SUMMARIZATION</span>
+        </div>
+        <div class="body">
+          <b>递归总结</b>历史对话 / 长文档, 用摘要代替原文。
+        </div>
+        <div class="where">👉 <b>位置:</b> 记忆 / 长历史</div>
+      </div>
+
+      <div class="cl c5">
+        <div class="head">
+          <span class="num">5</span>
+          <span class="ico">🗃️</span>
+          <span class="name">KV 缓存压缩</span>
+          <span class="en">KV CACHE</span>
+        </div>
+        <div class="body">
+          注意力层 KV cache <b>逐层/逐头</b>驱逐不重要项。
+        </div>
+        <div class="where">👉 <b>位置:</b> 注意力层</div>
+      </div>
+
+      <div class="cl c6">
+        <div class="head">
+          <span class="num">6</span>
+          <span class="ico">🌐</span>
+          <span class="name">稀疏注意力</span>
+          <span class="en">SPARSE ATTN</span>
+        </div>
+        <div class="body">
+          <b>不计算所有</b> attention pair, 只看"重要"的。
+        </div>
+        <div class="where">👉 <b>位置:</b> 注意力层 (架构层)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 03: 8 大代表方法 =================== -->
+  <section class="c3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>8 大代表方法:工业界真正在用的</h2>
+      <span class="en">EIGHT KEY ALGORITHMS</span>
+    </div>
+    <p>每类挑 1-2 个最有代表性的方法, 按"工业使用度"排序:</p>
+
+    <div class="methods">
+      <div class="md m1">
+        <div class="head">
+          <span class="ico">🪶</span>
+          <span class="name">LLMLingua</span>
+          <span class="from">Microsoft</span>
+        </div>
+        <div class="body">用 <b>小模型打分</b>删无信息 token, 保留指令关键部分, 20x 压缩。</div>
+        <div class="rate"><span class="pill">20x</span><span class="pill">Prompt 压缩</span></div>
+      </div>
+
+      <div class="md m2">
+        <div class="head">
+          <span class="ico">📜</span>
+          <span class="name">LongLLMLingua</span>
+          <span class="from">Microsoft</span>
+        </div>
+        <div class="body">LLMLingua 升级版, 处理<b>长上下文</b> (10K+), 关键信息保留更好。</div>
+        <div class="rate"><span class="pill">10x</span><span class="pill">长文</span></div>
+      </div>
+
+      <div class="md m3">
+        <div class="head">
+          <span class="ico">🌊</span>
+          <span class="name">StreamingLLM</span>
+          <span class="from">MIT</span>
+        </div>
+        <div class="body"><b>注意力沉点</b> + 滑动窗口, 让 LLM 理论支持<b>无限长</b>流式输入。</div>
+        <div class="rate"><span class="pill">∞</span><span class="pill">KV 缓存</span></div>
+      </div>
+
+      <div class="md m4">
+        <div class="head">
+          <span class="ico">🏋️</span>
+          <span class="name">H2O (Heavy-Hitter)</span>
+          <span class="from">CMU</span>
+        </div>
+        <div class="body">保留<b>被频繁关注</b>的"重磅" token, 驱逐低重要度 KV。</div>
+        <div class="rate"><span class="pill">5x</span><span class="pill">KV 缓存</span></div>
+      </div>
+
+      <div class="md m5">
+        <div class="head">
+          <span class="ico">🔺</span>
+          <span class="name">PyramidKV</span>
+          <span class="from">Microsoft</span>
+        </div>
+        <div class="body"><b>金字塔分配</b>: 浅层少 KV, 深层多 KV, 利用各层信息密度不同。</div>
+        <div class="rate"><span class="pill">5x</span><span class="pill">KV 缓存</span></div>
+      </div>
+
+      <div class="md m6">
+        <div class="head">
+          <span class="ico">🧷</span>
+          <span class="name">SnapKV</span>
+          <span class="from">ByteDance</span>
+        </div>
+        <div class="body"><b>聚类</b> attention 分数, 同类合并, 3-4x 压缩, 速度快。</div>
+        <div class="rate"><span class="pill">3-4x</span><span class="pill">KV 缓存</span></div>
+      </div>
+
+      <div class="md m7">
+        <div class="head">
+          <span class="ico">🧬</span>
+          <span class="name">KIVI / KVQuant</span>
+          <span class="from">MS / Meta</span>
+        </div>
+        <div class="body">KV 缓存直接<b>量化到 2-3 bit</b>, 内存 2.6-4x ↓。</div>
+        <div class="rate"><span class="pill">3-4x</span><span class="pill">KV 量化</span></div>
+      </div>
+
+      <div class="md m8">
+        <div class="head">
+          <span class="ico">⚡</span>
+          <span class="name">NSA (Native Sparse Attn)</span>
+          <span class="from">DeepSeek 2025</span>
+        </div>
+        <div class="body"><b>架构级</b>稀疏注意力, 硬件对齐, 速度+质量同时保证。</div>
+        <div class="rate"><span class="pill">硬件对齐</span><span class="pill">架构级</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 04: 3 层对比 + 权衡 =================== -->
+  <section class="c4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>3 层叠加:Token 压缩 / KV 压缩 / 量化</h2>
+      <span class="en">STACK 3 LAYERS</span>
+    </div>
+    <p>三件事<b>正交</b>, 真实部署中通常叠加用。理解各自在 LLM 哪个位置:</p>
+
+    <div class="compare">
+      <div class="cm cm1">
+        <div class="head">
+          <span class="ico">📜</span>
+          <span class="name">Token 压缩</span>
+          <span class="target">输入层</span>
+        </div>
+        <div class="body">
+          <b>减少送入 LLM 的 token</b>, 降成本降延迟。
+        </div>
+        <div class="methods-mini">
+          LLMLingua · LongLLM<br>
+          CompAct · Selective
+        </div>
+      </div>
+
+      <div class="cm cm2">
+        <div class="head">
+          <span class="ico">🗃️</span>
+          <span class="name">KV 缓存压缩</span>
+          <span class="target">注意力层</span>
+        </div>
+        <div class="body">
+          <b>减少历史 KV</b>, 让长上下文占更少显存。
+        </div>
+        <div class="methods-mini">
+          H2O · StreamingLLM<br>
+          PyramidKV · SnapKV
+        </div>
+      </div>
+
+      <div class="cm cm3">
+        <div class="head">
+          <span class="ico">📦</span>
+          <span class="name">模型量化</span>
+          <span class="target">权重 / 激活</span>
+        </div>
+        <div class="body">
+          <b>降低每 token 的位宽</b>, 模型本体变小。
+        </div>
+        <div class="methods-mini">
+          INT8 / INT4 · GPTQ<br>
+          AWQ · SmoothQuant
+        </div>
+      </div>
+    </div>
+
+    <div class="tradeoff">
+      <div class="title">📊 8 大方法:压缩率 / 质量损失 对比 (典型任务)</div>
+      <div class="items">
+        <div class="row">
+          <span class="name">LLMLingua</span>
+          <span class="rate">20x</span>
+          <div class="bar-bg"><div class="bar speed" style="width: 95%;"></div></div>
+          <span class="loss">~1-2% ↓</span>
+        </div>
+        <div class="row">
+          <span class="name">LongLLMLingua</span>
+          <span class="rate">10x</span>
+          <div class="bar-bg"><div class="bar speed" style="width: 70%;"></div></div>
+          <span class="loss">~1% ↓</span>
+        </div>
+        <div class="row">
+          <span class="name">StreamingLLM</span>
+          <span class="rate">∞ / 5x</span>
+          <div class="bar-bg"><div class="bar speed" style="width: 60%;"></div></div>
+          <span class="loss">~0% (流式)</span>
+        </div>
+        <div class="row">
+          <span class="name">H2O</span>
+          <span class="rate">5x</span>
+          <div class="bar-bg"><div class="bar speed" style="width: 50%;"></div></div>
+          <span class="loss">~1-2% ↓</span>
+        </div>
+        <div class="row">
+          <span class="name">PyramidKV</span>
+          <span class="rate">5x</span>
+          <div class="bar-bg"><div class="bar speed" style="width: 50%;"></div></div>
+          <span class="loss"><1% ↓</span>
+        </div>
+        <div class="row">
+          <span class="name">SnapKV</span>
+          <span class="rate">3-4x</span>
+          <div class="bar-bg"><div class="bar speed" style="width: 40%;"></div></div>
+          <span class="loss"><1% ↓</span>
+        </div>
+        <div class="row">
+          <span class="name">KIVI / KVQuant</span>
+          <span class="rate">3-4x</span>
+          <div class="bar-bg"><div class="bar speed" style="width: 40%;"></div></div>
+          <span class="loss">~1-2% ↓</span>
+        </div>
+        <div class="row">
+          <span class="name">NSA (DeepSeek)</span>
+          <span class="rate">架构级</span>
+          <div class="bar-bg"><div class="bar speed" style="width: 80%;"></div></div>
+          <span class="loss">持平</span>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="item"><span class="dot" style="background:var(--eff)"></span>压缩率 (条越长 = 越高)</div>
+        <div class="item">↓ = 质量损失</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 05: 误区 =================== -->
+  <section class="c5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>新手最常踩的 4 个坑</h2>
+      <span class="en">COMMON PITFALLS</span>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"Token 压缩 = 无损"</span>
+        <span class="fix">👉 <b>任何压缩都有损失</b>。LLMLingua 20x 压缩通常掉 1-2%, 任务敏感时更明显。先评估再上。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"KV 缓存压缩 = Token 压缩"</span>
+        <span class="fix">👉 <b>两层不同</b>: Token 压缩减<b>输入</b>, KV 压缩减<b>中间状态</b>。要叠加用, 单独都不够。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"压缩率越高越好"</span>
+        <span class="fix">👉 <b>压缩 ↔ 质量 反相关</b>。INT4 20x 压缩 5% 损失没用, INT4 4x 1% 损失才实用。找 sweet spot。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">"提示压缩对所有 prompt 都好用"</span>
+        <span class="fix">👉 <b>代码 / 数学 / 关键指令</b>压缩易失效, 聊天 / 检索内容效果好。先按任务类型评估。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTER =================== -->
+  <footer>
+    <div class="title">这一页先记住 · TL;DR</div>
+    <ul class="points">
+      <li><b>WHAT</b>长上下文 = 4 重灾难, 6 大类方法可救</li>
+      <li><b>HOW</b>Token 压缩 / KV 压缩 / 量化 三层叠加</li>
+      <li><b>KEY</b>LLMLingua + H2O/SnapKV + 量化 是常用组合</li>
+    </ul>
+    <div class="oneliner">
+      <b>一句话总结:</b>大模型/智能体 token 压缩 = <b>6 大类方法</b>在不同位置做减法,
+      <b>Token 压缩 + KV 缓存压缩 + 量化</b> 三层正交, 可叠加到 <b>4x × 5x × 4x = 80x</b> 总体压缩。
+    </div>
+    <div class="stamp">图源:仿「一张图讲清楚」系列 · 参考 LLMLingua (Microsoft 2023) · StreamingLLM (MIT 2023) · H2O (CMU 2023) · PyramidKV · SnapKV · NSA (DeepSeek 2025)</div>
+    <div class="credit">
+      <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
