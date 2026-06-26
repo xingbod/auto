@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ViT 砍一半 Token 还不掉点? 一页讲清 Token Merging</title>
+<style>
+:root{
+  --primary:#059669; --primary-deep:#047857; --primary-soft:#d1fae5; --primary-line:#6ee7b7;
+  --teal:#0891b2; --teal-soft:#cffafe; --teal-line:#67e8f9;
+  --amber:#ea580c; --amber-soft:#fed7aa; --amber-line:#fdba74;
+  --rose:#e11d48; --rose-soft:#ffe4e6; --rose-line:#fecdd3;
+  --red:#dc2626; --red-soft:#fee2e2;
+  --ink:#1f2937; --ink-2:#374151; --ink-3:#6b7280; --ink-4:#9ca3af;
+  --line:#e5e7eb; --line-soft:#f3f4f6;
+  --bg:#ffffff; --bg-2:#fafafa;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg-2);color:var(--ink);line-height:1.65}
+.page{max-width:760px;margin:0 auto;background:var(--bg);box-shadow:0 1px 0 rgba(0,0,0,.04)}
+
+.header{padding:40px 44px 28px;background:linear-gradient(180deg,#d1fae5 0%,#ffffff 100%);}
+.header h1{font-size:29px;line-height:1.3;margin:0 0 10px;color:var(--primary-deep);font-weight:800;letter-spacing:-0.01em}
+.header .sub{font-size:14.5px;color:var(--ink-2);margin:0 0 16px}
+.header .meta{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--ink-3)}
+.header .meta span{background:var(--primary-soft);border:1px solid var(--primary-line);padding:4px 11px;border-radius:999px;color:var(--primary-deep)}
+.header .icons{float:right;font-size:24px;color:var(--primary);margin-top:-6px;letter-spacing:6px}
+
+section{padding:28px 44px;border-top:1px solid var(--line-soft)}
+.sec-title{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-4);font-weight:700;margin-bottom:14px}
+.sec-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:var(--primary);color:#fff;font-weight:800;font-size:13px;vertical-align:middle;margin-right:10px;letter-spacing:0}
+
+.ov-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.ov-card{border-radius:10px;padding:14px 10px 12px;text-align:center;border:1px solid var(--line)}
+.ov-card .e{font-size:26px;display:block;line-height:1.1;margin-bottom:6px}
+.ov-card .n{font-size:13px;font-weight:700;color:var(--ink)}
+.ov-card .en{font-size:10.5px;color:var(--ink-4);letter-spacing:.06em;margin-top:3px;text-transform:uppercase}
+
+.mod{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:18px 20px 14px;margin-top:14px}
+.mod-h{font-size:18px;font-weight:700;color:var(--ink);margin:0 0 4px;line-height:1.35}
+.mod-en{font-size:11.5px;color:var(--ink-4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:block}
+p.md{font-size:14px;line-height:1.7;color:var(--ink-2);margin:8px 0}
+
+table.cmp{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+table.cmp th,table.cmp td{padding:8px 10px;border:1px solid var(--line);text-align:left;vertical-align:top}
+table.cmp th{background:var(--primary-soft);color:var(--primary-deep);font-weight:700;font-size:12px;letter-spacing:.04em}
+table.cmp td:first-child{font-weight:700;color:var(--ink);white-space:nowrap}
+
+.eq{background:var(--primary-soft);border-left:4px solid var(--primary);border-radius:8px;padding:12px 16px;margin:12px 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--primary-deep)}
+.eq .label{display:block;font-size:11px;color:var(--ink-4);font-family:-apple-system,sans-serif;letter-spacing:.06em;margin-bottom:6px;text-transform:uppercase}
+
+.svg-wrap{background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px;margin:12px 0}
+.svg-wrap svg{display:block;width:100%;height:auto}
+
+.sec-teal .sec-num{background:var(--teal)}
+.sec-teal .eq{background:var(--teal-soft);border-left-color:var(--teal);color:#0e7490}
+.sec-teal table.cmp th{background:var(--teal-soft);color:#0e7490}
+.sec-amber .sec-num{background:var(--amber)}
+.sec-amber .eq{background:var(--amber-soft);border-left-color:var(--amber);color:#9a3412}
+.sec-amber table.cmp th{background:var(--amber-soft);color:#9a3412}
+.sec-rose .sec-num{background:var(--rose)}
+.sec-rose .eq{background:var(--rose-soft);border-left-color:var(--rose);color:#9f1239}
+.sec-rose table.cmp th{background:var(--rose-soft);color:#9f1239}
+
+.pitfall{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;padding:12px 14px;background:var(--red-soft);border-radius:9px;border-left:4px solid var(--red)}
+.pitfall .x{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.pitfall .wrong{font-size:13.5px;color:var(--ink-2)}
+.pitfall .wrong b{color:var(--red)}
+.pitfall .right{font-size:13.5px;color:#15803d;font-weight:600;display:block;margin-top:4px}
+
+.tldr{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.tldr .it{background:var(--bg-2);border:1px solid var(--line);border-radius:9px;padding:13px 14px}
+.tldr .it .tag{display:inline-block;font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.tldr .it p{font-size:13px;color:var(--ink-2);margin:0;line-height:1.6}
+
+.oneliner{background:linear-gradient(135deg,#064e3b 0%,#059669 100%);color:#d1fae5;border-radius:12px;padding:22px 24px;text-align:center;font-size:15.5px;line-height:1.7}
+.oneliner b{color:#fde68a;font-weight:700}
+.oneliner i{color:#a7f3d0;font-style:normal;font-weight:600}
+
+.refs{text-align:right;font-size:11px;color:var(--ink-4);margin-top:14px;line-height:1.7}
+
+.credit{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-3);text-align:center;line-height:1.6}
+.credit b{color:var(--ink);font-weight:700}
+
+@media (max-width:640px){
+  section{padding:24px 22px}
+  .header{padding:30px 22px 22px}
+  .header h1{font-size:24px}
+  .ov-grid{grid-template-columns:repeat(2,1fr)}
+  .tldr{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ① 标题 -->
+<header class="header">
+  <span class="icons">⚡ 🔗 🎯</span>
+  <h1>ViT 砍掉一半 Token 还不掉点?</h1>
+  <p class="sub">一页讲清 Token Merging (ToMe) 的核心算法、设计选择与效果权衡</p>
+  <div class="meta">
+    <span>📖 阅读 5 min</span>
+    <span>🧠 CV / Transformer 工程师</span>
+    <span>📚 ToMe · ICLR 2023 · Meta AI</span>
+  </div>
+</header>
+
+<!-- ② 总览 -->
+<section>
+  <div class="sec-title">Overview · 5 个关键词先记住</div>
+  <div class="ov-grid">
+    <div class="ov-card" style="background:#d1fae5;border-color:#6ee7b7">
+      <span class="e">🔗</span><span class="n">Token 合并</span><span class="en">Token Merging</span>
+    </div>
+    <div class="ov-card" style="background:#cffafe;border-color:#67e8f9">
+      <span class="e">🚀</span><span class="n">无需训练</span><span class="en">Training-Free</span>
+    </div>
+    <div class="ov-card" style="background:#fed7aa;border-color:#fdba74">
+      <span class="e">⚖️</span><span class="n">双向匹配</span><span class="en">Bipartite Match</span>
+    </div>
+    <div class="ov-card" style="background:#ffe4e6;border-color:#fecdd3">
+      <span class="e">⏱️</span><span class="n">2× 加速</span><span class="en">2× Faster</span>
+    </div>
+    <div class="ov-card" style="background:#ede9fe;border-color:#c4b5fd">
+      <span class="e">-density</span><span class="n">密度保留</span><span class="en">Density-Preserving</span>
+    </div>
+  </div>
+</section>
+
+<!-- ③ 主模块 01 -->
+<section>
+  <div class="sec-title"><span class="sec-num">01</span>为什么需要 Token Merging?</div>
+  <div class="mod">
+    <span class="mod-en">Motivation</span>
+    <p class="md">ViT 对图像切成 N 个 patch token,自注意力计算量随 N <b>平方增长</b>。但一张图里大量 patch 是<b>冗余的</b>(如背景天空、重复纹理),它们对最终预测贡献极小,却消耗同等的注意力算力。</p>
+    <p class="md"><b>已有方案</b>:Token Pruning(裁剪)直接丢弃"不重要"的 token → 信息<b>不可逆</b>丢失,且需要训练特定模块决定丢哪些。ToMe 的洞察:<b>与其丢,不如合</b> —— 把相似 token 取平均合成一个,既减数量又保留信息。</p>
+    <div class="eq">
+      <span class="label">核心思路对比</span>
+      Pruning: &nbsp;x<sub>1</sub>, x<sub>2</sub>, x<sub>3</sub> → 丢弃 x<sub>2</sub> → x<sub>1</sub>, x<sub>3</sub> &nbsp;&nbsp;(信息永久丢失!)<br>
+      Merging: &nbsp;x<sub>1</sub>, x<sub>2</sub>, x<sub>3</sub> → 合并 x<sub>1</sub>⊕x<sub>2</sub> → x<sub>12</sub>, x<sub>3</sub> &nbsp;(信息被平均保留)
+    </div>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 640 210" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ar1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+            <path d="M0,0 L8,3 L0,6 z" fill="#059669"/>
+          </marker>
+          <marker id="ar2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+            <path d="M0,0 L8,3 L0,6 z" fill="#dc2626"/>
+          </marker>
+        </defs>
+        <!-- 原始 token -->
+        <text x="20" y="28" font-size="12" font-weight="700" fill="#1f2937">原始 ViT 输入 (N=196 tokens)</text>
+        <line x1="10" y1="35" x2="320" y2="35" stroke="#e5e7eb" stroke-width="1"/>
+        <g id="tokens-row">
+          <rect x="15" y="45" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+          <rect x="42" y="45" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+          <rect x="69" y="45" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+          <rect x="96" y="45" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+          <rect x="123" y="45" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+          <rect x="150" y="45" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+          <rect x="177" y="45" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+          <rect x="204" y="45" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+          <rect x="231" y="45" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+          <rect x="258" y="45" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+          <rect x="285" y="45" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+          <text x="315" y="60" font-size="11" fill="#9ca3af">··· ··· ···</text>
+        </g>
+
+        <!-- 分叉: 左=pruning 右=merging -->
+        <!-- Pruning -->
+        <text x="10" y="95" font-size="12" font-weight="700" fill="#dc2626">Pruning (丢)</text>
+        <rect x="15" y="105" width="22" height="22" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1.2"/>
+        <rect x="42" y="105" width="22" height="22" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1.2" stroke-dasharray="3,2" opacity="0.4"/>
+        <rect x="69" y="105" width="22" height="22" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1.2"/>
+        <rect x="96" y="105" width="22" height="22" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1.2" stroke-dasharray="3,2" opacity="0.4"/>
+        <rect x="123" y="105" width="22" height="22" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1.2"/>
+        <text x="158" y="120" font-size="10" fill="#dc2626">✗ 信息丢失!</text>
+        <line x1="46" y1="67" x2="46" y2="103" stroke="#dc2626" stroke-width="1.4" stroke-dasharray="3,2" marker-end="url(#ar2)"/>
+        <line x1="100" y1="67" x2="100" y2="103" stroke="#dc2626" stroke-width="1.4" stroke-dasharray="3,2" marker-end="url(#ar2)"/>
+
+        <!-- Merging -->
+        <text x="370" y="95" font-size="12" font-weight="700" fill="#059669">Merging (合) ✓</text>
+        <rect x="370" y="105" width="28" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+        <rect x="404" y="105" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+        <rect x="431" y="105" width="28" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+        <rect x="465" y="105" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+        <rect x="492" y="105" width="28" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+        <rect x="526" y="105" width="22" height="22" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+        <text x="552" y="120" font-size="10" fill="#059669">✓ 信息均匀保留</text>
+
+        <!-- 弧线从原始→merging -->
+        <path d="M200 70 Q380 70 390 103" stroke="#059669" stroke-width="1.4" fill="none" marker-end="url(#ar1)"/>
+
+        <!-- 底部: 结果 -->
+        <text x="10" y="160" font-size="12" font-weight="700" fill="#1f2937">结果: 计算量 O(N²) → O((N-r)²), 每层减 r 个 token</text>
+        <rect x="10" y="170" width="300" height="30" rx="6" fill="#f0fdf4" stroke="#059669" stroke-width="1"/>
+        <text x="20" y="190" font-size="11.5" fill="#047857" font-weight="600">ToMe: N=196 → r=16/层 → 8 层后仅剩 68 token, 2.0× 加速</text>
+        <rect x="330" y="170" width="300" height="30" rx="6" fill="#fef2f2" stroke="#dc2626" stroke-width="1"/>
+        <text x="340" y="190" font-size="11.5" fill="#dc2626" font-weight="600">Pruning: 同样加速但不可逆, 且需要额外训练</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ③ 主模块 02 -->
+<section class="sec-teal">
+  <div class="sec-title"><span class="sec-num">02</span>核心算法: 双分软匹配 + 贪心合并</div>
+  <div class="mod">
+    <span class="mod-en">Bipartite Soft Matching</span>
+    <p class="md">ToMe 在每个 Transformer Block 的<b>自注意力之前</b>插入一个合并步骤。关键在于:如何找出"最相似"的 token 对?</p>
+    <table class="cmp">
+      <tr><th style="width:20%">步骤</th><th>操作</th><th style="width:22%">细节</th></tr>
+      <tr>
+        <td><b>1. 分集合</b><br>Split</td>
+        <td>把当前 t 个 token 沿序列维度<b>交替</b>分成 A、B 两个等大集合 (奇数位→A, 偶数位→B)</td>
+        <td>两集合无交集, 保证合并只在跨集合间发生, 避免<b>链式合并</b></td>
+      </tr>
+      <tr>
+        <td><b>2. 算相似度</b><br>Similarity</td>
+        <td>用注意力 Key 矩阵 K, 计算 A 中每个 token 和 B 中所有 token 的<b>余弦相似度</b></td>
+        <td>score(i,j) = k<sub>i</sub> · k<sub>j</sub>, 复用已有的注意力投影权重</td>
+      </tr>
+      <tr>
+        <td><b>3. 双分匹配</b><br>Match</td>
+        <td>对相似度矩阵做<b>贪心双向匹配</b>, 找到 A↔B 之间最相似的 r 对 token</td>
+        <td>等价于在二分图上求最小权匹配, 一次匹配只配对一次, 不重复合并</td>
+      </tr>
+      <tr>
+        <td><b>4. 合并</b><br>Merge</td>
+        <td>将每对匹配的两个 token <b>取平均</b>合成一个新 token (按 (Hadamard) 乘上聚类大小归一化)</td>
+        <td>x<sub>merged</sub> = (x<sub>a</sub> + x<sub>b</sub>) / 2, 维度不变</td>
+      </tr>
+      <tr>
+        <td><b>5. 继续</b><br>Forward</td>
+        <td>合并后的 t-r 个 token 进入正常 Self-Attention + MLP → 下一层重复</td>
+        <td>无缝插入, 不修改原始架构权重</td>
+      </tr>
+    </table>
+    <div class="eq">
+      <span class="label">Bipartite Matching 核心逻辑</span>
+      Input: &nbsp;tokens X ∈ R<sup>t×d</sup>, &nbsp;keys K = X·W<sub>K</sub><br>
+      Split A, B ⊂ X &nbsp;(|A| ≈ |B| ≈ t/2)<br>
+      S(i,j) = cos( K<sub>A,i</sub>, K<sub>B,j</sub> ) &nbsp;&nbsp;← 相似度矩阵 S ∈ R<sup>(t/2)×(t/2)</sup><br>
+      M =Hungarian(S)<sub>top-r</sub> &nbsp;← 贪心选 r 对最相似的配对<br>
+      X' = merge(X, M) &nbsp;&nbsp;&nbsp; |X'| = t - r
+    </div>
+  </div>
+</section>
+
+<!-- ③ 主模块 03 -->
+<section class="sec-amber">
+  <div class="sec-title"><span class="sec-num">03</span>三个关键设计选择</div>
+  <div class="mod">
+    <span class="mod-en">Key Design Choices</span>
+    <table class="cmp">
+      <tr><th style="width:22%">设计点</th><th>ToMe 的选择</th><th>为什么不这样做 (替代方案的问题)</th></tr>
+      <tr>
+        <td><b>训练无关</b><br>Training-Free</td>
+        <td>不修改任何模型权重, 不需任何额外训练, 像一个即插即用的前向传播 patch</td>
+        <td>替代方案 (DynamicViT / EViT) 需要训练 <b>预测器</b> 决定丢哪些 token, 切换任务就要重训</td>
+      </tr>
+      <tr>
+        <td><b>双向匹配</b><br>Bipartite</td>
+        <td>将 token 交替分 A/B 两集, 跨集合做一对一匹配 → 每次最多合成 t/2 对</td>
+        <td>直接贪心会出现<b>链式</b>: 一个 token 被合并到 A 后还说"和 B 也相似"再被合一次 → 团块化失真</td>
+      </tr>
+      <tr>
+        <td><b>密度保留</b><br>Density</td>
+        <td>合并后保留所有但减数量: x<sub>1</sub>+x<sub>2</sub>→x<sub>12</sub>, 不丢信息只是<b>均匀重新平均</b></td>
+        <td>Pruning 直接删 token → <b>不可逆</b>丢失, 且需额外训练预测器, 越大比例越脆</td>
+      </tr>
+    </table>
+    <div class="eq">
+      <span class="label">为什么交替分配 A/B 而不是按空间分?</span>
+      交替分配保证: 每个token都能在<span style="color:#9a3412;font-weight:700">另一半集合</span>中找到潜在匹配对象<br>
+      如果按空间分(如左侧 vs 右侧) 跨空间合并会破坏局部性, 但交替分配每一对都来自不同空间位置, <b>天然支持跨区域融合</b>
+    </div>
+  </div>
+</section>
+
+<!-- ③ 主模块 04 -->
+<section class="sec-rose">
+  <div class="sec-title"><span class="sec-num">04</span>实验效果: 速度与精度的优雅权衡</div>
+  <div class="mod">
+    <span class="mod-en">Results &amp; Trade-offs</span>
+    <table class="cmp">
+      <tr><th style="width:14%">任务</th><th>模型</th><th>速度提升</th><th>精度变化 (vs 原版)</th><th>备注</th></tr>
+      <tr>
+        <td rowspan="2"><b>图像分类</b></td>
+        <td>ViT-B/16 (224)</td><td><b>1.5-2.0×</b></td><td>-0.2 ~ -0.7% top-1 (r=16)</td><td>最大减 128 个 token</td>
+      </tr>
+      <tr>
+        <td>Swin-B</td><td><b>1.4-1.8×</b></td><td>-0.3 ~ -1.0% top-1 (r=8)</td><td>Swin 已有 pooling, 收益略低</td>
+      </tr>
+      <tr>
+        <td><b>目标检测</b></td>
+        <td>ViTDet-R50</td><td><b>1.3-1.5×</b></td><td>-0.5 ~ -1.0 AP</td><td>同时加速 backbone + head</td>
+      </tr>
+      <tr>
+        <td><b>语义分割</b></td>
+        <td>Mask2Former</td><td><b>1.3-1.6×</b></td><td>-0.5 ~ -1.0 mIoU</td><td>逐层合并保持高层 spatial 信息</td>
+      </tr>
+      <tr>
+        <td><b>视频理解</b></td>
+        <td>TimeSformer</td><td><b>1.5-2.3×</b></td><td>-0.2 ~ -0.8%</td><td>视频中时序冗余更丰富, 合并收益更大</td>
+      </tr>
+    </table>
+    <div class="eq">
+      <span class="label">关键发现: 合并 vs 裁剪的精度差异</span>
+      同等加速比下 ToMe(Merging) 精度 <b>始终高于</b> Pruning(删除) 方法, 且越往后越领先<br>
+      原因: 合并 = 信息做完整平均而不是丢弃, 后续层仍可"看到"合并前的信息内容 (平均后仍保留)
+    </div>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 640 150" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="25" font-size="12" font-weight="700" fill="#9f1239">精度-Accuracy vs 吞吐-Throughput 权衡曲线 (ImageNet, ViT-B/16)</text>
+        <!-- 坐标系 -->
+        <line x1="50" y1="110" x2="550" y2="110" stroke="#6b7280" stroke-width="1.5"/>
+        <line x1="50" y1="110" x2="50" y2="35" stroke="#6b7280" stroke-width="1.5"/>
+        <text x="530" y="128" font-size="11" fill="#6b7280">Faster →</text>
+        <text x="20" y="42" font-size="11" fill="#6b7280">↑ Accuracy</text>
+
+        <!-- 网格虚线 -->
+        <line x1="50" y1="70" x2="550" y2="70" stroke="#e5e7eb" stroke-width="0.5" stroke-dasharray="3,3"/>
+
+        <!-- ToMe 曲线 (平缓下降) -->
+        <polyline points="80,42 180,45 280,48 380,53 480,60 520,65" fill="none" stroke="#059669" stroke-width="2.5"/>
+        <circle cx="80" cy="42" r="4" fill="#059669"/>
+        <circle cx="180" cy="45" r="4" fill="#059669"/>
+        <circle cx="280" cy="48" r="4" fill="#059669"/>
+        <circle cx="380" cy="53" r="4" fill="#059669"/>
+        <circle cx="480" cy="60" r="4" fill="#059669"/>
+        <circle cx="520" cy="65" r="4" fill="#059669"/>
+        <text x="90" y="38" font-size="10" fill="#059669" font-weight="700">ToMe (Ours)</text>
+
+        <!-- Pruning 曲线 (快速下降) -->
+        <polyline points="80,42 160,50 240,58 320,68 400,80 460,95" fill="none" stroke="#dc2626" stroke-width="2"/>
+        <circle cx="160" cy="50" r="3.5" fill="#dc2626"/>
+        <circle cx="240" cy="58" r="3.5" fill="#dc2626"/>
+        <circle cx="320" cy="68" r="3.5" fill="#dc2626"/>
+        <circle cx="400" cy="80" r="3.5" fill="#dc2626"/>
+        <circle cx="460" cy="95" r="3.5" fill="#dc2626"/>
+        <text x="410" y="104" font-size="10" fill="#dc2626" font-weight="700">Pruning</text>
+
+        <!-- 原始 ViT 基准 -->
+        <circle cx="80" cy="42" r="8" fill="none" stroke="#1f2937" stroke-width="1.5"/>
+        <text x="60" y="56" font-size="9.5" fill="#1f2937">ViT-B/16</text>
+        <text x="60" y="68" font-size="9" fill="#9ca3af">81.8% 1× Sp</text>
+
+        <!-- 2× 标注 -->
+        <line x1="400" y1="100" x2="400" y2="115" stroke="#9ca3af" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <text x="390" y="128" font-size="10" fill="#9ca3af">≈2× Faster</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ④ 误区 -->
+<section>
+  <div class="sec-title">⚠ Common Pitfalls · 4 个理解误区</div>
+
+  <div class="pitfall">
+    <div class="x">✗</div>
+    <div>
+      <div class="wrong"><b>ToMe 需要重新训练模型</b> <span style="text-decoration:line-through">在 ViT 上加合并层就要 fine-tune</span></div>
+      👉 <span class="right">ToMe 是 <b>training-free</b> 的: 不修改权重, 不需要数据, 像一个前向传播操作直接插入即可用</span>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="x">✗</div>
+    <div>
+      <div class="wrong"><b>合并 = 裁剪, 都是删 token</b> <span style="text-decoration:line-through">反正都减少 token 数, 效果差不多</span></div>
+      👉 <span class="right">合并 = 两个 token → <b>取平均</b> → 1 个等维新 token (信息被差分式保留); 裁剪 = 直接丢弃 token (信息永久丢失)</span>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="x">✗</div>
+    <div>
+      <div class="wrong"><b>随便取两个相似 token 合并就行</b> <span style="text-decoration:line-through">直接对全部 token 做全局贪心配对</span></div>
+      👉 <span class="right">必须用<b>双向匹配</b>: 先分奇偶 A/B 两集, 再跨集做一对一匹配, 否则会出现链式合并、一个 token 被反复合并</span>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="x">✗</div>
+    <div>
+      <div class="wrong"><b>合并越多越好, 压缩率越高越好</b> <span style="text-decoration:line-through">把 r 设到最大, 反正不掉点</span></div>
+      👉 <span class="right">r (每层合并数) 越大, 精度下降越明显 (ViT-B/16 上 r=16 可控, r=32+ 开始明显损失); 建议开始用 r=8</span>
+    </div>
+  </div>
+</section>
+
+<!-- ⑤ 总结 -->
+<section>
+  <div class="sec-title">★ TL;DR · 3 个要点先抓牢</div>
+  <div class="tldr">
+    <div class="it">
+      <span class="tag">What</span>
+      <p>在每个 Transformer Block 前用<b>双向软匹配</b>从 t 个 token 中合并 r 个相似 token (取平均), <b>不丢信息, 不改权重</b></p>
+    </div>
+    <div class="it">
+      <span class="tag">How</span>
+      <p>交替分 A/B 两集 → 用注意力 Key 算余弦相似度 → 贪心匹配 top-r 对 → 每对取平均合并 → t-r 个 token 继续</p>
+    </div>
+    <div class="it">
+      <span class="tag">Result</span>
+      <p>对 ViT-B/16 获 2× 加速, 仅损 ~0.3% top-1; 适用于分类/检测/分割/视频, <b>无需训练</b></p>
+    </div>
+  </div>
+
+  <div class="oneliner">
+    Token Merging 让 ViT "<i>不训练、不掉点、插即用</i>": 通过<b>双向匹配</b>找到最相似的 token 对并<b>取平均</b>合并,<br>
+    每层减 r 个 token 实现最高 2× 加速, 信息因为"合"而非"丢"而得以保留
+  </div>
+
+  <div class="refs">
+    Reference: Bolya et al., "Token Merging: Your ViT but Faster", ICLR 2023 · Meta AI/FAIR · Georgia Tech · arXiv:2210.09461
+  </div>
+
+  <div class="credit">
+    <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+    <span style="font-size:10.5px;color:var(--ink-3)">© 2026 DONG XINGBO · All rights reserved</span>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
