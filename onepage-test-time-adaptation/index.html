@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>测试时也能适应？一页讲清 Test-Time Adaptation</title>
+<style>
+:root{
+  --primary:#4f46e5; --primary-deep:#3730a3; --primary-soft:#eef2ff; --primary-line:#c7d2fe;
+  --teal:#0d9488; --teal-soft:#ccfbf1; --amber:#d97706; --amber-soft:#fef3c7;
+  --violet:#7c3aed; --violet-soft:#ede9fe;
+  --red:#dc2626; --red-soft:#fee2e2;
+  --ink:#1f2937; --ink-2:#374151; --ink-3:#6b7280; --ink-4:#9ca3af;
+  --line:#e5e7eb; --line-soft:#f3f4f6;
+  --bg:#ffffff; --bg-2:#fafafa;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg-2);color:var(--ink);line-height:1.65}
+.page{max-width:760px;margin:0 auto;background:var(--bg);box-shadow:0 1px 0 rgba(0,0,0,.04)}
+
+/* ① 标题 */
+.header{padding:40px 44px 28px;background:linear-gradient(180deg,#eef2ff 0%,#ffffff 100%);}
+.header h1{font-size:29px;line-height:1.3;margin:0 0 10px;color:var(--primary-deep);font-weight:800;letter-spacing:-0.01em}
+.header .sub{font-size:14.5px;color:var(--ink-2);margin:0 0 16px}
+.header .meta{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--ink-3)}
+.header .meta span{background:var(--primary-soft);border:1px solid var(--primary-line);padding:4px 11px;border-radius:999px;color:var(--primary-deep)}
+.header .icons{float:right;font-size:24px;color:var(--primary);margin-top:-6px;letter-spacing:6px}
+
+/* section 通用 */
+section{padding:28px 44px;border-top:1px solid var(--line-soft)}
+.sec-title{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-4);font-weight:700;margin-bottom:14px}
+.sec-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:var(--primary);color:#fff;font-weight:800;font-size:13px;vertical-align:middle;margin-right:10px;letter-spacing:0}
+
+/* ② 总览卡片 */
+.ov-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.ov-card{border-radius:10px;padding:14px 10px 12px;text-align:center;border:1px solid var(--line)}
+.ov-card .e{font-size:26px;display:block;line-height:1.1;margin-bottom:6px}
+.ov-card .n{font-size:13px;font-weight:700;color:var(--ink)}
+.ov-card .en{font-size:10.5px;color:var(--ink-4);letter-spacing:.06em;margin-top:3px;text-transform:uppercase}
+
+/* ③ 模块 */
+.mod{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:18px 20px 14px;margin-top:14px}
+.mod-h{font-size:18px;font-weight:700;color:var(--ink);margin:0 0 4px;line-height:1.35}
+.mod-en{font-size:11.5px;color:var(--ink-4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:block}
+p.md{font-size:14px;line-height:1.7;color:var(--ink-2);margin:8px 0}
+
+/* 表 */
+table.cmp{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+table.cmp th,table.cmp td{padding:8px 10px;border:1px solid var(--line);text-align:left;vertical-align:top}
+table.cmp th{background:var(--primary-soft);color:var(--primary-deep);font-weight:700;font-size:12px;letter-spacing:.04em}
+table.cmp td:first-child{font-weight:700;color:var(--ink);white-space:nowrap}
+
+/* 公式块 */
+.eq{background:var(--primary-soft);border-left:4px solid var(--primary);border-radius:8px;padding:12px 16px;margin:12px 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--primary-deep)}
+.eq .label{display:block;font-size:11px;color:var(--ink-4);font-family:-apple-system,sans-serif;letter-spacing:.06em;margin-bottom:6px;text-transform:uppercase}
+
+/* SVG */
+.svg-wrap{background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px;margin:12px 0}
+.svg-wrap svg{display:block;width:100%;height:auto}
+
+/* 模块色变 */
+.sec-teal .sec-num{background:var(--teal)}
+.sec-teal .eq{background:var(--teal-soft);border-left-color:var(--teal);color:#0f766e}
+.sec-amber .sec-num{background:var(--amber)}
+.sec-amber .eq{background:var(--amber-soft);border-left-color:var(--amber);color:#92400e}
+.sec-violet .sec-num{background:var(--violet)}
+.sec-violet .eq{background:var(--violet-soft);border-left-color:var(--violet);color:#6d28d9}
+
+/* 误区 */
+.pitfall{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;padding:12px 14px;background:var(--red-soft);border-radius:9px;border-left:4px solid var(--red)}
+.pitfall .x{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.pitfall .wrong{font-size:13.5px;color:var(--ink-2)}
+.pitfall .wrong b{color:var(--red)}
+.pitfall .right{font-size:13.5px;color:#15803d;font-weight:600;display:block;margin-top:4px}
+
+/* TL;DR */
+.tldr{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.tldr .it{background:var(--bg-2);border:1px solid var(--line);border-radius:9px;padding:13px 14px}
+.tldr .it .tag{display:inline-block;font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.tldr .it p{font-size:13px;color:var(--ink-2);margin:0;line-height:1.6}
+
+.oneliner{background:linear-gradient(135deg,#312e81 0%,#4f46e5 100%);color:#e0e7ff;border-radius:12px;padding:22px 24px;text-align:center;font-size:15.5px;line-height:1.7}
+.oneliner b{color:#fde68a;font-weight:700}
+.oneliner i{color:#a5f3fc;font-style:normal;font-weight:600}
+
+.refs{text-align:right;font-size:11px;color:var(--ink-4);margin-top:14px;line-height:1.7}
+
+.credit{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-3);text-align:center;line-height:1.6}
+.credit b{color:var(--ink);font-weight:700}
+
+/* 移动端 */
+@media (max-width:640px){
+  .header,.header section{padding-left:22px;padding-right:22px}
+  section{padding:24px 22px}
+  .header h1{font-size:24px}
+  .ov-grid{grid-template-columns:repeat(2,1fr)}
+  .tldr{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ① 标题 -->
+<header class="header">
+  <span class="icons">🔄 ⚡ 🎯</span>
+  <h1>测试时也能适应？模型部署后如何"临场进化"</h1>
+  <p class="sub">一页讲清 Test-Time Adaptation (TTA) 的核心思想、方法谱系与落地陷阱</p>
+  <div class="meta">
+    <span>📖 阅读 5 min</span>
+    <span>🧠 ML / CV 工程师</span>
+    <span>📚 TENT · CoTTA · SAR · TTT</span>
+  </div>
+</header>
+
+<!-- ② 总览 -->
+<section>
+  <div class="sec-title">Overview · 5 个关键词先记住</div>
+  <div class="ov-grid">
+    <div class="ov-card" style="background:#eef2ff;border-color:#c7d2fe">
+      <span class="e">🔀</span><span class="n">分布偏移</span><span class="en">Distribution Shift</span>
+    </div>
+    <div class="ov-card" style="background:#ccfbf1;border-color:#5eead4">
+      <span class="e">🔁</span><span class="n">推理期自调</span><span class="en">Adapt at Inference</span>
+    </div>
+    <div class="ov-card" style="background:#fef3c7;border-color:#fcd34d">
+      <span class="e">⚡</span><span class="n">无需重训</span><span class="en">No Retraining</span>
+    </div>
+    <div class="ov-card" style="background:#ede9fe;border-color:#c4b5fd">
+      <span class="e">🔧</span><span class="n">参数高效</span><span class="en">BN-only / Partial</span>
+    </div>
+    <div class="ov-card" style="background:#fee2e2;border-color:#fca5a5">
+      <span class="e">🚧</span><span class="n">误差累积</span><span class="en">Error Accumulation</span>
+    </div>
+  </div>
+</section>
+
+<!-- ③ 主模块 01 -->
+<section>
+  <div class="sec-title"><span class="sec-num">01</span>什么是 TTA?为什么需要它?</div>
+  <div class="mod">
+    <span class="mod-en">What & Why</span>
+    <p class="md">训练集与测试集往往<b>分布不同</b>(corruption / domain / style shift),直接上线会让精度骤降。传统做法是重新标注新数据 → 重新训练,代价昂贵且不现实。</p>
+    <p class="md"><b>TTA</b> = 模型部署后,在推理时仅利用测试样本自身的信号(预测熵、自监督损失等)调整模型少量参数,以对抗当下的分布偏移,全程不接触源数据、不需要标签。</p>
+    <div class="eq">
+      <span class="label">TTA 形式化定义</span>
+      θ' = argmin<sub>θ</sub> &nbsp;L<sub>self</sub>( x<sub>test</sub> ; θ ), &nbsp;&nbsp; 不需要 y<sub>test</sub>
+      <br>其中 L<sub>self</sub> 可以是熵 H( p<sub>θ</sub>(y|x) ) 或自监督辅助任务损失
+    </div>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 640 170" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+            <path d="M0,0 L8,3 L0,6 z" fill="#4f46e5"/>
+          </marker>
+        </defs>
+        <rect x="10" y="50" width="110" height="60" rx="8" fill="#eef2ff" stroke="#4f46e5" stroke-width="1.5"/>
+        <text x="65" y="78" text-anchor="middle" font-size="13" fill="#3730a3" font-weight="700">源域训练</text>
+        <text x="65" y="96" text-anchor="middle" font-size="11" fill="#6b7280">Source Train</text>
+        <path d="M120 80 H170" stroke="#4f46e5" stroke-width="1.8" marker-end="url(#ar)" fill="none"/>
+
+        <rect x="180" y="50" width="110" height="60" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+        <text x="235" y="78" text-anchor="middle" font-size="13" fill="#1f2937" font-weight="700">部署推理</text>
+        <text x="235" y="96" text-anchor="middle" font-size="11" fill="#6b7280">Deploy</text>
+        <path d="M290 80 H340" stroke="#4f46e5" stroke-width="1.8" marker-end="url(#ar)" fill="none"/>
+
+        <rect x="350" y="20" width="130" height="40" rx="8" fill="#dc2626" fill-opacity="0.08" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="415" y="46" text-anchor="middle" font-size="12" fill="#dc2626" font-weight="700">分布偏移 Distribution Shift</text>
+        <path d="M415 60 V70 M350 95 H415" stroke="#dc2626" stroke-width="1.4" stroke-dasharray="3,2" fill="none" marker-end="url(#ar)"/>
+        <text x="430" y="100" font-size="10" fill="#dc2626">精度骤降!</text>
+
+        <rect x="350" y="115" width="130" height="42" rx="8" fill="#ccfbf1" stroke="#0d9488" stroke-width="1.5"/>
+        <text x="415" y="135" text-anchor="middle" font-size="12.5" fill="#0f766e" font-weight="700">TTA 在线适应</text>
+        <text x="415" y="150" text-anchor="middle" font-size="10" fill="#6b7280">仅用 x_test 调少量参数</text>
+
+        <path d="M480 80 H540" stroke="#0d9488" stroke-width="1.8" marker-end="url(#ar)" fill="none"/>
+        <rect x="550" y="55" width="80" height="50" rx="8" fill="#0d9488"/>
+        <text x="590" y="78" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">提升泛化</text>
+        <text x="590" y="94" text-anchor="middle" font-size="10.5" fill="#a7f3d0">Improved Acc.</text>
+
+        <text x="235" y="125" text-anchor="middle" font-size="10.5" fill="#6b7280">原始模型 θ → 推理遇到偏移 → TTA 输出 θ'</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ③ 主模块 02 -->
+<section class="sec-teal">
+  <div class="sec-title"><span class="sec-num">02</span>TTA 的方法谱系:两条主轴</div>
+  <div class="mod">
+    <span class="mod-en">Taxonomy by Two Axes</span>
+    <p class="md">所有 TTA 方法都可以沿<b>参数更新范围</b>与<b>数据流方式</b>两条主轴分类:</p>
+    <table class="cmp">
+      <tr><th style="width:18%">轴</th><th style="width:22%">类别</th><th>说明</th></tr>
+      <tr>
+        <td rowspan="4" style="font-weight:700">按<br>更新范围<br>(What)</td>
+        <td>Full TTA</td><td>所有模型参数都可更新,灵活但易过拟/遗忘</td>
+      </tr>
+      <tr><td>BN-only</td><td>只更新 BatchNorm 的 γ/β 和均值方差 (如 TENT、SAR),参数量极少最常用</td></tr>
+      <tr><td>Partial / Layer-wise</td><td>只更新特定层 (affordance layers),其余冻结</td></tr>
+      <tr><td>Source-Free</td><td><b>不</b>需要源训练数据 (只发模型权重给下游),适配隐私受限场景</td></tr>
+
+      <tr>
+        <td rowspan="4" style="font-weight:700">按<br>数据流<br>(How)</td>
+        <td>Single-sample</td><td>一次一个样本即时调整,最难但最实用</td>
+      </tr>
+      <tr><td>Batch-based</td><td>成批涌入时利用 batch 统计更新,精度高但依赖 batch size</td></tr>
+      <tr><td>Continual / Streaming</td><td>处理流式数据,需主动防灾难性遗忘</td></tr>
+      <tr><td>Online TTA</td><td>逐样本即时调整同时输出预测,延迟与精度需兼顾</td></tr>
+    </table>
+    <div class="eq">
+      <span class="label">两条轴的自由组合</span>
+      例: TENT = BN-only × Batch-based &nbsp;|&nbsp; CoTTA = Full × Continual &nbsp;|&nbsp; SAR = BN-only × Batch
+    </div>
+  </div>
+</section>
+
+<!-- ③ 主模块 03 -->
+<section class="sec-amber">
+  <div class="sec-title"><span class="sec-num">03</span>经典方法横向对比</div>
+  <div class="mod">
+    <span class="mod-en">4 Representative Methods</span>
+    <table class="cmp">
+      <tr>
+        <th style="width:14%">方法 / 年份</th>
+        <th>核心思想</th>
+        <th style="width:13%">标签需求</th>
+        <th>主要局限</th>
+      </tr>
+      <tr>
+        <td><b>TTT</b> (2020)<br><span style="font-size:11px;color:#6b7280">Sun et al., ICML</span></td>
+        <td>训练时附带自监督头 (如旋转预测);推理时用自监督损失更新该子网络</td>
+        <td>无</td>
+        <td>需在源域重新设计并训练自监督辅助任务</td>
+      </tr>
+      <tr>
+        <td><b>TENT</b> (2021)<br><span style="font-size:11px;color:#6b7280">Wang et al., ICLR</span></td>
+        <td>最小化预测分布的<b>熵</b> H( p<sub>θ</sub>(y|x) ),只更新 BN 参数</td>
+        <td>无</td>
+        <td>强依赖 batch 统计;错预测会自我强化</td>
+      </tr>
+      <tr>
+        <td><b>CoTTA</b> (2022)<br><span style="font-size:11px;color:#6b7280">Wang et al., CVPR</span></td>
+        <td>教师-学生 + 随机恢复 + EMA,长期持续适应,同时防遗忘与误差累积</td>
+        <td>无</td>
+        <td>全参数更新,计算开销大</td>
+      </tr>
+      <tr>
+        <td><b>SAR</b> (2023)<br><span style="font-size:11px;color:#6b7280">Niu et al., ICLR</span></td>
+        <td>锐度感知最小化 + 限制 BN 势能,在噪声偏移下更稳健</td>
+        <td>无</td>
+        <td>仍需 batch,大模型上 BN 层稀疏</td>
+      </tr>
+    </table>
+    <div class="eq">
+      <span class="label">TENT 的核心损失 (无监督)</span>
+      L<sub>TENT</sub>( x ) = - Σ<sub>c</sub> &nbsp; p<sub>θ</sub>( c | x ) · log p<sub>θ</sub>( c | x ) = H( p<sub>θ</sub>(y|x) )
+      <br>只对其求梯度并更新 BN 的 γ<sub>l</sub>, β<sub>l</sub> 两个参数张量
+    </div>
+  </div>
+</section>
+
+<!-- ③ 主模块 04 -->
+<section class="sec-violet">
+  <div class="sec-title"><span class="sec-num">04</span>两大命门:误差累积与灾难性遗忘</div>
+  <div class="mod">
+    <span class="mod-en">Error Accumulation &amp; Catastrophic Forgetting</span>
+    <p class="md">TTA 用<b>没有标签</b>的预测信号做训练,这带来了两个根本风险:</p>
+    <table class="cmp">
+      <tr><th style="width:24%">挑战</th><th>现象</th><th style="width:34%">主流缓解方案</th></tr>
+      <tr>
+        <td><b>误差累积</b><br>Error Accumulation</td>
+        <td>高置信的错误样本反过来又"训练"模型,越改越偏,精度快速退化</td>
+        <td>置信度阈值过滤 / 只更新低熵样本 · SAR 的锐度约束 · CoTTA 随机恢复权重</td>
+      </tr>
+      <tr>
+        <td><b>灾难性遗忘</b><br>Catastrophic Forgetting</td>
+        <td>逐渐适配新域后,模型在源域(或之前偏移)上的能力被覆盖</td>
+        <td>EMA 老师网络保持旧知识 · 权重正则 ‖θ-θ<sub>0</sub>‖² · 随机重置部分权重到 θ<sub>0</sub></td>
+      </tr>
+      <tr>
+        <td><b>Batch 依赖</b><br>Batch-size Sensitivity</td>
+        <td>BN-only 派方法需要足够大的 batch 才能算出可靠的均值/方差</td>
+        <td>替换为 GroupNorm / LayerNorm · 设计单样本损失 · 维护可学习的统计 EMA</td>
+      </tr>
+    </table>
+    <div class="eq">
+      <span class="label">关键权衡</span>
+      适应强度 ↑ &nbsp;→&nbsp; 应变力 ↑ 但稳定 ↓ &nbsp;&nbsp;|&nbsp;&nbsp; 更新频率 ↑ &nbsp;→&nbsp; 遗忘 ↑
+      <br>所有 TTA 工程化设计的本质都是在「适应」与「保持」之间走钢丝
+    </div>
+  </div>
+</section>
+
+<!-- ④ 误区 -->
+<section>
+  <div class="sec-title">⚠ Common Pitfalls · 4 个理解误区</div>
+
+  <div class="pitfall">
+    <div class="x">✗</div>
+    <div>
+      <div class="wrong"><b>TTA = 重新训练</b> <span style="text-decoration:line-through">用测试域数据微调节全部参数</span></div>
+      👉 <span class="right">TTA 在推理阶段仅用测试样本自身的自监督 / 熵信号更新极少参数,不接触源数据</span>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="x">✗</div>
+    <div>
+      <div class="wrong"><b>所有模型都能直接接 TTA</b> <span style="text-decoration:line-through">接个 TENT 就有效</span></div>
+      👉 <span class="right">主流 BN-only 派要求模型有可用的 BN 层;ViT / 无 BN 架构需改用 GroupNorm 适配或换方法</span>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="x">✗</div>
+    <div>
+      <div class="wrong"><b>越适应越准确</b> <span style="text-decoration:line-through">让模型充分拟合测试域</span></div>
+      👉 <span class="right">错误预测会自我强化(误差累积);必须设置信过滤、熵阈值、可更新频率上限</span>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="x">✗</div>
+    <div>
+      <div class="wrong"><b>TTA 能完全替代 Fine-tuning</b> <span style="text-decoration:line-through">用 TTA 就不用再标数据了</span></div>
+      👉 <span class="right">TTA 只应对小型 / 中度偏移;严重域差异仍需少量标注 + 有监督微调</span>
+    </div>
+  </div>
+</section>
+
+<!-- ⑤ 总结 -->
+<section>
+  <div class="sec-title">★ TL;DR · 3 个要点先抓牢</div>
+  <div class="tldr">
+    <div class="it">
+      <span class="tag">What</span>
+      <p>推理期用测试域样本的<b>无监督信号</b>(熵 / 自监督损失)更新少量参数,不重训、不要标签</p>
+    </div>
+    <div class="it">
+      <span class="tag">How</span>
+      <p>两条主轴:BN-only vs Full,Single / Batch / Continual;TENT、CoTTA、SAR 是三个范式代表</p>
+    </div>
+    <div class="it">
+      <span class="tag">Watch</span>
+      <p>两大命门:<b>误差累积</b>与<b>灾难性遗忘</b>;置信过滤 + EMA + 随机恢复是工程标配</p>
+    </div>
+  </div>
+
+  <div class="oneliner">
+    TTA 让模型在推理阶段"<i>临场应变</i>":通过最小化<b>自监督信号</b>调整少量参数,<br>
+    在不重训的前提下对抗分布偏移 —— 但必须在「<b>适应力</b>」与「<b>稳定性</b>」之间走钢丝
+  </div>
+
+  <div class="refs">
+    Reference: TTT (Sun et al., ICML 2020) · TENT (Wang et al., ICLR 2021) · CoTTA (Wang et al., CVPR 2022) · SAR (Niu et al., ICLR 2023) · Survey (Liang et al., 2023)
+  </div>
+
+  <div class="credit">
+    <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+    <span style="font-size:10.5px;color:var(--ink-3)">© 2026 DONG XINGBO · All rights reserved</span>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
