@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YOLO 家族 10 年发展史 · 从 v1 到 v26</title>
+<style>
+  :root {
+    --bg-1: #0d1117;
+    --bg-2: #161b22;
+    --bg-3: #1f2937;
+    --line: #30363d;
+    --ink: #e6edf3;
+    --ink-2: #c9d1d9;
+    --ink-3: #8b949e;
+    --muted: #6e7681;
+    --accent: #f97316;        /* YOLO 橙 */
+    --accent-2: #ef4444;      /* YOLO 红 */
+    --accent-3: #eab308;      /* YOLO 黄 */
+    --accent-4: #fb923c;      /* 浅橙 */
+    --blue: #5b8def;
+    --green: #10b981;
+    --purple: #a78bfa;
+    --pink: #ec4899;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg-1);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    overflow: hidden;
+  }
+
+  .deck { position: relative; width: 100%; height: 100%; }
+
+  .slide {
+    position: absolute; inset: 0;
+    padding: 70px 60px 90px;
+    display: none;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; flex-direction: column; }
+
+  /* ============ 顶部页码 ============ */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 24px;
+    background: rgba(13, 17, 23, 0.85);
+    border-bottom: 1px solid var(--line);
+    font-size: 12px; color: var(--ink-3);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+  .topbar .brand {
+    font-weight: 700; color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  .topbar .brand span { color: var(--ink-2); font-weight: 400; }
+  .topbar .ctrls kbd {
+    background: var(--bg-2); border: 1px solid var(--line);
+    padding: 1px 6px; border-radius: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px; color: var(--ink-2);
+    margin: 0 2px;
+  }
+
+  /* ============ 进度条 ============ */
+  .progress {
+    position: fixed; top: 36px; left: 0; right: 0; z-index: 9998;
+    height: 3px; background: var(--bg-2);
+  }
+  .progress-bar {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.2s ease;
+  }
+
+  /* ============ 翻页按钮 ============ */
+  .navbtn {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    z-index: 9998;
+    width: 44px; height: 44px;
+    background: rgba(22, 27, 34, 0.7);
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .navbtn:hover { background: var(--bg-3); border-color: var(--accent); color: var(--accent); }
+  .navbtn.prev { left: 12px; }
+  .navbtn.next { right: 12px; }
+  .navbtn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* ============ 标题样式 ============ */
+  h1 {
+    font-size: 32px; font-weight: 700;
+    color: var(--ink); margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  h1 .accent { color: var(--accent); }
+  h1 .red { color: var(--accent-2); }
+  h1 .yellow { color: var(--accent-3); }
+  h1 .green { color: var(--green); }
+  h1 .blue { color: var(--blue); }
+  h1 .purple { color: var(--purple); }
+
+  h2 {
+    font-size: 16px; font-weight: 400;
+    color: var(--ink-3); margin-bottom: 16px;
+  }
+
+  h3 {
+    font-size: 18px; font-weight: 600;
+    color: var(--ink-2); margin: 14px 0 8px;
+  }
+  h3 .small { font-size: 13px; color: var(--ink-3); font-weight: 400; }
+
+  p { color: var(--ink-2); margin: 6px 0; }
+  p.small { font-size: 13px; color: var(--ink-3); }
+  p.gray { color: var(--muted); font-size: 13px; }
+  ul, ol { color: var(--ink-2); padding-left: 22px; }
+  li { margin: 3px 0; }
+  li::marker { color: var(--accent); }
+
+  .right { text-align: right; }
+
+  /* ============ 封面 ============ */
+  .cover {
+    align-items: center; justify-content: center;
+    text-align: center;
+    background: radial-gradient(ellipse at center top,
+      rgba(249, 115, 22, 0.15) 0%,
+      transparent 60%),
+      var(--bg-1);
+  }
+  .cover .eyebrow {
+    font-size: 14px; font-weight: 600;
+    color: var(--accent); letter-spacing: 0.3em;
+    text-transform: uppercase; margin-bottom: 18px;
+  }
+  .cover h1 {
+    font-size: 64px; font-weight: 800;
+    line-height: 1.1; margin-bottom: 18px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 50%, var(--accent-3) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .cover .sub {
+    font-size: 22px; color: var(--ink-2);
+    margin-bottom: 6px; font-weight: 300;
+  }
+  .cover .tag {
+    margin-top: 28px;
+    font-size: 14px; color: var(--ink-3);
+    letter-spacing: 0.05em;
+  }
+  .cover .by {
+    margin-top: 36px;
+    font-size: 13px; color: var(--ink-3);
+  }
+  .cover .by b { color: var(--ink-2); }
+  .cover .hint {
+    margin-top: 22px;
+    font-size: 12px; color: var(--muted);
+  }
+  .cover .hint kbd {
+    background: var(--bg-2); border: 1px solid var(--line);
+    padding: 2px 8px; border-radius: 4px;
+    color: var(--ink-2); font-family: ui-monospace, monospace;
+    font-size: 11px; margin: 0 3px;
+  }
+
+  /* ============ 通用 chip / box ============ */
+  .chip {
+    display: inline-block; padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 12px; font-weight: 600;
+    background: var(--bg-2); color: var(--ink-2);
+    border: 1px solid var(--line);
+    margin: 1px 3px;
+  }
+  .chip.acc { background: rgba(249,115,22,0.15); color: var(--accent); border-color: var(--accent); }
+  .chip.red { background: rgba(239,68,68,0.15); color: var(--accent-2); border-color: var(--accent-2); }
+  .chip.yel { background: rgba(234,179,8,0.15); color: var(--accent-3); border-color: var(--accent-3); }
+  .chip.grn { background: rgba(16,185,129,0.15); color: var(--green); border-color: var(--green); }
+  .chip.blu { background: rgba(91,141,239,0.15); color: var(--blue); border-color: var(--blue); }
+  .chip.pur { background: rgba(167,139,250,0.15); color: var(--purple); border-color: var(--purple); }
+  .chip.pnk { background: rgba(236,72,153,0.15); color: var(--pink); border-color: var(--pink); }
+  .chip.gry { background: rgba(139,148,158,0.15); color: var(--ink-3); border-color: var(--ink-3); }
+
+  /* ============ 卡片 ============ */
+  .card {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 6px 0;
+  }
+  .card.accent { border-left: 3px solid var(--accent); }
+  .card.red { border-left: 3px solid var(--accent-2); }
+  .card.yel { border-left: 3px solid var(--accent-3); }
+  .card.grn { border-left: 3px solid var(--green); }
+  .card.blu { border-left: 3px solid var(--blue); }
+  .card h4 {
+    font-size: 15px; font-weight: 700;
+    color: var(--ink); margin-bottom: 4px;
+  }
+  .card .meta {
+    font-size: 11px; color: var(--ink-3);
+    margin-bottom: 6px;
+  }
+
+  /* ============ 网格布局 ============ */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .grid5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+
+  /* ============ pipeline ============ */
+  .pipeline {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--bg-2); border: 1px solid var(--line);
+    border-radius: 8px; padding: 10px 12px;
+    margin: 8px 0; flex-wrap: wrap;
+  }
+  .pipeline .step {
+    background: var(--bg-3); border: 1px solid var(--line);
+    padding: 5px 10px; border-radius: 5px;
+    font-size: 12px; font-weight: 600;
+    color: var(--ink-2);
+  }
+  .pipeline .step.acc { background: rgba(249,115,22,0.15); border-color: var(--accent); color: var(--accent); }
+  .pipeline .step.red { background: rgba(239,68,68,0.15); border-color: var(--accent-2); color: var(--accent-2); }
+  .pipeline .step.yel { background: rgba(234,179,8,0.15); border-color: var(--accent-3); color: var(--accent-3); }
+  .pipeline .step.grn { background: rgba(16,185,129,0.15); border-color: var(--green); color: var(--green); }
+  .pipeline .step.blu { background: rgba(91,141,239,0.15); border-color: var(--blue); color: var(--blue); }
+  .pipeline .step.pur { background: rgba(167,139,250,0.15); border-color: var(--purple); color: var(--purple); }
+  .pipeline .arrow { color: var(--muted); font-size: 14px; }
+
+  /* ============ 表格 ============ */
+  table {
+    width: 100%; border-collapse: collapse;
+    background: var(--bg-2); border: 1px solid var(--line);
+    border-radius: 6px; overflow: hidden;
+    font-size: 13px;
+  }
+  th, td {
+    padding: 7px 11px; text-align: left;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-2);
+  }
+  th {
+    background: var(--bg-3);
+    color: var(--ink); font-weight: 600;
+    font-size: 12px; letter-spacing: 0.02em;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(249, 115, 22, 0.04); }
+  td.mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; }
+  td.acc { color: var(--accent); font-weight: 600; }
+
+  /* ============ 网格示意 (YOLO 网格) ============ */
+  .yolo-grid {
+    display: grid; gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px auto;
+  }
+  .yolo-grid .cell {
+    background: var(--bg-2);
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--ink-3);
+  }
+  .yolo-grid .cell.acc { background: rgba(249,115,22,0.18); color: var(--accent); }
+  .yolo-grid .cell.red { background: rgba(239,68,68,0.18); color: var(--accent-2); }
+  .yolo-grid .cell.yel { background: rgba(234,179,8,0.18); color: var(--accent-3); }
+
+  /* ============ 时间线 ============ */
+  .timeline {
+    display: flex; align-items: stretch;
+    background: var(--bg-2); border: 1px solid var(--line);
+    border-radius: 8px; padding: 8px;
+    margin: 6px 0; gap: 4px;
+    overflow-x: auto;
+  }
+  .tl-item {
+    flex: 1; min-width: 70px;
+    text-align: center; padding: 6px 4px;
+    background: var(--bg-3);
+    border-radius: 5px;
+    border: 1px solid var(--line);
+    font-size: 11px;
+  }
+  .tl-item .v { font-size: 14px; font-weight: 700; color: var(--accent); }
+  .tl-item .y { color: var(--ink-3); font-size: 10px; margin-top: 1px; }
+  .tl-item.acc { background: rgba(249,115,22,0.12); border-color: var(--accent); }
+  .tl-item.acc .v { color: var(--accent-3); }
+  .tl-item.red { background: rgba(239,68,68,0.12); border-color: var(--accent-2); }
+  .tl-item.red .v { color: var(--accent-2); }
+
+  /* ============ 对比表 / 优缺点 ============ */
+  .compare {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    margin: 8px 0;
+  }
+  .compare .col {
+    background: var(--bg-2); border: 1px solid var(--line);
+    border-radius: 8px; padding: 14px 18px;
+  }
+  .compare .col h3 {
+    margin-top: 0; font-size: 16px;
+  }
+  .compare .col.acc { border-top: 3px solid var(--accent); }
+  .compare .col.red { border-top: 3px solid var(--accent-2); }
+
+  /* ============ Tight 密度变体 ============ */
+  .slide.tight { padding: 56px 50px 70px; }
+  .slide.tight h3 { margin: 8px 0 4px; font-size: 16px; }
+  .slide.tight p, .slide.tight li { font-size: 13.5px; line-height: 1.4; margin: 2px 0; }
+  .slide.tight .card { padding: 9px 13px; }
+  .slide.tight .card h4 { font-size: 14px; }
+  .slide.tight table { font-size: 12.5px; }
+  .slide.tight th, .slide.tight td { padding: 4px 9px; line-height: 1.3; }
+  .slide.tight .pipeline { padding: 6px 8px; }
+  .slide.tight .pipeline .step { padding: 3px 8px; font-size: 11.5px; }
+  .slide.tight .timeline .tl-item { padding: 4px 2px; font-size: 10.5px; }
+  .slide.tight .timeline .tl-item .v { font-size: 13px; }
+  .slide.tight h1 { font-size: 28px; }
+  .slide.tight h2 { font-size: 14px; margin-bottom: 10px; }
+
+  .slide.tight.denser table { font-size: 12px; }
+  .slide.tight.denser th, .slide.tight.denser td { padding: 3px 8px; line-height: 1.3; }
+  .slide.tight.denser h1 { font-size: 26px; }
+
+  /* ============ 总结/主线页 ============ */
+  .thread {
+    background: var(--bg-2); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 6px 0;
+  }
+  .thread h4 { color: var(--accent); font-size: 15px; margin-bottom: 4px; }
+  .thread p { color: var(--ink-2); font-size: 13.5px; margin: 0; }
+
+  /* ============ 引用 ============ */
+  .quote {
+    background: var(--bg-2); border-left: 3px solid var(--accent);
+    padding: 10px 16px; border-radius: 0 6px 6px 0;
+    color: var(--ink-2); font-style: italic;
+    margin: 8px 0; font-size: 14px;
+  }
+  .quote .attr {
+    color: var(--ink-3); font-size: 12px;
+    margin-top: 4px; font-style: normal;
+  }
+
+  /* ============ Cross-ref / 配套 deck ============ */
+  .xref {
+    background: rgba(249, 115, 22, 0.08);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 10px 16px;
+    margin: 8px 0;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .xref b { color: var(--accent); }
+  .xref a { color: var(--accent-3); text-decoration: underline; }
+
+  /* ============ Footer 浮条 ============ */
+  .footer {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+    border-top: 1px solid var(--line);
+    padding: 5px 16px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-3);
+    background: rgba(13, 17, 23, 0.92);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+  .footer b { color: var(--ink); font-weight: 600; }
+
+  /* ============ 题图 / 视觉中心 ============ */
+  .hero {
+    display: flex; gap: 24px; align-items: center;
+    margin: 8px 0 12px;
+  }
+  .hero .hero-text { flex: 1.2; }
+  .hero .hero-vis { flex: 1; }
+
+  .formula {
+    background: var(--bg-2); border: 1px solid var(--line);
+    border-radius: 6px; padding: 10px 14px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13.5px; color: var(--ink-2);
+    text-align: center; margin: 6px 0;
+  }
+  .formula .var { color: var(--accent); font-weight: 600; }
+  .formula .op { color: var(--ink-3); }
+
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 1: 封面                                                 -->
+  <!-- ============================================================ -->
+  <section class="slide cover active">
+    <div class="eyebrow">YOLO · FAMILY · 2015 → 2025</div>
+    <h1>YOLO 家族 10 年发展史</h1>
+    <div class="sub">从 v1 到 v26 的演进之路</div>
+    <div class="sub" style="font-size: 15px; margin-top: 4px; color: var(--ink-3);">
+      You Only Look Once · 单阶段检测 · 11 代迭代 · 一条主线
+    </div>
+    <div class="tag">授课讲义 · 28 张 · 中英对照 · 重点配图</div>
+    <div class="by">
+      讲者: <b>董星泊 (DONG XINGBO)</b> · 用于目标检测课程
+    </div>
+    <div class="hint">
+      操作: <kbd>←</kbd> <kbd>→</kbd> 翻页 · <kbd>Home</kbd>/<kbd>End</kbd> 跳首尾 · <kbd>P</kbd> 打印/PDF
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 2: 学习目标                                              -->
+  <!-- ============================================================ -->
+  <section class="slide">
+    <h1>本课要回答的 <span class="accent">5 个问题</span></h1>
+    <h2>Learning objectives</h2>
+
+    <div class="grid2" style="margin-top: 12px;">
+      <div class="card accent">
+        <h4>1. YOLO 的核心思想是什么?</h4>
+        <p style="font-size: 13.5px;">检测 = 回归;一次前向传播直接出框 + 类</p>
+        <p class="meta">对比两阶段 (R-CNN) 的本质区别</p>
+      </div>
+      <div class="card red">
+        <h4>2. 10 年 11 代,主轴怎么变?</h4>
+        <p style="font-size: 13.5px;">从 Darknet19 到 C3k2、从 anchor 到 anchor-free、从 NMS 到 NMS-free</p>
+        <p class="meta">backbone / neck / head / loss / 标签分配五条技术线</p>
+      </div>
+      <div class="card yel">
+        <h4>3. 哪些版本是"工业分水岭"?</h4>
+        <p style="font-size: 13.5px;">v3 (工程化) / v5 (PyTorch 生态) / v8 (统一框架) / v10 (NMS-free)</p>
+        <p class="meta">影响部署的关键节点</p>
+      </div>
+      <div class="card grn">
+        <h4>4. YOLO vs DETR 系,谁赢了?</h4>
+        <p style="font-size: 13.5px;">YOLO 主打"快 + 工程化",DETR 系主打"端到端"</p>
+        <p class="meta">2024+ 已经合流 (RT-DETR / YOLOv10 都 NMS-free)</p>
+      </div>
+    </div>
+    <div class="card blu" style="margin-top: 8px;">
+      <h4>5. 怎么用 YOLO 做产品?</h4>
+      <p style="font-size: 13.5px;">选型 (n/s/m/l/x) → 训练 (Ultralytics API) → 部署 (ONNX / TensorRT / OpenVINO / CoreML / TFLite)</p>
+      <p class="meta">详见配套 <a href="../yolo26-slides/" style="color: var(--accent);">yolo26-slides</a> (YOLO26 深度使用)</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 3: 核心思想                                              -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1>核心思想: <span class="accent">Detection = Regression</span></h1>
+    <h2>把"目标检测"重新表述成"一次回归"</h2>
+
+    <div class="hero">
+      <div class="hero-text">
+        <h3>YOLOv1 之前的范式 (两阶段)</h3>
+        <p><span class="chip red">候选区</span> → 分类 + 回归,慢 (R-CNN 47s/图)</p>
+        <h3 style="margin-top: 12px;">YOLO 的重新表述</h3>
+        <p><span class="chip acc">把整张图</span> 划分成 <span class="chip">S × S</span> 网格,每个 cell 预测 B 个 box + C 个类概率</p>
+        <p style="margin-top: 8px;">一次 CNN 前向 → 一次性输出 S × S × (B×5 + C) 张量</p>
+        <p style="margin-top: 6px;">单阶段、端到端、可达到 45 FPS (YOLOv1, 2015)</p>
+      </div>
+      <div class="hero-vis">
+        <div style="text-align: center; color: var(--ink-3); font-size: 12px; margin-bottom: 6px;">
+          一张 7×7 网格示意
+        </div>
+        <div class="yolo-grid" style="grid-template-columns: repeat(7, 1fr); width: 320px;">
+          <div class="cell">·</div><div class="cell">·</div><div class="cell">·</div>
+          <div class="cell">·</div><div class="cell acc">车</div><div class="cell">·</div>
+          <div class="cell">·</div>
+
+          <div class="cell">·</div><div class="cell">·</div><div class="cell">·</div>
+          <div class="cell">·</div><div class="cell acc">车</div><div class="cell">·</div>
+          <div class="cell">·</div>
+
+          <div class="cell">·</div><div class="cell">·</div><div class="cell">·</div>
+          <div class="cell yel">狗</div><div class="cell acc">车</div><div class="cell">·</div>
+          <div class="cell">·</div>
+
+          <div class="cell">·</div><div class="cell">·</div><div class="cell yel">狗</div>
+          <div class="cell yel">狗</div><div class="cell acc">车</div><div class="cell">·</div>
+          <div class="cell">·</div>
+
+          <div class="cell">·</div><div class="cell">·</div><div class="cell">·</div>
+          <div class="cell">·</div><div class="cell">·</div><div class="cell red">人</div>
+          <div class="cell">·</div>
+
+          <div class="cell">·</div><div class="cell">·</div><div class="cell">·</div>
+          <div class="cell">·</div><div class="cell">·</div><div class="cell red">人</div>
+          <div class="cell red">人</div>
+
+          <div class="cell">·</div><div class="cell">·</div><div class="cell">·</div>
+          <div class="cell">·</div><div class="cell">·</div><div class="cell">·</div>
+          <div class="cell">·</div>
+        </div>
+        <p class="small gray" style="text-align: center;">每个 cell 输出一组 (x, y, w, h, conf, class)</p>
+      </div>
+    </div>
+
+    <div class="formula">
+      output[S, S, B×5 + C] = CNN(input[H, W, 3])
+      <span class="op"> → </span>
+      <span class="var">一图 → 一张量</span>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 4: 两阶段 vs 单阶段 对比                                  -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1>两阶段 vs <span class="red">单阶段</span>: 速度换精度的取舍</h1>
+    <h2>YOLO 把"两阶段"打成了"单阶段"比赛</h2>
+
+    <div class="compare">
+      <div class="col red">
+        <h3>两阶段 (R-CNN 系列)</h3>
+        <p style="font-size: 13.5px; color: var(--ink-2);">
+          阶段 1: 提候选区 (region proposal)<br>
+          阶段 2: 在候选区上做分类 + 精修
+        </p>
+        <ul style="margin-top: 8px; font-size: 13px;">
+          <li><b style="color: var(--green);">+</b> 精度高 (2014-2018 一直是 SOTA)</li>
+          <li><b style="color: var(--green);">+</b> 适合复杂场景、小目标</li>
+          <li><b style="color: var(--accent-2);">−</b> 慢 (R-CNN 47s, Fast R-CNN 0.3s/图)</li>
+          <li><b style="color: var(--accent-2);">−</b> pipeline 复杂,难端到端训练</li>
+        </ul>
+        <p class="meta" style="margin-top: 6px;">代表: R-CNN, Fast R-CNN, Faster R-CNN, Mask R-CNN</p>
+      </div>
+      <div class="col acc">
+        <h3>单阶段 (YOLO / SSD / RetinaNet)</h3>
+        <p style="font-size: 13.5px; color: var(--ink-2);">
+          一次前向 → 直接出所有 box + 类别
+        </p>
+        <ul style="margin-top: 8px; font-size: 13px;">
+          <li><b style="color: var(--green);">+</b> 极快 (YOLO 45 FPS, SSD 59 FPS)</li>
+          <li><b style="color: var(--green);">+</b> pipeline 简单,工程化友好</li>
+          <li><b style="color: var(--green);">+</b> 端到端训练,易于迭代</li>
+          <li><b style="color: var(--accent-2);">−</b> 早期精度不如两阶段 (v1: 63.4 mAP vs Faster R-CNN 78.8)</li>
+          <li><b style="color: var(--accent-2);">−</b> 小目标 / 密集场景更弱</li>
+        </ul>
+        <p class="meta" style="margin-top: 6px;">代表: YOLO 系列、SSD、RetinaNet、CenterNet、FCOS</p>
+      </div>
+    </div>
+
+    <div class="quote">
+      "YOLO 把 detection 重新公式化为一个单一的回归问题,直接从图像像素到 bounding box 坐标和类概率。"
+      <div class="attr">— Joseph Redmon et al., YOLOv1 论文摘要, CVPR 2016</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 5: 时间线总览                                            -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1>YOLO 家族 10 年 <span class="accent">时间线</span></h1>
+    <h2>13 个代表性版本 + 4 个关键转折点 (v3 工程化 / v5 PyTorch / v8 统一框架 / v10 NMS-free)</h2>
+
+    <div class="timeline">
+      <div class="tl-item acc"><div class="v">v1</div><div class="y">2015</div></div>
+      <div class="tl-item acc"><div class="v">v2</div><div class="y">2017</div></div>
+      <div class="tl-item acc"><div class="v">v3</div><div class="y">2018</div></div>
+      <div class="tl-item yel"><div class="v">v4</div><div class="y">2020</div></div>
+      <div class="tl-item grn"><div class="v">v5</div><div class="y">2020</div></div>
+      <div class="tl-item"><div class="v">v6</div><div class="y">2022</div></div>
+      <div class="tl-item"><div class="v">v7</div><div class="y">2022</div></div>
+      <div class="tl-item blu"><div class="v">v8</div><div class="y">2023</div></div>
+      <div class="tl-item pur"><div class="v">v9</div><div class="y">2024</div></div>
+      <div class="tl-item red"><div class="v">v10</div><div class="y">2024</div></div>
+      <div class="tl-item blu"><div class="v">v11</div><div class="y">2024</div></div>
+      <div class="tl-item pnk"><div class="v">v12</div><div class="y">2025</div></div>
+      <div class="tl-item acc"><div class="v">v26</div><div class="y">2025</div></div>
+    </div>
+
+    <div class="grid3" style="margin-top: 14px;">
+      <div class="card yel">
+        <h4>① 学术时代 (v1-v3)</h4>
+        <p style="font-size: 13px;">Joseph Redmon 一人主导,Darknet 框架,纯研究,论文 + 代码</p>
+        <p class="meta">2015-2018 · 3 个版本 · 奠定单阶段范式</p>
+      </div>
+      <div class="card grn">
+        <h4>② 工程化时代 (v4-v5)</h4>
+        <p style="font-size: 13px;">社区接力,Ultralytics 推动 PyTorch 化,GitHub 万星</p>
+        <p class="meta">2020 · 2 个版本 · 工业部署事实标准</p>
+      </div>
+      <div class="card red">
+        <h4>③ 多家齐放 (v6-v26)</h4>
+        <p style="font-size: 13px;">美团、清华、阿里、Ultralytics 同台竞争,模块化、生态化</p>
+        <p class="meta">2022-2025 · 8 个版本 · 几乎"季度更新"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 6: YOLOv1                                                -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="accent">YOLOv1</span> · 2015 · 单阶段开山之作</h1>
+    <h2>Joseph Redmon et al. · CVPR 2016 · "You Only Look Once: Unified, Real-Time Object Detection"</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>核心贡献</h3>
+        <ul>
+          <li>把 detection 变成单个 CNN 的回归问题</li>
+          <li>45 FPS (Titan X),相比 Faster R-CNN 提升 6×</li>
+          <li>全局推理: 整张图一次卷积,可学到上下文</li>
+          <li>泛化能力比 R-CNN 强 (在自然图像以外的领域)</li>
+        </ul>
+
+        <h3>作者 & 背景</h3>
+        <p style="font-size: 13px;">Joseph Redmon (华盛顿大学),Santosh Divvala, Ross Girshick, Ali Farhadi</p>
+        <p class="meta">Redmon 后来做出了 Darknet,2018 后宣布退出 CV 圈,称"军用 AI 不该被研究"</p>
+      </div>
+      <div>
+        <h3>架构: 24 conv + 2 FC</h3>
+        <div class="pipeline">
+          <span class="step">448×448×3</span><span class="arrow">→</span>
+          <span class="step">24 conv</span><span class="arrow">→</span>
+          <span class="step">FC 4096</span><span class="arrow">→</span>
+          <span class="step acc">7×7×30</span>
+        </div>
+        <p class="small gray">GoogLeNet 启发的 backbone,最后输出 S×S×(B×5+C) = 7×7×(2×5+20) = 7×7×30</p>
+
+        <h3>局限</h3>
+        <ul>
+          <li><b style="color: var(--accent-2);">−</b> 每个 cell 只 2 个 box,密集目标挤</li>
+          <li><b style="color: var(--accent-2);">−</b> 难处理小目标、群体 (鸟群)</li>
+          <li><b style="color: var(--accent-2);">−</b> 63.4 mAP,显著低于 Faster R-CNN 78.8</li>
+          <li><b style="color: var(--accent-2);">−</b> 训练 loss 不区分大小 box 误差</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 7: YOLOv2 / YOLO9000                                     -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="red">YOLOv2</span> & YOLO9000 · 2017</h1>
+    <h2>"Better, Faster, Stronger" · CVPR 2017 · 引入 anchor + 多尺度</h2>
+
+    <div class="grid3">
+      <div class="card yel">
+        <h4>Better</h4>
+        <ul style="font-size: 12.5px;">
+          <li>引入 <b>anchor boxes</b> (Faster R-CNN 风格)</li>
+          <li><b>BN</b> 层所有 conv 之后</li>
+          <li><b>高分辨率分类器</b> 448 → 416</li>
+          <li><b>passthrough</b> 层融合细粒度特征</li>
+          <li><b>multi-scale training</b> (320-608 随机)</li>
+        </ul>
+      </div>
+      <div class="card grn">
+        <h4>Faster</h4>
+        <ul style="font-size: 12.5px;">
+          <li>新 backbone: <b>Darknet-19</b> (19 conv)</li>
+          <li>只用 5.58B 浮点 / 图</li>
+          <li>比 VGG-16 快 6×</li>
+        </ul>
+      </div>
+      <div class="card blu">
+        <h4>Stronger (YOLO9000)</h4>
+        <ul style="font-size: 12.5px;">
+          <li><b>联合训练</b> 检测 + 分类数据集</li>
+          <li>检测: COCO 80 类,分类: ImageNet 9000 类</li>
+          <li>层级分类: <b>WordTree</b> 合并 9418 类</li>
+          <li>能识别 "Norfolk terrier" 这种细粒度</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="quote">
+      "我们提出 YOLO9000,一个能实时检测超过 9000 物体类别的模型,通过联合优化检测和分类实现。"
+      <div class="attr">— Redmon & Farhadi, YOLO9000 论文, CVPR 2017</div>
+    </div>
+
+    <p class="small gray">结果: 78.6 mAP (416 输入, 比 v1 涨 15 个点) · 67 FPS · 仍比 Faster R-CNN 快</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 8: YOLOv3                                                -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="yellow">YOLOv3</span> · 2018 · 工业分水岭</h1>
+    <h2>Redmon & Farhadi · arXiv:1804.02767 · 多尺度 FPN · 工程化转折点</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>三大关键升级</h3>
+        <div class="pipeline">
+          <span class="step">Darknet-53</span><span class="arrow">→</span>
+          <span class="step yel">FPN 3 尺度</span><span class="arrow">→</span>
+          <span class="step">logistic 分类</span>
+        </div>
+        <ul>
+          <li><b>Darknet-53</b>: 53 层 + 残差连接,精度追平 ResNet-152,速度快 2×</li>
+          <li><b>多尺度预测</b>: 3 个尺度 (13×13, 26×26, 52×52) 检测不同大小目标</li>
+          <li><b>logistic 分类</b>: 独立 logstic 而非 softmax,可支持多标签 (一个女人 + 一个人)</li>
+        </ul>
+
+        <h3>数据</h3>
+        <ul>
+          <li>COCO mAP-50: 76.5 (vs v2 的 76.8 几乎持平)</li>
+          <li>但 mAP @0.5:0.95: 28.2 (vs v2 的 21.6 涨 7 个点)</li>
+          <li><b style="color: var(--accent-3);">30 FPS @ 416</b>,第一次"实时 + 准"二者兼得</li>
+        </ul>
+      </div>
+      <div>
+        <h3>架构总览</h3>
+        <div style="background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 12px; margin: 6px 0;">
+          <p style="font-size: 12.5px;"><b style="color: var(--accent-3);">Backbone</b> Darknet-53 (53 层残差)</p>
+          <p style="font-size: 12.5px;"><b style="color: var(--blue);">Neck</b> FPN (3 尺度横向连接)</p>
+          <p style="font-size: 12.5px;"><b style="color: var(--purple);">Head</b> 3 个独立检测头,每尺度 3 anchor</p>
+          <p style="font-size: 12.5px;"><b style="color: var(--green);">Loss</b> MSE 回归 + binary cross-entropy 分类</p>
+        </div>
+
+        <h3>意义</h3>
+        <ul>
+          <li>v3 是 <b style="color: var(--green);">工程界最常用的 YOLO</b>,到 2022 还有大量项目在用</li>
+          <li>Darknet 框架使用率最高</li>
+          <li>论文最后一次由 Redmon 主导 (后来他退出 CV 圈)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 9: YOLOv4                                                -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="red">YOLOv4</span> · 2020 · "Bag of Freebies" 大集合</h1>
+    <h2>Alexey Bochkovskiy et al. · arXiv:2004.10934 · Redmon 退出后社区接力</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>核心方法论: 拆成两类 tricks</h3>
+        <div class="thread yel" style="border-color: var(--accent-3);">
+          <h4>Bag of Freebies (BoF) — 训练阶段涨点</h4>
+          <p>只改训练策略,不改推理开销的数据增强 + 正则化:<br>
+          <span class="chip yel">CutMix</span> <span class="chip yel">Mosaic</span> <span class="chip yel">MixUp</span>
+          <span class="chip yel">DropBlock</span> <span class="chip yel">Label Smoothing</span>
+          <span class="chip yel">CIoU Loss</span></p>
+        </div>
+        <div class="thread grn" style="border-color: var(--green);">
+          <h4>Bag of Specials (BoS) — 推理阶段加小模块</h4>
+          <p>增加少量推理开销但能涨点:<br>
+          <span class="chip grn">Mish 激活</span> <span class="chip grn">CSP 模块</span> <span class="chip grn">SPP</span>
+          <span class="chip grn">PAN</span> <span class="chip grn">SAM 注意力</span></p>
+        </div>
+      </div>
+      <div>
+        <h3>架构选择</h3>
+        <div class="pipeline">
+          <span class="step">CSPDarknet-53</span><span class="arrow">→</span>
+          <span class="step yel">SPP</span><span class="arrow">→</span>
+          <span class="step grn">PANet</span><span class="arrow">→</span>
+          <span class="step">YOLOv3 head</span>
+        </div>
+
+        <h3>数据</h3>
+        <ul>
+          <li>MS COCO: <b>43.5% AP</b> @ 65 FPS (Tesla V100)</li>
+          <li>比 YOLOv3 涨 10 个点 AP,推理速度还更快</li>
+          <li>代码用 <b style="color: var(--accent);">Darknet</b> 框架 (非 PyTorch)</li>
+        </ul>
+
+        <h3>意义</h3>
+        <ul>
+          <li>第一次系统性把"训练 trick"工程化总结成方法论</li>
+          <li>带动后续 v5 / v6 / v7 全部沿用 "BoF + BoS" 思想</li>
+          <li>作者 Bochkovskiy 是 Redmon 之外的接力者,延续 YOLO 命名</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 10: YOLOv5                                               -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="green">YOLOv5</span> · 2020 · PyTorch 化 + 工程化生态</h1>
+    <h2>Ultralytics · Glenn Jocher · 没有正式论文,GitHub 直接开源 · 1.5 万星只用 3 个月</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>关键决策: 重写 + 重塑</h3>
+        <ul>
+          <li><b style="color: var(--green);">PyTorch 框架</b> (Darknet → PyTorch)</li>
+          <li><b style="color: var(--green);">5 个尺寸</b> (n/s/m/l/x) 一键切换,速度/精度 trade-off 标准化</li>
+          <li><b style="color: var(--green);">Mosaic 4 图</b> 增强默认开启</li>
+          <li><b style="color: var(--green);">AutoAnchor</b> 工具自动匹配数据 anchor</li>
+          <li><b style="color: var(--green);">Ultralytics API</b>: 一行 <code>model.train()</code> 开训</li>
+        </ul>
+
+        <h3>社区影响</h3>
+        <p style="font-size: 13.5px;">v5 没有论文,但 GitHub 100k+ star,被业界广泛采用 (工业、安防、医疗)</p>
+        <p class="meta">引发了 "YOLOv5 没有论文算不算学术工作" 的长期争议</p>
+      </div>
+      <div>
+        <h3>架构: Focus + CSP + SPP + PAN</h3>
+        <div class="pipeline">
+          <span class="step">Focus</span><span class="arrow">→</span>
+          <span class="step grn">CSPDarknet</span><span class="arrow">→</span>
+          <span class="step">SPP</span><span class="arrow">→</span>
+          <span class="step">PANet</span><span class="arrow">→</span>
+          <span class="step">YOLOv3 head</span>
+        </div>
+
+        <h3>5 个尺寸对比</h3>
+        <table>
+          <tr><th>尺寸</th><th>参数量</th><th>mAP@0.5</th><th>推理 (ms)</th></tr>
+          <tr><td class="acc">YOLOv5n (Nano)</td><td class="mono">1.9M</td><td>45.7</td><td class="mono">6.3</td></tr>
+          <tr><td class="acc">YOLOv5s (Small)</td><td class="mono">7.2M</td><td>56.8</td><td class="mono">6.4</td></tr>
+          <tr><td class="acc">YOLOv5m (Medium)</td><td class="mono">21.2M</td><td>64.1</td><td class="mono">8.2</td></tr>
+          <tr><td class="acc">YOLOv5l (Large)</td><td class="mono">46.5M</td><td>67.3</td><td class="mono">10.1</td></tr>
+          <tr><td class="acc">YOLOv5x (XLarge)</td><td class="mono">86.7M</td><td>68.9</td><td class="mono">12.1</td></tr>
+        </table>
+        <p class="small gray">数据来自 Ultralytics 官方, COCO val2017, V100 测</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 11: YOLOv6 / YOLOv7                                      -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="blue">YOLOv6</span> & <span class="purple">YOLOv7</span> · 2022 · 工业 + 学术双轨</h2>
+    <h2>美团 v6 · 中研院 / Academia Sinica v7 · 同期发布,不同侧重</h2>
+
+    <div class="grid2">
+      <div class="card blu">
+        <h3>YOLOv6 (美团, 2022.06)</h3>
+        <p style="font-size: 13px;">目标: 工业 GPU 部署优化</p>
+        <ul style="font-size: 12.5px;">
+          <li>backbone: <b>EfficientRep</b> (重参数化 RepVGG 风格)</li>
+          <li>head: 解耦头 (Decoupled Head) + Anchor-free</li>
+          <li>loss: SIoU + VariFocal</li>
+          <li>5 个尺寸 (n/t/s/m/l),V100 上 n 版 1234 FPS</li>
+          <li>工业部署导向, 提供 <b>TensorRT</b> 量化工具链</li>
+        </ul>
+        <p class="meta">arXiv:2209.02976 · 代码: meituan/YOLOv6</p>
+      </div>
+      <div class="card pur">
+        <h3>YOLOv7 (Academia Sinica, 2022.07)</h3>
+        <p style="font-size: 13px;">目标: 精度极限 (SOTA 优先, 速度其次)</p>
+        <ul style="font-size: 12.5px;">
+          <li>backbone: <b>E-ELAN</b> (扩展高效层聚合)</li>
+          <li>复合缩放 (Compound Scaling) 用于检测头</li>
+          <li>辅助头训练 + 标签重排 (planned re-parameterized conv)</li>
+          <li>5-160 FPS 全段覆盖, COCO 56.8% AP @ 30 FPS</li>
+          <li>比 v5/v6 都准, 但 PyTorch 实现重, 部署复杂</li>
+        </ul>
+        <p class="meta">arXiv:2207.02696 · 代码: WongKinYiu/yolov7</p>
+      </div>
+    </div>
+
+    <div class="quote">
+      "YOLOv7 在 5-160 FPS 范围内, 在速度和精度上都超过了当时所有已知检测器。"
+      <div class="attr">— Chien-Yao Wang, Alexey Bochkovskiy, Hong-Yuan Mark Liao, YOLOv7 论文</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 12: YOLOv8                                               -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="blue">YOLOv8</span> · 2023 · Ultralytics 统一框架</h1>
+    <h2>Glenn Jocher / Ultralytics · 2023.01 · 5 大任务统一 · anchor-free 全面化</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>关键升级</h3>
+        <ul>
+          <li><b style="color: var(--blue);">Anchor-free</b>: 抛弃 anchor 框,直接预测中心点</li>
+          <li><b style="color: var(--blue);">C2f 模块</b>: 替代 C3 (CSP),梯度流更丰富</li>
+          <li><b style="color: var(--blue);">5 大任务统一</b>: 检测 / 分类 / 分割 / 姿态 / OBB</li>
+          <li><b style="color: var(--blue);">TaskAlignedAssigner</b> 标签分配</li>
+          <li><b style="color: var(--blue);">解耦头</b> (cls 和 reg 分开)</li>
+        </ul>
+
+        <h3>生态意义</h3>
+        <p style="font-size: 13.5px;">Ultralytics 把 v5 的工程优势延续到 v8,一个 pip install 装 5 个任务</p>
+        <p class="small gray">v8 = "v5 + anchor-free + 多任务",沿用 n/s/m/l/x 5 尺寸</p>
+      </div>
+      <div>
+        <h3>架构总览</h3>
+        <div class="pipeline">
+          <span class="step">C2f (CSP)</span><span class="arrow">→</span>
+          <span class="step">SPPF</span><span class="arrow">→</span>
+          <span class="step">PANet</span><span class="arrow">→</span>
+          <span class="step blu">Anchor-free 解耦头</span>
+        </div>
+
+        <h3>5 任务统一</h3>
+        <div class="grid2" style="gap: 8px;">
+          <div class="card" style="padding: 8px 10px; margin: 0;">
+            <h4 style="font-size: 13px; color: var(--accent);">Detect</h4>
+            <p class="small gray">YOLOv8n/s/m/l/x</p>
+          </div>
+          <div class="card" style="padding: 8px 10px; margin: 0;">
+            <h4 style="font-size: 13px; color: var(--green);">Segment</h4>
+            <p class="small gray">YOLOv8n-seg</p>
+          </div>
+          <div class="card" style="padding: 8px 10px; margin: 0;">
+            <h4 style="font-size: 13px; color: var(--blue);">Classify</h4>
+            <p class="small gray">YOLOv8n-cls</p>
+          </div>
+          <div class="card" style="padding: 8px 10px; margin: 0;">
+            <h4 style="font-size: 13px; color: var(--purple);">Pose</h4>
+            <p class="small gray">YOLOv8n-pose</p>
+          </div>
+        </div>
+        <p class="small gray" style="margin-top: 8px;">+ OBB 旋转框检测 (2023.04)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 13: YOLOv9                                               -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="purple">YOLOv9</span> · 2024 · 可编程梯度信息 PGI</h1>
+    <h2>Chien-Yao Wang et al. · arXiv:2402.13616 · 解决"深度网络信息瓶颈"</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>问题: 深度网络 = 信息丢失</h3>
+        <p style="font-size: 13.5px;">网络越深,前向传播 + 监督损失梯度回传时,信息 (尤其是小目标) 会丢失</p>
+        <p style="font-size: 13.5px;">传统 skip / concat 都不够 → YOLOv9 提出 <b style="color: var(--purple);">PGI</b></p>
+
+        <h3>PGI: 可编程梯度信息</h3>
+        <ul>
+          <li><b>主分支</b>: 正常的前向 + 监督</li>
+          <li><b>辅助可逆分支</b>: PGI 把梯度信息"显式构造"再传回主分支</li>
+          <li>可逆函数,推理时不需要 → 0 推理开销</li>
+        </ul>
+
+        <h3>GELAN: 轻量高效聚合</h3>
+        <ul>
+          <li>基于 ELAN,梯度路径规划</li>
+          <li>支持任意 block,比 v7 的 E-ELAN 更通用</li>
+        </ul>
+      </div>
+      <div>
+        <h3>数据</h3>
+        <table>
+          <tr><th>模型</th><th>mAP@0.5</th><th>参数量</th><th>FLOPs</th></tr>
+          <tr><td class="acc">YOLOv9-S</td><td>46.8</td><td class="mono">7.1M</td><td>26.4G</td></tr>
+          <tr><td class="acc">YOLOv9-M</td><td>51.4</td><td class="mono">20.0M</td><td>76.3G</td></tr>
+          <tr><td class="acc">YOLOv9-C</td><td>53.0</td><td class="mono">25.3M</td><td>102.1G</td></tr>
+          <tr><td class="acc">YOLOv9-E</td><td>55.6</td><td class="mono">57.3M</td><td>189.0G</td></tr>
+        </table>
+        <p class="small gray">在同等规模下, 比 RT-DETR / YOLOv8 / YOLOv7 全面 SOTA</p>
+
+        <h3>意义</h3>
+        <p style="font-size: 13.5px;">"PGI"是从理论角度 (信息瓶颈) 重新审视 CNN 检测的代表作</p>
+        <p class="meta">同一团队: WongKinYiu (v7 作者) + 中研院</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 14: YOLOv10                                              -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="red">YOLOv10</span> · 2024 · 真正的 NMS-Free</h1>
+    <h2>Ao Wang et al. (Tsinghua) · arXiv:2405.14458 · 一致性匹配 + 双头</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>问题: 为什么 YOLO 一定要 NMS?</h3>
+        <p style="font-size: 13.5px;">传统 YOLO 一个目标会预测多个重叠 box,推理时需要 NMS 后处理</p>
+        <p style="font-size: 13.5px;">NMS → 不可微分 → 端到端部署困难 + 速度瓶颈</p>
+
+        <h3>YOLOv10 解决方案: 一致性双头</h3>
+        <div class="grid2" style="gap: 8px;">
+          <div class="card yel" style="padding: 9px 12px; margin: 0;">
+            <h4 style="font-size: 13.5px; color: var(--accent-3);">一对一 (训练)</h4>
+            <p style="font-size: 12.5px;">每个 gt 只匹配 1 个 prediction,无 NMS 训练</p>
+          </div>
+          <div class="card grn" style="padding: 9px 12px; margin: 0;">
+            <h4 style="font-size: 13.5px; color: var(--green);">一对多 (辅助训练)</h4>
+            <p style="font-size: 12.5px;">训练时多匹配,提供丰富监督</p>
+          </div>
+        </div>
+        <p style="font-size: 13px; margin-top: 8px;">推理时 <b style="color: var(--red);">只保留一对一头</b> → NMS 取消</p>
+      </div>
+      <div>
+        <h3>其他优化</h3>
+        <ul>
+          <li><b>Rank-guided block design</b> 减少冗余 stage</li>
+          <li><b>大核卷积</b> 增强感受野</li>
+          <li><b>自注意力</b> PSA 模块</li>
+        </ul>
+
+        <h3>数据</h3>
+        <table>
+          <tr><th>模型</th><th>mAP</th><th>Latency (ms)</th></tr>
+          <tr><td class="acc">YOLOv10-N</td><td>38.5</td><td class="mono">1.84</td></tr>
+          <tr><td class="acc">YOLOv10-S</td><td>46.3</td><td class="mono">2.49</td></tr>
+          <tr><td class="acc">YOLOv10-M</td><td>51.1</td><td class="mono">4.74</td></tr>
+          <tr><td class="acc">YOLOv10-B</td><td>52.5</td><td class="mono">5.74</td></tr>
+          <tr><td class="acc">YOLOv10-L</td><td>53.2</td><td class="mono">7.28</td></tr>
+          <tr><td class="acc">YOLOv10-X</td><td>54.4</td><td class="mono">10.7</td></tr>
+        </table>
+        <p class="small gray">在相同精度下, 比 YOLOv8 同尺寸快 25-50%</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 15: YOLOv11                                              -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="blue">YOLOv11</span> · 2024 · Ultralytics 续作</h1>
+    <h2>Glenn Jocher / Ultralytics · 2024.09 · C3k2 模块 + 5 任务统一延续</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>关键变化</h3>
+        <ul>
+          <li><b style="color: var(--blue);">C3k2 模块</b> 替代 C2f: 更小的 kernel,更快</li>
+          <li><b style="color: var(--blue);">C2PSA</b>: 位置敏感注意力 (Position-Sensitive Attention)</li>
+          <li><b style="color: var(--blue);">SPPF</b> 沿用</li>
+          <li><b style="color: var(--blue);">解耦头</b> 沿用</li>
+        </ul>
+
+        <h3>5 任务支持</h3>
+        <div class="grid2" style="gap: 6px; font-size: 12.5px;">
+          <span class="chip acc">检测</span>
+          <span class="chip grn">分割</span>
+          <span class="chip blu">分类</span>
+          <span class="chip pur">姿态</span>
+          <span class="chip yel">OBB 旋转框</span>
+        </div>
+
+        <h3>5 个尺寸 (沿用 n/s/m/l/x)</h3>
+        <p style="font-size: 13.5px;">相比 v8, mAP 涨 1-2 个点,推理速度持平</p>
+      </div>
+      <div>
+        <h3>数据 (COCO val2017, 640)</h3>
+        <table>
+          <tr><th>模型</th><th>mAP@50-95</th><th>参数量</th></tr>
+          <tr><td class="acc">YOLOv11n</td><td>39.5</td><td class="mono">2.6M</td></tr>
+          <tr><td class="acc">YOLOv11s</td><td>47.0</td><td class="mono">9.4M</td></tr>
+          <tr><td class="acc">YOLOv11m</td><td>51.5</td><td class="mono">20.1M</td></tr>
+          <tr><td class="acc">YOLOv11l</td><td>53.4</td><td class="mono">25.3M</td></tr>
+          <tr><td class="acc">YOLOv11x</td><td>54.7</td><td class="mono">56.9M</td></tr>
+        </table>
+
+        <h3>生态意义</h3>
+        <p style="font-size: 13.5px;">v11 是 Ultralytics 在 NMS-free 主流趋势下坚持 "有 NMS 实用派" 的代表作</p>
+        <p class="meta">和 v10 (清华, NMS-free) 形成两条路线对比</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 16: YOLOv12                                              -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="red">YOLOv12</span> · 2025 · 注意力机制入侵 YOLO</h1>
+    <h2>Yunjie Tian et al. · arXiv:2501.04683 · 把 Attention 塞进 YOLO backbone</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>核心: 让 YOLO 用 Attention</h3>
+        <p style="font-size: 13.5px;">传统 YOLO = 纯 CNN,v12 = CNN backbone + 轻量 Attention 增强</p>
+
+        <h3>三大组件</h3>
+        <div class="thread yel" style="border-color: var(--accent-3);">
+          <h4>① Area Attention (A2)</h4>
+          <p>把特征图分块,块内做 attention,降低 O(n²) 复杂度</p>
+        </div>
+        <div class="thread grn" style="border-color: var(--green);">
+          <h4>② R-ELAN</h4>
+          <p>Reparameterized ELAN,边缘聚合 + 缩放</p>
+        </div>
+        <div class="thread blu" style="border-color: var(--blue);">
+          <h4>③ 整体架构优化</h4>
+          <p>减少堆叠层数,补偿 attention 算力</p>
+        </div>
+      </div>
+      <div>
+        <h3>数据</h3>
+        <table>
+          <tr><th>模型</th><th>mAP</th><th>Latency</th></tr>
+          <tr><td class="acc">YOLOv12-N</td><td>40.6</td><td class="mono">1.64</td></tr>
+          <tr><td class="acc">YOLOv12-S</td><td>48.0</td><td class="mono">2.61</td></tr>
+          <tr><td class="acc">YOLOv12-M</td><td>52.5</td><td class="mono">4.86</td></tr>
+          <tr><td class="acc">YOLOv12-L</td><td>53.7</td><td class="mono">6.77</td></tr>
+          <tr><td class="acc">YOLOv12-X</td><td>55.2</td><td class="mono">11.79</td></tr>
+        </table>
+        <p class="small gray">T4 GPU 测, 在同尺寸下, 超过 YOLOv11 / YOLOv10</p>
+
+        <h3>意义</h3>
+        <p style="font-size: 13.5px;">"YOLO 也能用 Attention" 的实证,打破 CNN-only 的传统</p>
+        <p class="meta">跟随 DETR 系 + RT-DETR 主导的"注意力 + 端到端"趋势</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 17: YOLOv26 速览 + cross-ref                              -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="accent">YOLOv26</span> · 2025 · 三大创新汇聚</h1>
+    <h2>Ultralytics · 2025.06 · 详见配套 <a href="../yolo26-slides/" style="color: var(--accent-3);">yolo26-slides</a> 13 页</h2>
+
+    <div class="grid3">
+      <div class="card acc">
+        <h4>① DFL-Free + NMS-Free 双头</h4>
+        <p style="font-size: 13px;">去 DFL 量化误差,去 NMS 后处理</p>
+        <p class="meta">比 v10 更彻底,真正端到端</p>
+      </div>
+      <div class="card yel">
+        <h4>② MuSGD 优化器</h4>
+        <p style="font-size: 13px;">把 LLM 圈的 <b>Muon</b> 优化器移植到视觉</p>
+        <p class="meta">SGD + Muon 混合,收敛快 2×</p>
+      </div>
+      <div class="card grn">
+        <h4>③ Progressive Loss + STAL</h4>
+        <p style="font-size: 13px;">缓解 train-test gap + 小目标漏检</p>
+        <p class="meta">训练末期把 "小目标难度" 显式补偿</p>
+      </div>
+    </div>
+
+    <div class="xref">
+      <b>📘 详见配套 slides:</b> <a href="../yolo26-slides/">yolo26-slides/</a> (13 页)
+      详细讲解 YOLO26 的 4 大设计理念、Backbone (C3k2 + SPPF + C2PSA)、
+      FPN↑ + PAN↓ + 双头架构、6 大任务头、COCO 性能数据、与 YOLO11 关键差异。
+    </div>
+
+    <table style="margin-top: 8px;">
+      <tr><th>模型</th><th>mAP@0.5</th><th>mAP@0.5:0.95</th><th>CPU ONNX (ms)</th><th>TensorRT T4 (ms)</th></tr>
+      <tr><td class="acc">YOLO26n</td><td>61.2</td><td>42.8</td><td class="mono">38.3</td><td class="mono">1.3</td></tr>
+      <tr><td class="acc">YOLO26s</td><td>70.0</td><td>50.4</td><td class="mono">78.3</td><td class="mono">2.1</td></tr>
+      <tr><td class="acc">YOLO26m</td><td>75.0</td><td>55.7</td><td class="mono">190.5</td><td class="mono">4.3</td></tr>
+      <tr><td class="acc">YOLO26l</td><td>77.6</td><td>57.7</td><td class="mono">327.4</td><td class="mono">6.5</td></tr>
+      <tr><td class="acc">YOLO26x</td><td>79.5</td><td>59.2</td><td class="mono">668.5</td><td class="mono">11.0</td></tr>
+    </table>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 18: Backbone 演进                                         -->
+  <!-- ============================================================ -->
+  <section class="slide tight denser">
+    <h1>技术线 1: <span class="accent">Backbone 演进</span></h1>
+    <h2>从 19 层到 53 层,从残差到注意力</h2>
+
+    <table>
+      <tr><th>版本</th><th>Backbone</th><th>关键创新</th><th>参数量</th></tr>
+      <tr><td class="acc">v1</td><td>GoogLeNet-like (24 conv)</td><td>1×1 降维,无残差</td><td class="mono">~250M</td></tr>
+      <tr><td class="acc">v2</td><td>Darknet-19</td><td>类 VGG 堆叠 + 1×1 压缩</td><td class="mono">~50M</td></tr>
+      <tr><td class="acc">v3</td><td>Darknet-53</td><td>引入残差,精度速度双赢</td><td class="mono">~75M</td></tr>
+      <tr><td class="acc">v4</td><td>CSPDarknet-53</td><td>CSP 跨阶段局部,梯度路径切断</td><td class="mono">~64M</td></tr>
+      <tr><td class="acc">v5</td><td>CSPDarknet + Focus</td><td>Focus 模块切片降采样</td><td class="mono">7-87M</td></tr>
+      <tr><td class="acc">v6</td><td>EfficientRep</td><td>RepVGG 风格重参数化</td><td class="mono">4-110M</td></tr>
+      <tr><td class="acc">v7</td><td>E-ELAN</td><td>扩展高效层聚合</td><td class="mono">36-96M</td></tr>
+      <tr><td class="acc">v8</td><td>C2f (CSP 第二代)</td><td>更丰富梯度流,2× Conv 替代 Bottleneck</td><td class="mono">3-68M</td></tr>
+      <tr><td class="acc">v9</td><td>GELAN</td><td>通用高效聚合,任意 block 替换</td><td class="mono">7-57M</td></tr>
+      <tr><td class="acc">v10</td><td>C2f + 大核 + PSA</td><td>7×7 大核卷积 + 自注意力</td><td class="mono">2-30M</td></tr>
+      <tr><td class="acc">v11</td><td>C3k2 + C2PSA</td><td>更小 kernel + 位置敏感注意力</td><td class="mono">3-57M</td></tr>
+      <tr><td class="acc">v12</td><td>R-ELAN + A²</td><td>CNN + Area Attention 混合</td><td class="mono">2-60M</td></tr>
+      <tr><td class="acc">v26</td><td>C3k2 + SPPF + C2PSA</td><td>同 v11 骨架,创新放在 head + 训练</td><td class="mono">2-55M</td></tr>
+    </table>
+
+    <p class="small gray" style="margin-top: 6px;">演进主线: 简单堆叠 → 残差 → 跨阶段局部 → 高效聚合 → 注意力增强</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 19: Neck 演进                                            -->
+  <!-- ============================================================ -->
+  <section class="slide tight denser">
+    <h1>技术线 2: <span class="blue">Neck 演进</span></h1>
+    <h2>多尺度特征融合,从 FPN 到 RepBi-PAN</h2>
+
+    <table>
+      <tr><th>版本</th><th>Neck 结构</th><th>关键创新</th></tr>
+      <tr><td class="acc">v1-v2</td><td>无 (单尺度检测)</td><td>只 7×7 输出,大目标占优</td></tr>
+      <tr><td class="acc">v3</td><td>FPN (top-down)</td><td>3 尺度输出 (13/26/52),融合细粒度</td></tr>
+      <tr><td class="acc">v4</td><td>FPN + PAN (双向)</td><td>加 bottom-up, 底层信息回传</td></tr>
+      <tr><td class="acc">v5-v8</td><td>PANet (CSP 化)</td><td>CSPNet 思想塞进 PAN</td></tr>
+      <tr><td class="acc">v9</td><td>GELAN neck</td><td>通用聚合,更轻</td></tr>
+      <tr><td class="acc">v10</td><td>C2f + PAN</td><td>轻量化 PAN, 主用于减少冗余</td></tr>
+      <tr><td class="acc">v11</td><td>C3k2-PAN</td><td>C3k2 替代 C2f</td></tr>
+      <tr><td class="acc">v12</td><td>RepBi-PAN</td><td>双向 + 重参数化</td></tr>
+      <tr><td class="acc">v26</td><td>FPN↑ + PAN↓ + 双头</td><td>成熟方案, 不再追新</td></tr>
+    </table>
+
+    <div class="grid2" style="margin-top: 8px;">
+      <div class="card yel">
+        <h4>FPN (Top-Down)</h4>
+        <p style="font-size: 13px;">深层语义信息往浅层传,解决"小目标特征弱"</p>
+        <p class="meta">Lin et al., CVPR 2017 · Mask R-CNN 同款</p>
+      </div>
+      <div class="card grn">
+        <h4>PAN (Bottom-Up)</h4>
+        <p style="font-size: 13px;">FPN 之上加一条 bottom-up,底层定位信息回传</p>
+        <p class="meta">Liu et al., CVPR 2018 · Path Aggregation Network</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 20: Head & Loss 演进                                      -->
+  <!-- ============================================================ -->
+  <section class="slide tight denser">
+    <h1>技术线 3: <span class="green">Head & Loss 演进</span></h1>
+    <h2>从 anchor-based 到 anchor-free,IoU loss 一路进化</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>检测头 Head 演进</h3>
+        <table>
+          <tr><th>版本</th><th>Head 类型</th></tr>
+          <tr><td class="acc">v1</td><td>耦合 (cls + reg 一起)</td></tr>
+          <tr><td class="acc">v2-v3</td><td>Anchor-based 耦合</td></tr>
+          <tr><td class="acc">v4</td><td>Anchor-based 耦合 + PANet</td></tr>
+          <tr><td class="acc">v5</td><td>Anchor-based 耦合</td></tr>
+          <tr><td class="acc">v6</td><td>Anchor-free <b>解耦头</b></td></tr>
+          <tr><td class="acc">v7</td><td>Anchor-based 辅助头</td></tr>
+          <tr><td class="acc">v8</td><td>Anchor-free <b>解耦头</b></td></tr>
+          <tr><td class="acc">v9</td><td>Anchor-free 解耦</td></tr>
+          <tr><td class="acc">v10</td><td>Anchor-free + <b>双头</b> (1v1 + 1vN)</td></tr>
+          <tr><td class="acc">v11</td><td>Anchor-free 解耦</td></tr>
+          <tr><td class="acc">v12</td><td>Anchor-free 解耦</td></tr>
+          <tr><td class="acc">v26</td><td>Anchor-free + DFL-free + 双头</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>Loss 演进</h3>
+        <table>
+          <tr><th>版本</th><th>Box Loss</th><th>Cls Loss</th></tr>
+          <tr><td class="acc">v1</td><td>MSE</td><td>Softmax CE</td></tr>
+          <tr><td class="acc">v2</td><td>MSE</td><td>Softmax CE</td></tr>
+          <tr><td class="acc">v3</td><td>MSE</td><td>Logistic CE</td></tr>
+          <tr><td class="acc">v4</td><td><b>CIoU</b></td><td>CE</td></tr>
+          <tr><td class="acc">v5</td><td>CIoU</td><td>CE</td></tr>
+          <tr><td class="acc">v6</td><td><b>SIoU</b></td><td>VariFocal</td></tr>
+          <tr><td class="acc">v7</td><td>CIoU</td><td>CE</td></tr>
+          <tr><td class="acc">v8</td><td>CIoU + DFL</td><td>CE</td></tr>
+          <tr><td class="acc">v9</td><td>CIoU + DFL</td><td>CE</td></tr>
+          <tr><td class="acc">v10</td><td>CIoU + DFL</td><td>CE</td></tr>
+          <tr><td class="acc">v11</td><td>CIoU + DFL</td><td>CE</td></tr>
+          <tr><td class="acc">v12</td><td>CIoU + DFL</td><td>CE</td></tr>
+          <tr><td class="acc">v26</td><td><b>Progressive + SIoU</b></td><td>CE + STAL</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <p class="small gray" style="margin-top: 8px;">
+      Loss 演进主线: MSE → IoU → GIoU → DIoU → CIoU → SIoU · 分类: Softmax → Logistic → VariFocal → BCE
+    </p>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 21: 标签分配演进                                         -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1>技术线 4: <span class="yellow">标签分配</span> Label Assignment 演进</h1>
+    <h2>"哪个 anchor / 哪个 prediction 负责哪个 gt?"</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>关键问题</h3>
+        <p style="font-size: 13.5px;">一张图有 N 个预测框,但 gt 只有 K 个 (K &lt; N),需要决定每个 gt 由哪些预测负责</p>
+        <p style="font-size: 13.5px;">早期硬规则 → 现在软自适应</p>
+
+        <h3>3 个里程碑</h3>
+        <div class="thread" style="border-color: var(--accent-2);">
+          <h4>① 固定规则 (v1-v5)</h4>
+          <p>用 IoU 阈值匹配: IoU &gt; 0.5 算正样本,其余负样本。简单但缺灵活性</p>
+        </div>
+        <div class="thread" style="border-color: var(--accent-3);">
+          <h4>② ATSS / SimOTA (v6-v7)</h4>
+          <p><b>ATSS</b>: 自适应阈值,根据 anchor 统计 IoU 决定 · <b>SimOTA</b>: 用 Sinkhorn 求解最优分配,加 cost 矩阵</p>
+        </div>
+        <div class="thread" style="border-color: var(--green);">
+          <h4>③ Task-Aligned Assigner (v8-v26)</h4>
+          <p>把分类分数 + 定位质量 (IoU) 相乘做"对齐度",作为分配依据</p>
+        </div>
+      </div>
+      <div>
+        <h3>演进意义</h3>
+        <ul>
+          <li>标签分配 = <b style="color: var(--accent);">隐式学习率</b>: 决定哪些预测被加速,哪些被抑制</li>
+          <li>从"硬规则"到"软对齐" = 端到端可学</li>
+          <li>NMS-free 路线 (v10, v26) 的核心前提</li>
+        </ul>
+
+        <h3>TL;DR</h3>
+        <p style="font-size: 13px; color: var(--ink-2);">
+          标签分配这个"小问题",实际上是 YOLO 后面 5 代性能提升的隐形主推手
+        </p>
+
+        <div class="quote" style="font-size: 12.5px;">
+          "Task-aligned assignment is a key component of the YOLOv8 performance gain."
+          <div class="attr">— Ultralytics YOLOv8 文档, 2023</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 22: 训练增强演进                                         -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1>技术线 5: <span class="purple">训练增强</span> 演进</h1>
+    <h2>"Bag of Freebies" 一路加料</h2>
+
+    <div class="grid3">
+      <div class="card yel">
+        <h4>数据增强</h4>
+        <div style="font-size: 12.5px;">
+          <p><span class="chip yel">Mosaic</span> (v4): 4 张图拼 1 张</p>
+          <p><span class="chip yel">MixUp</span> (v4): 2 张图按 alpha 混合</p>
+          <p><span class="chip yel">CutMix</span> (v4): 切一块粘过去</p>
+          <p><span class="chip yel">Copy-Paste</span> (v5+): 目标直接复制粘</p>
+          <p><span class="chip yel">Random Affine</span>: 旋转 / 缩放 / 错切</p>
+          <p><span class="chip yel">HSV jitter</span>: 颜色扰动</p>
+          <p><span class="chip yel">Albumentations</span> 库集成</p>
+        </div>
+      </div>
+      <div class="card grn">
+        <h4>正则化</h4>
+        <div style="font-size: 12.5px;">
+          <p><span class="chip grn">DropBlock</span> (v4): 区域丢弃</p>
+          <p><span class="chip grn">Label Smoothing</span>: 标签软化</p>
+          <p><span class="chip grn">BN</span>: 沿用</p>
+          <p><span class="chip grn">EMA</span> (v5+): 指数移动平均</p>
+          <p><span class="chip grn">Weight Decay</span>: L2</p>
+          <p><span class="chip grn">Mixup 在多版本</span> 调整强度</p>
+        </div>
+      </div>
+      <div class="card blu">
+        <h4>训练策略</h4>
+        <div style="font-size: 12.5px;">
+          <p><span class="chip blu">Multi-scale</span> (v2+): 训练时随机 resize</p>
+          <p><span class="chip blu">Cosine LR</span>: 余弦退火</p>
+          <p><span class="chip blu">Warmup</span>: 渐进学习率</p>
+          <p><span class="chip blu">AutoAnchor</span> (v5+): K-means 重新聚类</p>
+          <p><span class="chip blu">Warmup+Biased</span>: Mosaic 后期关闭</p>
+          <p><span class="chip blu">AMP</span>: 自动混合精度</p>
+          <p><span class="chip blu">Progressive Loss</span> (v26): 训练末期给小目标补偿</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote">
+      "绝大多数 v4 之后的精度提升,都来自这些 'bag of freebies'——它们不增加推理成本。"
+      <div class="attr">— Alexey Bochkovskiy, YOLOv4 论文, 2020</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 23: YOLO vs DETR 系                                      -->
+  <!-- ============================================================ -->
+  <section class="slide tight" style="padding: 56px 50px 50px;">
+    <h1>YOLO 系 vs <span class="purple">DETR 系</span> · 同期对比</h1>
+    <h2>两条路线在 2024+ 合流</h2>
+
+    <div class="compare">
+      <div class="col acc">
+        <h3>YOLO 系 (单阶段 + anchor)</h3>
+        <ul style="font-size: 12.5px;">
+          <li><b>代表</b>: v1-v26 + SSD + RetinaNet</li>
+          <li><b>核心</b>: 一次前向 + 回归</li>
+          <li><b>优势</b>: 快 (5-160 FPS) + 工程化好 + 部署生态成熟</li>
+          <li><b>劣势</b>: 早期需 NMS + anchor 调参</li>
+          <li><b>2024+</b>: NMS-free (v10, v26) 吸收 DETR 优点</li>
+        </ul>
+      </div>
+      <div class="col pur">
+        <h3>DETR 系 (端到端 + 集合预测)</h3>
+        <ul style="font-size: 12.5px;">
+          <li><b>代表</b>: DETR (2020) → Deformable DETR (2021) → DINO (2022) → RT-DETR (2023)</li>
+          <li><b>核心</b>: 集合预测 + 二分匹配 + Transformer</li>
+          <li><b>优势</b>: 端到端 + NMS-free + 全局注意力</li>
+          <li><b>劣势</b>: 训练慢 (200 epoch+) + 算力大 + 早期不实时</li>
+          <li><b>2024+</b>: RT-DETR 拉到 100+ FPS, 实战可比 YOLO</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="thread" style="border-color: var(--green);">
+      <h4>合流趋势 (2024-2025)</h4>
+      <p>① YOLO 吸收 Attention (v12) 和 NMS-free (v10, v26) ② DETR 吸收实时性 (RT-DETR) ③ 区别模糊化: 两个系列都在追"端到端 + 实时 + 注意力"</p>
+    </div>
+
+    <table style="margin-top: 8px;">
+      <tr><th>模型</th><th>mAP</th><th>FPS (T4)</th><th>架构</th><th>日期</th></tr>
+      <tr><td class="acc">YOLOv8-X</td><td>53.9</td><td class="mono">93</td><td>CNN</td><td>2023.01</td></tr>
+      <tr><td class="acc">YOLOv10-X</td><td>54.4</td><td class="mono">~93</td><td>CNN + NMS-free</td><td>2024.05</td></tr>
+      <tr><td class="acc">YOLOv12-X</td><td>55.2</td><td class="mono">~85</td><td>CNN + Attention</td><td>2025.01</td></tr>
+      <tr><td class="pur">RT-DETR-R50</td><td>53.1</td><td class="mono">~108</td><td>DETR + Hybrid</td><td>2023.04</td></tr>
+      <tr><td class="pur">RT-DETR-R101</td><td>54.3</td><td class="mono">~74</td><td>DETR + Hybrid</td><td>2023.04</td></tr>
+      <tr><td class="pur">DINO-5scale</td><td>63.2</td><td class="mono">~10</td><td>DETR pure</td><td>2022.10</td></tr>
+    </table>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 24: 性能 vs 速度 演化                                     -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="red">性能 vs 速度</span> 10 年演化</h1>
+    <h2>从 "v1 准而慢" → "v26 又快又准"</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>mAP 与 FPS 同步提升 (COCO)</h3>
+        <table>
+          <tr><th>模型</th><th>年份</th><th>mAP</th><th>FPS</th></tr>
+          <tr><td class="acc">YOLOv1</td><td>2015</td><td>63.4*</td><td class="mono">45</td></tr>
+          <tr><td class="acc">YOLOv2</td><td>2017</td><td>78.6*</td><td class="mono">67</td></tr>
+          <tr><td class="acc">YOLOv3</td><td>2018</td><td>76.5*</td><td class="mono">30</td></tr>
+          <tr><td class="acc">YOLOv4</td><td>2020</td><td>43.5**</td><td class="mono">65</td></tr>
+          <tr><td class="acc">YOLOv5-X</td><td>2020</td><td>68.9*</td><td class="mono">83</td></tr>
+          <tr><td class="acc">YOLOv7-E6</td><td>2022</td><td>55.9**</td><td class="mono">56</td></tr>
+          <tr><td class="acc">YOLOv8-X</td><td>2023</td><td>53.9**</td><td class="mono">93</td></tr>
+          <tr><td class="acc">YOLOv9-E</td><td>2024</td><td>55.6**</td><td class="mono">~50</td></tr>
+          <tr><td class="acc">YOLOv10-X</td><td>2024</td><td>54.4**</td><td class="mono">~93</td></tr>
+          <tr><td class="acc">YOLOv11-X</td><td>2024</td><td>54.7**</td><td class="mono">~90</td></tr>
+          <tr><td class="acc">YOLOv12-X</td><td>2025</td><td>55.2**</td><td class="mono">~85</td></tr>
+          <tr><td class="acc">YOLO26-X</td><td>2025</td><td>59.2**</td><td class="mono">~91</td></tr>
+        </table>
+        <p class="small gray">* mAP@0.5 · ** mAP@0.5:0.95 · FPS 在 T4 / V100 上测</p>
+      </div>
+      <div>
+        <h3>演化的两条曲线</h3>
+        <div class="card yel">
+          <h4>① 速度曲线 (FPS)</h4>
+          <p style="font-size: 12.5px;">v1: 45 → v3: 30 (降) → v5: 83 → v8: 93 → v26: 91</p>
+          <p class="meta">"v3 牺牲速度换精度"是分水岭, v5 后追上</p>
+        </div>
+        <div class="card grn">
+          <h4>② 精度曲线 (mAP)</h4>
+          <p style="font-size: 12.5px;">v1: 63.4 → v3: 76.5 → v5: 68.9 → v8: 53.9* → v26: 59.2*</p>
+          <p class="meta">v4 后改用 mAP@0.5:0.95 更严格,绝对值降,实际涨</p>
+        </div>
+
+        <h3>结论</h3>
+        <p style="font-size: 13.5px;">YOLO 10 年做到了"快 + 准" <b style="color: var(--accent);">同步上升</b>, 没有 trade-off</p>
+        <p class="small gray">从"v1: 快但不太准"到"v26: 又快又准", 这是工程 + 学术的双赢</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 25: 部署与生态                                           -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="green">部署与生态</span> · 5 大目标平台</h1>
+    <h2>Ultralytics 提供 "一模型 → 全平台" 部署链</h2>
+
+    <div class="grid3">
+      <div class="card acc">
+        <h4>① ONNX (跨平台通用)</h4>
+        <p style="font-size: 12.5px;">标准 ONNX 导出 → ONNX Runtime</p>
+        <p class="meta">Windows / Linux / macOS / 移动</p>
+      </div>
+      <div class="card yel">
+        <h4>② TensorRT (NVIDIA GPU)</h4>
+        <p style="font-size: 12.5px;">v26 TensorRT 10 加速 2-3×</p>
+        <p class="meta">T4 / V100 / A100 / RTX 4090</p>
+      </div>
+      <div class="card grn">
+        <h4>③ OpenVINO (Intel CPU)</h4>
+        <p style="font-size: 12.5px;">Intel CPU/iGPU 加速</p>
+        <p class="meta">CPU 上跑 30+ FPS (YOLO26n)</p>
+      </div>
+      <div class="card blu">
+        <h4>④ CoreML (Apple)</h4>
+        <p style="font-size: 12.5px;">iOS / macOS 苹果生态</p>
+        <p class="meta">M1/M2 芯片 NEON 加速</p>
+      </div>
+      <div class="card pur">
+        <h4>⑤ TFLite / Edge TPU</h4>
+        <p style="font-size: 12.5px;">移动 / 嵌入式</p>
+        <p class="meta">Jetson / Raspberry Pi / 边缘</p>
+      </div>
+      <div class="card red">
+        <h4>⑥ NCNN / MNN (移动端)</h4>
+        <p style="font-size: 12.5px;">腾讯 NCNN / 阿里 MNN 移动端推理</p>
+        <p class="meta">Android / iOS 极致优化</p>
+      </div>
+    </div>
+
+    <h3>Python 一键训练 + 导出</h3>
+    <div class="formula">
+      from ultralytics import YOLO<br>
+      model = YOLO("yolo26n.pt")<br>
+      model.train(data="coco128.yaml", epochs=100, imgsz=640)<br>
+      model.export(format="onnx")  <span class="op"># / tensorrt / openvino / coreml / tflite</span>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 26: 应用 + 局限                                          -->
+  <!-- ============================================================ -->
+  <section class="slide tight">
+    <h1><span class="blue">应用</span> + <span class="red">局限</span> · 现实取舍</h1>
+    <h2>10 年 11 代,YOLO 已经成为 "目标检测" 事实标准</h2>
+
+    <div class="grid2">
+      <div>
+        <h3>应用场景 (已被广泛使用)</h3>
+        <div class="grid2" style="gap: 6px;">
+          <div class="card acc" style="padding: 8px 10px; margin: 0;">
+            <h4 style="font-size: 13px;">🚗 自动驾驶</h4>
+            <p class="small gray">行人 / 车辆 / 交通标志</p>
+          </div>
+          <div class="card grn" style="padding: 8px 10px; margin: 0;">
+            <h4 style="font-size: 13px;">🏭 工业质检</h4>
+            <p class="small gray">缺陷检测 / 计数 / 定位</p>
+          </div>
+          <div class="card yel" style="padding: 8px 10px; margin: 0;">
+            <h4 style="font-size: 13px;">🏥 医疗影像</h4>
+            <p class="small gray">细胞 / 病灶 / 切片</p>
+          </div>
+          <div class="card blu" style="padding: 8px 10px; margin: 0;">
+            <h4 style="font-size: 13px;">📹 智能监控</h4>
+            <p class="small gray">人群计数 / 异常行为</p>
+          </div>
+          <div class="card pur" style="padding: 8px 10px; margin: 0;">
+            <h4 style="font-size: 13px;">🌾 农业</h4>
+            <p class="small gray">病虫害 / 果实 / 无人机</p>
+          </div>
+          <div class="card red" style="padding: 8px 10px; margin: 0;">
+            <h4 style="font-size: 13px;">🤖 机器人</h4>
+            <p class="small gray">抓取 / 导航 / 服务机器人</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>局限与挑战</h3>
+        <ul>
+          <li><b style="color: var(--accent-2);">小目标</b>: 远景 / 高分辨率图,精度仍弱 (STAL / PGI 是 v9-v26 主攻方向)</li>
+          <li><b style="color: var(--accent-2);">遮挡</b>: 严重遮挡下召回率显著下降</li>
+          <li><b style="color: var(--accent-2);">极端尺度</b>: 极大或极小目标并存时</li>
+          <li><b style="color: var(--accent-2);">域迁移</b>: 跨场景 (白天 → 夜晚) 性能下降</li>
+          <li><b style="color: var(--accent-2);">数据效率</b>: 相比半监督 / 自监督方法仍弱</li>
+          <li><b style="color: var(--accent-2);">类别长尾</b>: 长尾分布数据集精度差</li>
+          <li><b style="color: var(--accent-2);">3D / 多模态</b>: 纯 2D 视觉,接 LLM 还在早期</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 27: 6 大主线总结                                          -->
+  <!-- ============================================================ -->
+  <section class="slide tight" style="padding: 56px 50px 60px;">
+    <h1 style="font-size: 26px; margin-bottom: 2px;"><span class="accent">6 大主线</span> 总结 YOLO 10 年</h1>
+    <h2 style="margin-bottom: 8px;">理解这 6 条主线,等于看完了 YOLO 史</h2>
+
+    <div class="thread" style="padding: 7px 14px; margin: 3px 0;">
+      <h4 style="margin-bottom: 2px; font-size: 14px;">① 单阶段路线胜利</h4>
+      <p style="font-size: 13px;">从 "R-CNN 精 / YOLO 快" 二分, 到 2025 主流单阶段路线, YOLO 用 10 年证明了 "快 + 准" 可以兼得</p>
+    </div>
+    <div class="thread" style="padding: 7px 14px; margin: 3px 0;">
+      <h4 style="margin-bottom: 2px; font-size: 14px;">② 实时性是 YOLO 的基因</h4>
+      <p style="font-size: 13px;">v1 45 FPS, v8 93 FPS, v26 91 FPS · 实时不是目标, 是前提 · "You Only Look Once" 名字就是承诺</p>
+    </div>
+    <div class="thread" style="padding: 7px 14px; margin: 3px 0;">
+      <h4 style="margin-bottom: 2px; font-size: 14px;">③ Anchor 从有到无 (v1→v8+)</h4>
+      <p style="font-size: 13px;">v2-v7 靠 anchor · v8 全面 anchor-free · 减少超参 + 提升可学性 + 方便 NMS-free</p>
+    </div>
+    <div class="thread" style="padding: 7px 14px; margin: 3px 0;">
+      <h4 style="margin-bottom: 2px; font-size: 14px;">④ NMS 从有到无 (v1→v10+)</h4>
+      <p style="font-size: 13px;">v10 一致性双头开启 NMS-free · v26 进一步 DFL-free · 真正 "端到端"</p>
+    </div>
+    <div class="thread" style="padding: 7px 14px; margin: 3px 0;">
+      <h4 style="margin-bottom: 2px; font-size: 14px;">⑤ 模块化 + 注意力融合</h4>
+      <p style="font-size: 13px;">CSP → C2f → C3k2 → R-ELAN · v12 开始引入 Attention · v26 把 LLM 训练 trick (MuSGD) 移植到视觉</p>
+    </div>
+    <div class="thread" style="padding: 7px 14px; margin: 3px 0;">
+      <h4 style="margin-bottom: 2px; font-size: 14px;">⑥ 工程化生态 + 多人接力</h4>
+      <p style="font-size: 13px;">Redmon (v1-v3) → Bochkovskiy (v4) → Ultralytics (v5/v8/v11/v26) → 清华 / 中研院 / 美团 (v6-v12) · 从 1 人项目 → 跨公司开源生态 · GitHub 11 万星 · 30+ 部署平台</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 28: Q&A + 参考文献 + 配套 deck                           -->
+  <!-- ============================================================ -->
+  <section class="slide tight" style="padding: 56px 50px 60px;">
+    <h1 style="font-size: 26px; margin-bottom: 2px;">Q&A & <span class="accent">参考文献</span></h1>
+    <h2 style="margin-bottom: 8px;">课堂讨论 + 核心论文 + 配套 slides</h2>
+
+    <div class="grid2" style="gap: 10px;">
+      <div>
+        <h3 style="margin: 4px 0 4px; font-size: 16px;">课堂讨论题 (课后思考)</h3>
+        <ol style="font-size: 12.5px; line-height: 1.45; margin: 0;">
+          <li>YOLO 的"快"和"准"真的不冲突吗? 背后的工程取舍是什么?</li>
+          <li>为什么 DETR 系最后被 YOLO 系的 NMS-free 反超? (v10 2024 vs RT-DETR 2023)</li>
+          <li>anchor-based vs anchor-free, 哪个更适合你的业务场景? 为什么?</li>
+          <li>v26 把 LLM 的 Muon 优化器移植到视觉, 这个"跨域"思路有什么限制?</li>
+          <li>如果让你设计 YOLOv27, 你会改什么? 理由?</li>
+        </ol>
+      </div>
+      <div>
+        <h3 style="margin: 4px 0 4px; font-size: 16px;">核心论文 (按版本)</h3>
+        <ul style="font-size: 11.5px; line-height: 1.45; margin: 0;">
+          <li>Redmon et al., <b>YOLOv1</b>, CVPR 2016, <span class="chip">1506.02640</span></li>
+          <li>Redmon & Farhadi, <b>YOLOv2 / 9000</b>, CVPR 2017, <span class="chip">1612.08242</span></li>
+          <li>Redmon & Farhadi, <b>YOLOv3</b>, 2018, <span class="chip">1804.02767</span></li>
+          <li>Bochkovskiy et al., <b>YOLOv4</b>, 2020, <span class="chip">2004.10934</span></li>
+          <li>Wang et al., <b>YOLOv7</b>, 2022, <span class="chip">2207.02696</span></li>
+          <li>Li et al., <b>YOLOv6</b> (美团), 2022, <span class="chip">2209.02976</span></li>
+          <li>Wang et al., <b>YOLOv9</b>, 2024, <span class="chip">2402.13616</span></li>
+          <li>Wang et al., <b>YOLOv10</b>, 2024, <span class="chip">2405.14458</span></li>
+          <li>Tian et al., <b>YOLOv12</b>, 2025, <span class="chip">2501.04683</span></li>
+          <li>Carion et al., <b>DETR</b>, ECCV 2020, <span class="chip">2005.12872</span></li>
+          <li>Zhao et al., <b>RT-DETR</b>, CVPR 2023, <span class="chip">2304.08069</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="xref" style="margin-top: 8px; padding: 8px 14px;">
+      <b>📘 配套 slides (本课延伸)</b>:
+      <a href="../yolo26-slides/">yolo26-slides/</a> · YOLO26 架构详解 (13 张, 2025)
+    </div>
+
+    <div style="margin-top: 6px; padding: 6px 14px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; font-size: 11.5px; color: var(--ink-3); text-align: center;">
+      <b style="color: var(--ink);">YOLO 家族 10 年发展史 · v1 → v26</b> · 讲者 董星泊 (DONG XINGBO) · 授课讲义 · 2025
+    </div>
+  </section>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- 顶部栏 / 进度 / 翻页                                            -->
+<!-- ============================================================ -->
+<div class="topbar">
+  <div class="brand">YOLO <span>· 家族 10 年发展史</span></div>
+  <div class="ctrls">
+    <kbd>←</kbd><kbd>→</kbd> 翻页 · <kbd>Home</kbd>/<kbd>End</kbd> 跳首尾 · <kbd>P</kbd> 打印
+  </div>
+</div>
+
+<div class="progress"><div class="progress-bar" id="pb"></div></div>
+<button class="navbtn prev" id="prev" title="上一页">‹</button>
+<button class="navbtn next" id="next" title="下一页">›</button>
+
+<div class="footer">
+  <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let cur = 0;
+
+  function show(i) {
+    i = Math.max(0, Math.min(total - 1, i));
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    cur = i;
+    document.getElementById('pb').style.width = ((i + 1) / total * 100) + '%';
+    document.getElementById('prev').disabled = (i === 0);
+    document.getElementById('next').disabled = (i === total - 1);
+    location.hash = (i + 1);
+  }
+
+  function next() { show(cur + 1); }
+  function prev() { show(cur - 1); }
+
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') { e.preventDefault(); show(0); }
+    else if (e.key === 'End') { e.preventDefault(); show(total - 1); }
+    else if (e.key === 'p' || e.key === 'P') { window.print(); }
+  });
+
+  // hash 启动支持
+  window.addEventListener('load', () => {
+    const h = parseInt(location.hash.replace('#', ''), 10);
+    if (h >= 1 && h <= total) show(h - 1); else show(0);
+  });
+</script>
+</body>
+</html>
