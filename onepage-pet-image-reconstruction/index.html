@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PET 医学图像重建 · 一页讲清楚</title>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --ink-2: #475569;
+      --ink-3: #94a3b8;
+      --line: #e2e8f0;
+      --line-2: #f1f5f9;
+
+      /* 4 大色系 (PET 重建 4 段式) */
+      --idea:    #0c4a6e;          /* 物理/数据 : 深海空蓝 (扫描穿透) */
+      --idea-soft: #f0f9ff;
+      --idea-deep: #082f49;
+
+      --design:  #a16207;          /* 经典算法 : 暗金 (解析/迭代) */
+      --design-soft: #fefce8;
+      --design-deep: #713f12;
+
+      --task:    #15803d;          /* 深度学习 : 医疗绿 (训练/扫描) */
+      --task-soft: #f0fdf4;
+      --task-deep: #14532d;
+
+      --scale:   #be185d;          /* 前沿/校正链 : 玫红 (高亮警告) */
+      --scale-soft: #fdf2f8;
+      --scale-deep: #831843;
+
+      --red: #ef4444;
+      --red-soft: #fef2f2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                   "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.55;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--card);
+      box-shadow: 0 0 0 1px var(--line);
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      padding: 36px 44px 28px;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(ellipse 600px 200px at top right, var(--idea-soft) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 200px at bottom left, #fdf2f8 0%, transparent 70%);
+    }
+    header .tag {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--idea-deep);
+      background: var(--idea-soft);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    header h1 {
+      font-size: 28px;
+      line-height: 1.28;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+    header h1 .q {
+      color: var(--idea-deep);
+    }
+    header .subtitle {
+      font-size: 14.5px;
+      color: var(--ink-2);
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+    header .meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    header .chip {
+      font-size: 12px;
+      color: var(--ink-2);
+      background: white;
+      border: 1px solid var(--line);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    header .chip b { color: var(--ink); font-weight: 700; }
+
+    /* ---------- Section base ---------- */
+    section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+    section:last-of-type { border-bottom: none; }
+
+    .sec-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .sec-num {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 13px;
+      color: white;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+    .sec-num.idea    { background: var(--idea); }
+    .sec-num.design  { background: var(--design); }
+    .sec-num.task    { background: var(--task); }
+    .sec-num.scale   { background: var(--scale); }
+    .sec-title {
+      font-size: 17px; font-weight: 700; color: var(--ink);
+    }
+    .sec-title .en {
+      display: block;
+      font-size: 11.5px; font-weight: 600;
+      color: var(--ink-3);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* ---------- Overview grid (6 cards) ---------- */
+    .overview {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .ov {
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid;
+    }
+    .ov .emo { font-size: 20px; display: block; margin-bottom: 4px; }
+    .ov .zh { font-weight: 700; font-size: 13.5px; color: var(--ink); }
+    .ov .en {
+      display: block;
+      font-size: 10.5px; color: var(--ink-3);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .ov.idea    { background: var(--idea-soft);    border-color: #bae6fd; }
+    .ov.design  { background: var(--design-soft);  border-color: #fde68a; }
+    .ov.task    { background: var(--task-soft);    border-color: #bbf7d0; }
+    .ov.scale   { background: var(--scale-soft);   border-color: #fbcfe8; }
+
+    /* ---------- Module body ---------- */
+    .mod-body { font-size: 14px; color: var(--ink-2); line-height: 1.7; }
+    .mod-body p + p { margin-top: 8px; }
+    .mod-body b { color: var(--ink); font-weight: 700; }
+    code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    .eq {
+      display: block;
+      margin: 10px 0;
+      padding: 10px 14px;
+      background: var(--line-2);
+      border-left: 4px solid var(--idea);
+      border-radius: 0 6px 6px 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      color: var(--ink);
+    }
+    .eq.design { border-left-color: var(--design); }
+    .eq.task   { border-left-color: var(--task); }
+    .eq.scale  { border-left-color: var(--scale); }
+
+    /* ---------- SVG flow ---------- */
+    .svg-wrap {
+      margin: 12px 0;
+      background: var(--line-2);
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid var(--line);
+    }
+    .svg-wrap svg { width: 100%; height: auto; display: block; }
+    .svg-cap {
+      font-size: 11.5px; color: var(--ink-3);
+      text-align: center; margin-top: 6px;
+    }
+
+    /* ---------- Compare table (3-col) ---------- */
+    .cmp {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      margin: 10px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .cmp th, .cmp td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--line-2);
+      vertical-align: top;
+    }
+    .cmp th {
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--ink);
+      background: var(--line-2);
+      letter-spacing: 0.04em;
+    }
+    .cmp tr:last-child td { border-bottom: none; }
+    .cmp td.dim {
+      font-weight: 700;
+      color: var(--ink);
+      background: var(--line-2);
+      width: 16%;
+    }
+    .cmp td.mid {
+      background: #f8fafc;
+    }
+
+    /* ---------- 5 correction cards ---------- */
+    .corr {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .corr .c {
+      background: var(--scale-soft);
+      border: 1px solid #fbcfe8;
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .corr .c .sym {
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      margin: 0 auto 4px;
+      background: var(--scale);
+      color: white;
+      font-weight: 800;
+      font-size: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .corr .c .nm { font-size: 12px; font-weight: 700; color: var(--scale-deep); }
+    .corr .c .full { font-size: 10.5px; color: var(--ink-3); margin-top: 1px; line-height: 1.3; }
+
+    /* ---------- Pitfalls ---------- */
+    .pits {
+      background: var(--red-soft);
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: 14px 18px;
+    }
+    .pits h3 {
+      font-size: 14px; color: var(--red);
+      font-weight: 800; letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+    .pit {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      gap: 8px;
+      padding: 6px 0;
+      font-size: 13px;
+      color: var(--ink-2);
+      align-items: start;
+    }
+    .pit .x {
+      color: var(--red); font-weight: 800; font-size: 14px;
+      margin-top: 1px;
+    }
+    .pit .wrong { text-decoration: line-through; color: #9ca3af; }
+    .pit .right { color: var(--task-deep); font-weight: 700; }
+
+    /* ---------- TL;DR ---------- */
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .tcard {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--line-2);
+    }
+    .tcard .lab {
+      font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink-3); font-weight: 700;
+    }
+    .tcard .val {
+      font-size: 13px; color: var(--ink); margin-top: 4px; line-height: 1.5;
+    }
+    .tcard .val b { color: var(--idea-deep); }
+
+    .oneliner {
+      background: linear-gradient(135deg, #082f49 0%, #0c4a6e 100%);
+      color: white;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .oneliner b { color: #fde68a; font-weight: 700; }
+
+    /* ---------- Footer ---------- */
+    footer {
+      padding: 16px 44px 24px;
+      border-top: 1px solid var(--line);
+      background: var(--line-2);
+      text-align: center;
+    }
+    footer .ref {
+      font-size: 10.5px; color: var(--ink-3);
+      line-height: 1.5;
+    }
+    footer .ref b { color: var(--ink-2); font-weight: 600; }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 640px) {
+      header, section, footer { padding-left: 20px; padding-right: 20px; }
+      header h1 { font-size: 22px; }
+      .overview { grid-template-columns: repeat(2, 1fr); }
+      .corr { grid-template-columns: repeat(2, 1fr); }
+      .tldr { grid-template-columns: 1fr; }
+      .cmp { font-size: 11.5px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ========== ① Header ========== -->
+  <header>
+    <div class="tag">NUCLEAR MEDICINE · 核医学影像</div>
+    <h1>PET 图像重建,是怎么<span class="q">"反演"出</span>体内代谢分布的?</h1>
+    <p class="subtitle">从 511 keV 湮灭光子到 SUV 定量图,一页讲清 PET 重建的 <b>4 大算法范式</b> + <b>5 大物理校正</b> + <b>1 个扩散前沿</b></p>
+    <div class="meta">
+      <span class="chip">⏱ 阅读 <b>8 分钟</b></span>
+      <span class="chip">🎯 医工交叉 / 医学 AI</span>
+      <span class="chip">📚 IEEE T-MI · MICCAI PET · AAPM TG-108</span>
+    </div>
+  </header>
+
+  <!-- ========== ② Overview ========== -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num idea">00</div>
+      <div class="sec-title">全图导览
+        <span class="en">Overview · 6 大要素</span>
+      </div>
+    </div>
+    <div class="overview">
+      <div class="ov idea">
+        <span class="emo">⚛️</span>
+        <div class="zh">核素物理</div>
+        <span class="en">Tracer &amp; Decay</span>
+      </div>
+      <div class="ov idea">
+        <span class="emo">📡</span>
+        <div class="zh">符合探测</div>
+        <span class="en">Coincidence</span>
+      </div>
+      <div class="ov design">
+        <span class="emo">📊</span>
+        <div class="zh">正弦图数据</div>
+        <span class="en">Sinogram y(s,θ)</span>
+      </div>
+      <div class="ov design">
+        <span class="emo">🧮</span>
+        <div class="zh">FBP / OSEM</div>
+        <span class="en">Classical</span>
+      </div>
+      <div class="ov task">
+        <span class="emo">🧠</span>
+        <div class="zh">深度学习</div>
+        <span class="en">DL Unrolled</span>
+      </div>
+      <div class="ov scale">
+        <span class="emo">🚀</span>
+        <div class="zh">扩散前沿</div>
+        <span class="en">Diffusion / SS</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ③ Module 01 - 物理链 ========== -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num idea">01</div>
+      <div class="sec-title">物理链:核素 → 湮灭 → 符合 → 投影
+        <span class="en">Physics Pipeline · From β⁺ decay to LOR</span>
+      </div>
+    </div>
+    <div class="mod-body">
+      <p>PET 重建的<b>输入</b>不是"图像",而是 <b>符合事件 (coincidence events)</b>:一对反方向飞行的 511 keV γ 光子。重建的<b>目标</b>是反演出体内 <b>示踪剂活度分布</b> λ(x),常用 <span class="mono">¹⁸F-FDG</span>(氟代脱氧葡萄糖) 标记肿瘤代谢。</p>
+      <p>整条链路:</p>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PET 物理链路">
+          <defs>
+            <marker id="arr-i" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#0c4a6e"/>
+            </marker>
+          </defs>
+          <!-- boxes -->
+          <g font-family="-apple-system, PingFang SC, sans-serif" font-size="12" font-weight="600" text-anchor="middle">
+            <g>
+              <rect x="10"  y="60" width="110" height="80" rx="10" fill="#f0f9ff" stroke="#0c4a6e" stroke-width="1.5"/>
+              <text x="65"  y="92" fill="#082f49">¹⁸F-FDG</text>
+              <text x="65"  y="110" fill="#475569" font-size="10">核素标记</text>
+              <text x="65"  y="126" fill="#94a3b8" font-size="10">Tracer</text>
+            </g>
+            <g>
+              <rect x="148" y="60" width="110" height="80" rx="10" fill="#f0f9ff" stroke="#0c4a6e" stroke-width="1.5"/>
+              <text x="203" y="92" fill="#082f49">β⁺ 衰变</text>
+              <text x="203" y="110" fill="#475569" font-size="10">e⁺ + 湮灭</text>
+              <text x="203" y="126" fill="#94a3b8" font-size="10">Positron</text>
+            </g>
+            <g>
+              <rect x="286" y="60" width="110" height="80" rx="10" fill="#f0f9ff" stroke="#0c4a6e" stroke-width="1.5"/>
+              <text x="341" y="92" fill="#082f49">γ 对 511 keV</text>
+              <text x="341" y="110" fill="#475569" font-size="10">反方向 180°</text>
+              <text x="341" y="126" fill="#94a3b8" font-size="10">Annihilation</text>
+            </g>
+            <g>
+              <rect x="424" y="60" width="110" height="80" rx="10" fill="#f0f9ff" stroke="#0c4a6e" stroke-width="1.5"/>
+              <text x="479" y="92" fill="#082f49">符合事件</text>
+              <text x="479" y="110" fill="#475569" font-size="10">窗宽 6-12 ns</text>
+              <text x="479" y="126" fill="#94a3b8" font-size="10">Coincidence</text>
+            </g>
+            <g>
+              <rect x="562" y="60" width="148" height="80" rx="10" fill="#0c4a6e" stroke="#082f49" stroke-width="1.5"/>
+              <text x="636" y="92" fill="#fde68a">Sinogram</text>
+              <text x="636" y="110" fill="#e0f2fe" font-size="10">y(s,θ) 投影</text>
+              <text x="636" y="126" fill="#bae6fd" font-size="10">LOR bin</text>
+            </g>
+          </g>
+          <!-- arrows -->
+          <g stroke="#0c4a6e" stroke-width="1.6" fill="none">
+            <line x1="120" y1="100" x2="144" y2="100" marker-end="url(#arr-i)"/>
+            <line x1="258" y1="100" x2="282" y2="100" marker-end="url(#arr-i)"/>
+            <line x1="396" y1="100" x2="420" y2="100" marker-end="url(#arr-i)"/>
+            <line x1="534" y1="100" x2="558" y2="100" marker-end="url(#arr-i)"/>
+          </g>
+          <!-- caption -->
+          <text x="360" y="178" font-family="-apple-system, PingFang SC, sans-serif" font-size="10.5" fill="#64748b" text-anchor="middle">
+            核素衰变 → 湮灭光子对 → 探测器环符合探测 → 响应线 (LOR) 投影到 sinogram
+          </text>
+        </svg>
+      </div>
+      <p>关键参数:</p>
+      <div class="eq">γ 光子能量 E = <b>511 keV</b> &nbsp;|&nbsp; 符合时间窗 Δt ≈ <b>6-12 ns</b> &nbsp;|&nbsp; 空间分辨率 ≈ <b>4-5 mm</b></p>
+      <p>PET 的<b>特殊性</b>:它不直接测量"图像",而是测量<b>示踪剂在体内发射的 γ 事件</b>。这和 CT (透射 X 射线) 的物理模型<b>完全不同</b>。</p>
+    </div>
+  </section>
+
+  <!-- ========== ③ Module 02 - FBP vs OSEM ========== -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num design">02</div>
+      <div class="sec-title">经典双雄:FBP vs OSEM
+        <span class="en">Classical Reconstruction · Analytical vs Iterative</span>
+      </div>
+    </div>
+    <div class="mod-body">
+      <p>PET 重建的<b>第一个分水岭</b>是<b>解析法 vs 迭代法</b>。早期沿用 X-CT 的 FBP,后被物理建模更准的 OSEM 全面替代。</p>
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th style="width:18%">维度</th>
+            <th style="width:41%">FBP · 滤波反投影</th>
+            <th>OSEM · 有序子集 EM</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="dim">原理</td>
+            <td>反 Radon 变换:投影-滤波-反投影</td>
+            <td>系统矩阵 <span class="mono">A</span> 建模,EM 迭代最大化对数似然</td>
+          </tr>
+          <tr>
+            <td class="dim">物理建模</td>
+            <td>理想线积分,忽略衰减/散射/死时间</td>
+            <td>可纳入 <span class="mono">A</span>:归一化、衰减、PSF、TOF</td>
+          </tr>
+          <tr>
+            <td class="dim">速度</td>
+            <td class="mid"><b>极快</b>(秒级),实时可用</td>
+            <td>较慢(分钟级),2-3 迭代 × 14-28 子集</td>
+          </tr>
+          <tr>
+            <td class="dim">噪声</td>
+            <td>放大高频噪声,星状伪影</td>
+            <td><b>噪声受控</b>,低剂量友好</td>
+          </tr>
+          <tr>
+            <td class="dim">低剂量</td>
+            <td>质量崩塌</td>
+            <td>仍可重建,可加 Bayesian 正则</td>
+          </tr>
+          <tr>
+            <td class="dim">临床角色</td>
+            <td>已基本被 OSEM 替代</td>
+            <td><b>当前临床主流</b>(Siemens/GE/Philips 全部)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="eq design">MLEM 迭代式:&nbsp; λ<sup>(k+1)</sup> = λ<sup>(k)</sup> · A<sup>T</sup>( y ÷ (A λ<sup>(k)</sup>) ) &nbsp;/&nbsp; s &nbsp;<span style="color:#94a3b8">// s = 灵敏度图</span></div>
+      <p>OSEM 是 MLEM 的工程加速版:把投影分 N 个子集轮流更新,速度提升 N×,代价是收敛点略有偏移,但临床可接受。</p>
+    </div>
+  </section>
+
+  <!-- ========== ③ Module 03 - DL 重建范式 ========== -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num task">03</div>
+      <div class="sec-title">深度学习 3 大重建范式
+        <span class="en">Deep Learning Reconstruction · 3 Paradigms</span>
+      </div>
+    </div>
+    <div class="mod-body">
+      <p>深度学习进入 PET 重建的路径有 3 条,<b>工程成熟度</b>和<b>可解释性</b>各异:</p>
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th style="width:18%">范式</th>
+            <th style="width:30%">思路</th>
+            <th>代表方法 &amp; 优劣</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="dim">Direct<br><span style="font-weight:400;color:#94a3b8;font-size:10.5px">直接重建</span></td>
+            <td>端到端 <span class="mono">sinogram → image</span></td>
+            <td><b>AUTOMAP / DeepPET</b> · 训练数据需求极大; 物理不可解释</td>
+          </tr>
+          <tr>
+            <td class="dim">Unrolled<br><span style="font-weight:400;color:#94a3b8;font-size:10.5px">迭代展开</span></td>
+            <td>OSEM 迭代步展开成网络层</td>
+            <td><b>Learned Primal-Dual · MAPEM-Net</b> · <b>当前最主流</b>, 物理+数据双驱动</td>
+          </tr>
+          <tr>
+            <td class="dim">Post-process<br><span style="font-weight:400;color:#94a3b8;font-size:10.5px">后处理</span></td>
+            <td>先 FBP/OSEM,再 U-Net 去噪</td>
+            <td><b>3D U-Net · GAN · DDPM</b> · 最容易临床部署,但丢失 sinogram 物理</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="eq task">Unrolled 网络 (以 Learned PD 为例):&nbsp; x<sup>k+1</sup> = Γ<sub>θ</sub> ( Prox<sub>θ</sub>( A<sup>T</sup> y - A x<sup>k</sup> ) )</div>
+      <p><b>工程甜蜜点</b>: <b>迭代展开 (Unrolled)</b> —— 既保留系统矩阵的物理可解释性,又用神经网络学出更优的正则项和步长。<b>GE Healthcare 2023</b> 发布的 PET DL recon 就是这个路线。</p>
+    </div>
+  </section>
+
+  <!-- ========== ③ Module 04 - 5 大校正 ========== -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num scale">04</div>
+      <div class="sec-title">5 大物理效应 &amp; 校正链
+        <span class="en">Corrections Pipeline · AC · SC · RC · DT · NC</span>
+      </div>
+    </div>
+    <div class="mod-body">
+      <p>原始 sinogram 投到 SUV 图之间,<b>必须</b>走完 5 个校正,缺一就会<b>定量失真</b>:</p>
+      <div class="corr">
+        <div class="c">
+          <div class="sym">AC</div>
+          <div class="nm">衰减</div>
+          <div class="full">Attenuation</div>
+        </div>
+        <div class="c">
+          <div class="sym">SC</div>
+          <div class="nm">散射</div>
+          <div class="full">Scatter</div>
+        </div>
+        <div class="c">
+          <div class="sym">RC</div>
+          <div class="nm">随机</div>
+          <div class="full">Random</div>
+        </div>
+        <div class="c">
+          <div class="sym">DT</div>
+          <div class="nm">死时间</div>
+          <div class="full">Dead Time</div>
+        </div>
+        <div class="c">
+          <div class="sym">NC</div>
+          <div class="nm">归一化</div>
+          <div class="full">Normalize</div>
+        </div>
+      </div>
+      <p><b>AC</b>: 511 keV γ 在体内被吸收, 用 CT/μ-map 校正; <b>SC</b>: 康普顿散射让 γ 偏离 LOR, 能量窗 350-650 keV 截断 + 单散射模拟 (SSS); <b>RC</b>: 两个不相关光子偶然同时到, 用延迟窗估计; <b>DT</b>: 探测器饱和, 高计数率下用 Paralyzable/Non-paralyzable 模型补偿; <b>NC</b>: 探测器单元响应差异, 用均匀面源校准。</p>
+      <div class="eq scale">校正后计数:&nbsp; y<sub>tru</sub> = ( y<sub>raw</sub> - y<sub>rand</sub> - y<sub>scat</sub> ) · NC<sub>f</sub> · AC<sub>f</sub> · DT<sub>f</sub></div>
+    </div>
+  </section>
+
+  <!-- ========== ④ Pitfalls ========== -->
+  <section>
+    <div class="pits">
+      <h3>⚠ 4 大常见误区</h3>
+      <div class="pit">
+        <div class="x">✗</div>
+        <div><span class="wrong">把 PET 当成"高分辨率 CT"</span> &nbsp;👉 PET 是<b>功能成像</b>(代谢),空间分辨率 <b>4-5 mm</b>,远低于 CT 的 0.5 mm; 解剖定位要靠 PET/CT 或 PET/MRI 融合</div>
+      </div>
+      <div class="pit">
+        <div class="x">✗</div>
+        <div><span class="wrong">FBP 重建结果就是金标准</span> &nbsp;👉 临床早用 <b>OSEM+TOF+PSF</b>, 物理建模更准; FBP 仅在快速预览/教学场景出现</div>
+      </div>
+      <div class="pit">
+        <div class="x">✗</div>
+        <div><span class="wrong">深度学习能"无监督"重建一切</span> &nbsp;👉 Direct/Unrolled 仍需配对 <b>sinogram-真值</b>(或仿真+自监督预训练), 纯无监督难以保持定量</div>
+      </div>
+      <div class="pit">
+        <div class="x">✗</div>
+        <div><span class="wrong">重建越精细越好,过度平滑</span> &nbsp;👉 临床要<b>诊断可读</b>而非 PSNR 最高; 过度平滑会<b>漏小病灶</b>(&lt; 8 mm) 和边缘伪影</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ⑤ Footer / TL;DR ========== -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num" style="background:#0f172a">✓</div>
+      <div class="sec-title">这一页先记住
+        <span class="en">TL;DR · 3 Takeaways</span>
+      </div>
+    </div>
+    <div class="tldr">
+      <div class="tcard">
+        <div class="lab">Data</div>
+        <div class="val">数据维度: <b>符合事件 → sinogram → 3D 体素</b>,空间分辨率受限于探测器物理</div>
+      </div>
+      <div class="tcard">
+        <div class="lab">Algo</div>
+        <div class="val">算法演进: <b>FBP → OSEM → DL Unrolled → Diffusion</b>,物理建模与数据驱动交织</div>
+      </div>
+      <div class="tcard">
+        <div class="lab">Correct</div>
+        <div class="val">校正链: <b>AC · SC · RC · DT · NC</b> 缺一不可,定量 SUV 的根基</div>
+      </div>
+    </div>
+    <div class="oneliner">
+      PET 重建的本质,是<b>反演示踪剂在体内的活度分布</b> —— 平衡<b>物理建模</b>、<b>计算代价</b>、<b>临床可解释性</b>三角。
+    </div>
+  </section>
+
+  <!-- ========== Footer ========== -->
+  <footer>
+    <div class="credit" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--ink-3); text-align: center; line-height: 1.6;">
+      <b style="color: var(--ink); font-weight: 700;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size: 10.5px; color: var(--ink-3);">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+    <div class="ref" style="margin-top: 10px;">
+      参考: <b>IEEE T-MI</b> 2020-25 PET Recon 专题 · <b>MICCAI</b> PET/SPECT 挑战赛 · <b>AAPM TG-108</b> PET 仿真 · <b>Siemens Biograph</b> / <b>GE Discovery</b> 临床协议
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
