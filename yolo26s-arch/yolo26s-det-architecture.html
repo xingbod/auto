@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>YOLO26s 模型架构图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    color: #e8e8f0;
+    padding: 36px 48px;
+    min-width: 1680px;
+  }
+  .header { text-align: center; margin-bottom: 24px; }
+  .header h1 {
+    font-size: 42px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #a78bfa, #7dd3fc, #f0abfc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 1px;
+  }
+  .header .sub {
+    font-size: 16px;
+    color: #a0a0c0;
+    margin-top: 8px;
+  }
+  .badges { display: flex; justify-content: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .badge {
+    background: rgba(124, 58, 237, 0.18);
+    border: 1px solid rgba(167, 139, 250, 0.45);
+    color: #d8c8ff;
+    padding: 5px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .badge.hot { background: rgba(239, 68, 68, 0.2); border-color: #f87171; color: #fecaca; }
+  .badge.ok { background: rgba(34, 197, 94, 0.2); border-color: #4ade80; color: #bbf7d0; }
+
+  .arch {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 18px;
+    align-items: stretch;
+  }
+  .col-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 12px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    padding: 30px 0;
+  }
+  .col-backbone { background: linear-gradient(180deg, #1e3a8a, #312e81); border: 2px solid #60a5fa; color: #bfdbfe; }
+  .col-neck    { background: linear-gradient(180deg, #5b21b6, #6b21a8); border: 2px solid #c084fc; color: #e9d5ff; }
+  .col-head    { background: linear-gradient(180deg, #be123c, #9d174d); border: 2px solid #fb7185; color: #fecdd3; }
+
+  .stage {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .stage:last-child { margin-bottom: 0; }
+  .block {
+    background: linear-gradient(160deg, rgba(99,102,241,0.22), rgba(139,92,246,0.22));
+    border: 1.5px solid rgba(167,139,250,0.55);
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-align: center;
+    min-width: 150px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  }
+  .block .name { font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 4px; }
+  .block .desc { font-size: 12px; color: #c7d2fe; line-height: 1.5; }
+  .block .param { font-size: 11px; color: #a5b4fc; margin-top: 4px; font-family: "SF Mono", Menlo, monospace; }
+  .block.input  { background: linear-gradient(160deg, #064e3b, #065f46); border-color: #34d399; }
+  .block.input  .name { color: #d1fae5; }
+  .block.stem   { background: linear-gradient(160deg, #1e3a8a, #1e40af); border-color: #60a5fa; }
+  .block.stem   .name { color: #dbeafe; }
+  .block.down   { background: linear-gradient(160deg, #312e81, #4c1d95); border-color: #818cf8; }
+  .block.c3k2   { background: linear-gradient(160deg, #4338ca, #6d28d9); border-color: #a78bfa; }
+  .block.sppf   { background: linear-gradient(160deg, #b91c1c, #991b1b); border-color: #fca5a5; }
+  .block.sppf   .name { color: #fee2e2; }
+  .block.fpn    { background: linear-gradient(160deg, #be185d, #9d174d); border-color: #f9a8d4; }
+  .block.fpn    .name { color: #fce7f3; }
+  .block.pan    { background: linear-gradient(160deg, #7e22ce, #6b21a8); border-color: #d8b4fe; }
+  .block.pan    .name { color: #f3e8ff; }
+  .block.head1  { background: linear-gradient(160deg, #b45309, #92400e); border-color: #fbbf24; }
+  .block.head1  .name { color: #fef3c7; }
+  .block.head2  { background: linear-gradient(160deg, #b91c1c, #7f1d1d); border-color: #fca5a5; }
+  .block.head2  .name { color: #fee2e2; }
+
+  .arrow {
+    color: #94a3b8;
+    font-size: 26px;
+    font-weight: 700;
+    user-select: none;
+  }
+  .arrow.up   { color: #fbbf24; }
+  .arrow.dn   { color: #60a5fa; }
+  .arrow.flat { color: #cbd5e1; }
+
+  .size-tag {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    font-size: 11px;
+    color: #94a3b8;
+    font-family: "SF Mono", Menlo, monospace;
+    background: rgba(0,0,0,0.3);
+    padding: 2px 8px;
+    border-radius: 8px;
+  }
+
+  /* 双头输出 */
+  .head-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .head-card {
+    background: linear-gradient(160deg, rgba(180,83,9,0.18), rgba(127,29,29,0.18));
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 18px 20px;
+    text-align: center;
+  }
+  .head-card.alt { border-color: #ef4444; background: linear-gradient(160deg, rgba(185,28,28,0.18), rgba(127,29,29,0.18)); }
+  .head-card .title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+  .head-card.alt .title { color: #fecaca; }
+  .head-card:not(.alt) .title { color: #fde68a; }
+  .head-card .shape { font-family: "SF Mono", Menlo, monospace; font-size: 14px; color: #e2e8f0; margin: 8px 0; }
+  .head-card .note { font-size: 12px; color: #cbd5e1; }
+
+  /* 底部创新点 */
+  .innov {
+    margin-top: 22px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .inn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(167,139,250,0.4);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .inn h4 {
+    color: #c4b5fd;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .inn h4 .icon { font-size: 18px; }
+  .inn p { font-size: 12px; color: #cbd5e1; line-height: 1.55; }
+  .inn p b { color: #fde68a; }
+
+  .footer {
+    margin-top: 18px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 12px;
+  }
+  .footer .ref {
+    margin-top: 4px;
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    color: #a78bfa;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚡ YOLO26s · 模型架构全景图</h1>
+  <div class="sub">Ultralytics YOLO26 — Small 变体 · 端到端 NMS-Free · 原生 One-to-One 检测头</div>
+  <div class="badges">
+    <span class="badge">📐 输入 640 × 640 × 3</span>
+    <span class="badge">🧠 9.5 M 参数</span>
+    <span class="badge">⚙️ 20.7 B FLOPs</span>
+    <span class="badge ok">🎯 48.6 mAP<sub>50-95</sub></span>
+    <span class="badge ok">⚡ 2.5 ms T4 TensorRT10</span>
+    <span class="badge hot">🚫 NMS-Free</span>
+    <span class="badge hot">🚫 DFL-Free</span>
+  </div>
+</div>
+
+<div class="arch">
+
+  <!-- Backbone -->
+  <div class="col-label col-backbone">BACKBONE</div>
+  <div>
+    <div class="stage">
+      <span class="size-tag">640×640×3</span>
+      <div class="block input">
+        <div class="name">Input Image</div>
+        <div class="desc">RGB 图像<br>640×640×3</div>
+      </div>
+      <span class="arrow flat">→</span>
+      <div class="block stem">
+        <div class="name">Conv Stem</div>
+        <div class="desc">k=3, s=2<br>3 → 64 ch</div>
+        <div class="param">/2 → 320×320</div>
+      </div>
+      <span class="arrow flat">→</span>
+      <div class="block stem">
+        <div class="name">Conv Stem</div>
+        <div class="desc">k=3, s=2<br>64 → 128 ch</div>
+        <div class="param">/2 → 160×160</div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <span class="size-tag">160×160×128</span>
+      <div class="block c3k2">
+        <div class="name">C3k2 × 1</div>
+        <div class="desc">128 ch<br>跨阶段部分卷积</div>
+        <div class="param">P2 输出</div>
+      </div>
+      <span class="arrow flat">→</span>
+      <div class="block down">
+        <div class="name">Conv Down</div>
+        <div class="desc">k=3, s=2<br>128 → 256 ch</div>
+        <div class="param">/2 → 80×80</div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <span class="size-tag">80×80×256</span>
+      <div class="block c3k2">
+        <div class="name">C3k2 × 2</div>
+        <div class="desc">256 ch<br>深层特征提取</div>
+        <div class="param">P3 输出</div>
+      </div>
+      <span class="arrow flat">→</span>
+      <div class="block down">
+        <div class="name">Conv Down</div>
+        <div class="desc">k=3, s=2<br>256 → 512 ch</div>
+        <div class="param">/2 → 40×40</div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <span class="size-tag">40×40×512</span>
+      <div class="block c3k2">
+        <div class="name">C3k2 × 2</div>
+        <div class="desc">512 ch<br>语义抽象</div>
+        <div class="param">P4 输出</div>
+      </div>
+      <span class="arrow flat">→</span>
+      <div class="block down">
+        <div class="name">Conv Down</div>
+        <div class="desc">k=3, s=2<br>512 → 1024 ch</div>
+        <div class="param">/2 → 20×20</div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <span class="size-tag">20×20×1024</span>
+      <div class="block c3k2">
+        <div class="name">C3k2 × 1</div>
+        <div class="desc">1024 ch<br>高层语义</div>
+      </div>
+      <span class="arrow flat">→</span>
+      <div class="block sppf">
+        <div class="name">SPPF</div>
+        <div class="desc">k=5 × 3 串接<br>空间金字塔池化</div>
+        <div class="param">P5 输出</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Neck -->
+  <div class="col-label col-neck">NECK<br>(FPN + PAN)</div>
+  <div>
+    <div class="stage">
+      <span class="size-tag">Top-Down Path</span>
+      <div class="block fpn">
+        <div class="name">Upsample ×2</div>
+        <div class="desc">最近邻<br>20 → 40</div>
+      </div>
+      <span class="arrow flat">⊕</span>
+      <div class="block pan">
+        <div class="name">Concat + C3k2</div>
+        <div class="desc">P5 ↑ + P4<br>1024+512 → 512</div>
+        <div class="param">P4'</div>
+      </div>
+      <span class="arrow up">→</span>
+      <div class="block fpn">
+        <div class="name">Upsample ×2</div>
+        <div class="desc">最近邻<br>40 → 80</div>
+      </div>
+      <span class="arrow flat">⊕</span>
+      <div class="block pan">
+        <div class="name">Concat + C3k2</div>
+        <div class="desc">P4' + P3<br>512+256 → 256</div>
+        <div class="param">P3'</div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <span class="size-tag">Bottom-Up Path</span>
+      <div class="block down">
+        <div class="name">Conv Down ×2</div>
+        <div class="desc">k=3, s=2<br>80 → 40</div>
+      </div>
+      <span class="arrow flat">⊕</span>
+      <div class="block pan">
+        <div class="name">Concat + C3k2</div>
+        <div class="desc">P3' ↓ + P4'<br>256+512 → 512</div>
+        <div class="param">P4''</div>
+      </div>
+      <span class="arrow dn">→</span>
+      <div class="block down">
+        <div class="name">Conv Down ×2</div>
+        <div class="desc">k=3, s=2<br>40 → 20</div>
+      </div>
+      <span class="arrow flat">⊕</span>
+      <div class="block pan">
+        <div class="name">Concat + C3k2</div>
+        <div class="desc">P4'' ↓ + P5<br>512+1024 → 1024</div>
+        <div class="param">P5''</div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <span class="size-tag">Multi-Scale Outputs</span>
+      <div class="block pan">
+        <div class="name">P3'' · 80×80</div>
+        <div class="desc">小目标检测头<br>256 ch</div>
+      </div>
+      <div class="block pan">
+        <div class="name">P4'' · 40×40</div>
+        <div class="desc">中目标检测头<br>512 ch</div>
+      </div>
+      <div class="block pan">
+        <div class="name">P5'' · 20×20</div>
+        <div class="desc">大目标检测头<br>1024 ch</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Head -->
+  <div class="col-label col-head">HEAD<br>(Dual)</div>
+  <div>
+    <div class="stage">
+      <span class="size-tag">3 个尺度 → 解耦到 cls / reg / anchor</span>
+      <div class="block head1">
+        <div class="name">One-to-One (默认)</div>
+        <div class="desc">端到端原生<br>无需 NMS</div>
+      </div>
+      <div class="block head2">
+        <div class="name">One-to-Many (可选)</div>
+        <div class="desc">传统 YOLO 输出<br>需 NMS 后处理</div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="head-grid">
+        <div class="head-card">
+          <div class="title">🟢 e2e 推理</div>
+          <div class="shape">(N, 300, 6)</div>
+          <div class="note">最多 300 个检测<br>每条 = [x,y,w,h,score,cls]<br><b>无 NMS · 部署最简</b></div>
+        </div>
+        <div class="head-card alt">
+          <div class="title">🔴 高精度</div>
+          <div class="shape">(N, nc+4, 8400)</div>
+          <div class="note">8400 anchor (80+40+20 三层)<br>多对一 → NMS 筛选<br><b>略高 mAP · 稍慢</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <span class="size-tag">Loss 设计</span>
+      <div class="block head1">
+        <div class="name">BCE / Focal</div>
+        <div class="desc">分类损失</div>
+      </div>
+      <div class="block head1">
+        <div class="name">CIoU + DFL-Free</div>
+        <div class="desc">回归损失<br>无分布约束</div>
+      </div>
+      <div class="block head2">
+        <div class="name">Progressive Loss</div>
+        <div class="desc">渐进监督<br>对齐 e2e head</div>
+      </div>
+      <div class="block head2">
+        <div class="name">STAL</div>
+        <div class="desc">小目标标签增强</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 底部 4 大创新 -->
+<div class="innov">
+  <div class="inn">
+    <h4><span class="icon">🚫</span> DFL-Free 回归</h4>
+    <p>移除 <b>Distribution Focal Loss</b>，检测头更轻；保留 <b>无约束回归范围</b>，简化 ONNX/TensorRT 导出。</p>
+  </div>
+  <div class="inn">
+    <h4><span class="icon">⚡</span> 端到端 NMS-Free</h4>
+    <p>默认 <b>One-to-One Head</b>，原生产生 (N,300,6) 输出，<b>无需 NMS</b> 后处理，部署延迟更低。</p>
+  </div>
+  <div class="inn">
+    <h4><span class="icon">🧪</span> MuSGD 优化器</h4>
+    <p>把 LLM 训练的 <b>Muon</b> 思想融入 SGD，结合得到 <b>MuSGD</b>，优化更稳、收敛更快。</p>
+  </div>
+  <div class="inn">
+    <h4><span class="icon">🎯</span> Progressive Loss + STAL</h4>
+    <p>训练时把监督信号更多推向 <b>推理 head</b>；<b>STAL</b> 增强小目标正样本覆盖。</p>
+  </div>
+</div>
+
+<div class="footer">
+  <div style="color:#c4b5fd; font-weight:700; margin-bottom:4px;">由 DONG XINGBO 创建整理 · 非授权禁止转载 · © 2026 DONG XINGBO</div>
+  <div style="color:#94a3b8; font-size:12px;">数据来源: Ultralytics YOLO26 Docs · Hugging Face Ultralytics/YOLO26 · 论文 arXiv:2606.03748</div>
+  <div class="ref">@misc{jocher2026ultralyticsyolo26unifiedrealtime, title={Ultralytics YOLO26: Unified Real-Time End-to-End Vision Models}, author={Glenn Jocher and Jing Qiu and Mengyu Liu and Shuai Lyu and Fatih Cagatay Akyon and Muhammet Esat Kalfaoglu}, year={2026}, eprint={2606.03748}}</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="arch" width="1480" height="1180" viewBox="0 0 1480 1180" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrHi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22d3ee"/>
+    </marker>
+    <marker id="arrRose" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#fb7185"/>
+    </marker>
+    <marker id="arrEm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#34d399"/>
+    </marker>
+
+    <!-- Block style filters for double-rect masking -->
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+
+  <!-- Grid background -->
+  <rect width="100%" height="100%" fill="url(#grid)"/>
+
+  <!-- =================== Title & Input =================== -->
+  <g>
+    <text x="40" y="34" font-family="JetBrains Mono" font-size="11" fill="#64748b">INPUT</text>
+    <rect x="40" y="44" width="140" height="60" rx="6" fill="#0f172a" stroke="#94a3b8" stroke-width="1.5"/>
+    <rect x="40" y="44" width="140" height="60" rx="6" fill="rgba(148,163,184,0.1)" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="110" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#e2e8f0">RGB Image</text>
+    <text x="110" y="90" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#94a3b8">640 × 640 × 3</text>
+  </g>
+
+  <!-- =================== BACKBONE BOX =================== -->
+  <g>
+    <rect x="30" y="135" width="970" height="455" rx="10"
+          fill="none" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.7"/>
+    <text x="50" y="158" font-family="JetBrains Mono" font-size="12" font-weight="700"
+          fill="#22d3ee" letter-spacing="1">BACKBONE  ·  C3k2 + C2PSA + SPPF</text>
+    <text x="985" y="158" text-anchor="end" font-family="JetBrains Mono" font-size="10" fill="#64748b">P1/2 → P5/32</text>
+  </g>
+
+  <!-- Stem -->
+  <g class="blk">
+    <rect x="60" y="180" width="120" height="50" rx="6" fill="#0f172a"/>
+    <rect x="60" y="180" width="120" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+    <text x="120" y="202" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Conv 3×3 s2</text>
+    <text x="120" y="218" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">64ch · P1/2</text>
+  </g>
+  <g class="blk">
+    <rect x="60" y="245" width="120" height="50" rx="6" fill="#0f172a"/>
+    <rect x="60" y="245" width="120" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+    <text x="120" y="267" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Conv 3×3 s2</text>
+    <text x="120" y="283" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">128ch · P2/4</text>
+  </g>
+
+  <!-- Stage 1: C3k2 256 e=0.25 -->
+  <g class="blk">
+    <rect x="220" y="245" width="140" height="50" rx="6" fill="#0f172a"/>
+    <rect x="220" y="245" width="140" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+    <text x="290" y="267" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">C3k2 ×2</text>
+    <text x="290" y="283" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">256ch · e=0.25</text>
+  </g>
+
+  <!-- Down Conv 256 P3/8 -->
+  <g class="blk">
+    <rect x="400" y="245" width="120" height="50" rx="6" fill="#0f172a"/>
+    <rect x="400" y="245" width="120" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+    <text x="460" y="267" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Conv 3×3 s2</text>
+    <text x="460" y="283" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">256ch · P3/8</text>
+  </g>
+
+  <!-- Stage 2: C3k2 512 e=0.25 -->
+  <g class="blk">
+    <rect x="560" y="245" width="140" height="50" rx="6" fill="#0f172a"/>
+    <rect x="560" y="245" width="140" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+    <text x="630" y="267" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">C3k2 ×2</text>
+    <text x="630" y="283" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">512ch · e=0.25</text>
+  </g>
+
+  <!-- Down Conv 512 P4/16 -->
+  <g class="blk">
+    <rect x="740" y="245" width="120" height="50" rx="6" fill="#0f172a"/>
+    <rect x="740" y="245" width="120" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+    <text x="800" y="267" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Conv 3×3 s2</text>
+    <text x="800" y="283" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">512ch · P4/16</text>
+  </g>
+
+  <!-- Stage 3: C3k2 512 csp=True -->
+  <g class="blk">
+    <rect x="60" y="345" width="140" height="50" rx="6" fill="#0f172a"/>
+    <rect x="60" y="345" width="140" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+    <text x="130" y="367" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">C3k2 ×2</text>
+    <text x="130" y="383" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">512ch · csp</text>
+  </g>
+
+  <!-- Down Conv 1024 P5/32 -->
+  <g class="blk">
+    <rect x="220" y="345" width="120" height="50" rx="6" fill="#0f172a"/>
+    <rect x="220" y="345" width="120" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+    <text x="280" y="367" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Conv 3×3 s2</text>
+    <text x="280" y="383" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">1024ch · P5/32</text>
+  </g>
+
+  <!-- Stage 4: C3k2 1024 csp=True -->
+  <g class="blk">
+    <rect x="360" y="345" width="140" height="50" rx="6" fill="#0f172a"/>
+    <rect x="360" y="345" width="140" height="50" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+    <text x="430" y="367" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">C3k2 ×2</text>
+    <text x="430" y="383" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">1024ch · csp</text>
+  </g>
+
+  <!-- SPPF -->
+  <g class="blk">
+    <rect x="520" y="345" width="140" height="50" rx="6" fill="#0f172a"/>
+    <rect x="520" y="345" width="140" height="50" rx="6" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="590" y="367" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">SPPF</text>
+    <text x="590" y="383" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">k=5 · 1024ch</text>
+  </g>
+
+  <!-- C2PSA (attention) -->
+  <g class="blk">
+    <rect x="680" y="345" width="170" height="50" rx="6" fill="#0f172a"/>
+    <rect x="680" y="345" width="170" height="50" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="765" y="367" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">C2PSA ×2</text>
+    <text x="765" y="383" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a78bfa">1024ch · PSA 注意力</text>
+  </g>
+
+  <!-- Stem-> Stage1 arrows -->
+  <line x1="180" y1="74" x2="120" y2="180" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="120" y1="230" x2="120" y2="245" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="180" y1="270" x2="220" y2="270" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="360" y1="270" x2="400" y2="270" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="520" y1="270" x2="560" y2="270" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="700" y1="270" x2="740" y2="270" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+
+  <!-- P3 → Stage 3 -->
+  <path d="M 800 295 L 800 320 L 130 320 L 130 345" stroke="#64748b" stroke-width="1.2" fill="none" marker-end="url(#arr)"/>
+  <line x1="200" y1="370" x2="220" y2="370" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="340" y1="370" x2="360" y2="370" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="500" y1="370" x2="520" y2="370" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="660" y1="370" x2="680" y2="370" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+
+  <!-- P3 / P4 / P5 tap-off labels -->
+  <g>
+    <circle cx="630" cy="270" r="4" fill="#22d3ee"/>
+    <text x="630" y="240" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#22d3ee">P3/8 tap</text>
+    <circle cx="800" cy="270" r="4" fill="#22d3ee"/>
+    <text x="800" y="240" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#22d3ee">P4/16 tap</text>
+    <circle cx="430" cy="370" r="4" fill="#22d3ee"/>
+    <text x="430" y="418" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#22d3ee">P5/32 tap</text>
+  </g>
+
+  <!-- P3/P4 skip arrows to neck (will be drawn after neck) -->
+
+  <!-- =================== NECK (FPN + PAN) =================== -->
+  <g>
+    <rect x="30" y="610" width="970" height="320" rx="10"
+          fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.7"/>
+    <text x="50" y="633" font-family="JetBrains Mono" font-size="12" font-weight="700"
+          fill="#a78bfa" letter-spacing="1">NECK  ·  PANet (FPN top-down + PAN bottom-up)</text>
+    <text x="985" y="633" text-anchor="end" font-family="JetBrains Mono" font-size="10" fill="#64748b">多尺度特征融合</text>
+  </g>
+
+  <!-- Top-down path -->
+  <!-- Upsample 2x (from P5) -->
+  <g class="blk">
+    <rect x="60" y="660" width="120" height="44" rx="6" fill="#0f172a"/>
+    <rect x="60" y="660" width="120" height="44" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="120" y="681" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Upsample 2×</text>
+    <text x="120" y="696" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a78b8a">P5 → 40×40</text>
+  </g>
+  <!-- Concat P4 -->
+  <g class="blk">
+    <rect x="220" y="660" width="120" height="44" rx="6" fill="#0f172a"/>
+    <rect x="220" y="660" width="120" height="44" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="280" y="681" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Concat</text>
+    <text x="280" y="696" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a78b8a">[up, P4]</text>
+  </g>
+  <!-- C3k2 512 csp -->
+  <g class="blk">
+    <rect x="380" y="660" width="160" height="44" rx="6" fill="#0f172a"/>
+    <rect x="380" y="660" width="160" height="44" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="460" y="681" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">C3k2 ×2</text>
+    <text x="460" y="696" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a78b8a">512ch · csp</text>
+  </g>
+
+  <!-- Upsample 2x (to P3) -->
+  <g class="blk">
+    <rect x="580" y="660" width="120" height="44" rx="6" fill="#0f172a"/>
+    <rect x="580" y="660" width="120" height="44" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="640" y="681" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Upsample 2×</text>
+    <text x="640" y="696" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a78b8a">→ 80×80</text>
+  </g>
+  <!-- Concat P3 -->
+  <g class="blk">
+    <rect x="740" y="660" width="120" height="44" rx="6" fill="#0f172a"/>
+    <rect x="740" y="660" width="120" height="44" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="800" y="681" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Concat</text>
+    <text x="800" y="696" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a78b8a">[up, P3]</text>
+  </g>
+  <!-- C3k2 256 csp - P3 out -->
+  <g class="blk">
+    <rect x="900" y="660" width="80" height="44" rx="6" fill="#0f172a"/>
+    <rect x="900" y="660" width="80" height="44" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="940" y="681" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#e2e8f0">C3k2 ×2</text>
+    <text x="940" y="696" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#a78b8a">256ch</text>
+  </g>
+
+  <!-- Bottom-up path -->
+  <g class="blk">
+    <rect x="60" y="800" width="120" height="44" rx="6" fill="#0f172a"/>
+    <rect x="60" y="800" width="120" height="44" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="120" y="821" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Conv 3×3 s2</text>
+    <text x="120" y="836" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a78b8a">P3 → P4</text>
+  </g>
+  <g class="blk">
+    <rect x="220" y="800" width="120" height="44" rx="6" fill="#0f172a"/>
+    <rect x="220" y="800" width="120" height="44" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="280" y="821" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Concat</text>
+    <text x="280" y="836" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a78b8a">[down, P4_n]</text>
+  </g>
+  <g class="blk">
+    <rect x="380" y="800" width="160" height="44" rx="6" fill="#0f172a"/>
+    <rect x="380" y="800" width="160" height="44" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="460" y="821" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">C3k2 ×2</text>
+    <text x="460" y="836" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a78b8a">512ch · csp</text>
+  </g>
+
+  <g class="blk">
+    <rect x="580" y="800" width="120" height="44" rx="6" fill="#0f172a"/>
+    <rect x="580" y="800" width="120" height="44" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="640" y="821" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Conv 3×3 s2</text>
+    <text x="640" y="836" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a78b8a">P4 → P5</text>
+  </g>
+  <g class="blk">
+    <rect x="740" y="800" width="120" height="44" rx="6" fill="#0f172a"/>
+    <rect x="740" y="800" width="120" height="44" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="800" y="821" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Concat</text>
+    <text x="800" y="836" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a78b8a">[down, P5_n]</text>
+  </g>
+  <g class="blk">
+    <rect x="900" y="800" width="80" height="44" rx="6" fill="#0f172a"/>
+    <rect x="900" y="800" width="80" height="44" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="940" y="821" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#e2e8f0">C3k2 ×2</text>
+    <text x="940" y="836" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#a78b8a">1024ch</text>
+  </g>
+
+  <!-- Backbone P5 → Neck upsample -->
+  <line x1="765" y1="395" x2="765" y2="500" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arr)"/>
+  <path d="M 765 500 L 765 600 L 120 600 L 120 660" stroke="#22d3ee" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+
+  <!-- Backbone P4 → Neck concat (skip) -->
+  <path d="M 800 295 L 800 500 L 280 500 L 280 660" stroke="#22d3ee" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+
+  <!-- Backbone P3 → Neck concat (skip) -->
+  <path d="M 630 295 L 630 500 L 800 500 L 800 660" stroke="#22d3ee" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+
+  <!-- top-down flow -->
+  <line x1="180" y1="682" x2="220" y2="682" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="340" y1="682" x2="380" y2="682" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="540" y1="682" x2="580" y2="682" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="700" y1="682" x2="740" y2="682" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="860" y1="682" x2="900" y2="682" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+
+  <!-- P3_out (940,704) → P3_down -->
+  <path d="M 940 704 L 940 760 L 120 760 L 120 800" stroke="#a78bfa" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <!-- P4_n (460,704) → concat down -->
+  <path d="M 460 704 L 460 760 L 280 760 L 280 800" stroke="#a78bfa" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <!-- P5_n (765,704) → Conv down at 640 -->
+  <line x1="180" y1="822" x2="220" y2="822" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="340" y1="822" x2="380" y2="822" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="540" y1="822" x2="580" y2="822" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="700" y1="822" x2="740" y2="822" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="860" y1="822" x2="900" y2="822" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+
+  <!-- Neck tap-off to head: P3=940,682 ; P4=460,822 ; P5=940,822 -->
+  <g>
+    <circle cx="940" cy="682" r="5" fill="#a78bfa"/>
+    <text x="990" y="686" font-family="JetBrains Mono" font-size="10" fill="#a78bfa">P3 out</text>
+    <circle cx="460" cy="822" r="5" fill="#a78bfa"/>
+    <text x="510" y="826" font-family="JetBrains Mono" font-size="10" fill="#a78bfa">P4 out</text>
+    <circle cx="940" cy="822" r="5" fill="#a78bfa"/>
+    <text x="990" y="826" font-family="JetBrains Mono" font-size="10" fill="#a78bfa">P5 out</text>
+  </g>
+
+  <!-- =================== HEAD (Segment26) =================== -->
+  <g>
+    <rect x="1030" y="135" width="420" height="795" rx="10"
+          fill="none" stroke="#34d399" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.7"/>
+    <text x="1050" y="158" font-family="JetBrains Mono" font-size="12" font-weight="700"
+          fill="#34d399" letter-spacing="1">HEAD  ·  Segment26 (DFL-free · 双头)</text>
+    <text x="1435" y="158" text-anchor="end" font-family="JetBrains Mono" font-size="10" fill="#64748b">DFL-free · e2e default</text>
+  </g>
+
+  <!-- Box regression branch -->
+  <g>
+    <text x="1050" y="190" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#34d399" letter-spacing="1">▸ BOX REGRESSION (DFL-free)</text>
+    <rect x="1050" y="200" width="380" height="60" rx="6" fill="#0f172a"/>
+    <rect x="1050" y="200" width="380" height="60" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+    <text x="1240" y="222" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">回归分支</text>
+    <text x="1240" y="240" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">reg_max=1 · 取消 DFL · 保留无约束回归范围</text>
+  </g>
+
+  <!-- Class branch -->
+  <g>
+    <text x="1050" y="290" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#34d399" letter-spacing="1">▸ CLASSIFICATION (BCE)</text>
+    <rect x="1050" y="300" width="380" height="60" rx="6" fill="#0f172a"/>
+    <rect x="1050" y="300" width="380" height="60" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+    <text x="1240" y="322" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">分类分支</text>
+    <text x="1240" y="340" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">nc 个类别 · Sigmoid · Task-Aligned Assigner</text>
+  </g>
+
+  <!-- Mask coefficients -->
+  <g>
+    <text x="1050" y="390" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#34d399" letter-spacing="1">▸ MASK COEFFICIENTS (32 维)</text>
+    <rect x="1050" y="400" width="380" height="60" rx="6" fill="#0f172a"/>
+    <rect x="1050" y="400" width="380" height="60" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+    <text x="1240" y="422" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Mask 系数</text>
+    <text x="1240" y="440" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">每个实例 32 维向量 · 与 proto 线性组合</text>
+  </g>
+
+  <!-- Proto module -->
+  <g>
+    <text x="1050" y="490" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#fbbf24" letter-spacing="1">▸ PROTO MODULE (多尺度 · 升级版)</text>
+    <rect x="1050" y="500" width="380" height="80" rx="6" fill="#0f172a"/>
+    <rect x="1050" y="500" width="380" height="80" rx="6" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="1240" y="522" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">Up-proto × 3 尺度融合</text>
+    <text x="1240" y="540" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">P3 + P4 + P5 → 256 通道</text>
+    <text x="1240" y="556" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">→ 160×160 → 上采样 4× → 640×640 mask 原型</text>
+  </g>
+
+  <!-- Sem seg loss -->
+  <g>
+    <text x="1050" y="610" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#a78bfa" letter-spacing="1">▸ SEMANTIC SEG AUX LOSS</text>
+    <rect x="1050" y="620" width="380" height="50" rx="6" fill="#0f172a"/>
+    <rect x="1050" y="620" width="380" height="50" rx="6" fill="rgba(76,29,149,0.3)" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="1240" y="640" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">语义分割辅助损失</text>
+    <text x="1240" y="658" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a78b8a">加速收敛 · 提升 mask 质量</text>
+  </g>
+
+  <!-- Dual head -->
+  <g>
+    <text x="1050" y="700" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#fb7185" letter-spacing="1">▸ DUAL DETECTION HEAD</text>
+
+    <!-- 1-to-1 (default e2e) -->
+    <rect x="1050" y="710" width="185" height="100" rx="6" fill="#0f172a"/>
+    <rect x="1050" y="710" width="185" height="100" rx="6" fill="rgba(136,19,55,0.4)" stroke="#fb7185" stroke-width="1.5"/>
+    <text x="1142" y="732" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#fb7185">1-to-1 HEAD</text>
+    <text x="1142" y="752" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">NMS-free · e2e</text>
+    <text x="1142" y="772" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">默认推理头</text>
+    <text x="1142" y="790" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#fb7185">(N, 300, 6)</text>
+
+    <!-- 1-to-many (aux) -->
+    <rect x="1245" y="710" width="185" height="100" rx="6" fill="#0f172a"/>
+    <rect x="1245" y="710" width="185" height="100" rx="6" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="1337" y="732" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#fbbf24">1-to-MANY HEAD</text>
+    <text x="1337" y="752" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#e2e8f0">传统 NMS</text>
+    <text x="1337" y="772" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#94a3b8">训练辅助头</text>
+    <text x="1337" y="790" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#fbbf24">(N, nc+4, 8400)</text>
+  </g>
+
+  <!-- Output -->
+  <g>
+    <text x="1050" y="845" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#34d399" letter-spacing="1">▸ OUTPUT</text>
+    <rect x="1050" y="855" width="380" height="60" rx="6" fill="#0f172a"/>
+    <rect x="1050" y="855" width="380" height="60" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+    <text x="1240" y="877" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#34d399">Segmentation Result</text>
+    <text x="1240" y="897" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#cbd5e1">boxes + class scores + per-instance masks</text>
+  </g>
+  <!-- arrow from P3/P4/P5 taps to head input -->
+  <path d="M 940 682 L 990 682 L 990 230 L 1050 230" stroke="#a78bfa" stroke-width="1.5" fill="none" marker-end="url(#arrEm)"/>
+  <path d="M 460 822 L 510 822 L 990 330 L 1050 330" stroke="#a78bfa" stroke-width="1.5" fill="none" marker-end="url(#arrEm)"/>
+  <path d="M 940 822 L 990 822 L 990 430 L 1050 430" stroke="#a78bfa" stroke-width="1.5" fill="none" marker-end="url(#arrEm)"/>
+  <path d="M 940 822 L 990 822 L 990 540 L 1050 540" stroke="#a78bfa" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+
+  <!-- =================== LOSS / TRAINING (right side) =================== -->
+  <g>
+    <rect x="1030" y="950" width="420" height="200" rx="10"
+          fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.7"/>
+    <text x="1050" y="973" font-family="JetBrains Mono" font-size="12" font-weight="700"
+          fill="#fbbf24" letter-spacing="1">TRAINING RECIPE</text>
+
+    <text x="1050" y="998" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#fbbf24">▸ MuSGD Optimizer</text>
+    <text x="1075" y="1014" font-family="JetBrains Mono" font-size="9" fill="#cbd5e1">SGD + Muon 混合 · LLM 训练思想迁移到 CV</text>
+
+    <text x="1050" y="1038" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#fbbf24">▸ Progressive Loss</text>
+    <text x="1075" y="1054" font-family="JetBrains Mono" font-size="9" fill="#cbd5e1">训练重心从辅助 1-to-many 头 → 推理 1-to-1 头</text>
+
+    <text x="1050" y="1078" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#fbbf24">▸ STAL (Small-Target Aware Label)</text>
+    <text x="1075" y="1094" font-family="JetBrains Mono" font-size="9" fill="#cbd5e1">小目标正样本覆盖率提升 · 对细胞/小目标友好</text>
+
+    <text x="1050" y="1118" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="#fbbf24">▸ Semantic Seg Aux Loss</text>
+    <text x="1075" y="1134" font-family="JetBrains Mono" font-size="9" fill="#cbd5e1">辅助语义分割损失 · +2.5 box / +3.7 mask AP (vs YOLO11)</text>
+  </g>
+
+  <!-- =================== Side panel: specs =================== -->
+  <g>
+    <rect x="30" y="950" width="970" height="200" rx="10"
+          fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6"/>
+    <text x="50" y="973" font-family="JetBrains Mono" font-size="12" font-weight="700"
+          fill="#94a3b8" letter-spacing="1">YOLO26s-seg · SPEC SHEET</text>
+
+    <g font-family="JetBrains Mono" font-size="10" fill="#cbd5e1">
+      <text x="50" y="1000">任务</text>      <text x="180" y="1000" fill="#22d3ee">Instance Segmentation · 细胞分割</text>
+      <text x="50" y="1018">输入</text>      <text x="180" y="1018" fill="#e2e8f0">640 × 640 × 3 (RGB)</text>
+      <text x="50" y="1036">Backbone</text>  <text x="180" y="1036" fill="#e2e8f0">Conv + 4× C3k2 + SPPF + C2PSA</text>
+      <text x="50" y="1054">Neck</text>      <text x="180" y="1054" fill="#e2e8f0">PANet (FPN top-down + PAN bottom-up)</text>
+      <text x="50" y="1072">Head</text>      <text x="180" y="1072" fill="#e2e8f0">Segment26 · DFL-free · 双检测头 (e2e + NMS)</text>
+      <text x="50" y="1090">层数 / 参数量</text> <text x="180" y="1090" fill="#e2e8f0">309 层 · 11.5M params (s) · 37.4 GFLOPs</text>
+      <text x="50" y="1108">COCO mAP (seg)</text><text x="180" y="1108" fill="#34d399">box +2.5 AP · mask +3.7 AP (vs YOLO11)</text>
+      <text x="50" y="1126">推理速度</text>  <text x="180" y="1126" fill="#e2e8f0">T4 TensorRT 2.5ms · CPU ONNX 87ms</text>
+
+      <text x="490" y="1000">★ 关键创新</text>
+      <text x="560" y="1000" fill="#fbbf24">DFL-free box regression</text>
+      <text x="490" y="1018">★ 关键创新</text>
+      <text x="560" y="1018" fill="#fbbf24">NMS-free end-to-end</text>
+      <text x="490" y="1036">★ 关键创新</text>
+      <text x="560" y="1036" fill="#fbbf24">MuSGD 优化器</text>
+      <text x="490" y="1054">★ 关键创新</text>
+      <text x="560" y="1054" fill="#fbbf24">STAL 小目标增强</text>
+      <text x="490" y="1072">★ 关键创新</text>
+      <text x="560" y="1072" fill="#fbbf24">Up-proto 多尺度</text>
+      <text x="490" y="1090">★ 关键创新</text>
+      <text x="560" y="1090" fill="#fbbf24">Sem seg aux loss</text>
+      <text x="490" y="1108">★ 论文</text>
+      <text x="560" y="1108" fill="#94a3b8">arXiv:2606.03748 (2026)</text>
+      <text x="490" y="1126">★ 仓库</text>
+      <text x="560" y="1126" fill="#94a3b8">github.com/ultralytics/ultralytics</text>
+    </g>
+  </g>
+
+</svg>
