@@ -74,8 +74,16 @@
     th, td { border-bottom: 1px solid var(--line); padding: 9px 10px; vertical-align: top; text-align: left; }
     th { color: var(--accent); background: rgba(125,211,252,.08); font-weight: 600; }
     td { color: #edf3ff; }
-    .slide.tight table { font-size: 14.5px; }
-    .slide.tight th, .slide.tight td { padding: 7px 9px; }
+    .slide.tight table { font-size: 13.5px; }
+    .slide.tight th, .slide.tight td { padding: 6px 8px; line-height: 1.35; }
+    .slide.tight .arch { margin: 6px 0; }
+    .slide.tight.denser table { font-size: 12.5px; }
+    .slide.tight.denser th, .slide.tight.denser td { padding: 4px 7px; line-height: 1.3; }
+    .slide.tight .layer { padding: 5px 8px; font-size: 12.5px; }
+    .slide.tight .box { padding: 9px 12px; }
+    .slide.tight h3, .slide.tight .box h4 { margin: 6px 0 3px; font-size: 15.5px; }
+    .slide.tight p, .slide.tight li { margin: 2px 0; }
+    .slide.tight ol, .slide.tight ul { margin-top: 4px; }
 
     .foot { position: fixed; left: 0; right: 0; bottom: 26px; height: 26px; display: flex; align-items: center; justify-content: space-between; padding: 0 26px; color: var(--muted); font-size: 13px; z-index: 5; }
     .progress { position: fixed; left: 0; bottom: 22px; height: 3px; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .2s; z-index: 5; }
@@ -622,6 +630,253 @@
         </div>
         <div class="diag-flow" style="margin: 0 0 2px;">↑ &nbsp;&nbsp; ↑ &nbsp;&nbsp; ↑ &nbsp;&nbsp; ↑</div>
         <div class="diag-flow" style="font-size: 13px;">闭环：现场数据 → 在线层 → 记忆库 → L3 蒸馏 → 灰度回灌主模型（受工业级保护层约束）</div>
+      </div>
+    </div></section>
+
+    <!-- ============== 16. 工程实现 - 组件 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>12. 工程实现：边缘端组件架构</h2>
+      <p class="small">建议把系统拆成 3 个独立 service，便于在边缘容器 / K8s pod 中独立升级和回滚：</p>
+      <div class="grid3">
+        <div class="box">
+          <h4>inference_service</h4>
+          <p class="small">推理主链路，<b>实时最关键</b>。</p>
+          <div class="arch" style="flex-direction: column; align-items: stretch;">
+            <span class="layer yolo">yolo_engine</span>
+            <span class="layer feat">roi_feature_engine</span>
+            <span class="layer eye">domain_monitor</span>
+            <span class="layer adapt">online_adapter</span>
+            <span class="layer mem">memory_retriever</span>
+            <span class="layer dec">decision_fusion</span>
+            <span class="layer">sample_logger</span>
+          </div>
+        </div>
+        <div class="box">
+          <h4>memory_service</h4>
+          <p class="small">记忆与样本管理，<b>读多写少</b>。</p>
+          <div class="arch" style="flex-direction: column; align-items: stretch;">
+            <span class="layer g">short_term_memory</span>
+            <span class="layer g">long_term_prototype_db</span>
+            <span class="layer o">hard_sample_buffer</span>
+            <span class="layer">version_manager</span>
+          </div>
+        </div>
+        <div class="box">
+          <h4>ops_service</h4>
+          <p class="small">运维与人机反馈，<b>异步可降级</b>。</p>
+          <div class="arch" style="flex-direction: column; align-items: stretch;">
+            <span class="layer y">model_version_manager</span>
+            <span class="layer r">rollback_manager</span>
+            <span class="layer">telemetry_uploader</span>
+            <span class="layer p">human_feedback_importer</span>
+          </div>
+        </div>
+      </div>
+      <p class="small muted" style="margin-top: 10px;">inference_service 单进程内低延迟；memory_service 可独立水平扩展；ops_service 即使挂了推理仍能跑（只是失去远端遥测和反馈通路）。</p>
+    </div></section>
+
+    <!-- ============== 17. 工程实现 - 存储与日志 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>12.1 工程实现：存储方案 + 关键日志</h2>
+      <div class="grid2">
+        <div class="box">
+          <h4>💾 存储方案</h4>
+          <p class="small"><b>轻量实现：</b></p>
+          <ul class="small">
+            <li>SQLite 保存元数据</li>
+            <li>FAISS / HNSW 保存向量索引</li>
+            <li>本地文件系统保存 ROI 图片</li>
+            <li>JSON / YAML 保存阈值和版本配置</li>
+          </ul>
+          <p class="small" style="margin-top: 6px;"><b>中大型部署：</b></p>
+          <ul class="small">
+            <li>PostgreSQL 元数据</li>
+            <li>Milvus / Qdrant 向量库</li>
+            <li>MinIO / NAS 样本存储</li>
+            <li>Grafana / Prometheus 监控</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>📝 每个目标的 13 字段关键日志</h4>
+          <div class="arch" style="flex-direction: column; align-items: stretch; gap: 3px;">
+            <span class="layer">timestamp · machine_id · camera_id</span>
+            <span class="layer">material_id · batch_id</span>
+            <span class="layer">image_quality · domain_shift_score</span>
+            <span class="layer yolo">yolo_class · yolo_score</span>
+            <span class="layer dec">final_class · final_score · decision</span>
+            <span class="layer mem">memory_top1_class · memory_top1_similarity</span>
+            <span class="layer y">adapter_version · memory_version · model_version</span>
+          </div>
+          <p class="small" style="margin-top: 8px;">日志是 <b>售后定位 / 模型升级 / 客户效果评估</b> 的核心资产，必须<b>版本化、可恢复</b>。</p>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- ============== 17. 指标体系 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>13. 指标体系：离线 / 在线 / 业务三层</h2>
+      <div class="grid3">
+        <div class="box">
+          <h4>📊 离线指标</h4>
+          <ul class="small">
+            <li>mAP</li>
+            <li>precision / recall / F1</li>
+            <li>per-class AP</li>
+            <li>小目标召回率</li>
+            <li>缺陷召回率</li>
+            <li>正常样本误剔率</li>
+            <li>低置信样本比例</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>🟢 在线指标</h4>
+          <ul class="small">
+            <li>误剔率 / 漏剔率</li>
+            <li>喷阀触发稳定性</li>
+            <li>当前批次低置信比例</li>
+            <li>记忆库命中率</li>
+            <li>YOLO × memory 冲突率</li>
+            <li>TTA 更新次数</li>
+            <li>回滚次数</li>
+            <li>每小时新增困难样本数</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>💰 业务指标</h4>
+          <ul class="small">
+            <li>成品纯度</li>
+            <li>带出比</li>
+            <li>产能</li>
+            <li>客户人工复检量</li>
+            <li>换批次后稳定时间</li>
+            <li>新物料适应时间</li>
+          </ul>
+        </div>
+      </div>
+      <p class="small" style="margin-top: 8px;">三类指标必须<b>分层上报</b>：离线做模型质量评估、在线做实时监控与告警、业务指标做客户 ROI 评估。</p>
+    </div></section>
+
+    <!-- ============== 18. 分阶段落地路线 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>14. 分阶段落地路线：4 阶段逐步升级</h2>
+      <div class="timeline" style="padding-left: 24px;">
+        <div class="event">
+          <p><span class="year">阶段 1</span><b>稳定版自适应（不改权重）</b> · 周期 2–4 周</p>
+          <p class="small">交付：图像质量监控 + 动态阈值 + 批次统计 + 高置信样本记录 + 困难样本池 + 基础报表<br>
+          目标：提升换批次 / 光照变化下的稳定性；建立记忆库数据基础</p>
+        </div>
+        <div class="event">
+          <p><span class="year">阶段 2</span><b>原型记忆库</b> · 周期 4–8 周</p>
+          <p class="small">交付：ROI embedding + 短期记忆 + 长期 prototype + FAISS/HNSW 检索 + YOLO+memory 分数融合 + 记忆库版本化<br>
+          目标：让系统利用历史经验修正边界样本；减少低置信和轻微 domain shift 误判</p>
+        </div>
+        <div class="event">
+          <p><span class="year">阶段 3</span><b>轻量 TTA</b> · 周期 6–10 周</p>
+          <p class="small">交付：BN / adapter / calibration 在线更新 + teacher-student EMA + 类别自适应伪标签阈值 + 防漂移回滚 + shadow model 评估<br>
+          目标：支持连续漂移和周期性变化；不全量重训也能提升长期表现</p>
+        </div>
+        <div class="event">
+          <p><span class="year">阶段 4</span><b>蒸馏升级闭环</b> · 长期迭代</p>
+          <p class="small">交付：人工纠错工具 + 困难样本主动学习 + foundation model 辅助标注 + Teacher ensemble + 轻量 YOLO student 蒸馏 + 灰度发布 + 回滚<br>
+          目标：把现场经验沉淀为新模型版本；支持客户和物料个性化</p>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- ============== 19. 推荐技术组合 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>15. 推荐技术组合：第一版 vs 增强版</h2>
+      <div class="grid2">
+        <div class="box">
+          <h4>第一版（最小可用）</h4>
+          <div class="arch" style="flex-direction: column; align-items: stretch;">
+            <span class="layer yolo">YOLO 主模型</span>
+            <span class="layer feat">YOLO 中间层 + 轻量 projection head</span>
+            <span class="layer mem">FAISS + SQLite</span>
+            <span class="layer adapt">动态阈值 + BN 统计更新 + temperature calibration</span>
+            <span class="layer g">高置信门控 + 多帧一致性 + 版本回滚</span>
+            <span class="layer p">周期性离线蒸馏（不实时）</span>
+          </div>
+        </div>
+        <div class="box">
+          <h4>增强版（生产可扩）</h4>
+          <div class="arch" style="flex-direction: column; align-items: stretch;">
+            <span class="layer yolo">YOLO 主模型 + YOLO-World / Grounding DINO 辅助</span>
+            <span class="layer adapt">Mean Teacher + adaptive pseudo-label threshold + adapter</span>
+            <span class="layer mem">short-term memory + long-term prototypes + hard sample buffer</span>
+            <span class="layer y">Teacher ensemble / Foundation → edge YOLO student</span>
+            <span class="layer p">开放词汇辅助发现未知类</span>
+            <span class="layer g">shadow model 评估 + 影子模式灰度发布</span>
+          </div>
+        </div>
+      </div>
+      <p class="small" style="margin-top: 8px;">建议 <b>第一版先用 4-6 周跑通</b>，让客户看到"自适应有效果"，再根据业务指标分阶段引入增强版能力。</p>
+    </div></section>
+
+    <!-- ============== 21. 相关论文速览 ============== -->
+    <section class="slide tight denser"><div class="card">
+      <h2>16. 相关论文速览（20 篇，分 5 类）</h2>
+      <table>
+        <thead>
+          <tr><th style="width: 18%;">类别</th><th>代表论文 · arXiv 编号 · 与本方案关系</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag y">YOLO / 农业 / 工业检测</span></td>
+            <td class="small"><b>YOLO-World</b> 2401.17270 开放词汇检测； <b>YOLO-UniOW</b> 2412.20645 开放世界 unknown； <b>HyperDefect-YOLO</b> 2412.03969 工业缺陷； <b>Agricultural YOLO Review</b> 2401.10379 农业综述</td>
+          </tr>
+          <tr>
+            <td><span class="tag p">TTA 基础方法</span></td>
+            <td class="small"><b>Tent</b> 2006.10726 熵最小化 + 归一化层更新； <b>CoTTA</b> 2203.13591 Teacher 平均 + 随机恢复； <b>Variational CTTA</b> 2402.08182 不确定性缓解 prior drift； <b>CTTA 评测</b> 2208.08767 选型参考</td>
+          </tr>
+          <tr>
+            <td><span class="tag g">检测 SFDA / TTA / CTTA</span></td>
+            <td class="small"><b>AMROD</b> 2406.16439 目标检测 CTTA + 类别动态阈值 + 防遗忘（<b>高度相关</b>）； <b>SF-YOLO</b> 2409.16538 YOLO source-free DA； <b>Simplifying SFOD</b> 2407.07586 BN + 简单自训练； <b>Video SFDA</b> 2404.15252 视频恶劣成像； <b>Foundation TTA Detection</b> 2510.25175 Instance Dynamic Memory（<b>与本方案记忆库非常接近</b>）</td>
+          </tr>
+          <tr>
+            <td><span class="tag o">开放集 / 未知类</span></td>
+            <td class="small"><b>Grounding DINO</b> 2303.05499 开放集检测； <b>Grounding DINO 1.5 Edge</b> 2405.10300 边缘版； <b>VLOD-TTA</b> 2510.00458 视觉语言检测器 TTA； <b>Bayesian TTA VL</b> 2510.02750 动态 cache + class prior + 零反向传播（<b>边缘极友好</b>）</td>
+          </tr>
+          <tr>
+            <td><span class="tag">记忆 / 缓存 TTA 思想</span></td>
+            <td class="small"><b>Noisy TTA in VLM</b> 2502.14604 noisy/OOD 损害 TTA → 异常样本不直接学习； <b>Ultra-Light TTA VLM</b> 2511.09101 冻结 backbone，只更新原型 / 类别先验 / 温度（<b>工业边缘极适合</b>）</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="small muted" style="margin-top: 6px;">完整 arXiv 链接与相关性见 sort.md 第 14 节（<span style="font-family: ui-monospace, monospace;">https://arxiv.org/abs/&lt;编号&gt;</span>）。</p>
+    </div></section>
+
+    <!-- ============== 21. 风险与结论 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>17. 风险与结论</h2>
+      <div class="grid2">
+        <div class="box">
+          <h4>⚠ 风险与注意事项（6 条）</h4>
+          <ol class="small">
+            <li>TTA <b>不是万能</b>：物料类别变化大时仍需人工确认或离线升级</li>
+            <li>记忆库<b>不能无门槛自动写入</b>，否则出现确认偏差</li>
+            <li>现场自适应必须<b>可关闭 / 可回滚 / 可追踪</b></li>
+            <li>边缘设备<b>不要引入过重 foundation model</b> 作为实时主控</li>
+            <li>开放词汇模型只做<b>辅助发现 / 标注建议 / 低频复核</b>，不直接控制喷阀</li>
+            <li>高价值珠宝：<b>优先控制漏检</b>；大产量农产品：<b>同时关注误剔率 + 产能</b></li>
+          </ol>
+        </div>
+        <div class="box">
+          <h4>✅ 推荐技术路线（结论）</h4>
+          <div class="arch" style="flex-direction: column; align-items: stretch;">
+            <span class="layer yolo">稳定 YOLO 主模型</span>
+            <span class="layer eye">图像质量与批次状态监控</span>
+            <span class="layer adapt">动态阈值与轻量 TTA</span>
+            <span class="layer g">短期批次记忆</span>
+            <span class="layer g">长期类别原型库</span>
+            <span class="layer o">困难样本池</span>
+            <span class="layer y">周期性蒸馏升级</span>
+          </div>
+          <p class="small" style="margin-top: 8px;">兼顾<b>工业稳定性 · 实时性 · 可解释性 · 持续进化</b>。</p>
+        </div>
+      </div>
+      <div class="quote" style="margin-top: 10px;">
+        短期先做 <b>不改权重的自适应 + 记忆库</b>；中期引入 BN / adapter / teacher-student；长期通过蒸馏和模型版本管理形成"<b>越用越聪明</b>"的精选机 / 色选机 AI 系统。
       </div>
     </div></section>
 
