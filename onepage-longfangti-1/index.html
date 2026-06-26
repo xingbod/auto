@@ -162,7 +162,6 @@
     color: var(--ink);
   }
 
-  /* subhead */
   h4.sub {
     font-size: 14px;
     font-weight: 700;
@@ -258,7 +257,7 @@
   .lister li b { color: var(--ink); }
   .lister li code { font-size: 12px; }
 
-  /* scenario cards */
+  /* scenario cards (5 种表面积情境) */
   .scn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 10px 0; }
   .scn {
     padding: 12px 14px;
@@ -303,31 +302,6 @@
   .scn.chim .form { background: #eef2ff; }
   .scn.wall .form { background: #f0fdf4; }
   .scn.pool .form { background: #ecfeff; }
-
-  /* unfold summary list */
-  .unf-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin: 10px 0;
-  }
-  .unf {
-    padding: 10px 12px;
-    background: var(--m3-soft);
-    border: 1px solid #fbcfe8;
-    border-radius: 6px;
-    font-size: 13px;
-    color: var(--ink-2);
-  }
-  .unf b { color: var(--m3-deep); }
-  .unf .shape {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 12.5px;
-    color: var(--m3-deep);
-    white-space: pre;
-    line-height: 1.3;
-    margin: 4px 0;
-  }
 
   /* 11 nets grid */
   .nets-grid {
@@ -429,7 +403,7 @@
 
   @media (max-width: 640px) {
     header, section { padding-left: 22px; padding-right: 22px; }
-    .ov-grid, .tldr, .scn-grid, .unf-list { grid-template-columns: repeat(2, 1fr); }
+    .ov-grid, .tldr, .scn-grid, .nets-grid { grid-template-columns: repeat(2, 1fr); }
     .cmp { font-size: 12.5px; }
     .cmp th, .cmp td { padding: 7px 8px; }
   }
@@ -443,13 +417,14 @@
     <span class="tag">小学数学 · 5 年级下册 · 第二单元</span>
     <h1>长方体(一)到底<span class="q">考什么？</span></h1>
     <p class="subtitle">
-      6 面 / 12 棱 / 8 顶点 + 表面积 5 情境 + 组合切拼挖空 + 体积容积 + 排水法,
-      一张图把第二单元所有考点摆平。
+      <b>本单元讲形状 + 表面积</b>:6 面 / 12 棱 / 8 顶点 + 表面积 5 情境 + 11 展开图 + 切拼挖空 + 露在外面 + 涂色切小。
+      <br>
+      <span style="color:var(--m1-deep);font-weight:600;">📘 体积公式 / 单位换算 / 排水法 → 详见 第四单元《长方体(二)》</span>
     </p>
     <div class="meta">
       <span class="chip">📐 <b>北师大版</b> · 5 年级下册</span>
-      <span class="chip">🎯 几何与图形 入门</span>
-      <span class="chip">📊 5 大子主题</span>
+      <span class="chip">🎯 几何与图形 · 形状 &amp; 表面积</span>
+      <span class="chip">📊 4 大子主题</span>
     </div>
   </header>
 
@@ -479,19 +454,19 @@
         <div class="en">Surface Area · 5 Cases</div>
       </div>
       <div class="ov-card c4">
-        <span class="emo">🧮</span>
-        <div class="name">体积 + 组合切拼挖空</div>
-        <div class="en">Volume · Cut · Hollow</div>
+        <span class="emo">📄</span>
+        <div class="name">11 种展开图</div>
+        <div class="en">11 Nets</div>
       </div>
       <div class="ov-card c5">
-        <span class="emo">🥤</span>
-        <div class="name">体积与容积 单位</div>
-        <div class="en">Volume &amp; Capacity</div>
+        <span class="emo">✂️</span>
+        <div class="name">切拼 + 挖空</div>
+        <div class="en">Cut &amp; Hollow</div>
       </div>
       <div class="ov-card c6">
-        <span class="emo">💧</span>
-        <div class="name">排水法</div>
-        <div class="en">Displacement Method</div>
+        <span class="emo">🎨</span>
+        <div class="name">露在外面 + 涂色切小</div>
+        <div class="en">Exposed &amp; Color Cut</div>
       </div>
     </div>
   </section>
@@ -510,7 +485,6 @@
     <div class="mod">
       <p>长方体是由 <b>6 个长方形</b>面(特殊情况下有 2 个正方形)围成的立体图形。所有公式都从 <b>6 / 12 / 8</b> 这 3 个数字出发。</p>
 
-      <!-- 简化 3D:只顶面 1 个浅色高光,其他 5 个白底+统一深绿描边 -->
       <svg viewBox="0 0 660 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;margin:10px 0;background:#f0fdfa;border:1px solid #99f6e4;border-radius:8px;">
         <defs>
           <marker id="arr1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
@@ -518,17 +492,11 @@
           </marker>
         </defs>
 
-        <!-- 顶面 (浅色高光) -->
         <polygon points="220,110 420,110 470,75 270,75" fill="#ecfdf5" stroke="#115e59" stroke-width="1.8"/>
-        <!-- 前面 (白) -->
         <polygon points="220,110 420,110 420,220 220,220" fill="white" stroke="#115e59" stroke-width="1.8"/>
-        <!-- 右面 (白) -->
         <polygon points="420,110 470,75 470,185 420,220" fill="white" stroke="#115e59" stroke-width="1.8"/>
-        <!-- 后面 (虚线) -->
         <polygon points="270,75 470,75 470,185 270,185" fill="none" stroke="#115e59" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
-        <!-- 底面 (虚线) -->
         <polygon points="220,220 420,220 470,185 270,185" fill="none" stroke="#115e59" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
-        <!-- 12 条棱 -->
         <g stroke="#115e59" stroke-width="2" fill="none">
           <line x1="220" y1="220" x2="420" y2="220"/>
           <line x1="420" y1="220" x2="470" y2="185"/>
@@ -543,16 +511,11 @@
           <line x1="470" y1="75" x2="470" y2="185"/>
           <line x1="270" y1="75" x2="270" y2="185"/>
         </g>
-        <!-- 8 顶点 -->
         <g fill="#be185d">
-          <circle cx="220" cy="110" r="4"/>
-          <circle cx="420" cy="110" r="4"/>
-          <circle cx="470" cy="75" r="4"/>
-          <circle cx="270" cy="75" r="4"/>
-          <circle cx="220" cy="220" r="4"/>
-          <circle cx="420" cy="220" r="4"/>
-          <circle cx="470" cy="185" r="4"/>
-          <circle cx="270" cy="185" r="4"/>
+          <circle cx="220" cy="110" r="4"/><circle cx="420" cy="110" r="4"/>
+          <circle cx="470" cy="75" r="4"/><circle cx="270" cy="75" r="4"/>
+          <circle cx="220" cy="220" r="4"/><circle cx="420" cy="220" r="4"/>
+          <circle cx="470" cy="185" r="4"/><circle cx="270" cy="185" r="4"/>
         </g>
         <text x="206" y="108" font-size="10" fill="#831843" font-weight="700">A</text>
         <text x="426" y="108" font-size="10" fill="#831843" font-weight="700">B</text>
@@ -563,17 +526,14 @@
         <text x="476" y="200" font-size="10" fill="#831843" font-weight="700">C'</text>
         <text x="256" y="200" font-size="10" fill="#831843" font-weight="700">D'</text>
 
-        <!-- 长 a:水平向右,前下沿 D→C -->
         <line x1="225" y1="245" x2="415" y2="245" stroke="#042f2e" stroke-width="1.4" marker-end="url(#arr1)"/>
         <line x1="415" y1="245" x2="225" y2="245" stroke="#042f2e" stroke-width="1.4" marker-end="url(#arr1)"/>
         <text x="320" y="262" font-size="12" fill="#042f2e" font-weight="700" text-anchor="middle">长 (a)</text>
 
-        <!-- 宽 b:从前到后水平进深,沿底面 C→C' -->
         <line x1="430" y1="218" x2="466" y2="190" stroke="#042f2e" stroke-width="1.4" marker-end="url(#arr1)"/>
         <line x1="466" y1="190" x2="430" y2="218" stroke="#042f2e" stroke-width="1.4" marker-end="url(#arr1)"/>
         <text x="500" y="208" font-size="12" fill="#042f2e" font-weight="700">宽 (b)</text>
 
-        <!-- 高 h:竖直,左前棱 A→D -->
         <line x1="190" y1="115" x2="190" y2="215" stroke="#042f2e" stroke-width="1.4" marker-end="url(#arr1)"/>
         <line x1="190" y1="215" x2="190" y2="115" stroke="#042f2e" stroke-width="1.4" marker-end="url(#arr1)"/>
         <text x="170" y="170" font-size="12" fill="#042f2e" font-weight="700" text-anchor="middle">高 (h)</text>
@@ -663,11 +623,6 @@
           <td><code>2(ab + ah + bh)</code></td>
           <td class="yes"><code>6a²</code></td>
         </tr>
-        <tr>
-          <th>体积</th>
-          <td><code>abh</code> = 底面积 × 高</td>
-          <td class="yes"><code>a³</code></td>
-        </tr>
       </table>
 
       <div class="callout">
@@ -676,13 +631,13 @@
     </div>
   </section>
 
-  <!-- 03 表面积 + 5 情境 -->
+  <!-- 03 表面积 + 5 情境 + 11 展开图 -->
   <section class="m3">
     <div class="sec-head">
       <div class="sec-num">03</div>
       <div>
-        <div class="sec-title">表面积:6 个面的「总面积」+ 5 情境</div>
-        <div class="sec-en">Surface Area · 5 Cases</div>
+        <div class="sec-title">表面积:6 个面的「总面积」+ 5 情境 + 11 展开图</div>
+        <div class="sec-en">Surface Area · 5 Cases · 11 Nets</div>
       </div>
     </div>
     <div class="mod">
@@ -748,64 +703,68 @@
         </div>
       </div>
 
+      <div class="callout">
+        <b>💡 做题口诀</b>:看到题目先判断"几个面"——<br>
+        ① 全封闭(没说特殊):6 个面 &nbsp; ② 无盖(鱼缸/木箱/粉刷顶):5 个面 = S − 一个顶面 &nbsp; ③ 无前(衣柜门):5 个面 = S − 一个前面 &nbsp; ④ 烟囱/通风管(无上下):4 个侧面 = 2(a+b)h
+      </div>
 
       <h4 class="sub">📐 长方体(正方体)展开图 11 种全图</h4>
       <div class="nets-grid">
-<div class="net">
-        <svg viewBox="0 0 200 100" class="net-svg"><rect x="90" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="90" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
-        <div class="net-name">① 1-4-1 标准</div>
-        <div class="net-desc">上 1 在中 + 下 1 在中 (最常见)</div>
-      </div>
-<div class="net">
-        <svg viewBox="0 0 200 100" class="net-svg"><rect x="90" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
-        <div class="net-name">② 1-4-1 (下偏左)</div>
-        <div class="net-desc">上 1 在中 + 下 1 在第 1 位</div>
-      </div>
-<div class="net">
-        <svg viewBox="0 0 200 100" class="net-svg"><rect x="90" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
-        <div class="net-name">③ 1-4-1 (下偏中)</div>
-        <div class="net-desc">上 1 在中 + 下 1 在第 2 位</div>
-      </div>
-<div class="net">
-        <svg viewBox="0 0 200 100" class="net-svg"><rect x="30" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="90" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
-        <div class="net-name">④ 1-4-1 (上偏左)</div>
-        <div class="net-desc">上 1 在第 1 位 + 下 1 在中</div>
-      </div>
-<div class="net">
-        <svg viewBox="0 0 200 100" class="net-svg"><rect x="70" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="90" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
-        <div class="net-name">⑤ 1-4-1 (上偏中)</div>
-        <div class="net-desc">上 1 在第 2 位 + 下 1 在中</div>
-      </div>
-<div class="net">
-        <svg viewBox="0 0 200 100" class="net-svg"><rect x="30" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
-        <div class="net-name">⑥ 1-4-1 错位</div>
-        <div class="net-desc">上 1 在第 1 位 + 下 1 在第 2 位 (错开)</div>
-      </div>
-<div class="net">
-        <svg viewBox="0 0 200 100" class="net-svg"><rect x="30" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
-        <div class="net-name">⑦ 1-3-2 标准</div>
-        <div class="net-desc">上 1 在最左 + 下 2 在最左</div>
-      </div>
-<div class="net">
-        <svg viewBox="0 0 200 100" class="net-svg"><rect x="70" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
-        <div class="net-name">⑧ 1-3-2 (中对中)</div>
-        <div class="net-desc">上 1 在中 + 下 2 在中</div>
-      </div>
-<div class="net">
-        <svg viewBox="0 0 200 100" class="net-svg"><rect x="110" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
-        <div class="net-name">⑨ 1-3-2 (右对齐)</div>
-        <div class="net-desc">上 1 在最右 + 下 2 在最右</div>
-      </div>
-<div class="net">
-        <svg viewBox="0 0 200 100" class="net-svg"><rect x="70" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
-        <div class="net-name">⑩ 2-2-2 楼梯</div>
-        <div class="net-desc">3 排各 2 个,第 2 排错开</div>
-      </div>
-<div class="net">
-        <svg viewBox="0 0 200 100" class="net-svg"><rect x="30" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/></svg>
-        <div class="net-name">⑪ 3-3 错开</div>
-        <div class="net-desc">2 排各 3 个,错开半格</div>
-      </div>
+        <div class="net">
+          <svg viewBox="0 0 200 100" class="net-svg"><rect x="90" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="90" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
+          <div class="net-name">① 1-4-1 标准</div>
+          <div class="net-desc">上 1 在中 + 下 1 在中 (最常见)</div>
+        </div>
+        <div class="net">
+          <svg viewBox="0 0 200 100" class="net-svg"><rect x="90" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
+          <div class="net-name">② 1-4-1 (下偏左)</div>
+          <div class="net-desc">上 1 在中 + 下 1 在第 1 位</div>
+        </div>
+        <div class="net">
+          <svg viewBox="0 0 200 100" class="net-svg"><rect x="90" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
+          <div class="net-name">③ 1-4-1 (下偏中)</div>
+          <div class="net-desc">上 1 在中 + 下 1 在第 2 位</div>
+        </div>
+        <div class="net">
+          <svg viewBox="0 0 200 100" class="net-svg"><rect x="30" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="90" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
+          <div class="net-name">④ 1-4-1 (上偏左)</div>
+          <div class="net-desc">上 1 在第 1 位 + 下 1 在中</div>
+        </div>
+        <div class="net">
+          <svg viewBox="0 0 200 100" class="net-svg"><rect x="70" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="90" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
+          <div class="net-name">⑤ 1-4-1 (上偏中)</div>
+          <div class="net-desc">上 1 在第 2 位 + 下 1 在中</div>
+        </div>
+        <div class="net">
+          <svg viewBox="0 0 200 100" class="net-svg"><rect x="30" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
+          <div class="net-name">⑥ 1-4-1 错位</div>
+          <div class="net-desc">上 1 在第 1 位 + 下 1 在第 2 位 (错开)</div>
+        </div>
+        <div class="net">
+          <svg viewBox="0 0 200 100" class="net-svg"><rect x="30" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
+          <div class="net-name">⑦ 1-3-2 标准</div>
+          <div class="net-desc">上 1 在最左 + 下 2 在最左</div>
+        </div>
+        <div class="net">
+          <svg viewBox="0 0 200 100" class="net-svg"><rect x="70" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
+          <div class="net-name">⑧ 1-3-2 (中对中)</div>
+          <div class="net-desc">上 1 在中 + 下 2 在中</div>
+        </div>
+        <div class="net">
+          <svg viewBox="0 0 200 100" class="net-svg"><rect x="110" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#f9a8d4" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
+          <div class="net-name">⑨ 1-3-2 (右对齐)</div>
+          <div class="net-desc">上 1 在最右 + 下 2 在最右</div>
+        </div>
+        <div class="net">
+          <svg viewBox="0 0 200 100" class="net-svg"><rect x="70" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="30" y="40" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="70" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/></svg>
+          <div class="net-name">⑩ 2-2-2 楼梯</div>
+          <div class="net-desc">3 排各 2 个,第 2 排错开</div>
+        </div>
+        <div class="net">
+          <svg viewBox="0 0 200 100" class="net-svg"><rect x="30" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="10" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="70" y="40" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="110" y="40" width="20" height="20" fill="#fbcfe8" stroke="#be185d" stroke-width="1.2"/><rect x="150" y="40" width="20" height="20" fill="#ec4899" stroke="#be185d" stroke-width="1.2"/></svg>
+          <div class="net-name">⑪ 3-3 错开</div>
+          <div class="net-desc">2 排各 3 个,错开半格</div>
+        </div>
       </div>
       <div class="callout">
         <b>📝 文字总结</b>:11 种 = <b>1-4-1 型 6 种</b> + <b>1-3-2 型 3 种</b> + <b>2-2-2 型 1 种</b> + <b>3-3 型 1 种</b>。<br>
@@ -814,101 +773,22 @@
         ③ 2-2-2 型(1 种):3 排各 2 个,中间 1 排错开(楼梯形)<br>
         ④ 3-3 型(1 种):2 排各 3 个,错开半格
       </div>
-
-      <div class="callout">
-        <b>💡 做题口诀</b>:看到题目先判断"几个面"——<br>
-        ① 全封闭(没说特殊):6 个面 &nbsp; ② 无盖(鱼缸/木箱/粉刷顶):5 个面 = S − 一个顶面 &nbsp; ③ 无前(衣柜门):5 个面 = S − 一个前面 &nbsp; ④ 烟囱/通风管(无上下):4 个侧面 = 2(a+b)h
-      </div>
-
     </div>
   </section>
 
-  <!-- 04 体积 + 组合/切拼/挖空/涂色切小 + 容积 -->
+  <!-- 04 切拼 + 挖空 -->
   <section class="m4">
     <div class="sec-head">
       <div class="sec-num">04</div>
       <div>
-        <div class="sec-title">体积 + 组合切拼挖空 + 涂色切小 + 容积</div>
-        <div class="sec-en">Volume · Cut · Hollow · Color &amp; Capacity</div>
+        <div class="sec-title">切拼 + 挖空:形状的「手术与挖洞」</div>
+        <div class="sec-en">Cut · Hollow</div>
       </div>
     </div>
     <div class="mod">
-      <h4 class="sub">📏 体积公式 + 单位</h4>
-      <p><b>体积</b> = 物体<b>所占空间的大小</b>。</p>
-      <div class="eq">
-        长方体: V = 长 × 宽 × 高 = <code>abh</code> = 底面积 × 高
-      </div>
-      <div class="eq">
-        正方体: V = 棱长³ = <code>a³</code>
-      </div>
-
-      <h4 class="sub">📏 体积单位换算(进率 1000!)</h4>
-      <table class="cmp">
-        <tr>
-          <th style="width:22%;">单位</th>
-          <th>符号</th>
-          <th>相邻换算</th>
-        </tr>
-        <tr>
-          <th>立方米</th>
-          <td><code>m³</code></td>
-          <td rowspan="3" style="text-align:center;font-weight:700;color:var(--m4-deep);">× 1000 ↑<br>÷ 1000 ↓<br><br>1 m³ = 1 000 000 cm³</td>
-        </tr>
-        <tr>
-          <th>立方分米</th>
-          <td><code>dm³</code></td>
-        </tr>
-        <tr>
-          <th>立方厘米</th>
-          <td><code>cm³</code></td>
-        </tr>
-      </table>
-
-      <ul class="lister">
-        <li>相邻体积单位的进率是 <b>1000</b>。长度 10,面积 100,<b>体积 1000 (10³)</b>——容易记错!</li>
-        <li><b>1 m³</b> 是个大单位,约 1 m × 1 m × 1 m 的箱子(能装 1000 L 水)。</li>
-      </ul>
-
-      <h4 class="sub">🥤 体积 vs 容积(必考辨析)</h4>
-      <table class="cmp">
-        <tr>
-          <th style="width:22%;">对比</th>
-          <th>体积</th>
-          <th>容积</th>
-        </tr>
-        <tr>
-          <th>含义</th>
-          <td>物体<b>本身</b>占空间的大小</td>
-          <td>容器<b>内部</b>能装多少</td>
-        </tr>
-        <tr>
-          <th>测量</th>
-          <td>从<b>外面</b>量</td>
-          <td>从<b>里面</b>量</td>
-        </tr>
-        <tr>
-          <th>常用单位</th>
-          <td><code>m³</code> · <code>dm³</code> · <code>cm³</code></td>
-          <td><code>L</code>(升) · <code>mL</code>(毫升)</td>
-        </tr>
-        <tr>
-          <th>大小关系</th>
-          <td>同一物体,<b>体积 ≥ 容积</b></td>
-          <td>同一物体,<b>容积 ≤ 体积</b>(差壁厚)</td>
-        </tr>
-        <tr>
-          <th>桥接</th>
-          <td colspan="2" style="text-align:center;font-weight:700;color:var(--m4-deep);">1 L = 1 dm³ &nbsp;&nbsp; 1 mL = 1 cm³ &nbsp;&nbsp; 1 L = 1000 mL</td>
-        </tr>
-      </table>
-
-      <div class="callout">
-        <b>💡 例</b>:鱼缸长 8 dm 宽 5 dm 高 4 dm,装水高 3 dm,<b>水体积</b> = 8 × 5 × 3 = 120 dm³ = <b>120 L</b>。(水深 ≠ 鱼缸高,用水深 3 dm 算。)
-      </div>
+      <p>把一个长方体<b>切开、合上、挖掉一块</b>,表面积会变,体积怎么变?有规律。</p>
 
       <h4 class="sub">✂️ 切拼:切一刀多 2 面 / 合一块少 2 面</h4>
-      <p>把 1 个长方体<b>用刀切</b>或把 2 个长方体<b>合在一起</b>,表面积和体积都会变,但有规律:</p>
-
       <table class="cmp">
         <tr>
           <th style="width:30%;">操作</th>
@@ -974,9 +854,20 @@
         ② 表面积 = 原来 2×(20+15+12)=94;挖洞内壁 4×1×3=12 dm²;挖掉顶/底各 1 dm²,共 − 2;新表面积 = 94 − 2 + 12 = <b>104 dm²</b>。<br>
         <b>关键</b>:挖空 = <b>内壁 4 个新面</b>(是原来没有的),<b>顶/底 2 个面</b>(消失了,因为挖穿了)。所以净增加 12 − 2 = 10 dm²。
       </div>
+    </div>
+  </section>
 
-      <h4 class="sub">👀 露在外面的面(N 个小正方体堆叠)</h4>
-      <p>把 <b>N 个相同的小正方体</b>堆在一起(像乐高),问"露在外面的面有几个"。这是经典题!</p>
+  <!-- 05 露在外面 + 涂色切小 -->
+  <section class="m5">
+    <div class="sec-head">
+      <div class="sec-num">05</div>
+      <div>
+        <div class="sec-title">露在外面 + 涂色切小:N 个小正方体的组合</div>
+        <div class="sec-en">Exposed Faces &amp; Color &amp; Cut</div>
+      </div>
+    </div>
+    <div class="mod">
+      <p>把 <b>N 个相同的小正方体</b>堆在一起(像乐高),问"露在外面的面有几个"——这是经典题!</p>
 
       <div class="eq">
         露在外面的面 = N × 6 − 被盖住的面 × 2
@@ -1036,81 +927,13 @@
     </div>
   </section>
 
-  <!-- 05 排水法 -->
-  <section class="m5">
-    <div class="sec-head">
-      <div class="sec-num">05</div>
-      <div>
-        <div class="sec-title">排水法:不规则物体的体积怎么求?</div>
-        <div class="sec-en">Volume of Irregular Solids · Water Displacement</div>
-      </div>
-    </div>
-    <div class="mod">
-      <p>不是所有物体都有规则形状(石头、苹果、橡皮泥团……)。北师大这一单元专门讲了一种<b>阿基米德式</b>的实验方法 —— <b>排水法</b>。</p>
-
-      <svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;margin:10px 0;background:#ecfeff;border:1px solid #a5f3fc;border-radius:8px;">
-        <rect x="180" y="40" width="120" height="180" fill="white" stroke="#0e7490" stroke-width="2"/>
-        <line x1="180" y1="80" x2="195" y2="80" stroke="#0e7490" stroke-width="1"/>
-        <line x1="180" y1="125" x2="195" y2="125" stroke="#0e7490" stroke-width="1"/>
-        <line x1="180" y1="170" x2="195" y2="170" stroke="#0e7490" stroke-width="1"/>
-        <line x1="180" y1="215" x2="195" y2="215" stroke="#0e7490" stroke-width="1"/>
-        <text x="170" y="84" font-size="10" fill="#0e7490" text-anchor="end">100</text>
-        <text x="170" y="129" font-size="10" fill="#0e7490" text-anchor="end">150</text>
-        <text x="170" y="174" font-size="10" fill="#0e7490" text-anchor="end">200</text>
-        <text x="170" y="219" font-size="10" fill="#0e7490" text-anchor="end">250 mL</text>
-
-        <rect x="181" y="80" width="118" height="139" fill="#7dd3fc" opacity="0.5"/>
-        <line x1="181" y1="80" x2="299" y2="80" stroke="#0284c7" stroke-width="1.4" stroke-dasharray="3,3"/>
-        <text x="60" y="84" font-size="11" fill="#0e7490" font-weight="700">原水位</text>
-        <text x="60" y="98" font-size="11" fill="#0284c7" font-weight="700">100 mL</text>
-
-        <path d="M 215 80 Q 208 60 230 56 Q 252 52 262 70 Q 270 88 256 96 Q 240 102 220 94 Q 208 88 215 80 Z"
-              fill="#94a3b8" stroke="#475569" stroke-width="1.5"/>
-
-        <line x1="181" y1="125" x2="299" y2="125" stroke="#dc2626" stroke-width="1.6" stroke-dasharray="3,3"/>
-        <text x="320" y="129" font-size="11" fill="#dc2626" font-weight="700">↑ 新水位 150 mL</text>
-
-        <text x="240" y="232" font-size="11" fill="#0e7490" font-weight="700" text-anchor="middle">量筒</text>
-
-        <g>
-          <text x="500" y="50" font-size="12" fill="#0e7490" font-weight="700">排水法公式</text>
-          <text x="500" y="74" font-size="12" fill="#164e63" font-weight="700">V物体 = V后 − V前</text>
-          <line x1="500" y1="84" x2="612" y2="84" stroke="#a5f3fc" stroke-width="1"/>
-
-          <text x="500" y="104" font-size="11" fill="#475569">V后 = 150 mL</text>
-          <text x="500" y="122" font-size="11" fill="#475569">V前 = 100 mL</text>
-          <line x1="500" y1="130" x2="612" y2="130" stroke="#a5f3fc" stroke-width="0.5" stroke-dasharray="2,2"/>
-          <text x="500" y="148" font-size="12" fill="#0e7490" font-weight="700">V物体 = 50 mL</text>
-          <text x="500" y="166" font-size="11" fill="#0e7490">= 50 cm³</text>
-          <text x="500" y="182" font-size="9.5" fill="#9ca3af">1 mL = 1 cm³</text>
-
-          <line x1="500" y1="196" x2="612" y2="196" stroke="#a5f3fc" stroke-width="1"/>
-          <text x="500" y="214" font-size="10" fill="#dc2626">↑ 水面上升的体积</text>
-          <text x="500" y="228" font-size="10" fill="#dc2626">  = 物体体积</text>
-        </g>
-      </svg>
-
-      <ul class="lister">
-        <li><b>操作</b>:量筒装<b>足够</b>水 → 记下读数 V<sub>前</sub> → 用细线系住物体<b>完全浸没</b>水中 → 记下新读数 V<sub>后</sub></li>
-        <li><b>公式</b>:V<sub>物体</sub> = V<sub>后</sub> − V<sub>前</sub> = 水面上升的体积</li>
-        <li>原理:物体占了一部分空间,把水"挤"出去,水就上升了,<b>上升的体积 = 物体体积</b></li>
-        <li><b>前提</b>:物体必须 <b>完全浸没</b> + <b>不吸水</b> + <b>不溶于水</b></li>
-      </ul>
-
-      <div class="callout">
-        <b>💡 例</b>:量筒原有水 200 mL,把一个土豆完全浸没后水面升到 280 mL,土豆体积 = 280 − 200 = <b>80 cm³</b> (= 80 mL)。<br>
-        <b>注意</b>:<b>不要把水倒出来再量</b>!倒出来会引入误差,直接读 V<sub>后</sub> − V<sub>前</sub> 即可。
-      </div>
-    </div>
-  </section>
-
   <!-- ========== ④ 误区警示 ========== -->
   <section>
     <div class="sec-head">
       <div class="sec-num" style="background:var(--red);">!</div>
       <div>
-        <div class="sec-title">6 个最容易踩的坑</div>
-        <div class="sec-en">6 Common Pitfalls</div>
+        <div class="sec-title">5 个最容易踩的坑</div>
+        <div class="sec-en">5 Common Pitfalls</div>
       </div>
     </div>
 
@@ -1137,16 +960,6 @@
     <div class="pitfall">
       <div class="x">✗</div>
       <div class="body">
-        <span class="wrong">1 m³ = 100 dm³(类比 1 m² = 100 dm²)</span>
-        <span class="arrow">👉</span>
-        <span class="right">1 m³ = 1000 dm³(进率 1000,不是 100!)</span>
-        长度 10,面积 100,<b>体积 1000 (10³)</b>。差一位数就差 10 倍。
-      </div>
-    </div>
-
-    <div class="pitfall">
-      <div class="x">✗</div>
-      <div class="body">
         <span class="wrong">烟囱 / 通风管的表面积 = 2(ab + ah + bh)</span>
         <span class="arrow">👉</span>
         <span class="right">烟囱只有 4 个侧面 = 2(a + b)h(底面周长 × 高)</span>
@@ -1167,10 +980,10 @@
     <div class="pitfall">
       <div class="x">✗</div>
       <div class="body">
-        <span class="wrong">挖空 = 体积减,表面积也减</span>
+        <span class="wrong">本单元要考排水法 / 体积公式 / 单位换算</span>
         <span class="arrow">👉</span>
-        <span class="right">挖空 = 体积减,表面积<b>反而增加</b>(多了内壁 4 个面)。</span>
-        挖穿的情况:净增 = 4 × 内壁面 − 2 × 顶/底面 = +2 内壁面。表面积基本是<b>变大</b>。
+        <span class="right">本单元是「形状 + 表面积」;<b>排水法 / 体积公式 / 单位换算 → 第四单元《长方体(二)》</b>。</span>
+        别在这一页死磕体积单位进率!那都是第四单元的考点。
       </div>
     </div>
   </section>
@@ -1191,19 +1004,18 @@
         <div class="txt"><b>6 面 / 12 棱 / 8 顶点</b>;相对面相等,相对棱相等(每组 4 条);正方体是特殊长方体。棱长总和 = <b>4(a+b+h)</b> 或 <b>12a</b>。</div>
       </div>
       <div class="card">
-        <div class="lab">② 公式 Formulas</div>
-        <div class="txt">表面积 <b>S = 2(ab+ah+bh)</b> 或 <b>6a²</b>;体积 <b>V = abh</b> 或 <b>a³</b>;排水法 <b>V = V后 − V前</b>。看清是 6/5/4 个面。</div>
+        <div class="lab">② 表面积 Surface</div>
+        <div class="txt">表面积 <b>S = 2(ab+ah+bh)</b> 或 <b>6a²</b>。看清是 6/5/4 个面(全封闭/无盖/烟囱/粉刷/泳池)。11 种展开图:1-4-1×6 + 1-3-2×3 + 2-2-2×1 + 3-3×1。</div>
       </div>
       <div class="card">
-        <div class="lab">③ 切拼挖空 &amp; 单位</div>
-        <div class="txt">切 1 刀 <b>+2 面</b>,合 1 块 <b>−2 面</b>,挖空 <b>内壁多 4 面</b>。体积进率 <b>1000</b>;1 L = 1 dm³,1 mL = 1 cm³。</div>
+        <div class="lab">③ 切拼挖空 + 组合</div>
+        <div class="txt">切 1 刀 <b>+2 面</b>,合 1 块 <b>−2 面</b>,挖空 <b>内壁多 4 面</b>。N 个小正方体外面 = N×6 − 接触对×2。涂色切小:8 / 12(n-2) / 6(n-2)² / (n-2)³。</div>
       </div>
     </div>
 
     <div class="one-liner">
-      🧊 长方体 = <b>6 面</b>"包起来" + <b>12 棱</b>"撑起来" + <b>8 顶点</b>"串起来";<br>
-      <b>表面积</b>算"皮"(<b>糊纸</b>要多大),<b>体积</b>算"肉"(<b>装水</b>能装多少),<b>不规则</b>用<b>排水法</b>;<br>
-      <b>切拼挖空</b> 5 公式,看清"多几面 / 少几面 / 体积怎么变"。
+      🧊 长方体(一) = <b>形状 + 表面积</b>;<br>
+      <b>表面积</b>算"皮"(<b>糊纸</b>要多大),<b>切拼挖空</b>算"形状怎么变",<b>组合</b>算"堆起来露几面"。
     </div>
 
     <p class="ref">📘 参考:北师大版《数学》5 年级下册 · 第二单元「长方体(一)」 · 编排: DONG XINGBO</p>
