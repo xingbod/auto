@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hermes 在科研与教学中的使用 · Skills 速查</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a33;
+      --panel2: #172445;
+      --text: #eef4ff;
+      --muted: #aebbd4;
+      --accent: #7dd3fc;       /* 浅蓝 - 流程主线 */
+      --accent2: #fbbf24;      /* 琥珀 - 强调 */
+      --green: #86efac;        /* 绿  - 教学 / 安全 */
+      --pink: #f0abfc;         /* 紫红- 子系统 */
+      --orange: #fb923c;       /* 橙  - 科研 */
+      --red: #fca5a5;          /* 红  - 警告 */
+      --teal: #5eead4;         /* 青绿- 数据/实验 */
+      --line: rgba(255,255,255,.16);
+      --shadow: 0 22px 70px rgba(0,0,0,.38);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+    body::before { content: ""; position: fixed; inset: 0; background: radial-gradient(circle at 12% 10%, rgba(125,211,252,.28), transparent 30%), radial-gradient(circle at 88% 18%, rgba(94,234,212,.18), transparent 28%), radial-gradient(circle at 62% 88%, rgba(251,191,36,.12), transparent 32%); pointer-events: none; }
+    .deck { height: 100vh; width: 100vw; position: relative; }
+    .slide { position: absolute; inset: 0; padding: 36px 60px 92px; display: none; overflow: auto; }
+    .slide.active { display: block; animation: fade .22s ease-out; }
+    @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .card { max-width: 1180px; min-height: calc(100vh - 132px); margin: 0 auto; padding: 30px 40px; background: linear-gradient(180deg, rgba(18,26,51,.94), rgba(14,20,39,.94)); border: 1px solid var(--line); border-radius: 26px; box-shadow: var(--shadow); }
+    .slide.tight .card { padding: 22px 32px; }
+    .center { display: grid; place-items: center; text-align: center; }
+    h1 { font-size: clamp(40px, 5.6vw, 72px); line-height: 1.06; margin: 0 0 22px; letter-spacing: -0.035em; }
+    h2 { font-size: clamp(26px, 3.2vw, 40px); line-height: 1.1; margin: 0 0 14px; letter-spacing: -0.03em; }
+    h3 { font-size: 19px; margin: 12px 0 6px; color: var(--accent); }
+    p, li { font-size: 17px; line-height: 1.45; color: var(--text); }
+    .slide.tight p, .slide.tight li { font-size: 15.5px; line-height: 1.4; }
+    .slide.tight h3 { font-size: 17px; margin: 8px 0 4px; }
+    ul, ol { margin-top: 8px; padding-left: 1.15em; }
+    li { margin: 3px 0; }
+    .muted { color: var(--muted); }
+    .small { font-size: 14.5px; line-height: 1.45; color: var(--muted); }
+    .tag { display: inline-block; padding: 5px 11px; border-radius: 999px; border: 1px solid rgba(125,211,252,.35); color: var(--accent); background: rgba(125,211,252,.10); font-size: 14px; margin: 3px 4px 3px 0; }
+    .tag.g { border-color: rgba(134,239,172,.4); color: var(--green); background: rgba(134,239,172,.10); }
+    .tag.o { border-color: rgba(251,146,60,.4); color: var(--orange); background: rgba(251,146,60,.10); }
+    .tag.p { border-color: rgba(240,171,252,.4); color: var(--pink); background: rgba(240,171,252,.10); }
+    .tag.r { border-color: rgba(252,165,165,.4); color: var(--red); background: rgba(252,165,165,.10); }
+    .tag.y { border-color: rgba(251,191,36,.4); color: var(--accent2); background: rgba(251,191,36,.10); }
+    .tag.t { border-color: rgba(94,234,212,.4); color: var(--teal); background: rgba(94,234,212,.10); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .slide.tight .grid2, .slide.tight .grid3, .slide.tight .grid4 { gap: 10px; }
+    .box { background: rgba(255,255,255,.055); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+    .slide.tight .box { padding: 10px 12px; }
+    .box strong { color: var(--accent2); }
+    .box h4 { margin: 0 0 6px; font-size: 16px; color: var(--accent); }
+    .box .small { font-size: 13.5px; }
+    .box.compact p, .box.compact li { font-size: 14px; line-height: 1.4; }
+    .quote { border-left: 4px solid var(--accent); padding: 8px 0 8px 16px; color: var(--muted); font-size: 18px; margin: 8px 0; }
+    .quote b { color: var(--accent2); }
+    .arch { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+    .layer { padding: 7px 10px; border-radius: 8px; background: rgba(125,211,252,.14); border: 1px solid rgba(125,211,252,.35); color: #dff7ff; font-size: 13.5px; white-space: nowrap; }
+    .arrow { color: var(--muted); font-size: 16px; }
+    .layer.research { background: rgba(251,146,60,.15); border-color: rgba(251,146,60,.40); color: #ffd9b6; }
+    .layer.teach    { background: rgba(134,239,172,.15); border-color: rgba(134,239,172,.40); color: #d6ffe2; }
+    .layer.daily    { background: rgba(125,211,252,.18); }
+    .layer.heavy    { background: rgba(240,171,252,.15); border-color: rgba(240,171,252,.40); color: #f5d4ff; }
+    .layer.eval     { background: rgba(94,234,212,.15); border-color: rgba(94,234,212,.40); color: #c8fff0; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 15.5px; overflow: hidden; border-radius: 12px; margin: 8px 0; }
+    th, td { border-bottom: 1px solid var(--line); padding: 9px 10px; vertical-align: top; text-align: left; }
+    th { color: var(--accent); background: rgba(125,211,252,.08); font-weight: 600; }
+    td { color: #edf3ff; }
+    .slide.tight table { font-size: 13.5px; }
+    .slide.tight th, .slide.tight td { padding: 6px 8px; line-height: 1.35; }
+    .slide.tight .arch { margin: 6px 0; }
+    .slide.tight.denser table { font-size: 12.5px; }
+    .slide.tight.denser th, .slide.tight.denser td { padding: 4px 7px; line-height: 1.3; }
+    .slide.tight.denser h2 { margin: 0 0 8px; font-size: 28px; }
+
+    .foot { position: fixed; left: 0; right: 0; bottom: 26px; height: 26px; display: flex; align-items: center; justify-content: space-between; padding: 0 26px; color: var(--muted); font-size: 13px; z-index: 5; }
+    .progress { position: fixed; left: 0; bottom: 22px; height: 3px; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .2s; z-index: 5; }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; border: 1px solid var(--line); border-bottom-width: 2px; padding: 1px 6px; border-radius: 5px; background: rgba(255,255,255,.06); font-size: 12px; }
+    .title-meta { font-size: 20px; color: var(--muted); max-width: 880px; margin: 6px auto 0; }
+    .takeaway { color: var(--green); font-weight: 700; }
+    .warning { color: var(--red); }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em; padding: 1px 5px; background: rgba(255,255,255,.08); border-radius: 3px; }
+
+    .diagram { background: rgba(0,0,0,.20); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; margin: 4px 0; }
+    .diag-row { display: flex; align-items: stretch; gap: 6px; margin: 4px 0; }
+    .diag-row .grp { display: flex; flex-direction: column; gap: 4px; flex: 1; padding: 6px 8px; background: rgba(125,211,252,.06); border: 1px solid rgba(125,211,252,.22); border-radius: 8px; }
+    .diag-row .grp .gl { font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 1px; }
+    .diag-row .grp .gn { display: inline-block; padding: 3px 6px; border-radius: 5px; background: rgba(255,255,255,.08); border: 1px solid var(--line); font-size: 12px; margin: 1px 2px; }
+    .diag-row .grp.mem   { background: rgba(134,239,172,.06); border-color: rgba(134,239,172,.30); }
+    .diag-row .grp.mem   .gl { color: var(--green); }
+    .diag-row .grp.off   { background: rgba(251,191,36,.06); border-color: rgba(251,191,36,.30); }
+    .diag-row .grp.off   .gl { color: var(--accent2); }
+    .diag-row .grp.adapt { background: rgba(240,171,252,.06); border-color: rgba(240,171,252,.30); }
+    .diag-row .grp.adapt .gl { color: var(--pink); }
+    .diag-row .grp.eye   { background: rgba(125,211,252,.06); border-color: rgba(125,211,252,.30); }
+    .diag-row .grp.eye   .gl { color: var(--accent); }
+    .diag-row .grp.research { background: rgba(251,146,60,.06); border-color: rgba(251,146,60,.30); }
+    .diag-row .grp.research .gl { color: var(--orange); }
+    .diag-row .grp.teach    { background: rgba(134,239,172,.06); border-color: rgba(134,239,172,.30); }
+    .diag-row .grp.teach    .gl { color: var(--green); }
+    .diag-row .grp.daily    { background: rgba(125,211,252,.06); border-color: rgba(125,211,252,.30); }
+    .diag-row .grp.daily    .gl { color: var(--accent); }
+    .diag-flow { text-align: center; color: var(--muted); font-size: 12px; margin: 1px 0; }
+    .tree { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; white-space: pre; background: rgba(0,0,0,.30); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); line-height: 1.25; }
+
+    .skill-card { background: rgba(255,255,255,.055); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+    .skill-card .name { font-family: ui-monospace, monospace; font-size: 14px; font-weight: 700; color: var(--accent2); }
+    .skill-card .cat { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+    .skill-card .desc { font-size: 13.5px; line-height: 1.45; }
+    .skill-card .use { font-size: 12.5px; color: var(--green); margin-top: 4px; }
+
+    @media print { html, body { overflow: visible; background: #fff; color: #000; } body::before, .foot, .progress { display: none; } .slide { display: block !important; position: relative; page-break-after: always; height: auto; min-height: 100vh; padding: 20px; } .card { box-shadow: none; background: #fff; color: #000; border: 1px solid #ccc; } p, li, td { color: #111; } .muted { color: #555; } }
+    @media (max-width: 900px) { .slide { padding: 22px 16px 70px; } .card { padding: 22px 20px; } .grid2, .grid3, .grid4 { grid-template-columns: 1fr; } p, li { font-size: 17px; } }
+  </style>
+</head>
+<body>
+  <div class="deck" id="deck">
+
+    <!-- ============== 1. 封面 ============== -->
+    <section class="slide active"><div class="card center">
+      <div>
+        <div class="tag">使用指南 · 配套 hermes-agent-mechanism-slides</div>
+        <h1>Hermes 在科研 & 教学中的<br/>实战使用指南</h1>
+        <p class="title-meta">从一篇论文到一门课 · 14 个真实场景 · 15+ 顶级 skills 速查</p>
+        <p class="small muted" style="margin-top: 24px;">覆盖 arXiv 跟踪 / 顶会调研 / 论文精读 / 实验代码 / 模型训练 / 评估 + 备课 / 课件 / 插图 / 教学评估</p>
+        <p class="small muted" style="margin-top: 8px;">←/→ 或 Space 翻页 · P 打印/PDF · Home/End 跳转</p>
+      </div>
+    </div></section>
+
+    <!-- ============== 2. 目录 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>目录 · 21 张 slides</h2>
+      <div class="grid4">
+        <div class="box">
+          <h4>总览</h4>
+          <ul>
+            <li>1. 封面</li>
+            <li>2. 目录</li>
+            <li>3. 三层能力总览</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>科研篇 (8 张)</h4>
+          <ul>
+            <li>4. 科研场景图谱</li>
+            <li>5. 每日论文跟踪</li>
+            <li>6. 顶会趋势调研</li>
+            <li>7. 主题深度调研</li>
+            <li>8. 论文精读</li>
+            <li>9. 实验代码</li>
+            <li>10. 训练 / 微调 / 评估</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>教学篇 (5 张)</h4>
+          <ul>
+            <li>11. 教学场景图谱</li>
+            <li>12. HTML slides 自动生成</li>
+            <li>13. 一页纸信息图</li>
+            <li>14. 论文级插图 / 动画</li>
+            <li>15. 教学评估</li>
+            <li>16. 小学作业 / 试卷整理</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>实战 / 速查 (6 张)</h4>
+          <ul>
+            <li>17. 科研端到端工作流</li>
+            <li>18. 教学端到端工作流</li>
+            <li>19. Top 15 skills (1-8)</li>
+            <li>19. Top 15 skills (9-15)</li>
+            <li>20. skills 决策树</li>
+            <li>21. 总结 + 资源</li>
+          </ul>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- ============== 3. 三层能力总览 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>1. 三层能力总览 · 科研 × 教学 × 日常</h2>
+      <div class="diagram">
+        <div class="diag-row">
+          <div class="grp research" style="flex: 1.1;">
+            <span class="gl">科研 (Research)</span>
+            <div>
+              <span class="gn">论文跟踪</span> <span class="gn">顶会调研</span>
+              <span class="gn">主题深挖</span> <span class="gn">论文精读</span>
+              <span class="gn">实验代码</span> <span class="gn">训练/评估</span>
+            </div>
+            <div class="small" style="margin-top: 6px; color: var(--orange);">数据 → 实验 → 报告</div>
+          </div>
+          <div class="grp teach" style="flex: 1.1;">
+            <span class="gl">教学 (Teaching)</span>
+            <div>
+              <span class="gn">备课 slides</span> <span class="gn">一页信息图</span>
+              <span class="gn">论文级插图</span> <span class="gn">教学评估</span>
+              <span class="gn">小学作业</span> <span class="gn">实验教材</span>
+            </div>
+            <div class="small" style="margin-top: 6px; color: var(--green);">讲义 → 演示 → 评估</div>
+          </div>
+          <div class="grp daily" style="flex: 0.9;">
+            <span class="gl">日常 (Daily)</span>
+            <div>
+              <span class="gn">cron 早报</span> <span class="gn">邮件</span>
+              <span class="gn">智能家居</span> <span class="gn">文件整理</span>
+            </div>
+            <div class="small" style="margin-top: 6px; color: var(--accent);">自动化 7×24</div>
+          </div>
+        </div>
+      </div>
+      <h3>三者的共同基础</h3>
+      <ul>
+        <li><b>同一套 Agent 机制</b>（见配套 deck "Hermes 类智能体的机制"）</li>
+        <li><b>同一份长期记忆</b>：科研偏好、教学风格互不干扰，按需加载</li>
+        <li><b>同一个工具箱</b>：100+ 原子工具 + 30+ skills 自由组合</li>
+        <li><b>同一份多平台前端</b>：CLI / Telegram / cron / Web 都能调用</li>
+      </ul>
+    </div></section>
+
+    <!-- ============== 4. 科研场景图谱 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>2. 科研篇 · 7 大场景 + 论文写作</h2>
+      <p class="muted">从<b>信息获取</b>到<b>实验产出</b>到<b>论文撰写</b>，覆盖一个研究项目的完整生命周期。</p>
+      <div class="grid4">
+        <div class="skill-card">
+          <div class="cat">① 信息获取</div>
+          <div class="name">arXiv 跟踪</div>
+          <div class="desc">每日新论文 cron 推送</div>
+          <div class="use">→ academic-daily-digest</div>
+        </div>
+        <div class="skill-card">
+          <div class="cat">② 趋势研判</div>
+          <div class="name">顶会调研</div>
+          <div class="desc">CVPR/NeurIPS 风向分析</div>
+          <div class="use">→ conference-trend-analysis</div>
+        </div>
+        <div class="skill-card">
+          <div class="cat">③ 主题深挖</div>
+          <div class="name">主题调研</div>
+          <div class="desc">某方向 20-50 篇论文</div>
+          <div class="use">→ academic-topic-survey</div>
+        </div>
+        <div class="skill-card">
+          <div class="cat">④ 论文精读</div>
+          <div class="name">PDF 解读</div>
+          <div class="desc">图表 / 公式 / 实验提取</div>
+          <div class="use">→ pdf-vision-reading</div>
+        </div>
+        <div class="skill-card">
+          <div class="cat">⑤ 实验代码</div>
+          <div class="name">快速原型</div>
+          <div class="desc">数据 + baseline + 可视化</div>
+          <div class="use">→ jupyter-live-kernel</div>
+        </div>
+        <div class="skill-card">
+          <div class="cat">⑥ 模型训练</div>
+          <div class="name">fine-tune</div>
+          <div class="desc">SFT / DPO / GRPO 流水线</div>
+          <div class="use">→ unsloth / axolotl / TRL</div>
+        </div>
+        <div class="skill-card">
+          <div class="cat">⑦ 模型评估</div>
+          <div class="name">benchmark</div>
+          <div class="desc">60+ 学术 benchmark 跑分</div>
+          <div class="use">→ evaluating-llms-harness</div>
+        </div>
+        <div class="skill-card" style="background: rgba(251,191,36,.06); border-color: rgba(251,191,36,.30);">
+          <div class="cat" style="color: var(--accent2);">+ 写作</div>
+          <div class="name">research-paper-writing</div>
+          <div class="desc">LaTeX / 实验图 / 引用管理</div>
+          <div class="use">→ 配套 skill</div>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- ============== 5. 每日论文跟踪 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>3. 科研场景 ① · 每日论文跟踪</h2>
+      <div class="grid2">
+        <div class="box">
+          <h4>使用 skill</h4>
+          <p><span class="tag o">research</span> <code>academic-daily-digest</code></p>
+          <h4>数据源</h4>
+          <ul>
+            <li>Hugging Face Daily Papers API</li>
+            <li>arXiv RSS (cs.CV / cs.CL / cs.LG)</li>
+            <li>Semantic Scholar / OpenAlex</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>典型产出</h4>
+          <ul>
+            <li>每日 10-20 篇策展论文</li>
+            <li>中英对照标题 + 摘要</li>
+            <li>可按 topic / author 过滤</li>
+            <li>直接 cron 06:00 推到邮箱</li>
+          </ul>
+        </div>
+      </div>
+      <div class="arch" style="margin: 12px 0 8px;">
+        <span class="layer daily">cron 06:00</span><span class="arrow">→</span>
+        <span class="layer research">抓 HF + arXiv</span><span class="arrow">→</span>
+        <span class="layer">LLM 摘要/翻译</span><span class="arrow">→</span>
+        <span class="layer heavy">himalaya send</span><span class="arrow">→</span>
+        <span class="layer teach">QQ 邮箱</span>
+      </div>
+      <div class="quote">"<b>省 30 分钟/天</b>：不用每天刷 arXiv，每天早上看到策展好的 10 篇高质量论文。"</div>
+    </div></section>
+
+    <!-- ============== 6. 顶会趋势调研 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>4. 科研场景 ② · 顶会趋势调研</h2>
+      <div class="grid2">
+        <div class="box">
+          <h4>使用 skill</h4>
+          <p><span class="tag o">research</span> <code>conference-trend-analysis</code></p>
+          <p><span class="tag o">research</span> <code>academic-conference-survey</code></p>
+          <h4>能力</h4>
+          <ul>
+            <li>全量抓 accepted papers（不只是 best paper）</li>
+            <li>对标题做主题聚类 (45-topic CV 字典)</li>
+            <li>跨会议 / 跨年对比增长率</li>
+            <li>识别热门 / 衰退 / 新兴方向</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>典型产出</h4>
+          <ul>
+            <li>中文 Markdown 趋势报告</li>
+            <li>97 张 HTML slides 深度讲解</li>
+            <li>每个方向: 2 篇代表论文 + 4 个延伸 idea</li>
+            <li>可做 thesis / 综述 / 选题参考</li>
+          </ul>
+          <h4>覆盖会议</h4>
+          <p class="small">CVPR · ICCV · ECCV · NeurIPS · ICML · ICLR · BMVC</p>
+        </div>
+      </div>
+      <p class="small takeaway">例：<code>帮我调研 CVPR 2025 →</code> 自动出 1 份报告 + 1 个 slides deck + 每个方向的可研究方向。</p>
+    </div></section>
+
+    <!-- ============== 7. 主题深度调研 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>5. 科研场景 ③ · 主题深度调研</h2>
+      <div class="grid2">
+        <div class="box">
+          <h4>使用 skill</h4>
+          <p><span class="tag o">research</span> <code>academic-topic-survey</code></p>
+          <p><span class="tag o">research</span> <code>academic-paper-harvest</code></p>
+          <p class="small muted">4 大数据源: OpenAlex + DBLP + arXiv + Semantic Scholar</p>
+          <h4>适用</h4>
+          <ul>
+            <li>开题前调研 "TTA" / "Token Merging" 这类具体方向</li>
+            <li>综述论文初稿素材</li>
+            <li>找 20-50 篇相关论文 + 元数据</li>
+            <li>批量下载 OA 全文</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>典型产出</h4>
+          <ul>
+            <li>论文元数据表 (作者/venue/year/citations)</li>
+            <li>PDF 全文 (europe-pmc-paper-download)</li>
+            <li>主题热度趋势 (按年份)</li>
+            <li>高被引 + 最新 + 经典 三类代表作</li>
+          </ul>
+          <h4>使用 prompts</h4>
+          <p class="small"><code>"调研 TTA (Test-Time Adaptation) 方向,2022-2026 的 30 篇代表作"</code></p>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- ============== 8. 论文精读 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>6. 科研场景 ④ · 论文精读 (PDF 视觉阅读)</h2>
+      <div class="grid2">
+        <div class="box">
+          <h4>使用 skill</h4>
+          <p><span class="tag o">pdf-vision-reading</span> (root)</p>
+          <p><span class="tag o">research</span> <code>arxiv</code></p>
+          <p class="small muted">vision_analyze 工具 + arxiv 抓 metadata + 阅读整篇 PDF</p>
+          <h4>能力</h4>
+          <ul>
+            <li>直接读 PDF 图表 (跳过 OCR)</li>
+            <li>识别论文 Fig. 1 / 架构图 / 实验曲线</li>
+            <li>提取公式 + 复述方法</li>
+            <li>跨页合并理解 (context 装不下时分批)</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>典型用法</h4>
+          <ul>
+            <li><b>快速过</b>：摘要 + Fig.1 截图 → 30 秒知道做什么</li>
+            <li><b>深读</b>：分段读 + 写笔记 (research-paper-writing)</li>
+            <li><b>对比</b>：3 篇同方向论文并排摘要</li>
+            <li><b>复现</b>：从 method 段提取伪代码</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote">"<b>省 2 小时/篇</b>：以前读一篇 10 页 paper 至少 1.5 小时，现在精读 30 分钟就能复述方法 + 找创新点。"</div>
+    </div></section>
+
+    <!-- ============== 9. 实验代码 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>7. 科研场景 ⑤ · 实验代码 (Jupyter Live Kernel)</h2>
+      <div class="grid2">
+        <div class="box">
+          <h4>使用 skill</h4>
+          <p><span class="tag t">data-science</span> <code>jupyter-live-kernel</code></p>
+          <p class="small muted">stateful Python REPL，跨 cell 保留变量、import、文件句柄</p>
+          <h4>能力</h4>
+          <ul>
+            <li>迭代式数据分析 (不像 execute_code 每次重启)</li>
+            <li>直接读 .csv / .parquet / 训练模型</li>
+            <li>画 matplotlib/plotly 图，下载到本地</li>
+            <li>适合探索性数据 + baseline 验证</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>典型用法</h4>
+          <ul>
+            <li><b>数据探索</b>：丢一个 xlsx，30 秒出分布图 + 异常点</li>
+            <li><b>快速 baseline</b>：调 sklearn / xgboost / 简单 NN</li>
+            <li><b>结果可视化</b>：loss 曲线 / 混淆矩阵 / attention map</li>
+            <li><b>配合 execute_code</b>：前者 interactive，后者批处理</li>
+          </ul>
+        </div>
+      </div>
+      <p class="small">例：<code>"用 jupyter-live-kernel 跑这个 iris 数据集,出 4 个特征的 pairplot + 一个随机森林 baseline"</code>。</p>
+    </div></section>
+
+    <!-- ============== 10. 训练/微调/评估 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>8. 科研场景 ⑥ · 训练 / 微调 / 评估 三件套</h2>
+      <table>
+        <tr><th>任务</th><th>推荐 skill</th><th>关键能力</th></tr>
+        <tr>
+          <td><b>微调 LLM</b></td>
+          <td><span class="tag o">mlops/training</span> <code>unsloth</code> / <code>axolotl</code> / <code>fine-tuning-with-trl</code></td>
+          <td>YAML 配置、2-5x 加速、LoRA/QLoRA、SFT/DPO/GRPO</td>
+        </tr>
+        <tr>
+          <td><b>推理服务</b></td>
+          <td><span class="tag o">mlops/inference</span> <code>serving-llms-vllm</code> / <code>llama-cpp</code></td>
+          <td>vLLM PagedAttention 高吞吐；llama.cpp 本地 GGUF</td>
+        </tr>
+        <tr>
+          <td><b>模型评估</b></td>
+          <td><span class="tag o">mlops/evaluation</span> <code>evaluating-llms-harness</code></td>
+          <td>60+ benchmark (MMLU/HumanEval/GSM8K)；统一跑分</td>
+        </tr>
+        <tr>
+          <td><b>实验追踪</b></td>
+          <td><span class="tag o">mlops/evaluation</span> <code>weights-and-biases</code></td>
+          <td>训练指标、参数、超参数自动记录 + 对比图</td>
+        </tr>
+        <tr>
+          <td><b>模型下载</b></td>
+          <td><span class="tag o">mlops</span> <code>huggingface-hub</code></td>
+          <td>hf CLI 搜/下/传模型 + 数据集 + Space</td>
+        </tr>
+        <tr>
+          <td><b>结构化输出</b></td>
+          <td><span class="tag o">mlops/inference</span> <code>outlines</code></td>
+          <td>保证 JSON/XML 严格 schema 合法</td>
+        </tr>
+      </table>
+      <p class="small takeaway">一个完整的 SFT 项目：<code>hf download</code> → <code>unsloth YAML</code> → <code>wandb track</code> → <code>vllm serve</code> → <code>lm-eval</code> 跑分。</p>
+    </div></section>
+
+    <!-- ============== 11. 教学场景图谱 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>9. 教学篇 · 6 大场景总览</h2>
+      <p class="muted">从<b>备课</b>到<b>课件</b>到<b>评估</b>，覆盖教学全流程。</p>
+      <div class="grid3">
+        <div class="skill-card">
+          <div class="cat">① 备课</div>
+          <div class="name">HTML Slides 自动生成</div>
+          <div class="desc">从主题/论文 → 20-100 张单文件 slides</div>
+          <div class="use">→ html-teaching-slides</div>
+        </div>
+        <div class="skill-card">
+          <div class="cat">② 浓缩</div>
+          <div class="name">一页纸信息图</div>
+          <div class="desc">"一页讲清楚一个核心问题"</div>
+          <div class="use">→ onepage-infographic</div>
+        </div>
+        <div class="skill-card">
+          <div class="cat">③ 可视化</div>
+          <div class="name">论文级插图 / 动画</div>
+          <div class="desc">SVG 架构图 + 数学动画</div>
+          <div class="use">→ architecture-diagram / manim-video / p5js</div>
+        </div>
+        <div class="skill-card">
+          <div class="cat">④ 评估</div>
+          <div class="name">教学评估</div>
+          <div class="desc">课堂录音 → 6 维 Rubric 评分</div>
+          <div class="use">→ audio-teaching-eval / teaching-eval-pipeline</div>
+        </div>
+        <div class="skill-card">
+          <div class="cat">⑤ 作业</div>
+          <div class="name">小学试卷整理</div>
+          <div class="desc">错题周周清 / 期末知识点总结</div>
+          <div class="use">→ ocr-and-documents + onepage</div>
+        </div>
+        <div class="skill-card">
+          <div class="cat">⑥ 课件辅助</div>
+          <div class="name">PowerPoint / 设计</div>
+          <div class="desc">.pptx 读写 + DESIGN.md 视觉规范</div>
+          <div class="use">→ powerpoint / design-md</div>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- ============== 12. HTML slides ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>10. 教学场景 ① · HTML Slides 自动生成</h2>
+      <div class="grid2">
+        <div class="box">
+          <h4>使用 skill</h4>
+          <p><span class="tag g">productivity</span> <code>html-teaching-slides</code></p>
+          <h4>能力</h4>
+          <ul>
+            <li>主题 → 22-100 张单文件 HTML slides</li>
+            <li>深色主题 + 浅色主题 + 课件风格</li>
+            <li>键盘翻页 / 打印 PDF / GitHub Pages 部署</li>
+            <li>内置 CSS 组件库 (box / pipeline / tree / diagram)</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>典型使用</h4>
+          <ul>
+            <li><b>讲一个研究方向</b>：CNN 历史 / 顶会趋势 / Hermes 机制</li>
+            <li><b>技术培训</b>：SFT / RLHF / 量化 / 蒸馏</li>
+            <li><b>论文导读</b>：单篇论文 20 张讲解</li>
+            <li><b>项目汇报</b>：方案 slides / 季度总结</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote">"<b>本套 slides 就是用这个 skill 生成的</b>：从 0 到 22 张 HTML，含 ASCII 树、架构图、对比表、决策图，全程 30 分钟。"</div>
+    </div></section>
+
+    <!-- ============== 13. 一页纸信息图 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>11. 教学场景 ② · 一页纸信息图 (One-Page)</h2>
+      <div class="grid2">
+        <div class="box">
+          <h4>使用 skill</h4>
+          <p><span class="tag g">productivity</span> <code>onepage-infographic</code></p>
+          <p><span class="tag g">html-infographic</span></p>
+          <h4>5 段式结构</h4>
+          <ol>
+            <li>钩子式标题</li>
+            <li>4-6 卡片总览</li>
+            <li>4 个编号主模块</li>
+            <li>对比 / 流程 / 决策</li>
+            <li>参考文献 + 一句话总结</li>
+          </ol>
+        </div>
+        <div class="box">
+          <h4>典型使用</h4>
+          <ul>
+            <li><b>技术速查</b>：TTA / Token Merging / 模型量化</li>
+            <li><b>概念可视化</b>：世界模型 / 空间智能 / 衰老的分子机制</li>
+            <li><b>方法对比</b>：强化学习算法 / RL principles</li>
+            <li><b>知识科普</b>：同态加密 / 扎根理论 / 技术扩散</li>
+          </ul>
+          <p class="small">已实测：用户 auto 仓库里 <b>30+ 个 onepage-*</b> 都是这套 skill 产出。</p>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- ============== 14. 论文级插图/动画 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>12. 教学场景 ③ · 论文级插图 / 动画</h2>
+      <table>
+        <tr><th>Skill</th><th>类别</th><th>能力</th><th>典型场景</th></tr>
+        <tr>
+          <td><code>architecture-diagram</code></td>
+          <td><span class="tag">creative</span></td>
+          <td>深色主题 SVG 系统架构图</td>
+          <td>论文 Fig. 2 / 系统总览</td>
+        </tr>
+        <tr>
+          <td><code>nn-architecture-diagram</code></td>
+          <td><span class="tag">creative</span></td>
+          <td>神经网络结构图 (CNN/Transformer)</td>
+          <td>ResNet / ViT / BERT 图解</td>
+        </tr>
+        <tr>
+          <td><code>excalidraw</code></td>
+          <td><span class="tag">creative</span></td>
+          <td>手绘风示意图 (Excalidraw JSON)</td>
+          <td>课堂白板风格</td>
+        </tr>
+        <tr>
+          <td><code>manim-video</code></td>
+          <td><span class="tag">creative</span></td>
+          <td>数学 / 算法动画 (3Blue1Brown 风)</td>
+          <td>梯度下降 / 注意力机制</td>
+        </tr>
+        <tr>
+          <td><code>p5js</code></td>
+          <td><span class="tag">creative</span></td>
+          <td>交互式 generative 可视化</td>
+          <td>物理仿真 / 数据艺术</td>
+        </tr>
+        <tr>
+          <td><code>baoyu-infographic</code></td>
+          <td><span class="tag">creative</span></td>
+          <td>21 种信息图 layout,中文友好</td>
+          <td>公众号 / 课件</td>
+        </tr>
+      </table>
+      <p class="small takeaway">原则：<b>重绘 > 截图</b>。所有架构图都用 SVG 课堂重绘版，附"参考论文 Fig. X"标注，避开版权。</p>
+    </div></section>
+
+    <!-- ============== 15. 教学评估 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>13. 教学场景 ④ · 教学评估 (录音 → 6 维 Rubric)</h2>
+      <div class="grid2">
+        <div class="box">
+          <h4>使用 skill</h4>
+          <p><span class="tag g">mlops</span> <code>audio-teaching-eval</code></p>
+          <p><span class="tag g">research</span> <code>teaching-eval-pipeline</code></p>
+          <h4>6 维 Rubric</h4>
+          <ul>
+            <li><b>D1</b> · 教学目标清晰度</li>
+            <li><b>D2</b> · 内容组织与逻辑</li>
+            <li><b>D3</b> · 讲解清晰度</li>
+            <li><b>D4</b> · 互动与学生参与</li>
+            <li><b>D5</b> · 时间管理</li>
+            <li><b>D6</b> · 教学反思与改进</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>11 个客观指标</h4>
+          <p class="small">声学 (语速/音量/停顿) + 文本 (关键词/重复/连贯) 双轨</p>
+          <h4>典型用法</h4>
+          <ul>
+            <li>课堂录音 → mlx-whisper 转写</li>
+            <li>LLM 评 6 维 Rubric</li>
+            <li>出 PDF 报告 + 改进建议</li>
+            <li>适合教师培训 / 微格教学</li>
+          </ul>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- ============== 16. 小学试卷 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>14. 教学场景 ⑤ · 小学作业 / 试卷整理</h2>
+      <p class="muted">用户的<b>真实高频场景</b>：5 年级孩子错题周周清 + 期末复习。</p>
+      <div class="grid2">
+        <div class="box">
+          <h4>工作流</h4>
+          <ol>
+            <li>CamScanner 扫描试卷 → PDF / 图片</li>
+            <li><code>ocr-and-documents</code> 提取文字 + 公式</li>
+            <li>Hermes 识别错题 + 分类 (概念 / 计算 / 应用)</li>
+            <li>生成 <b>一页纸知识点总结</b> (onepage-*)</li>
+            <li>GitHub Pages 静态部署，随时翻看</li>
+          </ol>
+        </div>
+        <div class="box">
+          <h4>已实测产出</h4>
+          <ul>
+            <li>5 年 5 班 · 错题周周清 (36 题)</li>
+            <li>5 年 6 班 · 错题周周清 (18 题)</li>
+            <li>龙高期末 5 年级 (33 题)</li>
+            <li>分数加减 / 分数乘除 / 统计图 (单元复习)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote">"<b>省 1 小时/周</b>：以前整理错题要 1.5 小时手动抄题 + 写思路，现在拍照 + 一句话指令 → 5 分钟出一页纸。"</div>
+    </div></section>
+
+    <!-- ============== 17. 科研端到端 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>15. 实战工作流 A · 科研项目端到端</h2>
+      <p class="muted">从一个<b>开题指令</b>到 <b>N 篇论文 + 1 份综述 + 1 个 slides</b>，Hermes 全程可介入。</p>
+      <div class="diagram">
+        <div class="diag-row">
+          <div class="grp research" style="flex: 1;"><span class="gl">① 选题 / 调研 (1-2 天)</span>
+            <div>
+              <span class="gn">academic-topic-survey</span>
+              <span class="gn">conference-trend-analysis</span>
+              <span class="gn">arxiv</span>
+              <span class="gn">pdf-vision-reading</span>
+            </div>
+          </div>
+        </div>
+        <div class="diag-flow">⬇ 选定方向 + 5-10 篇必读</div>
+        <div class="diag-row">
+          <div class="grp research" style="flex: 1;"><span class="gl">② 精读 + 笔记 (3-5 天)</span>
+            <div>
+              <span class="gn">pdf-vision-reading</span>
+              <span class="gn">obsidian</span>
+              <span class="gn">research-paper-writing</span>
+            </div>
+          </div>
+        </div>
+        <div class="diag-flow">⬇ 复现方法 + 发现 gap</div>
+        <div class="diag-row">
+          <div class="grp research" style="flex: 1;"><span class="gl">③ 实验 + 训练 (1-2 周)</span>
+            <div>
+              <span class="gn">jupyter-live-kernel</span>
+              <span class="gn">execute_code</span>
+              <span class="gn">unsloth</span>
+              <span class="gn">wandb</span>
+            </div>
+          </div>
+        </div>
+        <div class="diag-flow">⬇ 数据集 + baseline + 自己的改进</div>
+        <div class="diag-row">
+          <div class="grp research" style="flex: 1;"><span class="gl">④ 评估 + 写作 (3-5 天)</span>
+            <div>
+              <span class="gn">evaluating-llms-harness</span>
+              <span class="gn">research-paper-writing</span>
+              <span class="gn">nano-pdf</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- ============== 18. 教学端到端 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>16. 实战工作流 B · 教学项目端到端</h2>
+      <p class="muted">从<b>选定主题</b>到<b>课堂可用的全套材料</b>，覆盖备课-讲义-练习-评估。</p>
+      <div class="diagram">
+        <div class="diag-row">
+          <div class="grp teach" style="flex: 1;"><span class="gl">① 选定主题 + 调研资料</span>
+            <div>
+              <span class="gn">academic-topic-survey</span>
+              <span class="gn">pdf-vision-reading</span>
+              <span class="gn">arxiv</span>
+            </div>
+          </div>
+        </div>
+        <div class="diag-flow">⬇ 核心问题 + 关键论文 + 5 个 insight</div>
+        <div class="diag-row">
+          <div class="grp teach" style="flex: 1;"><span class="gl">② 产出讲义材料 (slides + 信息图)</span>
+            <div>
+              <span class="gn">html-teaching-slides</span>
+              <span class="gn">onepage-infographic</span>
+              <span class="gn">architecture-diagram</span>
+              <span class="gn">manim-video</span>
+            </div>
+          </div>
+        </div>
+        <div class="diag-flow">⬇ 20-100 张 slides + 一页纸 + 架构图 + 视频</div>
+        <div class="diag-row">
+          <div class="grp teach" style="flex: 1;"><span class="gl">③ 配套作业 / 实验</span>
+            <div>
+              <span class="gn">jupyter-live-kernel</span>
+              <span class="gn">tiny-llm-from-scratch</span>
+              <span class="gn">exercise generation</span>
+            </div>
+          </div>
+        </div>
+        <div class="diag-flow">⬇ 学生实验模板 + 自动评分脚本</div>
+        <div class="diag-row">
+          <div class="grp teach" style="flex: 1;"><span class="gl">④ 课堂评估 + 复盘</span>
+            <div>
+              <span class="gn">mlx-whisper</span>
+              <span class="gn">audio-teaching-eval</span>
+              <span class="gn">github-pages deploy</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- ============== 19. Top 15 skills (1-8) ============== -->
+    <section class="slide tight denser"><div class="card">
+      <h2>17. Top 15 推荐 skills 速查 (1-8)</h2>
+      <table>
+        <tr><th>#</th><th>Skill</th><th>类别</th><th>主要场景</th><th>频次</th></tr>
+        <tr><td>1</td><td><code>academic-daily-digest</code></td><td><span class="tag o">研究</span></td><td>每日 arXiv 论文 cron 推送</td><td>每日</td></tr>
+        <tr><td>2</td><td><code>html-teaching-slides</code></td><td><span class="tag g">教学</span></td><td>任意主题 → 20-100 张 HTML slides</td><td>每周</td></tr>
+        <tr><td>3</td><td><code>onepage-infographic</code></td><td><span class="tag g">教学</span></td><td>"一页讲清楚"信息图</td><td>每周</td></tr>
+        <tr><td>4</td><td><code>conference-trend-analysis</code></td><td><span class="tag o">研究</span></td><td>顶会 (CVPR/ICML) 风向分析</td><td>每月</td></tr>
+        <tr><td>5</td><td><code>academic-topic-survey</code></td><td><span class="tag o">研究</span></td><td>某方向 20-50 篇论文调研</td><td>每月</td></tr>
+        <tr><td>6</td><td><code>pdf-vision-reading</code></td><td><span class="tag o">研究</span></td><td>PDF 论文精读 + 图表提取</td><td>每周</td></tr>
+        <tr><td>7</td><td><code>jupyter-live-kernel</code></td><td><span class="tag t">数据</span></td><td>交互式数据分析 + 实验</td><td>每周</td></tr>
+        <tr><td>8</td><td><code>audio-teaching-eval</code></td><td><span class="tag g">教学</span></td><td>课堂录音 → 6 维 Rubric</td><td>每月</td></tr>
+      </table>
+      <p class="small muted">频次 = 用户的实际使用频率 (基于 auto 仓库 1-2 月的 30+ 交付记录)。见下页 9-15。</p>
+    </div></section>
+
+    <!-- ============== 19b. Top 15 skills (9-15) ============== -->
+    <section class="slide tight denser"><div class="card">
+      <h2>17. Top 15 推荐 skills 速查 (9-15) · 续</h2>
+      <table>
+        <tr><th>#</th><th>Skill</th><th>类别</th><th>主要场景</th><th>频次</th></tr>
+        <tr><td>9</td><td><code>ocr-and-documents</code></td><td><span class="tag g">教学</span></td><td>扫描件 → 文字 + 公式</td><td>每周</td></tr>
+        <tr><td>10</td><td><code>unsloth</code> / <code>axolotl</code></td><td><span class="tag o">研究</span></td><td>LLM 微调 (2-5x 加速)</td><td>项目</td></tr>
+        <tr><td>11</td><td><code>evaluating-llms-harness</code></td><td><span class="tag o">研究</span></td><td>60+ benchmark 跑分</td><td>项目</td></tr>
+        <tr><td>12</td><td><code>architecture-diagram</code></td><td><span class="tag p">创意</span></td><td>深色 SVG 架构图</td><td>每周</td></tr>
+        <tr><td>13</td><td><code>email-163</code></td><td><span class="tag y">通讯</span></td><td>终端收发邮件 (himalaya)</td><td>每日</td></tr>
+        <tr><td>14</td><td><code>cronjob-scheduler</code></td><td><span class="tag y">自动化</span></td><td>定时任务 (cron 表达式)</td><td>每月</td></tr>
+        <tr><td>15</td><td><code>github-pr-workflow</code></td><td><span class="tag y">协作</span></td><td>PR / Issue / Code Review</td><td>每周</td></tr>
+      </table>
+      <p class="small muted">三类高频: <b style="color: var(--orange);">研究类</b> (5 个) · <b style="color: var(--green);">教学类</b> (4 个) · <b style="color: var(--accent2);">自动化/通讯</b> (3 个) + 创意/数据各 1-2 个。</p>
+    </div></section>
+
+    <!-- ============== 20. skills 决策树 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>18. skills 选择决策树</h2>
+      <p class="muted">不确定用哪个？按以下 4 步决策：</p>
+      <div class="grid2" style="gap: 10px;">
+        <div class="tree">① 信息类 (我要"知道")
+│
+├── 每天都要看    → academic-daily-digest + cron
+├── 一段时间趋势  → conference-trend-analysis / blogwatcher
+├── 某方向系统    → academic-topic-survey
+├── 单篇精读      → pdf-vision-reading
+└── 历史对话      → session_search</div>
+        <div class="tree">② 产出类 (我要"做出来")
+│
+├── 长报告 slides → html-teaching-slides
+├── 一页速查      → onepage-infographic
+├── 架构图        → architecture-diagram
+├── 数学动画      → manim-video
+├── PPT 文件      → powerpoint
+└── 论文初稿      → research-paper-writing</div>
+        <div class="tree">③ 实验类 (我要"算出来")
+│
+├── 数据探索      → jupyter-live-kernel
+├── 快速原型      → execute_code
+├── LLM 微调      → unsloth / axolotl
+├── 推理服务      → vllm / llama-cpp
+├── benchmark     → evaluating-llms-harness
+└── 实验追踪      → weights-and-biases</div>
+        <div class="tree">④ 教学类 (我要"教别人")
+│
+├── 备课 slides   → html-teaching-slides
+├── 概念图        → onepage-infographic
+├── 课堂评估      → audio-teaching-eval
+├── 错题整理      → ocr + onepage-*
+└── 教学设计      → design-md</div>
+      </div>
+    </div></section>
+
+    <!-- ============== 21. 总结 ============== -->
+    <section class="slide tight"><div class="card">
+      <h2>19. 总结 · 把 Agent 用成"超能力"</h2>
+      <div class="quote">机制是"心脏"，skills 是"专业工具包"——<b>机制让你"能动"，skills 让你"动得快、动得准"</b>。</div>
+      <h3 style="margin: 8px 0 4px; font-size: 16px;">5 条核心心法</h3>
+      <ol class="compact" style="margin-top: 4px;">
+        <li><b>先看机制再选 skill</b>：知道 Agent 能做什么，再映射到 skill</li>
+        <li><b>组合优于单一</b>：3 个 skills 串联 = 一个端到端工作流</li>
+        <li><b>数据流是核心</b>：PDF/CSV/JSON → skill 加工 → slides/报告</li>
+        <li><b>复用工作流</b>：把"科研端到端" / "教学端到端" 当模板</li>
+        <li><b>实测再下结论</b>：每个 skill 自己跑一遍，比看文档靠谱</li>
+      </ol>
+      <h3 style="margin: 8px 0 4px; font-size: 16px;">推荐学习路径 (4 周)</h3>
+      <div class="arch" style="margin: 4px 0;">
+        <span class="layer teach" style="font-size: 12.5px;">W1: html-slides + onepage</span>
+        <span class="arrow">→</span>
+        <span class="layer daily" style="font-size: 12.5px;">W2: cron + digest</span>
+        <span class="arrow">→</span>
+        <span class="layer research" style="font-size: 12.5px;">W3: topic-survey + pdf</span>
+        <span class="arrow">→</span>
+        <span class="layer eval" style="font-size: 12.5px;">W4: jupyter + unsloth</span>
+      </div>
+      <h3 style="margin: 8px 0 4px; font-size: 16px;">配套资源</h3>
+      <ul>
+        <li>本套 slides 配套: <code>hermes-agent-mechanism-slides</code> (讲机制)</li>
+        <li>用户实战: <code>~/auto/</code> 30+ onepage-* + 10+ slides 案例</li>
+        <li>Hermes skills 库: <code>~/.hermes/skills/</code> (30+ 个)</li>
+      </ul>
+      <p class="small muted" style="margin-top: 12px;">— end of deck — · 共 22 张 · 由 DONG XINGBO 整理</p>
+    </div></section>
+
+  </div>
+
+  <div class="foot">
+    <span id="counter">Hermes 使用指南 · 1 / 21</span>
+    <span class="muted">← / → 翻页 · Home/End 跳转 · P 打印</span>
+  </div>
+  <div class="progress" id="progress"></div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const counter = document.getElementById('counter');
+    const progress = document.getElementById('progress');
+    let idx = 0;
+    function show(i) {
+      if (i < 0) i = 0;
+      if (i >= slides.length) i = slides.length - 1;
+      idx = i;
+      slides.forEach((s, n) => s.classList.toggle('active', n === idx));
+      counter.textContent = `Hermes 使用指南 · ${idx + 1} / ${slides.length}`;
+      progress.style.width = `${((idx + 1) / slides.length) * 100}%`;
+      history.replaceState(null, '', `#${idx + 1}`);
+    }
+    function next() { show(idx + 1); }
+    function prev() { show(idx - 1); }
+    document.addEventListener('keydown', (e) => {
+      if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); next(); }
+      if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+      if (e.key === 'Home') show(0);
+      if (e.key === 'End') show(slides.length - 1);
+      if (e.key.toLowerCase() === 'p') window.print();
+    });
+    const hashNum = parseInt(location.hash.replace('#',''), 10);
+    if (!Number.isNaN(hashNum) && hashNum >= 1) show(hashNum - 1); else show(0);
+    window.addEventListener('hashchange', () => {
+      const n = parseInt(location.hash.replace('#',''), 10);
+      if (!Number.isNaN(n) && n >= 1 && n <= slides.length && n !== idx + 1) show(n - 1);
+    });
+  </script>
+<div style="
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 5px 16px;
+  text-align: center;
+  font-size: 11px;
+  color: #6b7280;
+  background: rgba(250, 250, 250, 0.92);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  line-height: 1.4;
+  margin: 0;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+">
+  <b style="color: #111827; font-weight: 600;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO
+</div>
+
+</body>
+</html>
