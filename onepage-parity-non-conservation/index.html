@@ -303,6 +303,35 @@ table code {
   letter-spacing: 0.02em;
 }
 
+/* 实物图 / 通俗解释图 */
+.real-img {
+  background: #fafafa;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 14px 12px;
+  margin: 12px 0;
+  text-align: left;
+}
+.real-img img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  display: block;
+  margin: 0 auto;
+}
+.real-img .img-cap {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  margin-top: 10px;
+  letter-spacing: 0.01em;
+  line-height: 1.7;
+  padding: 8px 12px;
+  background: #fff;
+  border-radius: 6px;
+  border-left: 3px solid var(--m4-deep);
+}
+.real-img .img-cap b { color: var(--m4-deep); }
+
 /* ===== ④ Pitfalls 误区 ===== */
 .pitfalls h2 {
   font-size: 18px;
@@ -653,58 +682,21 @@ footer .credit b { color: var(--ink); font-weight: 700; }
     <li><b>预期</b>(宇称守恒):两个方向电子数<b>相等</b></li>
   </ul>
   <div class="callout">
-    🧪 <b>结果</b>: 两个方向电子数明显<b>不同</b> — 沿自旋方向电子数远多于反方向,
-    <b>不对称</b>!<br>
-    <b>镜像推论</b>: 镜子里钴-60 自旋方向反转,但电子发射方向<b>也反转</b> →
-    镜像里的实验结果和现实<b>不一样</b>。<br>
-    <b>结论</b>: <b>弱相互作用中宇称不守恒</b>被<b>实验证实</b>!
+    🧪 <b>通俗解读</b>(配合下方插图):<br>
+    <b>左侧 — 理论预期</b>:如果宇称守恒成立,镜像世界应与现实<b>完全对称</b>(电子发射方向相反);<br>
+    <b>右侧 — 实测结果</b>:实验发现镜像操作(反自旋)后,电子仍沿<b>同一方向</b>发射,<b>不再对称</b>;<br>
+    <b>结论</b>: 镜像世界 ≠ 现实世界 → 弱相互作用中宇称不守恒被<b>实验证实</b>!
   </div>
 
-  <!-- SVG 实验示意 -->
-  <div class="svg-wrap">
-    <svg viewBox="0 0 520 230" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;">
-      <!-- 现实世界 -->
-      <text x="120" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#be185d">现实世界</text>
-      <line x1="60" y1="60" x2="60" y2="180" stroke="#be185d" stroke-width="2" marker-end="url(#arr-m)"/>
-      <text x="40" y="100" font-size="10" fill="#374151" font-weight="600">↑</text>
-      <text x="40" y="115" font-size="9" fill="#6b7280">自旋</text>
-      <circle cx="100" cy="120" r="22" fill="#fce7f3" stroke="#be185d" stroke-width="2"/>
-      <text x="100" y="125" text-anchor="middle" font-size="12" font-weight="700" fill="#be185d" font-family="ui-monospace, monospace">⁶⁰Co</text>
-      <!-- 电子发射 ↑ 多 -->
-      <line x1="100" y1="100" x2="160" y2="60" stroke="#be185d" stroke-width="1.5"/>
-      <text x="160" y="55" font-size="10" fill="#be185d" font-weight="700">e⁻ ↑ 多</text>
-      <line x1="100" y1="140" x2="160" y2="180" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="3,3"/>
-      <text x="160" y="195" font-size="10" fill="#6b7280" font-style="italic">e⁻ ↓ 少</text>
-
-      <!-- 镜像世界 -->
-      <text x="330" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#0f766e">镜像世界</text>
-      <line x1="290" y1="60" x2="290" y2="180" stroke="#0f766e" stroke-width="2" marker-end="url(#arr-m2)"/>
-      <text x="270" y="100" font-size="10" fill="#374151" font-weight="600">↑</text>
-      <text x="270" y="115" font-size="9" fill="#6b7280">自旋</text>
-      <circle cx="330" cy="120" r="22" fill="#ccfbf1" stroke="#0f766e" stroke-width="2"/>
-      <text x="330" y="125" text-anchor="middle" font-size="12" font-weight="700" fill="#0f766e" font-family="ui-monospace, monospace">⁶⁰Co</text>
-      <!-- 镜像:电子 ↓ 多 -->
-      <line x1="330" y1="140" x2="390" y2="180" stroke="#0f766e" stroke-width="1.5"/>
-      <text x="390" y="195" font-size="10" fill="#0f766e" font-weight="700">e⁻ ↓ 多</text>
-      <line x1="330" y1="100" x2="390" y2="60" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="3,3"/>
-      <text x="390" y="55" font-size="10" fill="#6b7280" font-style="italic">e⁻ ↑ 少</text>
-
-      <!-- 镜子 -->
-      <line x1="220" y1="40" x2="220" y2="200" stroke="#6b7280" stroke-width="1" stroke-dasharray="4,3"/>
-      <text x="220" y="30" text-anchor="middle" font-size="10" fill="#6b7280" font-style="italic">| 镜子 |</text>
-
-      <text x="260" y="220" text-anchor="middle" font-size="11" fill="#be185d" font-weight="700">↑↓ ≠ ↓↑ → 镜像不对称 → 宇称不守恒</text>
-
-      <defs>
-        <marker id="arr-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="#be185d"/>
-        </marker>
-        <marker id="arr-m2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f766e"/>
-        </marker>
-      </defs>
-    </svg>
-    <div class="svg-cap">图 2 · 镜像里的实验 ≠ 现实里的实验 → 宇称 P 被破坏</div>
+  <!-- 实验设计图(用户提供的通俗图解) -->
+  <div class="real-img">
+    <img src="parity.png" alt="吴健雄钴-60 实验:理论预期 vs 实验结果" />
+    <div class="img-cap">
+      <b>通俗图解 · 吴健雄实验的判定逻辑</b><br>
+      左侧"如果宇称守恒成立"→ 镜像世界应与现实<b>完全对称</b>(电子发射方向相反);
+      右侧"实验结果"→ 镜像操作(反自旋)后电子仍沿<b>同一方向</b>发射,与现实<b>不再对称</b>。<br>
+      红色双向箭头直接指出矛盾 → 宇称 P 被实验打破。
+    </div>
   </div>
 </section>
 
