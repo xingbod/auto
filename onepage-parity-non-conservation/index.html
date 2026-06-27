@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宇称不守恒定律 · 一页纸讲清楚</title>
+<style>
+:root {
+  --m1-deep: #9f1239;   /* 深玫红 rose-800: 主色 */
+  --m1-soft: #fff1f2;   /* rose-50 偏深 */
+  --m2-deep: #a16207;   /* 暗金 amber-700 */
+  --m2-soft: #fef3c7;   /* amber-100 */
+  --m3-deep: #4338ca;   /* 深靛 indigo-700 */
+  --m3-soft: #e0e7ff;   /* indigo-100 */
+  --m4-deep: #0f766e;   /* 深松绿 teal-700 */
+  --m4-soft: #ccfbf1;   /* teal-100 */
+  --ink: #111827;
+  --ink-2: #374151;
+  --ink-3: #6b7280;
+  --line: #f3f4f6;
+  --bg: #ffffff;
+  --warn: #ef4444;
+  --warn-soft: #fef2f2;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #f5f5f4; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--ink);
+  line-height: 1.6;
+  padding: 24px 12px;
+}
+.poster {
+  max-width: 780px;
+  margin: 0 auto;
+  background: var(--bg);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 22px rgba(0,0,0,0.08);
+}
+section { padding: 26px 36px; border-bottom: 1px solid var(--line); }
+section:last-child { border-bottom: none; }
+
+/* ===== ① Header ===== */
+header {
+  position: relative;
+  background: linear-gradient(135deg, #9f1239 0%, #be185d 100%);
+  color: #fff;
+  padding: 34px 38px 28px;
+}
+header .eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.18);
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+header h1 {
+  font-size: 27px;
+  line-height: 1.42;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: -0.005em;
+}
+header h1 .q { color: #fde047; }
+header .subtitle {
+  font-size: 14.5px;
+  color: rgba(255,255,255,0.94);
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+header .meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: rgba(255,255,255,0.85);
+}
+header .meta span {
+  background: rgba(255,255,255,0.12);
+  padding: 3px 9px;
+  border-radius: 4px;
+}
+header .deco {
+  position: absolute;
+  top: 24px; right: 28px;
+  font-size: 28px;
+  opacity: 0.85;
+  letter-spacing: 4px;
+}
+
+/* ===== ② Overview 总览 ===== */
+.overview h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--m1-deep);
+}
+.overview h2 .en {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+.overview .lead {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin: 4px 0 14px;
+  line-height: 1.7;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.card {
+  border-radius: 8px;
+  padding: 12px 13px;
+  border: 1px solid;
+  position: relative;
+}
+.card .icn { font-size: 20px; display: block; margin-bottom: 4px; }
+.card .name {
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: var(--ink);
+}
+.card .en {
+  font-size: 10.5px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.card.c1 { background: var(--m1-soft); border-color: #fecdd3; }
+.card.c2 { background: var(--m2-soft); border-color: #fde68a; }
+.card.c3 { background: var(--m3-soft); border-color: #c7d2fe; }
+.card.c4 { background: var(--m4-soft); border-color: #99f6e4; }
+.card.c5 { background: #f0fdf4; border-color: #bbf7d0; }
+.card.c6 { background: #f5f3ff; border-color: #ddd6fe; }
+
+/* ===== ③ 编号主模块 ===== */
+.module { position: relative; }
+.module-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.num {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.m1 .num { background: var(--m1-deep); }
+.m2 .num { background: var(--m2-deep); }
+.m3 .num { background: var(--m3-deep); }
+.m4 .num { background: var(--m4-deep); }
+.module-head h3 {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.35;
+}
+.module-head h3 .en {
+  display: block;
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.module p {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--ink-2);
+  margin-bottom: 10px;
+}
+.module ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 10px;
+}
+.module li {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  padding-left: 18px;
+  position: relative;
+  margin-bottom: 5px;
+}
+.module li::before {
+  content: "▸";
+  position: absolute;
+  left: 4px;
+  color: var(--m1-deep);
+  font-weight: 700;
+}
+.m2 li::before { color: var(--m2-deep); }
+.m3 li::before { color: var(--m3-deep); }
+.m4 li::before { color: var(--m4-deep); }
+
+.callout {
+  background: var(--m1-soft);
+  border-left: 4px solid var(--m1-deep);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  margin: 10px 0;
+}
+.m2 .callout { background: var(--m2-soft); border-left-color: var(--m2-deep); }
+.m3 .callout { background: var(--m3-soft); border-left-color: var(--m3-deep); }
+.m4 .callout { background: var(--m4-soft); border-left-color: var(--m4-deep); }
+.callout b { color: var(--m1-deep); }
+.m2 .callout b { color: var(--m2-deep); }
+.m3 .callout b { color: var(--m3-deep); }
+.m4 .callout b { color: var(--m4-deep); }
+
+/* 公式块 */
+.eq {
+  background: #fafafa;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 10px 0;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 13.5px;
+  color: var(--ink);
+  line-height: 1.7;
+}
+.eq code {
+  font-family: inherit;
+  background: rgba(0,0,0,0.04);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--m1-deep);
+  font-weight: 600;
+}
+.m2 .eq code { color: var(--m2-deep); }
+.m3 .eq code { color: var(--m3-deep); }
+.m4 .eq code { color: var(--m4-deep); }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 10px 0;
+  background: #fafafa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+th, td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 12.5px;
+}
+td { color: var(--ink-2); }
+tr:last-child td { border-bottom: none; }
+table code {
+  font-family: ui-monospace, monospace;
+  background: rgba(159,18,57,0.08);
+  color: var(--m1-deep);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+/* SVG 容器 */
+.svg-wrap {
+  background: #fafafa;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+  text-align: center;
+}
+.svg-wrap svg { max-width: 100%; height: auto; }
+.svg-cap {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  margin-top: 6px;
+  letter-spacing: 0.02em;
+}
+
+/* ===== ④ Pitfalls 误区 ===== */
+.pitfalls h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--warn);
+  margin-bottom: 4px;
+}
+.pitfalls h2 .en {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+.pitfalls .lead {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin: 4px 0 14px;
+}
+.pitfall {
+  background: var(--warn-soft);
+  border: 1px solid #fecaca;
+  border-left: 4px solid var(--warn);
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.pitfall .wrong {
+  color: #991b1b;
+  font-weight: 600;
+  text-decoration: line-through;
+  text-decoration-color: #ef4444;
+}
+.pitfall .arrow {
+  margin: 0 6px;
+  color: var(--warn);
+  font-weight: 700;
+}
+.pitfall .right {
+  color: #14532d;
+  font-weight: 700;
+  background: #dcfce7;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+/* ===== ⑤ TL;DR 总结 ===== */
+.tldr h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--m1-deep);
+  margin-bottom: 4px;
+}
+.tldr h2 .en {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+.tldr .lead {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin: 4px 0 14px;
+}
+.tldr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.tl-card {
+  background: #fafafa;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 14px;
+  position: relative;
+}
+.tl-card .tag {
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--m1-deep);
+  margin-bottom: 4px;
+}
+.tl-card.t2 .tag { color: var(--m2-deep); }
+.tl-card.t3 .tag { color: var(--m3-deep); }
+.tl-card .text {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+.tldr-summary {
+  background: linear-gradient(135deg, #9f1239 0%, #be185d 100%);
+  color: #fff;
+  border-radius: 10px;
+  padding: 16px 20px;
+  font-size: 14.5px;
+  line-height: 1.75;
+  text-align: center;
+  font-weight: 500;
+}
+.tldr-summary b { color: #fde047; font-weight: 800; }
+footer {
+  text-align: center;
+  padding: 18px 36px 22px;
+  background: #fafafa;
+  border-top: 1px solid var(--line);
+}
+footer .src {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  line-height: 1.7;
+  text-align: right;
+  margin-bottom: 8px;
+}
+footer .credit {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  text-align: center;
+  line-height: 1.6;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+footer .credit b { color: var(--ink); font-weight: 700; }
+
+/* ===== 响应式 ===== */
+@media (max-width: 640px) {
+  section { padding: 22px 22px; }
+  header { padding: 26px 22px 22px; }
+  header h1 { font-size: 22px; }
+  .cards, .tldr-grid { grid-template-columns: repeat(2, 1fr); }
+  .deco { display: none; }
+  table { font-size: 12px; }
+}
+@media (max-width: 420px) {
+  .cards, .tldr-grid { grid-template-columns: 1fr; }
+  .module-head h3 { font-size: 17px; }
+}
+</style>
+</head>
+<body>
+<div class="poster">
+
+<!-- ① 标题区 -->
+<header>
+  <div class="deco">🪞 ⚛️ 🔄</div>
+  <span class="eyebrow">Particle Physics · 1956–1957</span>
+  <h1>为什么<span class="q">镜像里的世界</span>和真实世界不一样?</h1>
+  <p class="subtitle">
+    10 分钟读懂<strong>宇称不守恒定律</strong> — 从 "θ-τ 之谜" 的悬案,
+    到李政道、杨振宁的大胆假设,再到吴健雄用一个低温钴-60 实验一锤定音,
+    1957 年斩获诺贝尔物理学奖。
+  </p>
+  <div class="meta">
+    <span>📚 适合: 中学生 + 物理科普爱好者</span>
+    <span>⏱ 通读: 10 分钟</span>
+    <span>📖 参考: 诺贝尔奖官网 / Physical Review 1956</span>
+  </div>
+</header>
+
+<!-- ② 总览 -->
+<section class="overview">
+  <h2>一页总览 <span class="en">Overview</span></h2>
+  <p class="lead">
+    宇称(Parity)是物理学家长期信仰的"镜像对称"。1956 年之前,没人怀疑它在所有相互作用中成立。
+    短短 12 个月内,"θ-τ 之谜"+ 一篇论文 + 一个实验,把这条金科玉律打得粉碎。
+  </p>
+  <div class="cards">
+    <div class="card c1">
+      <span class="icn">🪞</span>
+      <div class="name">宇称 P</div>
+      <div class="en">Parity Operator</div>
+    </div>
+    <div class="card c2">
+      <span class="icn">🌀</span>
+      <div class="name">镜像对称</div>
+      <div class="en">Mirror Symmetry</div>
+    </div>
+    <div class="card c3">
+      <span class="icn">❓</span>
+      <div class="name">θ-τ 之谜</div>
+      <div class="en">Theta-Tau Puzzle</div>
+    </div>
+    <div class="card c4">
+      <span class="icn">⚡</span>
+      <div class="name">弱作用破缺</div>
+      <div class="en">Weak Force Violates P</div>
+    </div>
+    <div class="card c5">
+      <span class="icn">🧪</span>
+      <div class="name">吴健雄实验</div>
+      <div class="en">Co-60 Experiment</div>
+    </div>
+    <div class="card c6">
+      <span class="icn">🏆</span>
+      <div class="name">1957 诺奖</div>
+      <div class="en">Lee · Yang · Wu</div>
+    </div>
+  </div>
+</section>
+
+<!-- ③ 编号主模块 -->
+
+<!-- 01 什么是宇称 P -->
+<section class="module m1">
+  <div class="module-head">
+    <div class="num">01</div>
+    <h3>什么是宇称 P? <span class="en">What is Parity?</span></h3>
+  </div>
+  <p>
+    <b>宇称(Parity, 记作 P)</b>是物理学中的"镜像操作符" — 想象你把整个物理过程拿到镜子前看,
+    如果镜子里发生的现象和现实中<b>遵循同样的物理规律</b>,我们就说这个过程是<b>宇称守恒</b>的。
+  </p>
+  <ul>
+    <li><b>数学上</b>:P 把空间坐标 (x, y, z) 变成 (−x, −y, −z),即<b>空间反演</b></li>
+    <li><b>直觉上</b>:左手在镜子里变右手 — 镜像世界和现实左右互调</li>
+    <li><b>核心假设</b>(1956 年前):自然规律不应区分左右 → <code>P |ψ⟩ = ±|ψ⟩</code>,宇称 P 必然守恒</li>
+  </ul>
+  <div class="callout">
+    🪞 <b>例子</b>: 你右手扔球,在镜子里看是"左手"扔的 — 但牛顿第二定律 <code>F = ma</code> 完美适用,
+    这就是<b>宇称守恒</b>。在 1956 年之前,这种"镜像等价"被物理学家视为<b>铁律</b>。
+  </div>
+  <table>
+    <tr><th>相互作用</th><th>宇称 P 是否守恒</th></tr>
+    <tr><td>强相互作用(核力)</td><td>✅ 守恒</td></tr>
+    <tr><td>电磁相互作用</td><td>✅ 守恒</td></tr>
+    <tr><td>引力相互作用</td><td>✅ 守恒</td></tr>
+    <tr><td><b>弱相互作用</b></td><td><b>❌ 不守恒(1957 年发现)</b></td></tr>
+  </table>
+</section>
+
+<!-- 02 θ-τ 之谜 -->
+<section class="module m2">
+  <div class="module-head">
+    <div class="num">02</div>
+    <h3>θ-τ 之谜:物理学界的大悬案 <span class="en">The Theta-Tau Puzzle (1956)</span></h3>
+  </div>
+  <p>
+    1947 年起,物理学家在宇宙线实验中发现了一种奇怪的粒子 — 后来叫做 <b>K 介子(Kaon)</b>。
+    它有两种衰变模式:
+  </p>
+  <ul>
+    <li><b>θ 衰变</b>: K → π + π (产生 <b>2 个</b> π 介子)</li>
+    <li><b>τ 衰变</b>: K → π + π + π (产生 <b>3 个</b> π 介子)</li>
+  </ul>
+  <p>
+    奇怪的事情来了 — <b>质量、寿命、自旋完全相同的粒子</b>,
+    却衰变成宇称不同的末态(2 个 π 是偶宇称 +1,3 个 π 是奇宇称 −1)。
+  </p>
+  <div class="callout">
+    ⚖️ <b>两难选择</b>:
+    ① 否定"θ-τ 是同一种粒子"(→ 违反 τ-θ 同一性);
+    ② 承认它们是同一种粒子,但<b>宇称不守恒</b>(→ 违反当时的"铁律")。
+    整个物理学界陷入僵局,没人敢选第二条路。
+  </div>
+
+  <!-- SVG 衰变示意 -->
+  <div class="svg-wrap">
+    <svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;">
+      <!-- K 介子 -->
+      <circle cx="80" cy="100" r="28" fill="#fef3c7" stroke="#a16207" stroke-width="2"/>
+      <text x="80" y="105" text-anchor="middle" font-size="16" font-weight="700" fill="#a16207" font-family="ui-monospace, monospace">K</text>
+      <text x="80" y="60" text-anchor="middle" font-size="11" fill="#374151" font-weight="600">K 介子</text>
+      <text x="80" y="155" text-anchor="middle" font-size="10" fill="#6b7280">质量 = 寿命 = 自旋 完全相同</text>
+
+      <!-- 箭头到 θ 分支 -->
+      <line x1="115" y1="85" x2="240" y2="50" stroke="#a16207" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <text x="170" y="62" font-size="11" font-weight="700" fill="#a16207">θ 衰变</text>
+
+      <!-- θ 分支:2 个 π -->
+      <circle cx="280" cy="40" r="15" fill="#fff" stroke="#a16207" stroke-width="1.5"/>
+      <text x="280" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#a16207" font-family="ui-monospace, monospace">π</text>
+      <circle cx="330" cy="40" r="15" fill="#fff" stroke="#a16207" stroke-width="1.5"/>
+      <text x="330" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#a16207" font-family="ui-monospace, monospace">π</text>
+      <text x="305" y="75" text-anchor="middle" font-size="10" fill="#6b7280">2π · 偶宇称 +1</text>
+
+      <!-- 箭头到 τ 分支 -->
+      <line x1="115" y1="115" x2="240" y2="155" stroke="#a16207" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <text x="170" y="148" font-size="11" font-weight="700" fill="#a16207">τ 衰变</text>
+
+      <!-- τ 分支:3 个 π -->
+      <circle cx="260" cy="160" r="15" fill="#fff" stroke="#a16207" stroke-width="1.5"/>
+      <text x="260" y="164" text-anchor="middle" font-size="12" font-weight="700" fill="#a16207" font-family="ui-monospace, monospace">π</text>
+      <circle cx="305" cy="160" r="15" fill="#fff" stroke="#a16207" stroke-width="1.5"/>
+      <text x="305" y="164" text-anchor="middle" font-size="12" font-weight="700" fill="#a16207" font-family="ui-monospace, monospace">π</text>
+      <circle cx="350" cy="160" r="15" fill="#fff" stroke="#a16207" stroke-width="1.5"/>
+      <text x="350" y="164" text-anchor="middle" font-size="12" font-weight="700" fill="#a16207" font-family="ui-monospace, monospace">π</text>
+      <text x="305" y="190" text-anchor="middle" font-size="10" fill="#6b7280">3π · 奇宇称 −1</text>
+
+      <defs>
+        <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#a16207"/>
+        </marker>
+      </defs>
+    </svg>
+    <div class="svg-cap">图 1 · K 介子双衰变模式 — 同样的母粒子,不同的宇称末态</div>
+  </div>
+</section>
+
+<!-- 03 李杨假设 -->
+<section class="module m3">
+  <div class="module-head">
+    <div class="num">03</div>
+    <h3>李政道、杨振宁的大胆假设 <span class="en">Lee &amp; Yang's Bold Proposal (1956)</span></h3>
+  </div>
+  <p>
+    1956 年 10 月,两位华人物理学家 <b>李政道(30 岁)和杨振宁(34 岁)</b>在 <i>Physical Review</i> 发表了一篇划时代论文 ——
+    <b>"Question of Parity Conservation in Weak Interactions"</b>。
+  </p>
+  <ul>
+    <li>他们系统审视了<b>所有</b>弱相互作用实验数据,发现:</li>
+    <li>从<b>没有任何</b>实验真正检验过弱作用中的宇称守恒</li>
+    <li><b>大胆假设</b>:"宇称在弱相互作用中<b>可能不守恒</b>"</li>
+    <li><b>同时提出</b>多个可执行的实验方案来检验这个假设</li>
+  </ul>
+  <div class="callout">
+    💡 <b>思想突破</b>: 科学界一直默认宇称绝对守恒,因为镜像对称太"显然"。
+    李杨的洞察是 — <b>"显然"不等于"被检验过"</b>。他们把一个"哲学信念"变成了<b>可实验验证的科学问题</b>。
+  </div>
+  <div class="eq">
+    <b>论文建议的关键实验</b>:<br>
+    ① <code>极化核 β 衰变</code> — 测量自旋方向上的电子不对称性(吴健雄方案)<br>
+    ② <code>π → μ → e 衰变链</code> — 测量 μ 自旋方向上的电子角分布(伽尔文方案)<br>
+    ③ <code>Λ / Σ 超子衰变</code> — 测量衰变产物的角分布
+  </div>
+</section>
+
+<!-- 04 吴健雄实验 -->
+<section class="module m4">
+  <div class="module-head">
+    <div class="num">04</div>
+    <h3>吴健雄的钴-60 实验:一锤定音 <span class="en">Wu's Co-60 Experiment (1957)</span></h3>
+  </div>
+  <p>
+    <b>吴健雄</b>(当时在纽约国家标准局)接手了李杨建议的 <b>方案 ①</b>。
+    她设计了一个极其精巧的实验:
+  </p>
+  <ul>
+    <li><b>样品</b>: 放射性同位素 <code>⁶⁰Co</code>(钴-60) — 通过 β 衰变发射电子</li>
+    <li><b>极化</b>: 用低温(0.01 K)+ 强磁场使 ⁶⁰Co 原子核<b>自旋对齐</b></li>
+    <li><b>测量</b>: 沿自旋方向 <b>vs</b> 反方向 计数发射的电子数</li>
+    <li><b>预期</b>(宇称守恒):两个方向电子数<b>相等</b></li>
+  </ul>
+  <div class="callout">
+    🧪 <b>结果</b>: 两个方向电子数明显<b>不同</b> — 沿自旋方向电子数远多于反方向,
+    <b>不对称</b>!<br>
+    <b>镜像推论</b>: 镜子里钴-60 自旋方向反转,但电子发射方向<b>也反转</b> →
+    镜像里的实验结果和现实<b>不一样</b>。<br>
+    <b>结论</b>: <b>弱相互作用中宇称不守恒</b>被<b>实验证实</b>!
+  </div>
+
+  <!-- SVG 实验示意 -->
+  <div class="svg-wrap">
+    <svg viewBox="0 0 520 230" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;">
+      <!-- 现实世界 -->
+      <text x="120" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#be185d">现实世界</text>
+      <line x1="60" y1="60" x2="60" y2="180" stroke="#be185d" stroke-width="2" marker-end="url(#arr-m)"/>
+      <text x="40" y="100" font-size="10" fill="#374151" font-weight="600">↑</text>
+      <text x="40" y="115" font-size="9" fill="#6b7280">自旋</text>
+      <circle cx="100" cy="120" r="22" fill="#fce7f3" stroke="#be185d" stroke-width="2"/>
+      <text x="100" y="125" text-anchor="middle" font-size="12" font-weight="700" fill="#be185d" font-family="ui-monospace, monospace">⁶⁰Co</text>
+      <!-- 电子发射 ↑ 多 -->
+      <line x1="100" y1="100" x2="160" y2="60" stroke="#be185d" stroke-width="1.5"/>
+      <text x="160" y="55" font-size="10" fill="#be185d" font-weight="700">e⁻ ↑ 多</text>
+      <line x1="100" y1="140" x2="160" y2="180" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="3,3"/>
+      <text x="160" y="195" font-size="10" fill="#6b7280" font-style="italic">e⁻ ↓ 少</text>
+
+      <!-- 镜像世界 -->
+      <text x="330" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#0f766e">镜像世界</text>
+      <line x1="290" y1="60" x2="290" y2="180" stroke="#0f766e" stroke-width="2" marker-end="url(#arr-m2)"/>
+      <text x="270" y="100" font-size="10" fill="#374151" font-weight="600">↑</text>
+      <text x="270" y="115" font-size="9" fill="#6b7280">自旋</text>
+      <circle cx="330" cy="120" r="22" fill="#ccfbf1" stroke="#0f766e" stroke-width="2"/>
+      <text x="330" y="125" text-anchor="middle" font-size="12" font-weight="700" fill="#0f766e" font-family="ui-monospace, monospace">⁶⁰Co</text>
+      <!-- 镜像:电子 ↓ 多 -->
+      <line x1="330" y1="140" x2="390" y2="180" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="390" y="195" font-size="10" fill="#0f766e" font-weight="700">e⁻ ↓ 多</text>
+      <line x1="330" y1="100" x2="390" y2="60" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="3,3"/>
+      <text x="390" y="55" font-size="10" fill="#6b7280" font-style="italic">e⁻ ↑ 少</text>
+
+      <!-- 镜子 -->
+      <line x1="220" y1="40" x2="220" y2="200" stroke="#6b7280" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="220" y="30" text-anchor="middle" font-size="10" fill="#6b7280" font-style="italic">| 镜子 |</text>
+
+      <text x="260" y="220" text-anchor="middle" font-size="11" fill="#be185d" font-weight="700">↑↓ ≠ ↓↑ → 镜像不对称 → 宇称不守恒</text>
+
+      <defs>
+        <marker id="arr-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#be185d"/>
+        </marker>
+        <marker id="arr-m2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f766e"/>
+        </marker>
+      </defs>
+    </svg>
+    <div class="svg-cap">图 2 · 镜像里的实验 ≠ 现实里的实验 → 宇称 P 被破坏</div>
+  </div>
+</section>
+
+<!-- ④ 误区 -->
+<section class="pitfalls">
+  <h2>三大常见误区 <span class="en">Common Pitfalls</span></h2>
+  <p class="lead">学完原理后,以下三个<b>最常被混淆</b>的概念务必分清:</p>
+  <div class="pitfall">
+    ❌ <span class="wrong">"宇称完全不守恒,所有物理定律都不区分左右了"</span>
+    <span class="arrow">👉</span>
+    <span class="right">只在弱相互作用中破缺;强/电磁/引力仍完美宇称守恒</span>
+  </div>
+  <div class="pitfall">
+    ❌ <span class="wrong">"宇称不守恒 = 镜像里的世界'反过来了'"</span>
+    <span class="arrow">👉</span>
+    <span class="right">不是整体反转 — 而是说弱过程中"镜像实验"和"现实实验"结果不同</span>
+  </div>
+  <div class="pitfall">
+    ❌ <span class="wrong">"宇称不守恒 = 物质-反物质不对称 (C 不守恒)"</span>
+    <span class="arrow">👉</span>
+    <span class="right">两个不同概念: P 镜像是空间反演, C 荷共轭是把粒子变反粒子</span>
+  </div>
+</section>
+
+<!-- ⑤ TL;DR -->
+<section class="tldr">
+  <h2>这一页先记住 <span class="en">TL;DR</span></h2>
+  <p class="lead">一句话总结 1956-1957 年这场物理学革命:</p>
+  <div class="tldr-grid">
+    <div class="tl-card">
+      <div class="tag">定律</div>
+      <div class="text"><b>宇称 P 在弱相互作用中不守恒</b> — 1956 李杨提出,1957 吴健雄证实</div>
+    </div>
+    <div class="tl-card t2">
+      <div class="tag">意义</div>
+      <div class="text">终结了"自然必然左右对称"的百年信仰,弱力是<b>唯一</b>能区分左右的基本力</div>
+    </div>
+    <div class="tl-card t3">
+      <div class="tag">影响</div>
+      <div class="text">1957 诺奖(李政道、杨振宁)+ 吴健雄"物理学第一夫人";开启弱作用研究新纪元</div>
+    </div>
+  </div>
+  <div class="tldr-summary">
+    物理学家以为宇宙必然<b>左右对称</b>。<br>
+    1957 年的实验告诉我们:在<b>弱相互作用</b>中,<b>自然真的能区分左右</b>。
+  </div>
+</section>
+
+<footer>
+  <div class="src">
+    📖 参考来源:<br>
+    · 李政道、杨振宁,《Question of Parity Conservation in Weak Interactions》, Physical Review 104 (1956) 254<br>
+    · 吴健雄等,《Experimental Test of the Parity Conservation in Beta Decay》, Physical Review 105 (1957) 1413<br>
+    · The Nobel Prize in Physics 1957 — nobelprize.org
+  </div>
+  <div class="credit">
+    <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+    <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+  </div>
+</footer>
+
+</div>
+</body>
+</html>
