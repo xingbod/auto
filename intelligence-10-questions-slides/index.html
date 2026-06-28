@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>智能的十大追问 · Intelligence: Ten Fundamental Questions</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --bg-2: #161b22;
+  --line: #30363d;
+  --ink: #e6edf3;
+  --ink-2: #c9d1d9;
+  --ink-3: #8b949e;
+  --muted: #6e7681;
+  --accent: #7dd3fc;
+  --accent2: #fbbf24;
+  --green: #86efac;
+  --red: #fca5a5;
+  --pink: #f0abfc;
+  --orange: #fdba74;
+  --topbar-h: 44px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1.5;
+  overflow: hidden;
+}
+
+/* ========== Topbar ========== */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-h);
+  background: rgba(13, 17, 23, 0.92);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px; z-index: 1000;
+  font-size: 12px;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.topbar .brand { font-weight: 700; color: var(--ink); letter-spacing: 0.5px; }
+.topbar .brand span { color: var(--accent); }
+.topbar .keys { color: var(--ink-3); }
+.topbar .keys kbd {
+  display: inline-block; padding: 1px 6px;
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: 3px; font-family: ui-monospace, monospace;
+  font-size: 10px; color: var(--ink-2); margin: 0 1px;
+}
+.progress {
+  position: fixed; top: var(--topbar-h); left: 0; right: 0; height: 3px;
+  background: var(--bg-2); z-index: 999;
+}
+.progress-bar {
+  height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
+  width: 0%; transition: width 0.2s;
+}
+
+/* ========== Slide Container ========== */
+.slides-wrap { position: relative; width: 100%; height: 100%; padding-top: var(--topbar-h); }
+
+.slide {
+  position: absolute; inset: 0;
+  padding: 70px 56px 76px;
+  display: none; flex-direction: column;
+  overflow: hidden;
+}
+.slide.active { display: flex; }
+.slide.tight { padding: 56px 50px 70px; }
+.slide.tight.denser { padding: 52px 46px 64px; }
+
+/* Cover slide: only show when .active */
+.slide.cover { display: none; }
+.slide.cover.active { display: flex; }
+
+.slide h1 {
+  font-size: 30px; color: var(--ink); margin: 0 0 12px; font-weight: 700;
+}
+.slide h2 {
+  font-size: 24px; color: var(--ink); margin: 0 0 10px; font-weight: 700;
+  padding-bottom: 6px; border-bottom: 2px solid var(--line);
+}
+.slide h3 {
+  font-size: 16px; color: var(--ink); margin: 10px 0 5px; font-weight: 600;
+}
+.slide h4 {
+  font-size: 14px; color: var(--ink); margin: 6px 0 3px; font-weight: 600;
+}
+.slide p { margin: 4px 0; }
+.slide ul, .slide ol { margin: 4px 0 4px 20px; }
+.slide li { margin: 2px 0; line-height: 1.45; }
+.slide .small { font-size: 12px; color: var(--ink-3); }
+.slide .gray { color: var(--ink-3); }
+.slide .right { text-align: right; }
+
+/* ========== Cover ========== */
+.slide.cover.active {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 70px 40px 76px;
+}
+.cover .badge {
+  display: inline-block; padding: 4px 14px; border-radius: 20px;
+  background: rgba(125, 211, 252, 0.12); border: 1px solid var(--accent);
+  color: var(--accent); font-size: 12px; letter-spacing: 1px;
+  margin-bottom: 18px; font-weight: 600;
+}
+.cover h1.title {
+  font-size: 54px; font-weight: 800; line-height: 1.1; color: var(--ink);
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, #7dd3fc 0%, #f0abfc 50%, #fbbf24 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.cover h2.subtitle {
+  font-size: 22px; color: var(--ink-2); font-weight: 500; margin-bottom: 24px;
+  border: none; padding: 0;
+}
+.cover .tagline {
+  font-size: 16px; color: var(--ink-3); max-width: 720px; line-height: 1.6;
+  margin-bottom: 28px;
+}
+.cover .meta {
+  display: flex; gap: 30px; margin-top: 16px; font-size: 12px; color: var(--ink-3);
+}
+.cover .meta b { color: var(--ink); font-weight: 600; }
+.cover .q-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 8px; max-width: 820px; margin-top: 8px;
+}
+.cover .q-chip {
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: 6px; padding: 7px 6px; font-size: 12px; color: var(--ink-2);
+}
+.cover .q-chip b { display: block; color: var(--ink); font-size: 13px; }
+
+/* ========== Color boxes ========== */
+.box {
+  display: inline-block; padding: 3px 8px; border-radius: 4px;
+  font-weight: 600; font-size: 12px; margin: 1px 2px; border: 1px solid;
+}
+.q1 { background: rgba(251,191,36,0.12);  color: #fbbf24; border-color: #fbbf24; }
+.q2 { background: rgba(20,184,166,0.12);  color: #2dd4bf; border-color: #14b8a6; }
+.q3 { background: rgba(236,72,153,0.12);  color: #f472b6; border-color: #ec4899; }
+.q4 { background: rgba(59,130,246,0.12);  color: #60a5fa; border-color: #3b82f6; }
+.q5 { background: rgba(99,102,241,0.12);  color: #818cf8; border-color: #6366f1; }
+.q6 { background: rgba(16,185,129,0.12);  color: #34d399; border-color: #10b981; }
+.q7 { background: rgba(167,139,250,0.12); color: #c4b5fd; border-color: #a78bfa; }
+.q8 { background: rgba(239,68,68,0.12);   color: #fca5a5; border-color: #ef4444; }
+.q9 { background: rgba(132,204,22,0.12);  color: #bef264; border-color: #84cc16; }
+.q10{ background: rgba(148,163,184,0.12); color: #cbd5e1; border-color: #94a3b8; }
+
+.box.policy { background: rgba(91,141,239,0.15);  color: #5b8def; border-color: #5b8def; }
+.box.data   { background: rgba(125,211,252,0.15); color: #7dd3fc; border-color: #7dd3fc; }
+.box.model  { background: rgba(167,139,250,0.15); color: #a78bfa; border-color: #a78bfa; }
+.box.train  { background: rgba(34,197,94,0.15);   color: #22c55e; border-color: #22c55e; }
+.box.eval   { background: rgba(245,158,11,0.15);  color: #f59e0b; border-color: #f59e0b; }
+.box.warn   { background: rgba(239,68,68,0.15);   color: #ef4444; border-color: #ef4444; }
+.box.future { background: rgba(251,191,36,0.15);  color: #fbbf24; border-color: #fbbf24; }
+
+/* ========== Layouts ========== */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.grid5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+
+.card {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 11px 13px;
+}
+.card.tight { padding: 8px 11px; }
+.card.accent { border-left: 3px solid var(--accent); }
+.card.warn   { border-left: 3px solid var(--red); }
+.card.green  { border-left: 3px solid var(--green); }
+.card.amber  { border-left: 3px solid var(--accent2); }
+.card.pink   { border-left: 3px solid var(--pink); }
+.card.purple { border-left: 3px solid #a78bfa; }
+.card.indigo { border-left: 3px solid #818cf8; }
+.card.teal   { border-left: 3px solid #2dd4bf; }
+.card.blue   { border-left: 3px solid #60a5fa; }
+.card.lime   { border-left: 3px solid #bef264; }
+.card.red    { border-left: 3px solid #fca5a5; }
+.card.slate  { border-left: 3px solid #cbd5e1; }
+.card h3 { font-size: 14px; color: var(--ink); margin: 0 0 5px; }
+.card h4 { font-size: 13px; color: var(--ink); margin: 4px 0 2px; }
+.card p  { font-size: 13px; margin: 2px 0; line-height: 1.4; }
+.card ul, .card ol { font-size: 13px; margin: 2px 0 2px 16px; }
+.card li { margin: 1px 0; line-height: 1.35; }
+
+/* ========== Tables ========== */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+table th, table td { padding: 6px 8px; border: 1px solid var(--line); text-align: left; }
+table th { background: var(--bg-2); color: var(--ink); font-weight: 600; }
+table td { color: var(--ink-2); }
+table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+.slide.tight.denser table { font-size: 12px; }
+.slide.tight.denser table th, .slide.tight.denser table td { padding: 4px 6px; line-height: 1.3; }
+
+/* ========== Timeline ========== */
+.timeline {
+  position: relative; padding-left: 18px;
+  border-left: 2px solid var(--line);
+}
+.timeline-item { position: relative; margin: 6px 0; }
+.timeline-item::before {
+  content: ''; position: absolute; left: -23px; top: 4px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); border: 2px solid var(--bg);
+}
+.timeline-year { font-weight: 700; color: var(--accent2); font-size: 12px; }
+.timeline-title { font-weight: 600; color: var(--ink); font-size: 13px; }
+.timeline-desc { font-size: 12px; color: var(--ink-3); margin-top: 1px; line-height: 1.35; }
+
+/* ========== Pipeline ========== */
+.pipeline {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 8px 0; padding: 10px 8px; background: var(--bg-2);
+  border-radius: 8px; border: 1px solid var(--line); gap: 4px;
+}
+.pipeline-step {
+  flex: 1; text-align: center; padding: 6px 4px; border-radius: 5px;
+  background: rgba(125,211,252,0.1); border: 1px solid var(--accent);
+  font-size: 12px; font-weight: 600;
+}
+.pipeline-step .small { font-size: 10px; color: var(--ink-3); font-weight: 400; margin-top: 1px; }
+.pipeline-step.q1 { background: rgba(251,191,36,0.10); border-color: #fbbf24; }
+.pipeline-step.q2 { background: rgba(20,184,166,0.10); border-color: #14b8a6; }
+.pipeline-step.q3 { background: rgba(236,72,153,0.10); border-color: #ec4899; }
+.pipeline-step.q4 { background: rgba(59,130,246,0.10); border-color: #3b82f6; }
+.pipeline-step.q5 { background: rgba(99,102,241,0.10); border-color: #6366f1; }
+.pipeline-step.q6 { background: rgba(16,185,129,0.10); border-color: #10b981; }
+.pipeline-step.q7 { background: rgba(167,139,250,0.10); border-color: #a78bfa; }
+.pipeline-step.q8 { background: rgba(239,68,68,0.10); border-color: #ef4444; }
+.pipeline-step.q9 { background: rgba(132,204,22,0.10); border-color: #84cc16; }
+.pipeline-step.q10{ background: rgba(148,163,184,0.10); border-color: #94a3b8; }
+
+/* ========== Tree / pre ========== */
+.tree {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11.5px; white-space: pre; background: var(--bg-2);
+  padding: 8px 12px; border-radius: 6px; border: 1px solid var(--line);
+  line-height: 1.35;
+}
+
+/* ========== Number grid ========== */
+.num-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 6px 0; }
+.num-cell {
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: 5px; padding: 6px; text-align: center;
+}
+.num-cell .lbl { font-size: 10px; color: var(--ink-3); text-transform: uppercase; }
+.num-cell .val { font-size: 18px; font-weight: bold; margin: 2px 0; font-family: ui-monospace, monospace; }
+.num-cell .sub { font-size: 10px; color: var(--ink-3); }
+
+/* ========== Q-tag header (question color) ========== */
+.qheader {
+  display: inline-block; padding: 3px 10px; border-radius: 4px;
+  font-size: 12px; font-weight: 700; color: #0d1117;
+  margin-right: 8px;
+}
+.q1-bg { background: #fbbf24; }
+.q2-bg { background: #2dd4bf; }
+.q3-bg { background: #f472b6; }
+.q4-bg { background: #60a5fa; }
+.q5-bg { background: #818cf8; }
+.q6-bg { background: #34d399; }
+.q7-bg { background: #c4b5fd; }
+.q8-bg { background: #fca5a5; }
+.q9-bg { background: #bef264; }
+.q10-bg{ background: #cbd5e1; }
+
+/* ========== Diagram ========== */
+.diagram {
+  background: rgba(0,0,0,0.2); border: 1px solid var(--line);
+  border-radius: 10px; padding: 10px 14px; margin: 4px 0;
+}
+.diag-row { display: flex; align-items: stretch; gap: 6px; margin: 4px 0; }
+.diag-row .grp {
+  display: flex; flex-direction: column; gap: 3px; flex: 1;
+  padding: 6px 8px; background: rgba(125,211,252,0.06);
+  border: 1px solid rgba(125,211,252,0.25); border-radius: 6px;
+}
+.diag-row .grp .gl { font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 1px; }
+.diag-row .grp .gn { display: inline-block; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); border: 1px solid var(--line); font-size: 11.5px; margin: 1px 1px; }
+.diag-row .grp.q1   { background: rgba(251,191,36,0.06);  border-color: rgba(251,191,36,0.30); }
+.diag-row .grp.q1   .gl { color: #fbbf24; }
+.diag-row .grp.q2   { background: rgba(20,184,166,0.06);  border-color: rgba(20,184,166,0.30); }
+.diag-row .grp.q2   .gl { color: #2dd4bf; }
+.diag-row .grp.q3   { background: rgba(236,72,153,0.06);  border-color: rgba(236,72,153,0.30); }
+.diag-row .grp.q3   .gl { color: #f472b6; }
+.diag-row .grp.q4   { background: rgba(59,130,246,0.06);  border-color: rgba(59,130,246,0.30); }
+.diag-row .grp.q4   .gl { color: #60a5fa; }
+.diag-row .grp.q5   { background: rgba(99,102,241,0.06);  border-color: rgba(99,102,241,0.30); }
+.diag-row .grp.q5   .gl { color: #818cf8; }
+.diag-row .grp.q6   { background: rgba(16,185,129,0.06);  border-color: rgba(16,185,129,0.30); }
+.diag-row .grp.q6   .gl { color: #34d399; }
+.diag-row .grp.q7   { background: rgba(167,139,250,0.06); border-color: rgba(167,139,250,0.30); }
+.diag-row .grp.q7   .gl { color: #c4b5fd; }
+.diag-row .grp.q8   { background: rgba(239,68,68,0.06);   border-color: rgba(239,68,68,0.30); }
+.diag-row .grp.q8   .gl { color: #fca5a5; }
+.diag-row .grp.q9   { background: rgba(132,204,22,0.06);  border-color: rgba(132,204,22,0.30); }
+.diag-row .grp.q9   .gl { color: #bef264; }
+.diag-row .grp.q10  { background: rgba(148,163,184,0.06); border-color: rgba(148,163,184,0.30); }
+.diag-row .grp.q10  .gl { color: #cbd5e1; }
+.diag-flow { text-align: center; color: var(--muted); font-size: 11px; margin: 1px 0; }
+
+/* ========== Foot nav ========== */
+.footnav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 30px; background: rgba(13, 17, 23, 0.92);
+  border-top: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; z-index: 1000;
+  font-size: 11px; color: var(--ink-3);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.footnav .btns { display: flex; gap: 4px; }
+.footnav button {
+  background: var(--bg-2); border: 1px solid var(--line); color: var(--ink-2);
+  padding: 3px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
+  font-family: inherit;
+}
+.footnav button:hover { background: #1f2937; color: var(--ink); }
+
+/* ========== Page footer (copyright - position: fixed) ========== */
+.copyright-bar {
+  position: fixed; bottom: 30px; left: 0; right: 0; z-index: 999;
+  text-align: center; font-size: 10.5px; color: var(--ink-3);
+  background: rgba(13, 17, 23, 0.85);
+  padding: 3px 16px; line-height: 1.3;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.copyright-bar b { color: var(--ink); font-weight: 600; }
+
+/* Adjust slide bottom padding to leave room for footnav + copyright */
+.slide { padding-bottom: 100px; }
+.slide.tight { padding-bottom: 92px; }
+.slide.tight.denser { padding-bottom: 86px; }
+
+/* Slide title with question header */
+.q-banner {
+  display: flex; align-items: center; margin: 0 0 6px;
+}
+.q-banner .num { font-size: 18px; color: var(--ink-3); margin-right: 8px; font-family: ui-monospace, monospace; }
+.q-banner .qtitle { font-size: 22px; font-weight: 700; color: var(--ink); }
+.q-banner .qsub { font-size: 12px; color: var(--ink-3); margin-left: 12px; }
+
+/* Section divider */
+.divider {
+  height: 2px; background: linear-gradient(90deg, transparent, var(--line), transparent);
+  margin: 8px 0;
+}
+
+/* Highlight list */
+.hl { color: var(--accent2); font-weight: 600; }
+.hl-b { color: var(--accent); font-weight: 600; }
+.hl-g { color: var(--green); font-weight: 600; }
+.hl-p { color: var(--pink); font-weight: 600; }
+.hl-r { color: var(--red); font-weight: 600; }
+
+.kw { color: var(--ink); font-weight: 600; }
+
+/* Compact list for many items */
+.dense-list { columns: 2; column-gap: 18px; }
+.dense-list li { break-inside: avoid; }
+
+/* Roadmap */
+.roadmap {
+  display: flex; align-items: stretch; gap: 8px;
+  margin: 8px 0; padding: 10px;
+  background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px;
+}
+.roadmap .stage {
+  flex: 1; padding: 8px 10px; border-radius: 6px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--line);
+}
+.roadmap .stage .syear { font-size: 11px; color: var(--accent2); font-weight: 700; }
+.roadmap .stage .sname { font-size: 13px; color: var(--ink); font-weight: 600; margin: 1px 0 3px; }
+.roadmap .stage ul { font-size: 11.5px; color: var(--ink-2); margin: 0 0 0 14px; }
+.roadmap .arrow { display: flex; align-items: center; color: var(--ink-3); font-size: 18px; }
+
+/* Coverage map */
+.cover-map { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.cover-map .item {
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: 6px; padding: 7px 10px;
+  display: flex; align-items: center;
+}
+.cover-map .item .label { font-size: 13px; color: var(--ink); font-weight: 600; }
+.cover-map .item .desc { font-size: 11px; color: var(--ink-3); margin-left: 8px; }
+
+/* Final Q&A */
+.qa {
+  font-size: 15px; color: var(--ink); margin: 4px 0; line-height: 1.6;
+}
+.qa .q { color: var(--accent); font-weight: 600; }
+
+.ref-list { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+.ref-list li { margin: 2px 0; }
+.ref-list .tag { font-family: ui-monospace, monospace; color: var(--accent); font-size: 11.5px; }
+
+</style>
+</head>
+<body>
+
+<!-- ========== TOPBAR ========== -->
+<div class="topbar">
+  <div class="brand">智能的十大追问 · <span>Ten Questions of Intelligence</span></div>
+  <div class="keys">
+    <kbd>←</kbd> <kbd>→</kbd> 翻页 · <kbd>Home</kbd>/<kbd>End</kbd> 跳首尾 · <kbd>P</kbd> 打印
+  </div>
+</div>
+<div class="progress"><div class="progress-bar" id="pb"></div></div>
+
+<!-- ========== SLIDES ========== -->
+<div class="slides-wrap">
+
+<!-- SLIDE 1: 封面 -->
+<section class="slide cover active" id="s1">
+  <div class="badge">RESEARCH ROADMAP · 2026</div>
+  <h1 class="title">智能的十大追问</h1>
+  <h2 class="subtitle">Ten Fundamental Questions of Intelligence</h2>
+  <p class="tagline">
+    从涌现、知识、推理、世界模型、记忆、泛化、幻觉、协同、进化，到统一理论——<br>
+    系统梳理人工智能最核心的十个开放问题，对每一条追问梳理研究进展并指明我们的研究机会。
+  </p>
+  <div class="q-grid">
+    <div class="q-chip"><b style="color:#fbbf24">Q1</b>涌现</div>
+    <div class="q-chip"><b style="color:#2dd4bf">Q2</b>知识</div>
+    <div class="q-chip"><b style="color:#f472b6">Q3</b>推理</div>
+    <div class="q-chip"><b style="color:#60a5fa">Q4</b>世界模型</div>
+    <div class="q-chip"><b style="color:#818cf8">Q5</b>记忆</div>
+    <div class="q-chip"><b style="color:#34d399">Q6</b>泛化</div>
+    <div class="q-chip"><b style="color:#c4b5fd">Q7</b>幻觉</div>
+    <div class="q-chip"><b style="color:#fca5a5">Q8</b>协同</div>
+    <div class="q-chip"><b style="color:#bef264">Q9</b>进化</div>
+    <div class="q-chip"><b style="color:#cbd5e1">Q10</b>统一理论</div>
+  </div>
+  <div class="meta">
+    <span><b>29 张</b> 投影片</span>
+    <span><b>10 大问题</b> × 2 页(进展+机会)</span>
+    <span><b>2026.06.28</b></span>
+  </div>
+</section>
+
+<!-- SLIDE 2: 学习目标 -->
+<section class="slide" id="s2">
+  <h2>本课主线 · Learning Objectives</h2>
+  <div class="grid2" style="margin-top: 6px;">
+    <div class="card accent">
+      <h3>为什么做这份 slides</h3>
+      <ul>
+        <li>当前 AI 论文爆炸式增长，<span class="hl">缺乏统一框架</span>梳理最核心的开放问题</li>
+        <li>10 大问题之间存在<span class="hl-b">深层耦合</span>(例如推理 ↔ 世界模型 ↔ 记忆)</li>
+        <li>研究界正进入"<span class="hl-g">后 scaling law 时代</span>"，需要新视角</li>
+        <li>为团队后续 <span class="hl">研究选题</span> 提供可执行的路线图</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>这份 slides 的目标</h3>
+      <ul>
+        <li>用 <span class="hl-b">一页一题</span> 的密度，讲清每个问题的"已知"与"未知"</li>
+        <li>给出每个问题<span class="hl-g">可落地的研究机会</span>，而非空泛展望</li>
+        <li>尝试提出一个 <span class="hl">统一框架</span>(Q10) 把 9 个问题串成有机整体</li>
+        <li>建立"<span class="hl-p">可执行路线图</span>"：短期 1 年、中期 3 年、长期 5 年</li>
+      </ul>
+    </div>
+  </div>
+  <h3 style="margin-top: 10px;">本课不做什么</h3>
+  <div class="card" style="margin-top: 4px;">
+    <ul>
+      <li><b>不写综述</b>：不堆 100 篇论文标题，只挑每个问题最关键的 3-5 个工作 + 代表趋势</li>
+      <li><b>不预测时点</b>：不预言"AGI 何时到来"等不可证伪议题；只讨论研究路径上的具体机会</li>
+      <li><b>不站队派别</b>：连接主义 / 符号主义 / 进化主义 / 贝叶斯派都引用，不预设谁最终胜出</li>
+    </ul>
+  </div>
+</section>
+
+<!-- SLIDE 3: 目录 / 10 大问题地图 -->
+<section class="slide tight denser" id="s3">
+  <h2>目录 · 10 大问题全景图</h2>
+  <div class="grid5" style="margin-top: 4px;">
+    <div class="card q1" style="padding: 6px 8px;">
+      <h3 style="font-size: 13px; color:#fbbf24; margin: 0 0 1px;">Q1 · 涌现</h3>
+      <p class="small" style="font-size: 11px;">规模+数据"突变"出能力</p>
+    </div>
+    <div class="card q2" style="padding: 6px 8px;">
+      <h3 style="font-size: 13px; color:#2dd4bf; margin: 0 0 1px;">Q2 · 知识</h3>
+      <p class="small" style="font-size: 11px;">知识从经验中提取</p>
+    </div>
+    <div class="card q3" style="padding: 6px 8px;">
+      <h3 style="font-size: 13px; color:#f472b6; margin: 0 0 1px;">Q3 · 推理</h3>
+      <p class="small" style="font-size: 11px;">CoT 背后的机制</p>
+    </div>
+    <div class="card q4" style="padding: 6px 8px;">
+      <h3 style="font-size: 13px; color:#60a5fa; margin: 0 0 1px;">Q4 · 世界模型</h3>
+      <p class="small" style="font-size: 11px;">脑内"模拟"物理</p>
+    </div>
+    <div class="card q5" style="padding: 6px 8px;">
+      <h3 style="font-size: 13px; color:#818cf8; margin: 0 0 1px;">Q5 · 记忆</h3>
+      <p class="small" style="font-size: 11px;">短/长记忆演化</p>
+    </div>
+    <div class="card q6" style="padding: 6px 8px;">
+      <h3 style="font-size: 13px; color:#34d399; margin: 0 0 1px;">Q6 · 泛化</h3>
+      <p class="small" style="font-size: 11px;">OOD 还能 work</p>
+    </div>
+    <div class="card q7" style="padding: 6px 8px;">
+      <h3 style="font-size: 13px; color:#c4b5fd; margin: 0 0 1px;">Q7 · 幻觉</h3>
+      <p class="small" style="font-size: 11px;">为何"自信说错"</p>
+    </div>
+    <div class="card q8" style="padding: 6px 8px;">
+      <h3 style="font-size: 13px; color:#fca5a5; margin: 0 0 1px;">Q8 · 协同</h3>
+      <p class="small" style="font-size: 11px;">多智能体分工</p>
+    </div>
+    <div class="card q9" style="padding: 6px 8px;">
+      <h3 style="font-size: 13px; color:#bef264; margin: 0 0 1px;">Q9 · 进化</h3>
+      <p class="small" style="font-size: 11px;">自我迭代改进</p>
+    </div>
+    <div class="card q10" style="padding: 6px 8px;">
+      <h3 style="font-size: 13px; color:#cbd5e1; margin: 0 0 1px;">Q10 · 统一理论</h3>
+      <p class="small" style="font-size: 11px;">一框架统摄</p>
+    </div>
+  </div>
+  <h3 style="margin: 4px 0 2px; font-size: 14px;">问题之间的耦合关系</h3>
+  <div class="diagram" style="padding: 6px 10px;">
+    <div class="diag-row" style="gap: 4px;">
+      <div class="grp q1" style="padding: 3px 5px; flex: 1;"><span class="gl">Q1 涌现</span><div><span class="gn" style="font-size: 10.5px; padding: 1px 4px;">scale / 相变</span></div></div>
+      <div class="grp q2" style="padding: 3px 5px; flex: 1;"><span class="gl">Q2 知识</span><div><span class="gn" style="font-size: 10.5px; padding: 1px 4px;">存储</span></div></div>
+      <div class="grp q3" style="padding: 3px 5px; flex: 1;"><span class="gl">Q3 推理</span><div><span class="gn" style="font-size: 10.5px; padding: 1px 4px;">组合</span></div></div>
+    </div>
+    <div class="diag-flow" style="font-size: 10px; margin: 0;">↓ 涌现为知识+推理奠基</div>
+    <div class="diag-row" style="gap: 4px;">
+      <div class="grp q4" style="padding: 3px 5px; flex: 1;"><span class="gl">Q4 世界模型</span><div><span class="gn" style="font-size: 10.5px; padding: 1px 4px;">仿真</span></div></div>
+      <div class="grp q5" style="padding: 3px 5px; flex: 1;"><span class="gl">Q5 记忆</span><div><span class="gn" style="font-size: 10.5px; padding: 1px 4px;">时间</span></div></div>
+      <div class="grp q6" style="padding: 3px 5px; flex: 1;"><span class="gl">Q6 泛化</span><div><span class="gn" style="font-size: 10.5px; padding: 1px 4px;">迁移</span></div></div>
+    </div>
+    <div class="diag-flow" style="font-size: 10px; margin: 0;">↓ 世界+记忆→泛化能力</div>
+    <div class="diag-row" style="gap: 4px;">
+      <div class="grp q7" style="padding: 3px 5px; flex: 1;"><span class="gl">Q7 幻觉</span><div><span class="gn" style="font-size: 10.5px; padding: 1px 4px;">校准缺失</span></div></div>
+      <div class="grp q8" style="padding: 3px 5px; flex: 1;"><span class="gl">Q8 协同</span><div><span class="gn" style="font-size: 10.5px; padding: 1px 4px;">社会</span></div></div>
+      <div class="grp q9" style="padding: 3px 5px; flex: 1;"><span class="gl">Q9 进化</span><div><span class="gn" style="font-size: 10.5px; padding: 1px 4px;">自指</span></div></div>
+    </div>
+    <div class="diag-flow" style="font-size: 10px; margin: 0;">↓ 协同+进化→新涌现；幻觉暴露已知漏洞</div>
+    <div class="diag-row" style="justify-content: center;">
+      <div class="grp q10" style="flex: 0 0 50%; padding: 3px 5px;"><span class="gl">Q10 统一理论</span><div><span class="gn" style="font-size: 10.5px; padding: 1px 4px;">压缩 / 预测 / 自由能 / 博弈</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: 总览图(时间线 + 关键拐点) -->
+<section class="slide tight denser" id="s4">
+  <h2>AI 智能研究发展拐点(2017-2026)</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:var(--accent)">理论拐点</h3>
+      <div class="timeline" style="padding-left: 14px;">
+        <div class="timeline-item" style="margin: 3px 0;">
+          <span class="timeline-year">2017</span>
+          <span class="timeline-title">Transformer (Vaswani+, NeurIPS)</span>
+          <div class="timeline-desc">注意力机制奠定 LLM 架构基石</div>
+        </div>
+        <div class="timeline-item" style="margin: 3px 0;">
+          <span class="timeline-year">2018-20</span>
+          <span class="timeline-title">GPT / BERT → Scaling Laws</span>
+          <div class="timeline-desc">预训练+微调范式确立；Kaplan 发现 loss-vs-compute 幂律</div>
+        </div>
+        <div class="timeline-item" style="margin: 3px 0;">
+          <span class="timeline-year">2022</span>
+          <span class="timeline-title">Emergent + CoT (Wei+ × 2)</span>
+          <div class="timeline-desc">规模阈值触发突变能力；"Let's think step by step" 开启显式推理</div>
+        </div>
+        <div class="timeline-item" style="margin: 3px 0;">
+          <span class="timeline-year">2022-23</span>
+          <span class="timeline-title">RLHF / DPO · ChatGPT 范式</span>
+          <div class="timeline-desc">对齐从人类反馈学习偏好</div>
+        </div>
+        <div class="timeline-item" style="margin: 3px 0;">
+          <span class="timeline-year">2024</span>
+          <span class="timeline-title">o1 / R1 · 推理时计算</span>
+          <div class="timeline-desc">test-time scaling law 开启；"Aha moment" 自发涌现</div>
+        </div>
+        <div class="timeline-item" style="margin: 3px 0;">
+          <span class="timeline-year">2024-26</span>
+          <span class="timeline-title">Agentic + World Models</span>
+          <div class="timeline-desc">AutoGen / MemGPT / JEPA / Sora — 从生成到预测，从工具到自主</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:var(--accent2)">本课 10 大问题 · 与上述拐点的映射</h3>
+      <div class="card tight">
+        <table style="font-size: 12px;">
+          <tr><th>问题</th><th>拐点</th><th>代表方法</th></tr>
+          <tr><td><span class="box q1">Q1</span> 涌现</td><td>2020-22</td><td>Scaling laws, Emergent, Grokking</td></tr>
+          <tr><td><span class="box q2">Q2</span> 知识</td><td>2018-24</td><td>预训练、RAG、Knowledge editing</td></tr>
+          <tr><td><span class="box q3">Q3</span> 推理</td><td>2022-24</td><td>CoT, ToT, PRM, o1/R1</td></tr>
+          <tr><td><span class="box q4">Q4</span> 世界模型</td><td>2018-25</td><td>World Models, JEPA, Dreamer, Sora</td></tr>
+          <tr><td><span class="box q5">Q5</span> 记忆</td><td>2023-25</td><td>MemGPT, RAG, long-context</td></tr>
+          <tr><td><span class="box q6">Q6</span> 泛化</td><td>2019-25</td><td>ICL, Foundation models, Compositional</td></tr>
+          <tr><td><span class="box q7">Q7</span> 幻觉</td><td>2022-25</td><td>Factuality, RAG, Self-RAG, ITI</td></tr>
+          <tr><td><span class="box q8">Q8</span> 协同</td><td>2023-25</td><td>Multi-agent, Debate, Tool use</td></tr>
+          <tr><td><span class="box q9">Q9</span> 进化</td><td>2023-25</td><td>Self-Rewarding, DGM, FunSearch</td></tr>
+          <tr><td><span class="box q10">Q10</span> 统一</td><td>2020+</td><td>Compression, Free Energy, AIXI, JEPA</td></tr>
+        </table>
+      </div>
+      <div class="card amber" style="margin-top: 5px; padding: 6px 10px;">
+        <h4 style="margin: 1px 0; font-size: 13px;">关键观察</h4>
+        <p style="font-size: 12.5px; margin: 0;">2022 是分水岭——<b>之前</b>关注"训练时 scaling"，<b>之后</b>关注"测试时 scaling" + "<span style="color:var(--accent2)">自主性</span>"(Agentic)。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5: Q1 涌现 - 研究进展 -->
+<section class="slide tight" id="s5">
+  <div class="q-banner">
+    <span class="qheader q1-bg">Q1</span>
+    <span class="qtitle">智能为何涌现</span>
+    <span class="qsub">Why does intelligence emerge?</span>
+  </div>
+  <h2>研究进展 · Research Progress</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#fbbf24">核心发现</h3>
+      <div class="card q1">
+        <h4>① 涌现的可测量规律</h4>
+        <ul>
+          <li><b>Scaling Laws</b> (Kaplan 2020)：loss ∝ N^(-α)，<span class="hl">幂律</span>贯穿 8 个数量级</li>
+          <li><b>Chinchilla</b> (Hoffmann 2022)：算力最优分配——模型与数据 1:1 缩放</li>
+          <li><b>Emergent Abilities</b> (Wei 2022)：在 <span class="hl">特定阈值</span> 上突现的能力（算术、CoT、代码）</li>
+          <li><b>Grokking</b> (Power 2022)：训练后数倍时间才"<span class="hl-g">顿悟</span>"的现象</li>
+        </ul>
+      </div>
+      <div class="card q1" style="margin-top: 6px;">
+        <h4>② 涌现的物理类比</h4>
+        <ul>
+          <li><b>相变</b>：loss 曲线的"急转弯"类似伊辛模型相变</li>
+          <li><b>临界性</b> (criticality)：脑与深度网络都被观察到雪崩分布的幂律</li>
+          <li><b>电路假设</b> (Anthropic, 2022)：小模型中已存在"<span class="hl-b">功能电路</span>"，规模只是放大</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#fbbf24">代表工作</h3>
+      <div class="card tight">
+        <table>
+          <tr><th>工作</th><th>核心贡献</th><th>对涌现的洞察</th></tr>
+          <tr><td>Kaplan 2020</td><td>Scaling Laws for LMs</td><td>幂律是 <span class="hl">普遍现象</span></td></tr>
+          <tr><td>Wei 2022</td><td>Emergent Abilities of LLMs</td><td>在阈值上 <span class="hl-b">突变</span> 出现</td></tr>
+          <tr><td>Schaeffer 2023</td><td>Are Emergent Abilities a Mirage?</td><td>连续指标下其实平滑；"<span class="hl">涌现是度量假象</span>"</td></tr>
+          <tr><td>Anthropic 2022</td><td>Transformer Circuits</td><td>小模型里已存在 <span class="hl-g">功能子图</span></td></tr>
+          <tr><td>Power 2022</td><td>Grokking</td><td>训练后 <span class="hl">延迟顿悟</span>，提示存在"暗知识"</td></tr>
+          <tr><td>Hu 2024</td><td>MiniCPM / Mup</td><td>最优传输 μP 让小模型 <span class="hl-b">预测大模型</span></td></tr>
+        </table>
+      </div>
+      <div class="card amber" style="margin-top: 6px;">
+        <h4>未解之谜</h4>
+        <ul>
+          <li>为什么有些能力突变(CoT、代码)，有些平滑(翻译、QA)？</li>
+          <li>是否能<span class="hl">预测</span>某个能力在哪个 scale 出现？</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6: Q1 涌现 - 未来机会 -->
+<section class="slide" id="s6">
+  <div class="q-banner">
+    <span class="qheader q1-bg">Q1</span>
+    <span class="qtitle">智能为何涌现 · 未来机会</span>
+    <span class="qsub">Future Opportunities</span>
+  </div>
+  <h2>我们的研究机会</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#fbbf24">方向 A · 可预测的涌现</h3>
+      <div class="card q1">
+        <h4>目标</h4>
+        <p>建立 "<span class="hl">能力-规模-数据</span>" 三维相图，让研究者在百亿级模型上就能预测万亿级能力。</p>
+        <h4>可行路径</h4>
+        <ul>
+          <li><b>Phase-Law</b>：把每个能力 (MMLU、MATH、HumanEval) 视为一个"相"，拟合 <span class="hl-b">临界指数</span></li>
+          <li><b>Probe-based Prediction</b>：训练小模型 + 探针，预测大模型能力曲线</li>
+          <li><b>Task Affinity Matrix</b>：用任务间迁移矩阵聚类找"能力原子"</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#fbbf24">方向 B · 涌现的因果机制</h3>
+      <div class="card q1">
+        <h4>目标</h4>
+        <p>理解"<span class="hl">为什么</span>"——是电路成型、还是优化地形改变、还是表征空间重构？</p>
+        <h4>可行路径</h4>
+        <ul>
+          <li><b>Circuit Emergence Tracking</b>：在训练中途用 <span class="hl-g">circuit probing</span> 标记能力"出现时刻"的电路激活</li>
+          <li><b>Loss Landscape Geometry</b>：测量 Hessian 谱在涌现前后的变化</li>
+          <li><b>Representational Topology</b>：用 <span class="hl">persistent homology</span> 跟踪概念环面的诞生</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card accent" style="margin-top: 6px;">
+    <h4>近期可落地的小项目（6-12 个月）</h4>
+    <ol>
+      <li><b>能力相图</b>：用 0.1B-7B 规模 + 现有 benchmark，画 5 个能力的"温度曲线" → 写论文</li>
+      <li><b>Grokking 加速器</b>：测试 warmup、curriculum、正则化是否能"<span class="hl">催熟</span>"顿悟</li>
+      <li><b>circuit 标记数据集</b>：建立"能力首次出现时的 attention head 集合" benchmark</li>
+    </ol>
+  </div>
+</section>
+
+<!-- SLIDE 7: Q2 知识 - 研究进展 -->
+<section class="slide tight" id="s7">
+  <div class="q-banner">
+    <span class="qheader q2-bg">Q2</span>
+    <span class="qtitle">知识如何形成</span>
+    <span class="qsub">How is knowledge formed?</span>
+  </div>
+  <h2>研究进展 · Research Progress</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#2dd4bf">① 知识的三种形态</h3>
+      <div class="card q2">
+        <h4>参数化知识 (Parametric)</h4>
+        <p>存储在 FFN 权重中，<span class="hl">事实查询</span>、<span class="hl">常识</span>，可被 adversarial 触发（如"Obama is a ___"）</p>
+        <h4>检索知识 (Retrieved)</h4>
+        <p>RAG：从外部语料实时召回，<span class="hl-b">可更新、可追溯</span></p>
+        <h4>操作知识 (Procedural)</h4>
+        <p>"会做"而不"会说"——<span class="hl-g">工具使用</span>、Agent 操作、CoT 路径</p>
+      </div>
+      <div class="card q2" style="margin-top: 6px;">
+        <h4>② 知识的形成机制</h4>
+        <ul>
+          <li><b>压缩假说</b>：训练 = 把语料压缩到参数中 (Delétang 2023)</li>
+          <li><b>知识神经元</b> (Dai 2022)：特定 FFN 神经元对应特定事实</li>
+          <li><b>知识编辑</b> (ROME, MEMIT)：在 1 个 layer 改 ~100 个神经元即"<span class="hl">改写事实</span>"</li>
+          <li><b>Knowledge Distillation</b>：大模型→小模型的知识迁移</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#2dd4bf">③ 知识存储的工程现状</h3>
+      <div class="card tight">
+        <table>
+          <tr><th>路径</th><th>代表</th><th>优点 / 局限</th></tr>
+          <tr><td>预训练</td><td>GPT-4, Llama-3</td><td>容量大；难更新；编造</td></tr>
+          <tr><td>持续预训练</td><td>Domain LLM</td><td>领域知识；算力贵</td></tr>
+          <tr><td>LoRA / Adapter</td><td>PEFT 系列</td><td>轻量注入；冲突</td></tr>
+          <tr><td>RAG</td><td>Self-RAG, CRAG</td><td>实时+可溯源；检索噪声</td></tr>
+          <tr><td>知识图谱</td><td>Neo4j + LLM</td><td>可解释；构建难</td></tr>
+          <tr><td>知识编辑</td><td>ROME, MEND</td><td>局部精确；<span class="hl-r">副作用</span></td></tr>
+        </table>
+      </div>
+      <div class="card amber" style="margin-top: 6px;">
+        <h4>未解之谜</h4>
+        <ul>
+          <li>不同知识形态的<span class="hl">互冲突</span>问题（写新知识会破坏旧知识）</li>
+          <li>参数化知识 <span class="hl-b">容量上限</span> 和最佳压缩率</li>
+          <li>"学到的"与"推理出的"知识能否清晰区分</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: Q2 知识 - 未来机会 -->
+<section class="slide" id="s8">
+  <div class="q-banner">
+    <span class="qheader q2-bg">Q2</span>
+    <span class="qtitle">知识如何形成 · 未来机会</span>
+    <span class="qsub">Future Opportunities</span>
+  </div>
+  <h2>我们的研究机会</h2>
+  <div class="grid3">
+    <div class="card q2">
+      <h3>方向 A · 神经-符号融合</h3>
+      <h4>问题</h4>
+      <p>纯参数化知识难编辑、难溯源；纯符号系统难泛化。</p>
+      <h4>思路</h4>
+      <ul>
+        <li>用 LLM 提取<span class="hl">概念图</span>，存图数据库</li>
+        <li>推理时 hybrid：硬约束走图，模糊查询走 LLM</li>
+        <li>设计"<span class="hl-b">知识桥</span>" loss 把两者拉到同一空间</li>
+      </ul>
+      <h4>应用</h4>
+      <p class="small">企业知识库、医疗指南、金融合规</p>
+    </div>
+    <div class="card q2">
+      <h3>方向 B · 持续学习 / 反灾难性遗忘</h3>
+      <h4>问题</h4>
+      <p>持续喂新知识会覆盖旧能力 (catastrophic forgetting)。</p>
+      <h4>思路</h4>
+      <ul>
+        <li><span class="hl">模块化 FFN</span>：每个领域独立 expert</li>
+        <li><span class="hl-b">回放</span>：混合旧数据重训练</li>
+        <li><span class="hl-g">EWC / SI</span>：正则化保护重要参数</li>
+        <li>解耦：把"<span class="hl">事实</span>"与"<span class="hl-b">能力</span>"存到不同位置</li>
+      </ul>
+    </div>
+    <div class="card q2">
+      <h3>方向 C · 知识的元认知</h3>
+      <h4>问题</h4>
+      <p>LLM 不知道"<span class="hl-r">自己不知道什么</span>"。</p>
+      <h4>思路</h4>
+      <ul>
+        <li>训练"<span class="hl">置信度探针</span>"：模型对每个 token 标 confidence</li>
+        <li>建立"<span class="hl-b">知识边界图谱</span>"：哪些主题可信、哪些要查</li>
+        <li>结合 RAG：低置信→主动检索</li>
+      </ul>
+      <h4>价值</h4>
+      <p class="small">直接缓解 Q7 幻觉问题</p>
+    </div>
+  </div>
+  <div class="card accent" style="margin-top: 6px;">
+    <h4>近期可落地（6-12 个月）</h4>
+    <ol>
+      <li><b>持续学习 benchmark</b>：建一个"<span class="hl">可量化遗忘率</span>"的诊断集，结合我们自己垂直领域数据</li>
+      <li><b>神经-符号小系统</b>：LLM + 小型 KG (Wikidata 子集)，医疗问答 / 政策查询 demo</li>
+      <li><b>置信度探针</b>：用 hidden states 训练一个 lightweight head，输出 calibration score</li>
+    </ol>
+  </div>
+</section>
+
+<!-- SLIDE 9: Q3 推理 - 研究进展 -->
+<section class="slide" id="s9">
+  <div class="q-banner">
+    <span class="qheader q3-bg">Q3</span>
+    <span class="qtitle">推理如何产生</span>
+    <span class="qsub">How does reasoning emerge?</span>
+  </div>
+  <h2>研究进展 · Research Progress</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#f472b6">① 推理能力的"引爆点"</h3>
+      <div class="card q3">
+        <ul>
+          <li><b>CoT Prompting</b> (Wei 2022)："<span class="hl">Let's think step by step</span>" 让 PaLM 540B 数学准确率从 18%→57%</li>
+          <li><b>Self-Consistency</b> (Wang 2022)：采样多条 CoT 投票</li>
+          <li><b>ToT / GoT</b>：树/图搜索式的探索</li>
+          <li><b>Process Reward Model (PRM)</b> (Lightman 2023)：逐步打分而非只评最终答案</li>
+          <li><b>o1 / R1</b> (OpenAI 2024 / DeepSeek 2025)：把"<span class="hl-b">推理时计算</span>"制度化，用 RL 训出长 CoT</li>
+        </ul>
+      </div>
+      <div class="card q3" style="margin-top: 6px;">
+        <h4>② 关键发现</h4>
+        <ul>
+          <li>"<span class="hl-g">Aha moment</span>"：R1 训练中模型自然学会"<span class="hl">回溯</span>"、"<span class="hl-b">分步验证</span>"——这是<span class="hl">自发涌现</span>的</li>
+          <li>推理能力与基础模型规模 <span class="hl-b">耦合</span>：小模型做不好 CoT</li>
+          <li>过程监督 vs 结果监督：<span class="hl-g">PRM 显著</span>优于 ORM（Lightman 2023）</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#f472b6">③ 推理的本质仍未清晰</h3>
+      <div class="card pink">
+        <h4>主流假说</h4>
+        <ul>
+          <li><b>系统 1 / 系统 2</b> (Kahneman 类比)：CoT = 慢思考</li>
+          <li><b>搜索假说</b>：推理 = 隐式 MCTS / 树搜索</li>
+          <li><b>规划假说</b>：CoT 让模型展开一个"<span class="hl">内部世界模型</span>"的预测</li>
+          <li><b>符号回放</b>：CoT 把潜空间的程序 call stack 显式化</li>
+        </ul>
+        <h4>反例 / 质疑</h4>
+        <ul>
+          <li>复杂 CoT 在简单任务上 <span class="hl-r">过度思考</span> 反而降准</li>
+          <li>CoT 对"<span class="hl-r">训练分布外</span>"任务常常失效</li>
+          <li>很多"<span class="hl">推理痕迹</span>"只是 post-hoc rationalization</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 10: Q3 推理 - 未来机会 -->
+<section class="slide" id="s10">
+  <div class="q-banner">
+    <span class="qheader q3-bg">Q3</span>
+    <span class="qtitle">推理如何产生 · 未来机会</span>
+    <span class="qsub">Future Opportunities</span>
+  </div>
+  <h2>我们的研究机会</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#f472b6">方向 A · 可验证推理 (Verified Reasoning)</h3>
+      <div class="card q3">
+        <h4>问题</h4>
+        <p>当前 CoT <span class="hl-r">不可验证</span>，一步错则步步错。</p>
+        <h4>思路</h4>
+        <ul>
+          <li>每步 CoT 接一个 <span class="hl">形式验证器</span> (Lean / Z3 / SymPy)</li>
+          <li>建立 "<span class="hl-b">CoT 步级 benchmark</span>"：在哪个 step 出错</li>
+          <li>把 verifier 的 reward 灌回 PPO/GRPO</li>
+        </ul>
+        <h4>落地</h4>
+        <p class="small">数学定理证明 / 代码生成 / 物理公式推导</p>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#f472b6">方向 B · 推理与世界模型耦合</h3>
+      <div class="card q3">
+        <h4>问题</h4>
+        <p>纯文本 CoT <span class="hl">缺乏 ground truth</span>，无法"<span class="hl-g">反事实</span>"思考。</p>
+        <h4>思路</h4>
+        <ul>
+          <li>训练时让 CoT 走一个 <span class="hl">可执行世界模型</span> (Python sandbox / 物理 simulator)</li>
+          <li>"想象-执行-对比"三段式：模型脑内模拟 → 真实执行 → 修正</li>
+          <li>在 <span class="hl-b">可验证领域</span> (math/code/robotics) 优先突破</li>
+        </ul>
+        <h4>价值</h4>
+        <p class="small">连接 Q3 推理 ↔ Q4 世界模型</p>
+      </div>
+    </div>
+  </div>
+  <div class="card accent" style="margin-top: 6px;">
+    <h4>近期可落地（6-12 个月）</h4>
+    <ol>
+      <li><b>Step-level Diagnostic</b>：建立数学/代码任务的"<span class="hl">步级错误归因</span>" benchmark</li>
+      <li><b>Verifier-RL</b>：在 Lean 4 或 SymPy 上做 PRM-GRPO 小实验，验证"<span class="hl-b">形式化奖励</span>"假设</li>
+      <li><b>CoT 数据集建设</b>：用 7B 模型 + verifier 反馈自举高质量 CoT 数据</li>
+    </ol>
+  </div>
+</section>
+
+<!-- SLIDE 11: Q4 世界模型 - 研究进展 -->
+<section class="slide tight" id="s11">
+  <div class="q-banner">
+    <span class="qheader q4-bg">Q4</span>
+    <span class="qtitle">世界模型如何建立</span>
+    <span class="qsub">How are world models built?</span>
+  </div>
+  <h2>研究进展 · Research Progress</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#60a5fa">① 三大学派</h3>
+      <div class="card q4">
+        <h4>生成派 (Generative)</h4>
+        <p>Sora、Genie、Veo——<span class="hl">逐像素预测</span>未来。优点：逼真；缺点：算力贵、难做规划。</p>
+        <h4>表征派 (Latent Dynamics)</h4>
+        <p>JEPA (LeCun)、DreamerV3——在<span class="hl-b">潜空间</span>预测下一表征。优点：高效；缺点：抽象度难控制。</p>
+        <h4>符号派 (Symbolic / Physics)</h4>
+        <p>Neuro-Symbolic、PhysNet——用<span class="hl-g">已知物理规则</span>。优点：可解释；缺点：迁移差。</p>
+      </div>
+      <div class="card q4" style="margin-top: 6px;">
+        <h4>② 关键工作</h4>
+        <ul>
+          <li><b>World Models</b> (Ha & Schmidhuber 2018)：VAE + RNN 玩具环境</li>
+          <li><b>DreamerV3</b> (Hafner 2023)：Minecraft 钻石级泛化</li>
+          <li><b>JEPA</b> (LeCun 2022)：非生成式自监督</li>
+          <li><b>Sora</b> (OpenAI 2024)：视频生成的 scaling</li>
+          <li><b>GAIA-1</b> (Wayve 2023)：自动驾驶世界模型</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#60a5fa">③ 当前共识与分歧</h3>
+      <div class="card blue">
+        <h4>共识</h4>
+        <ul>
+          <li>世界模型是 <span class="hl-b">AGI 的必要组件</span>（LeCun、Yann LeCun、Hinton 多次强调）</li>
+          <li>预测下一帧 ≠ 理解物理（Yann vs. Sora 团队的核心分歧）</li>
+          <li>潜空间预测 <span class="hl-g">节省 100× 算力</span>（vs. 像素级）</li>
+        </ul>
+        <h4>分歧</h4>
+        <ul>
+          <li><b>粒度</b>：像素级 vs 物体级 vs 概念级</li>
+          <li><b>训练信号</b>：纯观察 vs 干预 vs 反事实</li>
+          <li><b>是否需要语言</b>：纯几何 vs <span class="hl">语言锚定</span></li>
+        </ul>
+        <h4>未解之谜</h4>
+        <ul>
+          <li>世界模型是否需要<span class="hl">显式因果</span>？</li>
+          <li>能否在<span class="hl-b">无监督</span>下学到牛顿力学？</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 12: Q4 世界模型 - 未来机会 -->
+<section class="slide" id="s12">
+  <div class="q-banner">
+    <span class="qheader q4-bg">Q4</span>
+    <span class="qtitle">世界模型如何建立 · 未来机会</span>
+    <span class="qsub">Future Opportunities</span>
+  </div>
+  <h2>我们的研究机会</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#60a5fa">方向 A · 因果世界模型</h3>
+      <div class="card q4">
+        <h4>问题</h4>
+        <p>当前世界模型只能"<span class="hl">预测</span>"，不能"<span class="hl-b">反事实</span>"。</p>
+        <h4>思路</h4>
+        <ul>
+          <li>把 SCM (结构因果模型) 嵌入潜空间</li>
+          <li>训练数据加入<span class="hl">干预</span>(do-operator)</li>
+          <li>用"<span class="hl-g">反事实预测</span>"作为自监督目标</li>
+        </ul>
+        <h4>价值</h4>
+        <p class="small">让智能体能"如果...会怎样"，是规划与科学推理的基础</p>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#60a5fa">方向 B · 多模态统一世界模型</h3>
+      <div class="card q4">
+        <h4>问题</h4>
+        <p>视觉世界模型 / 物理世界模型 / 文本世界模型 <span class="hl-r">各自为政</span>。</p>
+        <h4>思路</h4>
+        <ul>
+          <li>用 <span class="hl">共享潜空间</span> 训练 VLM + 物理 simulator + 文本 CoT</li>
+          <li>建立 "<span class="hl-b">跨模态 grounding</span>" 评估基准</li>
+          <li>借鉴 LCM (Latent Consistency Model) 做高效潜空间 rollout</li>
+        </ul>
+        <h4>应用</h4>
+        <p class="small">机器人 / 自动驾驶 / 视频预测 / 游戏 AI</p>
+      </div>
+    </div>
+  </div>
+  <div class="card accent" style="margin-top: 6px;">
+    <h4>近期可落地（6-18 个月）</h4>
+    <ol>
+      <li><b>小规模物理世界模型</b>：复现 DreamerV3 on a toy env，加入<span class="hl">反事实干预</span>评估</li>
+      <li><b>因果指标</b>：设计"<span class="hl-b">反事实预测精度</span>" benchmark，对比 JEPA / Sora / Dreamer</li>
+      <li><b>世界模型+Agent 联合训练</b>：在 Minecraft / Habitat 里做"<span class="hl-g">想象-执行</span>"循环</li>
+    </ol>
+  </div>
+</section>
+
+<!-- SLIDE 13: Q5 记忆 - 研究进展 -->
+<section class="slide tight" id="s13">
+  <div class="q-banner">
+    <span class="qheader q5-bg">Q5</span>
+    <span class="qtitle">记忆如何演化</span>
+    <span class="qsub">How does memory evolve?</span>
+  </div>
+  <h2>研究进展 · Research Progress</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#818cf8">① 记忆的多层架构</h3>
+      <div class="card q5">
+        <h4>短期 (Working Memory)</h4>
+        <p>Context window：128K-10M tokens；KV cache 即"<span class="hl">工作记忆</span>"</p>
+        <h4>中期 (Episodic)</h4>
+        <p>MemGPT / Letta 虚拟上下文分页；外部 store + summarization</p>
+        <h4>长期 (Semantic / Parametric)</h4>
+        <p>权重即<span class="hl-b">长期记忆</span>；retrieval-augmented memory</p>
+        <h4>元记忆 (Meta)</h4>
+        <p>知识图谱 / Ebbinghaus 曲线式遗忘；"<span class="hl-g">知道何时该忘</span>"</p>
+      </div>
+      <div class="card q5" style="margin-top: 6px;">
+        <h4>② 关键工作</h4>
+        <ul>
+          <li><b>Transformer-XL</b> (Dai 2019)：段级循环 cache</li>
+          <li><b>MemGPT</b> (Packer 2023)：虚拟上下文管理</li>
+          <li><b>RETRO</b> (Borgeaud 2021)：检索增强预训练</li>
+          <li><b>Mamba / SSM</b> (Gu 2023)：O(1) 推理的连续记忆</li>
+          <li><b>LongLoRA</b> (Chen 2023)：100K+ 上下文微调</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#818cf8">③ 当前挑战</h3>
+      <div class="card indigo">
+        <h4>已知瓶颈</h4>
+        <ul>
+          <li><b>Lost-in-the-Middle</b> (Liu 2023)：长上下文中段召回率低</li>
+          <li><b>检索噪声</b>：RAG 召回错时反而带偏 LLM</li>
+          <li><b>写入冲突</b>：动态更新记忆会"<span class="hl-r">污染</span>"已有知识</li>
+          <li><b>遗忘机制</b>：模型不能像人一样"<span class="hl-b">主动遗忘</span>"冗余信息</li>
+        </ul>
+        <h4>仿生学方向</h4>
+        <ul>
+          <li><b>互补学习系统 (CLS)</b>：快学习 (海马) + 慢学习 (皮层)</li>
+          <li><b>记忆巩固</b>：睡眠周期式的 offline replay</li>
+          <li><b>层级记忆</b>：episodic → semantic 的蒸馏</li>
+        </ul>
+        <h4>未解之谜</h4>
+        <ul>
+          <li>人脑 <span class="hl">工作记忆仅 7±2 项</span>，LLM 几十 K 是过度还是不足？</li>
+          <li>是否需要"<span class="hl-b">情景记忆</span>"的显式机制？</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 14: Q5 记忆 - 未来机会 -->
+<section class="slide" id="s14">
+  <div class="q-banner">
+    <span class="qheader q5-bg">Q5</span>
+    <span class="qtitle">记忆如何演化 · 未来机会</span>
+    <span class="qsub">Future Opportunities</span>
+  </div>
+  <h2>我们的研究机会</h2>
+  <div class="grid3">
+    <div class="card q5">
+      <h3>方向 A · 终身记忆系统</h3>
+      <h4>目标</h4>
+      <p>让 LLM Agent 拥有"<span class="hl">几个月-几年</span>"级别的连续记忆。</p>
+      <h4>关键模块</h4>
+      <ul>
+        <li><span class="hl-b">分层</span>：episodic / semantic / procedural</li>
+        <li><span class="hl">Ebbinghaus 衰减</span>：自动丢弃冗余</li>
+        <li><span class="hl-g">主动回忆</span>：模型可调用 memory API</li>
+        <li><span class="hl-r">冲突解决</span>：新记忆 vs 旧记忆</li>
+      </ul>
+    </div>
+    <div class="card q5">
+      <h3>方向 B · 睡眠式离线整理</h3>
+      <h4>灵感</h4>
+      <p>人脑靠睡眠<span class="hl">整理</span>记忆；LLM 能否做"<span class="hl-b">offline memory consolidation</span>"？</p>
+      <h4>实现</h4>
+      <ul>
+        <li>每 N 小时把 episodic 蒸馏为 semantic</li>
+        <li>对权重做"<span class="hl">记忆重放</span>" (replay) 微调</li>
+        <li>类似 Continual Learning 的 EWC 正则化</li>
+      </ul>
+    </div>
+    <div class="card q5">
+      <h3>方向 C · 选择性遗忘</h3>
+      <h4>价值</h4>
+      <p>符合 GDPR "<span class="hl">被遗忘权</span>"、减小模型体积、避免知识冲突。</p>
+      <h4>技术路径</h4>
+      <ul>
+        <li><span class="hl">Machine Unlearning</span>：Fisher 信息抹除</li>
+        <li><span class="hl-b">MoE 专家剪枝</span>：删除某个 expert 即"<span class="hl-g">忘一类知识</span>"</li>
+        <li>差分隐私训练</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card accent" style="margin-top: 6px;">
+    <h4>近期可落地（6-12 个月）</h4>
+    <ol>
+      <li><b>长程 Agent 评测</b>：设计"<span class="hl">100 轮对话 + 5 天任务</span>"的 agent 评测，对比不同 memory 架构</li>
+      <li><b>睡眠式 consolidation</b>：在内部任务流上跑"<span class="hl-b">overnight replay</span>"实验</li>
+      <li><b>机器遗忘 benchmark</b>：建一个"<span class="hl-g">忘 X 知识后 Y 能力保留率</span>"的诊断集</li>
+    </ol>
+  </div>
+</section>
+
+<!-- SLIDE 15: Q6 泛化 - 研究进展 -->
+<section class="slide tight" id="s15">
+  <div class="q-banner">
+    <span class="qheader q6-bg">Q6</span>
+    <span class="qtitle">能力为何泛化</span>
+    <span class="qsub">Why do abilities generalize?</span>
+  </div>
+  <h2>研究进展 · Research Progress</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#34d399">① 三种泛化机制</h3>
+      <div class="card q6">
+        <h4>分布内泛化 (ID)</h4>
+        <p>同一分布不同样本——传统监督学习已解决</p>
+        <h4>分布外泛化 (OOD)</h4>
+        <p>环境 / 风格 / 任务变化——仍是 <span class="hl">核心难题</span></p>
+        <h4>组合泛化 (Compositional)</h4>
+        <p>训练中没见过的 <span class="hl-b">概念组合</span>——人类特有，LLM 部分具备</p>
+      </div>
+      <div class="card q6" style="margin-top: 6px;">
+        <h4>② LLM 的"奇迹泛化"</h4>
+        <ul>
+          <li><b>ICL</b> (In-Context Learning)：不更新权重就<span class="hl">学会新任务</span></li>
+          <li><b>跨任务迁移</b>：训练只有翻译，泛化到摘要、问答</li>
+          <li><b>隐式组合</b>：见过 A→B、B→C，能泛化 A→C（部分）</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#34d399">③ 解释假说</h3>
+      <div class="card green">
+        <h4>主流理论</h4>
+        <ul>
+          <li><b>压缩即泛化</b> (Delétang 2023)：ICL = 隐式模型压缩</li>
+          <li><b>Bayesian Inference</b> (Xie 2021)：ICL ≈ 在隐空间做贝叶斯推断</li>
+          <li><b>任务多样性假说</b>：训练任务越多元，零样本迁移越强</li>
+          <li><b>Foundation Hypothesis</b>：足够大的模型形成"<span class="hl">世界模型</span>"，一切下游任务从中派生</li>
+        </ul>
+        <h4>反例 / 局限</h4>
+        <ul>
+          <li><b>逆 scaling</b> (McKenzie 2023)：有些能力<span class="hl-r">规模越大越差</span></li>
+          <li><b>任务特异性</b>：复杂推理在简单任务上<span class="hl-b">退化</span></li>
+          <li><b>虚假相关</b>：模型学到 <span class="hl-r">spurious correlation</span> 而非因果</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 16: Q6 泛化 - 未来机会 -->
+<section class="slide tight denser" id="s16">
+  <div class="q-banner">
+    <span class="qheader q6-bg">Q6</span>
+    <span class="qtitle">能力为何泛化 · 未来机会</span>
+    <span class="qsub">Future Opportunities</span>
+  </div>
+  <h2>我们的研究机会</h2>
+  <div class="grid2" style="gap: 10px;">
+    <div>
+      <h3 style="color:#34d399">方向 A · 组合泛化理论</h3>
+      <div class="card q6" style="padding: 8px 11px;">
+        <h4 style="margin: 2px 0;">问题</h4>
+        <p style="font-size: 12.5px; margin: 1px 0;">LLM 组合泛化"看起来 work 但说不清为什么"。</p>
+        <h4 style="margin: 4px 0 2px;">思路</h4>
+        <ul style="font-size: 12.5px;">
+          <li>借鉴 <span class="hl">SCAN / COGS</span> 做系统化分析</li>
+          <li>设计"<span class="hl-b">组合探针</span>"，找能力原子</li>
+          <li>探究潜空间是否显式编码 compositional structure</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#34d399">方向 B · 数据课程学习</h3>
+      <div class="card q6" style="padding: 8px 11px;">
+        <h4 style="margin: 2px 0;">问题</h4>
+        <p style="font-size: 12.5px; margin: 1px 0;">Chinchilla 后，<span class="hl">数据策略</span>比模型规模更重要。</p>
+        <h4 style="margin: 4px 0 2px;">思路</h4>
+        <ul style="font-size: 12.5px;">
+          <li>研究 <span class="hl">任务熵</span> 与泛化能力的关系</li>
+          <li>建立 <span class="hl-b">数据课程学习</span> 理论</li>
+          <li>让 <span class="hl-g">长尾任务</span> 不被淹没</li>
+        </ul>
+        <p class="small" style="margin-top: 3px;">价值：直接降低训练成本</p>
+      </div>
+    </div>
+  </div>
+  <div class="grid2" style="gap: 10px; margin-top: 6px;">
+    <div class="card q6" style="padding: 8px 11px;">
+      <h3 style="font-size: 14px; margin: 2px 0;">方向 C · 跨模态迁移</h3>
+      <p style="font-size: 12.5px; margin: 2px 0;"><b>问题</b>：语言/视觉/动作 <span class="hl">互训</span> 能否放大泛化？</p>
+      <p style="font-size: 12.5px; margin: 2px 0;"><b>思路</b>：GPT-4o / VLA 类模型已现端倪；研究 <span class="hl-b">模态对齐</span> 在何种数据规模下出现。</p>
+    </div>
+    <div class="card q6" style="padding: 8px 11px;">
+      <h3 style="font-size: 14px; margin: 2px 0;">方向 D · 对抗泛化</h3>
+      <p style="font-size: 12.5px; margin: 2px 0;"><b>问题</b>：adversarial 攻击下，<span class="hl-r">泛化急剧下降</span>。</p>
+      <p style="font-size: 12.5px; margin: 2px 0;"><b>思路</b>：把对抗训练 <span class="hl">纳入预训练</span>；用"<span class="hl-b">扰动一致性</span>"作为泛化目标。</p>
+    </div>
+  </div>
+  <div class="card accent" style="margin-top: 4px; padding: 8px 12px;">
+    <h4 style="margin: 2px 0;">近期可落地（6-12 个月）</h4>
+    <ol style="font-size: 12.5px; margin: 2px 0 2px 20px;">
+      <li><b>组合 benchmark 套件</b>：在 SCAN/COGS 基础上加入中文任务，做<span class="hl">跨语言组合泛化</span>评测</li>
+      <li><b>数据课程实验</b>：固定总 token 数，对比<span class="hl-b">5 种数据 schedule</span> 的下游泛化</li>
+      <li><b>对抗泛化</b>：在现有 SFT 模型上做 adversarial fine-tune，测 OOD 鲁棒性</li>
+    </ol>
+  </div>
+</section>
+
+<!-- SLIDE 17: Q7 幻觉 - 研究进展 -->
+<section class="slide tight" id="s17">
+  <div class="q-banner">
+    <span class="qheader q7-bg">Q7</span>
+    <span class="qtitle">幻觉为何产生</span>
+    <span class="qsub">Why do hallucinations occur?</span>
+  </div>
+  <h2>研究进展 · Research Progress</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#c4b5fd">① 幻觉的三类成因</h3>
+      <div class="card q7">
+        <h4>事实性幻觉 (Factuality)</h4>
+        <p>编造不存在的人物 / 论文 / 数据 — <span class="hl">最常见</span></p>
+        <h4>忠实性幻觉 (Faithfulness)</h4>
+        <p>摘要与原文不符、推理跳过前提 — <span class="hl-b">CoT 类典型</span></p>
+        <h4>推理幻觉 (Reasoning)</h4>
+        <p>逻辑链断裂、循环论证 — <span class="hl-g">复杂任务高发</span></p>
+      </div>
+      <div class="card q7" style="margin-top: 6px;">
+        <h4>② 主流根因假说</h4>
+        <ul>
+          <li><b>Next-token 训练的内在局限</b>：模型学的是<span class="hl">分布</span>而非事实</li>
+          <li><b>暴露偏差 (exposure bias)</b>：训练没见过自己的错误</li>
+          <li><b>知识边界模糊</b>：模型<span class="hl-r">不知道不知道</span> (Q2 元认知缺失)</li>
+          <li><b>解码的随机性</b>：低概率路径可能"<span class="hl-b">幻觉</span>"出合理句子</li>
+          <li><b>RLHF 幻觉奖励</b>：偏好"<span class="hl">自信</span>"回答被奖励</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#c4b5fd">③ 当前缓解方法</h3>
+      <div class="card tight purple">
+        <table>
+          <tr><th>方法</th><th>代表</th><th>缓解率</th></tr>
+          <tr><td>RAG</td><td>Self-RAG, CRAG</td><td>中（依赖检索质量）</td></tr>
+          <tr><td>事实性微调</td><td>Factuality tuning</td><td>局部有效</td></tr>
+          <tr><td>不确定性估计</td><td>Semantic entropy</td><td>可检测 ~70%</td></tr>
+          <tr><td>Consistency 检查</td><td>SelfCheckGPT</td><td>可检测 ~60%</td></tr>
+          <tr><td>Verifier</td><td>Process Reward</td><td>推理类有效</td></tr>
+          <tr><td>Inference-time</td><td>o1, CoT-decoding</td><td>部分有效</td></tr>
+          <tr><td>知识编辑</td><td>ROME, MEMIT</td><td>极局部</td></tr>
+        </table>
+      </div>
+      <div class="card amber" style="margin-top: 6px;">
+        <h4>未解之谜</h4>
+        <ul>
+          <li>幻觉是否 <span class="hl">不可避免</span>？(统计学派 vs 校准派)</li>
+          <li>能否做到 <span class="hl-b">"零幻觉"</span>？(对齐问题 vs 能力问题)</li>
+          <li>人类专家也会"幻觉"——是否要<span class="hl-g">对齐到人类幻觉率</span>？</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 18: Q7 幻觉 - 未来机会 -->
+<section class="slide" id="s18">
+  <div class="q-banner">
+    <span class="qheader q7-bg">Q7</span>
+    <span class="qtitle">幻觉为何产生 · 未来机会</span>
+    <span class="qsub">Future Opportunities</span>
+  </div>
+  <h2>我们的研究机会</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#c4b5fd">方向 A · 校准作为第一目标</h3>
+      <div class="card q7">
+        <h4>思路</h4>
+        <p>不追求"<span class="hl-b">零幻觉</span>"，追求<span class="hl">可靠的"我不知道"</span>。</p>
+        <h4>实现</h4>
+        <ul>
+          <li>训练时加 <span class="hl">ECE loss</span> (Expected Calibration Error)</li>
+          <li>用"<span class="hl-b">拒绝回答</span>"作为合法 action</li>
+          <li>把"<span class="hl-g">置信度</span>"接进 verifier (Q3 推理)</li>
+        </ul>
+        <h4>评估</h4>
+        <p class="small">用 ECE / Brier Score / AUROC 而非单纯准确率</p>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#c4b5fd">方向 B · 幻觉的因果干预</h3>
+      <div class="card q7">
+        <h4>思路</h4>
+        <p>不要事后检测，要在<span class="hl">生成过程中</span>抑制幻觉。</p>
+        <h4>实现</h4>
+        <ul>
+          <li>Activation Steering：定位"<span class="hl-b">幻觉神经元</span>"，生成时反向干预</li>
+          <li>把 RAG 嵌入"<span class="hl">解码路径</span>"：每生成 N token 强制检索</li>
+          <li>用 verifier <span class="hl-g">实时打断</span>不可靠推理</li>
+        </ul>
+        <h4>灵感</h4>
+        <p class="small">Anthropic "Golden Gate Claude" 已证明 steering 可行</p>
+      </div>
+    </div>
+  </div>
+  <div class="card accent" style="margin-top: 6px;">
+    <h4>近期可落地（6-12 个月）</h4>
+    <ol>
+      <li><b>校准 SFT 数据集</b>：建一个"<span class="hl">显式标注置信度</span>"的 SFT 数据集，训练模型说"我不确定"</li>
+      <li><b>激活干预实验</b>：识别内部"<span class="hl-b">幻觉方向</span>"，用 activation patching 验证</li>
+      <li><b>幻觉诊断 benchmark</b>：面向<span class="hl-g">垂直领域</span>（教育/医疗/法律）的中文幻觉评测</li>
+    </ol>
+  </div>
+</section>
+
+<!-- SLIDE 19: Q8 协同 - 研究进展 -->
+<section class="slide tight" id="s19">
+  <div class="q-banner">
+    <span class="qheader q8-bg">Q8</span>
+    <span class="qtitle">智能如何协同</span>
+    <span class="qsub">How do intelligences collaborate?</span>
+  </div>
+  <h2>研究进展 · Research Progress</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#fca5a5">① 协同的三种模式</h3>
+      <div class="card q8">
+        <h4>Pipeline 模式 (串行)</h4>
+        <p>A→B→C，每个 Agent 一个子任务 — <span class="hl">当前主流</span>，LangGraph/AutoGen</p>
+        <h4>Peer 模式 (并行)</h4>
+        <p>多 Agent 独立作答 + <span class="hl-b">投票/辩论</span> — Du et al. 2023 / Irving et al. 2018 (Debate)</p>
+        <h4>Hierarchical 模式 (层级)</h4>
+        <p>Manager Agent 调度子 Agent — <span class="hl-g">OpenAI Swarm / MetaGPT</span></p>
+      </div>
+      <div class="card q8" style="margin-top: 6px;">
+        <h4>② 关键发现</h4>
+        <ul>
+          <li><b>多 Agent ≠ 更好</b>：很多时候<span class="hl-r">单 Agent + 好 prompt</span> 即可</li>
+          <li><b>Debate 提升事实性</b>：Irving 2018、Du 2023 都观察到</li>
+          <li><b>涌现沟通协议</b>：MALT / CICERO 在游戏中<span class="hl-b">自创协议</span></li>
+          <li><b>工具使用</b>：Toolformer / ReAct / Function Call — Agent 核心能力</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#fca5a5">③ 当前架构</h3>
+      <div class="card tight red">
+        <table>
+          <tr><th>框架</th><th>模式</th><th>特点</th></tr>
+          <tr><td>AutoGen (Microsoft)</td><td>Peer</td><td>灵活，<span class="hl">学术主流</span></td></tr>
+          <tr><td>LangGraph</td><td>Pipeline</td><td>图编排，<span class="hl-b">生产友好</span></td></tr>
+          <tr><td>CrewAI</td><td>Hierarchical</td><td>角色化，易上手</td></tr>
+          <tr><td>MetaGPT</td><td>Hierarchical</td><td>SOP 风格</td></tr>
+          <tr><td>ChatDev</td><td>Pipeline</td><td>软件开发场景</td></tr>
+          <tr><td>OpenAI Swarm</td><td>Hierarchical</td><td>轻量级 handoff</td></tr>
+        </table>
+      </div>
+      <div class="card amber" style="margin-top: 6px;">
+        <h4>未解之谜</h4>
+        <ul>
+          <li>协同是否<span class="hl">涌现出新能力</span>，还是只是任务分解？</li>
+          <li>多 Agent 的 <span class="hl-b">通信开销</span> 与收益的 trade-off</li>
+          <li>如何避免<span class="hl-r">级联错误</span>（一环错则环环错）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 20: Q8 协同 - 未来机会 -->
+<section class="slide" id="s20">
+  <div class="q-banner">
+    <span class="qheader q8-bg">Q8</span>
+    <span class="qtitle">智能如何协同 · 未来机会</span>
+    <span class="qsub">Future Opportunities</span>
+  </div>
+  <h2>我们的研究机会</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#fca5a5">方向 A · 异构 Agent 协同</h3>
+      <div class="card q8">
+        <h4>问题</h4>
+        <p>当前多 Agent 都是<span class="hl-r">同构</span>(同 LLM)，缺乏异质性。</p>
+        <h4>思路</h4>
+        <ul>
+          <li>不同 <span class="hl">基础模型</span> 的 Agent 协同 (GPT + Claude + Gemini)</li>
+          <li>不同<span class="hl-b">角色</span>：规划者 / 批评者 / 执行者 / 验证者</li>
+          <li>不同<span class="hl-g">技能</span>：用 LLM + 符号系统 + 神经检索</li>
+        </ul>
+        <h4>价值</h4>
+        <p class="small">类比人类社会分工</p>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#fca5a5">方向 B · 协议涌现 vs 协议设计</h3>
+      <div class="card q8">
+        <h4>问题</h4>
+        <p>是让 Agent <span class="hl">自创协议</span>，还是<span class="hl-b">人工设计协议</span>？</p>
+        <h4>思路</h4>
+        <ul>
+          <li>在受限环境 (谈判 / 拍卖) 中观察<span class="hl">协议涌现</span></li>
+          <li>设计 <span class="hl-b">Communication Protocol Bench</span></li>
+          <li>借鉴 ACL / FIPA 标准</li>
+        </ul>
+        <h4>灵感</h4>
+        <p class="small">CICERO (Diplomacy) / MALT (Trading) 已给出范例</p>
+      </div>
+    </div>
+  </div>
+  <div class="card accent" style="margin-top: 6px;">
+    <h4>近期可落地（6-12 个月）</h4>
+    <ol>
+      <li><b>异构 Agent 评测</b>：3 个不同 base 模型 + 4 个任务，对比 <span class="hl">同构 vs 异构</span> 表现</li>
+      <li><b>通信效率实验</b>：在固定任务下，扫描 <span class="hl-b">通信轮次</span> 与准确率的 Pareto</li>
+      <li><b>垂直领域 Agent 平台</b>：教育 / 科研场景的 multi-agent demo</li>
+    </ol>
+  </div>
+</section>
+
+<!-- SLIDE 21: Q9 进化 - 研究进展 -->
+<section class="slide" id="s21">
+  <div class="q-banner">
+    <span class="qheader q9-bg">Q9</span>
+    <span class="qtitle">智能如何进化</span>
+    <span class="qsub">How does intelligence evolve?</span>
+  </div>
+  <h2>研究进展 · Research Progress</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#bef264">① 三层进化</h3>
+      <div class="card q9">
+        <h4>模型进化 (Model Evolution)</h4>
+        <p>架构搜索 (NAS)、超参进化、<span class="hl">模型合并</span> (Model Merging) — 已经是工程实践</p>
+        <h4>数据进化 (Data Evolution)</h4>
+        <p>Self-Instruct、Self-Rewarding (Yuan 2024)、<span class="hl-b">instruction 蒸馏</span></p>
+        <h4>能力进化 (Capability Evolution)</h4>
+        <p>FunSearch (Romera-Paredes 2023)、AlphaEvolve、<span class="hl-g">Darwin Godel Machine</span> (Zhang 2025) — 让模型改自己代码</p>
+      </div>
+      <div class="card q9" style="margin-top: 6px;">
+        <h4>② 关键工作</h4>
+        <ul>
+          <li><b>FunSearch</b> (DeepMind 2023)：LLM + 进化搜索，在数学上发现新构造</li>
+          <li><b>Self-Rewarding</b> (Meta 2024)：模型生成 reward 训练下一代</li>
+          <li><b>Darwin Godel Machine</b> (2025)：<span class="hl">自改代码</span>的智能体</li>
+          <li><b>AlphaEvolve</b> (DeepMind 2025)：代码级进化</li>
+          <li><b>Voyager</b> (NVIDIA 2023)：Minecraft 中<span class="hl-b">永久技能库</span>自我扩展</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#bef264">③ 风险与边界</h3>
+      <div class="card lime">
+        <h4>已观察到的</h4>
+        <ul>
+          <li><b>能力突破</b>：FunSearch 在 cap-set 等问题上<span class="hl-b">刷新 SOTA</span></li>
+          <li><b>技能累积</b>：Voyager 不断往 skill library 添加新能力</li>
+          <li><b>自指改进</b>：DGM 在 SWE-bench 上<span class="hl">自己改自己</span>越改越强</li>
+        </ul>
+        <h4>根本难题</h4>
+        <ul>
+          <li><b>目标漂移 (goal drift)</b>：进化过程中目标可能<span class="hl-r">偏移</span></li>
+          <li><b>评估瓶颈</b>：用什么<span class="hl-b">评估下一代</span>比上一代更好？</li>
+          <li><b>安全闭环</b>：自指系统<span class="hl-r">失控</span>的早期信号如何捕获？</li>
+          <li><b>算力开销</b>：每代 <span class="hl">从头训练</span> 不可持续</li>
+        </ul>
+        <h4>未解之谜</h4>
+        <ul>
+          <li>"<span class="hl">开放进化</span>" vs "目标驱动进化" 哪个更本质？</li>
+          <li>智能进化的<span class="hl-b">单位</span>是什么？参数？能力？想法？</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 22: Q9 进化 - 未来机会 -->
+<section class="slide" id="s22">
+  <div class="q-banner">
+    <span class="qheader q9-bg">Q9</span>
+    <span class="qtitle">智能如何进化 · 未来机会</span>
+    <span class="qsub">Future Opportunities</span>
+  </div>
+  <h2>我们的研究机会</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#bef264">方向 A · 受控自演化 (Bounded Self-Improvement)</h3>
+      <div class="card q9">
+        <h4>目标</h4>
+        <p>让模型<span class="hl">持续变强</span>，但每次改进都在 <span class="hl-b">可证明安全</span> 的边界内。</p>
+        <h4>实现</h4>
+        <ul>
+          <li>每次改动必须通过 <span class="hl">形式化验证</span> (Verus / Lean)</li>
+          <li>改动有"<span class="hl-b">rollback 快照</span>"，出问题立即回退</li>
+          <li>用"<span class="hl-g">红队裁判</span>"做安全网</li>
+        </ul>
+        <h4>灵感</h4>
+        <p class="small">DGM (2025) + 形式化方法</p>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#bef264">方向 B · 开放质量多样性 (Open-Ended Quality-Diversity)</h3>
+      <div class="card q9">
+        <h4>目标</h4>
+        <p>不只"<span class="hl">变强</span>"，还"<span class="hl-b">变多</span>"——生成多样解法库。</p>
+        <h4>实现</h4>
+        <ul>
+          <li>借鉴 QD 算法 (MAP-Elites / CVT-MAP-Elites)</li>
+          <li>用 LLM 做 <span class="hl">变异算子</span>，QD 算法做 <span class="hl-b">选择</span></li>
+          <li>在代码 / 写作 / 策略空间里跑开放探索</li>
+        </ul>
+        <h4>价值</h4>
+        <p class="small">比单一目标进化更接近"自然进化"</p>
+      </div>
+    </div>
+  </div>
+  <div class="card accent" style="margin-top: 6px;">
+    <h4>近期可落地（6-18 个月）</h4>
+    <ol>
+      <li><b>受限自演化 demo</b>：在受控 toy task (比如 ARC) 上做 <span class="hl">带 rollback 的自指改进</span></li>
+      <li><b>QD-LLM 探索</b>：用 LLM + MAP-Elites 在小代码空间跑 <span class="hl-b">多样解法库</span></li>
+      <li><b>评估协议</b>：建立 "<span class="hl-g">代际评估</span>" benchmark —— A_i 与 A_{i+1} 怎么比？</li>
+    </ol>
+  </div>
+</section>
+
+<!-- SLIDE 23: Q10 统一理论 - 候选框架 -->
+<section class="slide tight denser" id="s23">
+  <div class="q-banner">
+    <span class="qheader q10-bg">Q10</span>
+    <span class="qtitle">统一智能理论</span>
+    <span class="qsub">Can we propose a unified theory?</span>
+  </div>
+  <h2>研究进展 · 候选框架</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#cbd5e1">四大主流统一理论</h3>
+      <div class="card q10" style="padding: 8px 11px;">
+        <h4 style="margin: 2px 0;">① 压缩即智能 <span class="small gray">(Delétang 2023 / Solomonoff)</span></h4>
+        <p style="font-size: 12.5px; margin: 1px 0;">核心：<span class="hl">最优压缩 = 最强泛化</span>。LLM 训练 = 寻找最短程序。</p>
+        <h4 style="margin: 6px 0 2px;">② 自由能原理 <span class="small gray">(Friston 2010)</span></h4>
+        <p style="font-size: 12.5px; margin: 1px 0;">核心：智能体最小化 <span class="hl-b">surprise (variational free energy)</span>。</p>
+        <h4 style="margin: 6px 0 2px;">③ 预测编码 <span class="small gray">(Rao &amp; Ballard 1999 / LeCun JEPA)</span></h4>
+        <p style="font-size: 12.5px; margin: 1px 0;">核心：<span class="hl-g">预测下一表征</span> 而非像素，误差驱动学习。</p>
+        <h4 style="margin: 6px 0 2px;">④ 强化学习统御 <span class="small gray">(Sutton / AIXI / Hutter)</span></h4>
+        <p style="font-size: 12.5px; margin: 1px 0;">核心：<span class="hl">最大化奖励</span> 是最普适目标；AIXI = 理论最优但不可计算。</p>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#cbd5e1">四大新兴统一视角</h3>
+      <div class="card slate" style="padding: 8px 11px;">
+        <h4 style="margin: 2px 0;">⑤ 贝叶斯大脑 (Bayesian Brain)</h4>
+        <p style="font-size: 12.5px; margin: 1px 0;">大脑 = 概率推断引擎，<span class="hl">prior + likelihood = posterior</span></p>
+        <h4 style="margin: 6px 0 2px;">⑥ 集成信息论 (IIT, Tononi)</h4>
+        <p style="font-size: 12.5px; margin: 1px 0;">意识 = 集成信息 Φ；<span class="hl-b">有争议</span>，但提供量化框架</p>
+        <h4 style="margin: 6px 0 2px;">⑦ 博弈论 / 多 Agent 视角</h4>
+        <p style="font-size: 12.5px; margin: 1px 0;">智能 = 在多智能体博弈中的<span class="hl-g">纳什均衡 / 元博弈</span></p>
+        <h4 style="margin: 6px 0 2px;">⑧ 自指系统 (Self-Reference)</h4>
+        <p style="font-size: 12.5px; margin: 1px 0;">Gödel 机、Self-Referential 进化 — <span class="hl">智能 = 能改进自身的系统</span></p>
+      </div>
+      <div class="card amber" style="margin-top: 6px; padding: 7px 11px;">
+        <h4 style="margin: 2px 0;">八条线 ↔ 9 大问题的对应</h4>
+        <p style="font-size: 12px; margin: 0;">压缩→Q6泛化 / 自由能→Q1Q4 / 预测→Q3Q4 / RL→Q9 / 贝叶斯→Q2Q7 / 信息→Q10 / 博弈→Q8 / 自指→Q9Q10</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 24: Q10 统一理论 - 我们的提案 -->
+<section class="slide tight" id="s24">
+  <div class="q-banner">
+    <span class="qheader q10-bg">Q10</span>
+    <span class="qtitle">统一智能理论 · 我们的提案</span>
+    <span class="qsub">Our Tentative Unified Framework</span>
+  </div>
+  <h2>提案：以"压缩 × 预测 × 自由能 × 协同"为核心的四元统一视角</h2>
+  <div class="diagram" style="padding: 6px 12px;">
+    <div class="diag-row" style="gap: 6px; margin: 2px 0;">
+      <div class="grp q10" style="flex: 1; padding: 4px 7px;"><span class="gl" style="font-size: 10px;">核心 ① · 压缩 Compression</span><div><span class="gn" style="font-size: 11px; padding: 1px 5px;">最优描述长度</span> <span class="gn" style="font-size: 11px; padding: 1px 5px;">→ Q2 知识 / Q6 泛化</span></div></div>
+    </div>
+    <div class="diag-flow" style="font-size: 10px; margin: 0;">⇅ 同构 ⇅</div>
+    <div class="diag-row" style="gap: 6px; margin: 2px 0;">
+      <div class="grp q10" style="flex: 1; padding: 4px 7px;"><span class="gl" style="font-size: 10px;">核心 ② · 预测 Prediction</span><div><span class="gn" style="font-size: 11px; padding: 1px 5px;">下一表征 / token</span> <span class="gn" style="font-size: 11px; padding: 1px 5px;">→ Q1 / Q3 / Q4</span></div></div>
+    </div>
+    <div class="diag-flow" style="font-size: 10px; margin: 0;">⇅ 受约束于 ⇅</div>
+    <div class="diag-row" style="gap: 6px; margin: 2px 0;">
+      <div class="grp q10" style="flex: 1; padding: 4px 7px;"><span class="gl" style="font-size: 10px;">核心 ③ · 自由能 Free Energy</span><div><span class="gn" style="font-size: 11px; padding: 1px 5px;">最小化 surprise</span> <span class="gn" style="font-size: 11px; padding: 1px 5px;">→ Q7 / Q9</span></div></div>
+    </div>
+    <div class="diag-flow" style="font-size: 10px; margin: 0;">⇅ 协同涌现 ⇅</div>
+    <div class="diag-row" style="gap: 6px; margin: 2px 0;">
+      <div class="grp q10" style="flex: 1; padding: 4px 7px;"><span class="gl" style="font-size: 10px;">核心 ④ · 协同 Coordination</span><div><span class="gn" style="font-size: 11px; padding: 1px 5px;">多智能体 / 自指改进</span> <span class="gn" style="font-size: 11px; padding: 1px 5px;">→ Q5 / Q8 / Q9</span></div></div>
+    </div>
+  </div>
+  <div class="card accent" style="margin-top: 4px; padding: 8px 12px;">
+    <h4 style="margin: 1px 0;">一句话总结</h4>
+    <p style="font-size: 13px; margin: 2px 0;"><b>智能 = 一个能 <span class="hl">压缩经验</span>、<span class="hl-b">预测未来</span>、<span class="hl-g">最小化自由能</span>、并能在 <span class="hl-r">多智能体博弈</span> 中持续自指改进的系统。</b></p>
+    <p class="small" style="margin-top: 3px;">注：这不是新理论，而是对 9 大问题的"<span class="hl">统一语法</span>"。优势：可操作、可工程化、避免空泛哲学讨论。</p>
+  </div>
+</section>
+
+<!-- SLIDE 25: 综合路线图 - 我们的研究机会矩阵 -->
+<section class="slide tight denser" id="s25">
+  <h2>研究机会矩阵 · 我们的路线图</h2>
+  <div class="roadmap">
+    <div class="stage">
+      <div class="syear">短期 0-1 年</div>
+      <div class="sname">建立工具与基准</div>
+      <ul>
+        <li>能力相图 (Q1)</li>
+        <li>步级诊断 (Q3)</li>
+        <li>垂直幻觉评测 (Q7)</li>
+        <li>长程 Agent 评测 (Q5)</li>
+      </ul>
+    </div>
+    <div class="arrow">→</div>
+    <div class="stage">
+      <div class="syear">中期 1-3 年</div>
+      <div class="sname">机制突破</div>
+      <ul>
+        <li>神经-符号知识桥 (Q2)</li>
+        <li>Verifier-RL 推理 (Q3)</li>
+        <li>因果世界模型 (Q4)</li>
+        <li>睡眠式 consolidation (Q5)</li>
+      </ul>
+    </div>
+    <div class="arrow">→</div>
+    <div class="stage">
+      <div class="syear">长期 3-5 年</div>
+      <div class="sname">自指系统</div>
+      <ul>
+        <li>异构 Agent 平台 (Q8)</li>
+        <li>受控自演化 (Q9)</li>
+        <li>统一框架形式化 (Q10)</li>
+        <li>校准即能力 (Q7)</li>
+      </ul>
+    </div>
+  </div>
+  <h3>优先级矩阵 · 影响力 × 可行性</h3>
+  <div class="card tight">
+    <table>
+      <tr>
+        <th></th>
+        <th>可行性高 (低算力 + 数据现成)</th>
+        <th>可行性中 (需要算力 / 合作)</th>
+        <th>可行性低 (长期赌注)</th>
+      </tr>
+      <tr>
+        <td><b>影响力 高</b></td>
+        <td><span class="box q7">Q7 校准 SFT</span> <span class="box q3">Q3 步级诊断</span> <span class="box q5">Q5 长程评测</span></td>
+        <td><span class="box q2">Q2 神经-符号</span> <span class="box q4">Q4 因果世界模型</span></td>
+        <td><span class="box q9">Q9 受控自演化</span> <span class="box q10">Q10 统一理论</span></td>
+      </tr>
+      <tr>
+        <td><b>影响力 中</b></td>
+        <td><span class="box q1">Q1 能力相图</span> <span class="box q6">Q6 数据课程</span></td>
+        <td><span class="box q8">Q8 异构 Agent</span> <span class="box q5">Q5 主动遗忘</span></td>
+        <td><span class="box q9">Q9 开放 QD</span></td>
+      </tr>
+      <tr>
+        <td><b>影响力 低</b></td>
+        <td><span class="box q6">Q6 对抗泛化</span></td>
+        <td><span class="box q1">Q1 circuit 标记</span></td>
+        <td>—</td>
+      </tr>
+    </table>
+  </div>
+  <div class="card accent" style="margin-top: 4px;">
+    <h4>建议首批立项 (3 个)</h4>
+    <ol>
+      <li><b>能力相图 (Q1)</b>：0 算力、0 数据，纯评测，3 个月出论文 <span class="hl">★</span></li>
+      <li><b>步级诊断 + Verifier-RL (Q3)</b>：可在 7B 模型做小规模实验，与 Lean/SymPy 团队合作 <span class="hl-b">★★</span></li>
+      <li><b>垂直领域幻觉评测 (Q7)</b>：教育 / 医疗场景，1 年内出 benchmark + 缓解方案 <span class="hl-g">★★★</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- SLIDE 26: 总结与启示 -->
+<section class="slide" id="s26">
+  <h2>总结与启示 · 8 条 Take-aways</h2>
+  <div class="grid4" style="margin-top: 6px;">
+    <div class="card amber">
+      <h3>① scale 不是全部</h3>
+      <p>2022 后 <span class="hl">算法 + 数据 + 推理时</span> 三个杠杆都比 scale 重要</p>
+    </div>
+    <div class="card teal">
+      <h3>② 知识 = 压缩 + 检索</h3>
+      <p>不要纯参数化，<span class="hl-b">神经-符号混合</span> 是趋势</p>
+    </div>
+    <div class="card pink">
+      <h3>③ 推理 = 可验证搜索</h3>
+      <p>CoT + PRM + Verifier 是当前最优组合</p>
+    </div>
+    <div class="card blue">
+      <h3>④ 世界模型 = 潜空间预测</h3>
+      <p>JEPA / Dreamer 比 Sora 更接近"<span class="hl">理解</span>"</p>
+    </div>
+    <div class="card indigo">
+      <h3>⑤ 记忆 = 分层 + 主动遗忘</h3>
+      <p>短期 / 中期 / 长期 + Ebbinghaus + 选择性遗忘</p>
+    </div>
+    <div class="card green">
+      <h3>⑥ 泛化 = 数据多样性</h3>
+      <p>Chinchilla 后 <span class="hl-b">数据策略</span> 比模型规模更关键</p>
+    </div>
+    <div class="card purple">
+      <h3>⑦ 校准 > 零幻觉</h3>
+      <p>可靠的"<span class="hl">我不知道</span>" 比 100% 准确更重要</p>
+    </div>
+    <div class="card red">
+      <h3>⑧ 多智能体 ≠ 多</h3>
+      <p>同构多 Agent 边际收益低，<span class="hl-b">异构 + 协议</span> 才有效</p>
+    </div>
+  </div>
+  <div class="grid2" style="margin-top: 6px;">
+    <div class="card lime">
+      <h3>⑨ 自演化需要安全网</h3>
+      <p>Darwin Godel 范式有前景，但 <span class="hl">形式化验证 + rollback</span> 不可少</p>
+    </div>
+    <div class="card slate">
+      <h3>⑩ 统一理论：可操作版本</h3>
+      <p><b>压缩 × 预测 × 自由能 × 协同</b> 四元组，<span class="hl">可工程化</span></p>
+    </div>
+  </div>
+  <div class="card accent" style="margin-top: 4px;">
+    <h4>对团队的具体建议</h4>
+    <ol>
+      <li><b>短期</b>：选 1-2 个 Q 做小实验 (建议 Q1 能力相图 + Q7 校准)，<span class="hl">3-6 个月内出第一篇</span></li>
+      <li><b>中期</b>：与形式化方法团队合作做 Q3 步级推理，<span class="hl-b">12 个月内出可部署 demo</span></li>
+      <li><b>长期</b>：把 9 个问题统一到"压缩-预测-自由能-协同"框架下，<span class="hl-g">3-5 年做出一篇综述 + 一个统一 benchmark</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- SLIDE 27: 参考文献 (Q1-Q5) -->
+<section class="slide tight denser" id="s27">
+  <h2>参考文献 · Key References (1/2)</h2>
+  <div class="grid2" style="margin-top: 4px;">
+    <div>
+      <h3 style="color:#fbbf24">Q1 涌现</h3>
+      <ul class="ref-list">
+        <li><span class="tag">[Kaplan+ 2020]</span> Scaling Laws for Neural LMs. arXiv:2001.08361.</li>
+        <li><span class="tag">[Hoffmann+ 2022]</span> Chinchilla. arXiv:2203.15556.</li>
+        <li><span class="tag">[Wei+ 2022]</span> Emergent Abilities of LLMs. TMLR.</li>
+        <li><span class="tag">[Schaeffer+ 2023]</span> Are Emergent Abilities a Mirage? NeurIPS.</li>
+        <li><span class="tag">[Power+ 2022]</span> Grokking. arXiv:2201.02177.</li>
+        <li><span class="tag">[Anthropic 2022]</span> Mathematical Framework for Transformer Circuits.</li>
+      </ul>
+      <h3 style="color:#2dd4bf">Q2 知识</h3>
+      <ul class="ref-list">
+        <li><span class="tag">[Delétang+ 2023]</span> Compression Represents Intelligence. arXiv:2304.12762.</li>
+        <li><span class="tag">[Dai+ 2022]</span> Knowledge Neurons in Transformers. ACL.</li>
+        <li><span class="tag">[Meng+ 2022]</span> ROME. NeurIPS.</li>
+        <li><span class="tag">[Asai+ 2024]</span> Self-RAG. ICLR.</li>
+        <li><span class="tag">[Yan+ 2024]</span> Corrective RAG (CRAG). arXiv:2401.15884.</li>
+      </ul>
+      <h3 style="color:#f472b6">Q3 推理</h3>
+      <ul class="ref-list">
+        <li><span class="tag">[Wei+ 2022]</span> Chain-of-Thought Prompting. NeurIPS.</li>
+        <li><span class="tag">[Yao+ 2023]</span> Tree of Thoughts. NeurIPS.</li>
+        <li><span class="tag">[Lightman+ 2023]</span> Let's Verify Step by Step. arXiv:2305.20050.</li>
+        <li><span class="tag">[OpenAI 2024]</span> Learning to Reason with LLMs (o1).</li>
+        <li><span class="tag">[DeepSeek 2025]</span> R1. arXiv:2501.12948.</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="color:#60a5fa">Q4 世界模型</h3>
+      <ul class="ref-list">
+        <li><span class="tag">[Ha &amp; Schmidhuber 2018]</span> World Models. arXiv:1803.10122.</li>
+        <li><span class="tag">[Hafner+ 2023]</span> DreamerV3. Nature.</li>
+        <li><span class="tag">[LeCun 2022]</span> A Path Towards Autonomous Machine Intelligence. (JEPA)</li>
+        <li><span class="tag">[OpenAI 2024]</span> Sora Technical Report.</li>
+        <li><span class="tag">[Hu+ 2023]</span> GAIA-1. arXiv:2309.13508.</li>
+      </ul>
+      <h3 style="color:#818cf8">Q5 记忆</h3>
+      <ul class="ref-list">
+        <li><span class="tag">[Packer+ 2023]</span> MemGPT. arXiv:2310.08560.</li>
+        <li><span class="tag">[Liu+ 2023]</span> Lost in the Middle. TACL.</li>
+        <li><span class="tag">[Borgeaud+ 2021]</span> RETRO. arXiv:2112.04426.</li>
+        <li><span class="tag">[Gu &amp; Dao 2023]</span> Mamba. arXiv:2312.00752.</li>
+        <li><span class="tag">[Chen+ 2023]</span> LongLoRA. arXiv:2309.12307.</li>
+      </ul>
+      <h3 style="color:#34d399">Q6 泛化</h3>
+      <ul class="ref-list">
+        <li><span class="tag">[Xie+ 2021]</span> Bayesian Inference Prompting. arXiv:2109.01294.</li>
+        <li><span class="tag">[McKenzie+ 2023]</span> Inverse Scaling. arXiv:2306.09433.</li>
+        <li><span class="tag">[Delétang+ 2023]</span> Neural Networks and Chomsky Hierarchy.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 28: 参考文献 (Q7-Q10) + 总结 -->
+<section class="slide tight denser" id="s28">
+  <h2>参考文献 · Key References (2/2)</h2>
+  <div class="grid2" style="margin-top: 4px;">
+    <div>
+      <h3 style="color:#c4b5fd">Q7 幻觉</h3>
+      <ul class="ref-list">
+        <li><span class="tag">[Manakul+ 2023]</span> SelfCheckGPT. EMNLP.</li>
+        <li><span class="tag">[Huang+ 2023]</span> Survey on Hallucination in LLMs. arXiv:2311.05232.</li>
+        <li><span class="tag">[Farquhar+ 2024]</span> Semantic Entropy. Nature.</li>
+      </ul>
+      <h3 style="color:#fca5a5">Q8 协同</h3>
+      <ul class="ref-list">
+        <li><span class="tag">[Wu+ 2023]</span> AutoGen. arXiv:2308.08155.</li>
+        <li><span class="tag">[Du+ 2023]</span> Multi-Agent Debate. arXiv:2305.14325.</li>
+        <li><span class="tag">[Hong+ 2023]</span> MetaGPT. arXiv:2308.00352.</li>
+        <li><span class="tag">[FAIR 2022]</span> CICERO (Diplomacy). Science.</li>
+      </ul>
+      <h3 style="color:#bef264">Q9 进化</h3>
+      <ul class="ref-list">
+        <li><span class="tag">[Romera-Paredes+ 2023]</span> FunSearch. Nature.</li>
+        <li><span class="tag">[Yuan+ 2024]</span> Self-Rewarding LM. arXiv:2401.10020.</li>
+        <li><span class="tag">[Zhang+ 2025]</span> Darwin Godel Machine. arXiv:2505.22954.</li>
+        <li><span class="tag">[Wang+ 2023]</span> Voyager. arXiv:2305.16291.</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="color:#cbd5e1">Q10 统一理论</h3>
+      <ul class="ref-list">
+        <li><span class="tag">[Friston 2010]</span> The Free-Energy Principle. Nature Reviews Neuroscience.</li>
+        <li><span class="tag">[Hutter 2005]</span> AIXI. Springer.</li>
+        <li><span class="tag">[Sutton 2019]</span> The Bitter Lesson.</li>
+        <li><span class="tag">[Tononi 2004]</span> Integrated Information Theory. BMC Neuroscience.</li>
+        <li><span class="tag">[Solomonoff 1964]</span> Algorithmic Probability.</li>
+        <li><span class="tag">[Rao &amp; Ballard 1999]</span> Predictive Coding. Nature Neuroscience.</li>
+      </ul>
+      <h3 style="color:var(--ink-3)">综合性资源</h3>
+      <ul class="ref-list">
+        <li><span class="tag">[Stanford CRFM 2024]</span> Foundation Models Survey. arXiv:2108.07258.</li>
+        <li><span class="tag">[Bommasani+ 2021]</span> On the Opportunities and Risks of Foundation Models. Stanford.</li>
+        <li><span class="tag">[arXiv 2026]</span> cs.AI / cs.CL / cs.LG daily submissions.</li>
+      </ul>
+      <div class="card amber" style="margin-top: 4px;">
+        <h4>使用建议</h4>
+        <p class="small">参考文献按 Q 编号分组，方便"<span class="hl">从问题到文献</span>"反向检索。arXiv 编号 <span class="hl-b">可直接访问</span>。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 29: Q&A / 结语 -->
+<section class="slide cover" id="s29">
+  <div class="badge">Q & A · DISCUSSION</div>
+  <h1 class="title" style="font-size: 48px;">讨论 · 提问 · 立项</h1>
+  <h2 class="subtitle">哪一个问题最值得我们做？</h2>
+  <p class="tagline">
+    请考虑：① 我们的算力 / 数据 / 团队 ② 短期出论文 vs 长期赌注 ③ 哪个 Q 与我们 <span class="hl">已有的工作</span> 最接近？<br>
+    比如：教育背景的同事优先 Q3/Q7；做系统 / Agent 的优先 Q5/Q8；做 NLP 模型本身的优先 Q1/Q6。
+  </p>
+  <div class="grid2" style="max-width: 820px; margin: 0 auto; text-align: left;">
+    <div class="card accent">
+      <h3>立刻可做 (3 个月)</h3>
+      <ul>
+        <li>能力相图 (Q1) - 评测为主</li>
+        <li>中文幻觉评测 (Q7) - 数据建设</li>
+        <li>步级诊断 (Q3) - 框架搭建</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>中期 (6-12 个月)</h3>
+      <ul>
+        <li>Verifier-RL 推理 (Q3)</li>
+        <li>神经-符号知识桥 (Q2)</li>
+        <li>异构 Agent 平台 (Q8)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="meta" style="margin-top: 20px;">
+    <span>📁 路径: <b>auto/intelligence-10-questions-slides/index.html</b></span>
+    <span>⏱ 本课 <b>29 张</b> 投影片</span>
+  </div>
+</section>
+
+</div>
+
+<!-- ========== FOOT NAV ========== -->
+<div class="footnav">
+  <div class="btns">
+    <button onclick="show(0)">⏮ 首页</button>
+    <button onclick="prev()">← 上一页</button>
+    <button onclick="next()">下一页 →</button>
+    <button onclick="show(slides.length-1)">⏭ 末页</button>
+  </div>
+  <div>
+    <span id="cur">1</span> / <span id="tot">28</span>
+  </div>
+</div>
+
+<!-- ========== COPYRIGHT (position: fixed, floats above) ========== -->
+<div class="copyright-bar">
+  <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let cur = 0;
+  const total = slides.length;
+  document.getElementById('tot').textContent = total;
+
+  function show(i) {
+    i = Math.max(0, Math.min(total-1, i));
+    slides[cur].classList.remove('active');
+    cur = i;
+    slides[cur].classList.add('active');
+    document.getElementById('cur').textContent = i+1;
+    document.getElementById('pb').style.width = ((i+1)/total*100) + '%';
+    if (location.hash !== '#' + (i+1)) {
+      history.replaceState(null, '', '#' + (i+1));
+    }
+  }
+  function next() { show(cur+1); }
+  function prev() { show(cur-1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { next(); e.preventDefault(); }
+    if (e.key === 'ArrowLeft'  || e.key === 'PageUp')   { prev(); e.preventDefault(); }
+    if (e.key === 'Home')  show(0);
+    if (e.key === 'End')   show(total-1);
+    if (e.key === 'p' || e.key === 'P') window.print();
+  });
+
+  // Click right half / left half to navigate
+  document.addEventListener('click', e => {
+    if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+    const x = e.clientX / window.innerWidth;
+    if (x > 0.7) next();
+    else if (x < 0.3) prev();
+  });
+
+  // Init from hash
+  const m = location.hash.match(/#(\d+)/);
+  if (m) show(parseInt(m[1]) - 1);
+  else show(0);
+</script>
+</body>
+</html>
