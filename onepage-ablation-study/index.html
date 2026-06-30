@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深度学习消融实验怎么做 · 一页纸讲清楚</title>
+<style>
+:root {
+  --m1-deep: #4c1d95;   /* 深紫黑 indigo-950: 主色 (AI/魔法紫) */
+  --m1-soft: #ede9fe;   /* violet-100 */
+  --m2-deep: #9a3412;   /* 深赭石 orange-800 */
+  --m2-soft: #ffedd5;   /* orange-100 */
+  --m3-deep: #1f2937;   /* 深炭灰 gray-800 */
+  --m3-soft: #f3f4f6;   /* gray-100 */
+  --m4-deep: #881337;   /* 深酒红 rose-900 */
+  --m4-soft: #ffe4e6;   /* rose-100 */
+  --ink: #111827;
+  --ink-2: #374151;
+  --ink-3: #6b7280;
+  --line: #f3f4f6;
+  --bg: #ffffff;
+  --warn: #ef4444;
+  --warn-soft: #fef2f2;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #f5f5f4; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--ink);
+  line-height: 1.6;
+  padding: 24px 12px;
+}
+.poster {
+  max-width: 780px;
+  margin: 0 auto;
+  background: var(--bg);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 22px rgba(0,0,0,0.08);
+}
+section { padding: 26px 36px; border-bottom: 1px solid var(--line); }
+section:last-child { border-bottom: none; }
+
+/* ===== ① Header ===== */
+header {
+  position: relative;
+  background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
+  color: #fff;
+  padding: 34px 38px 28px;
+}
+header .eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.18);
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+header h1 {
+  font-size: 26px;
+  line-height: 1.42;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: -0.005em;
+}
+header h1 .q { color: #fde047; }
+header .subtitle {
+  font-size: 14.5px;
+  color: rgba(255,255,255,0.94);
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+header .meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: rgba(255,255,255,0.85);
+}
+header .meta span {
+  background: rgba(255,255,255,0.12);
+  padding: 3px 9px;
+  border-radius: 4px;
+}
+header .deco {
+  position: absolute;
+  top: 24px; right: 28px;
+  font-size: 28px;
+  opacity: 0.85;
+  letter-spacing: 4px;
+}
+
+/* ===== ② Overview 总览 ===== */
+.overview h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--m1-deep);
+}
+.overview h2 .en {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+.overview .lead {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin: 4px 0 14px;
+  line-height: 1.7;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.card {
+  border-radius: 8px;
+  padding: 12px 13px;
+  border: 1px solid;
+  position: relative;
+}
+.card .icn { font-size: 20px; display: block; margin-bottom: 4px; }
+.card .name {
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: var(--ink);
+}
+.card .en {
+  font-size: 10.5px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.card.c1 { background: var(--m1-soft); border-color: #ddd6fe; }
+.card.c2 { background: var(--m2-soft); border-color: #fed7aa; }
+.card.c3 { background: var(--m3-soft); border-color: #d1d5db; }
+.card.c4 { background: var(--m4-soft); border-color: #fecdd3; }
+.card.c5 { background: #f0fdf4; border-color: #bbf7d0; }
+.card.c6 { background: #fef3c7; border-color: #fde68a; }
+
+/* ===== ③ 编号主模块 ===== */
+.module { position: relative; }
+.module-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.num {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.m1 .num { background: var(--m1-deep); }
+.m2 .num { background: var(--m2-deep); }
+.m3 .num { background: var(--m3-deep); }
+.m4 .num { background: var(--m4-deep); }
+.module-head h3 {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.35;
+}
+.module-head h3 .en {
+  display: block;
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.module p {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--ink-2);
+  margin-bottom: 10px;
+}
+.module ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 10px;
+}
+.module li {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  padding-left: 18px;
+  position: relative;
+  margin-bottom: 5px;
+}
+.module li::before {
+  content: "▸";
+  position: absolute;
+  left: 4px;
+  color: var(--m1-deep);
+  font-weight: 700;
+}
+.m2 li::before { color: var(--m2-deep); }
+.m3 li::before { color: var(--m3-deep); }
+.m4 li::before { color: var(--m4-deep); }
+
+.callout {
+  background: var(--m1-soft);
+  border-left: 4px solid var(--m1-deep);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  margin: 10px 0;
+}
+.m2 .callout { background: var(--m2-soft); border-left-color: var(--m2-deep); }
+.m3 .callout { background: var(--m3-soft); border-left-color: var(--m3-deep); }
+.m4 .callout { background: var(--m4-soft); border-left-color: var(--m4-deep); }
+.callout b { color: var(--m1-deep); }
+.m2 .callout b { color: var(--m2-deep); }
+.m3 .callout b { color: var(--m3-deep); }
+.m4 .callout b { color: var(--m4-deep); }
+
+/* 公式块 */
+.eq {
+  background: #fafafa;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 10px 0;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 13.5px;
+  color: var(--ink);
+  line-height: 1.7;
+}
+.eq code {
+  font-family: inherit;
+  background: rgba(0,0,0,0.04);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--m1-deep);
+  font-weight: 600;
+}
+.m2 .eq code { color: var(--m2-deep); }
+.m3 .eq code { color: var(--m3-deep); }
+.m4 .eq code { color: var(--m4-deep); }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 10px 0;
+  background: #fafafa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+th, td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 12.5px;
+}
+td { color: var(--ink-2); }
+tr:last-child td { border-bottom: none; }
+table code {
+  font-family: ui-monospace, monospace;
+  background: rgba(76,29,149,0.08);
+  color: var(--m1-deep);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.m4 table code { background: rgba(136,19,55,0.08); color: var(--m4-deep); }
+.m4 th { color: var(--m4-deep); }
+
+/* SVG 容器 */
+.svg-wrap {
+  background: #fafafa;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+  text-align: center;
+}
+.svg-wrap svg { max-width: 100%; height: auto; }
+.svg-cap {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  margin-top: 6px;
+  letter-spacing: 0.02em;
+}
+
+/* ===== ④ 误区警示 ===== */
+.pitfall h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--warn);
+  margin-bottom: 4px;
+}
+.pitfall h2 .en {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+.pitfall .lead {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin: 4px 0 14px;
+  line-height: 1.7;
+}
+.pit-list { list-style: none; padding: 0; margin: 0; }
+.pit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 14px;
+  background: var(--warn-soft);
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.pit-icon {
+  width: 24px; height: 24px;
+  background: var(--warn);
+  color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.pit-body { flex: 1; }
+.pit-wrong {
+  font-size: 13.5px;
+  color: #991b1b;
+  text-decoration: line-through;
+  text-decoration-color: #ef4444;
+  text-decoration-thickness: 1.5px;
+  margin-bottom: 3px;
+  font-weight: 600;
+}
+.pit-right {
+  font-size: 13.5px;
+  color: #166534;
+  font-weight: 600;
+  line-height: 1.65;
+}
+.pit-right::before {
+  content: "👉 ";
+}
+
+/* ===== ⑤ TL;DR ===== */
+.summary h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--m1-deep);
+  margin-bottom: 4px;
+}
+.summary h2 .en {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+.tldr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 14px 0 18px;
+}
+.tldr {
+  padding: 12px 14px;
+  background: #fafafa;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.tldr .tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--m1-deep);
+  margin-bottom: 4px;
+}
+.tldr.t2 .tag { color: var(--m2-deep); }
+.tldr.t3 .tag { color: var(--m3-deep); }
+.tldr p {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.65;
+}
+.oneliner {
+  background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%);
+  color: #fff;
+  border-radius: 10px;
+  padding: 18px 22px;
+  font-size: 15px;
+  line-height: 1.7;
+  font-weight: 500;
+}
+.oneliner b {
+  color: #fde047;
+  font-weight: 700;
+}
+.refs {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  text-align: right;
+  line-height: 1.7;
+}
+.refs b { color: var(--ink-2); }
+
+/* responsive */
+@media (max-width: 640px) {
+  section { padding: 22px 18px; }
+  header { padding: 24px 22px 20px; }
+  header h1 { font-size: 21px; }
+  .cards { grid-template-columns: repeat(2, 1fr); }
+  .tldr-grid { grid-template-columns: 1fr; }
+  .num { width: 32px; height: 32px; font-size: 14px; }
+  .module-head h3 { font-size: 17px; }
+}
+</style>
+</head>
+<body>
+<div class="poster">
+
+<!-- ============================== ① 标题区 ============================== -->
+<header>
+  <div class="eyebrow">Deep Learning · Paper Writing</div>
+  <h1>消融实验 = 深度学习的<span class="q">"控制变量法"</span><br>怎么做才不被审稿人挑刺？</h1>
+  <p class="subtitle">
+    5 步法完整流程 + 真实消融样表 + 5 大常见误区。<br>
+    一次性讲透 <b>Ablation Study</b> 的标准做法,从此告别 "Why does it work?" 的灵魂拷问。
+  </p>
+  <div class="deco">🧪 🧠 📊</div>
+  <div class="meta">
+    <span>📚 适合: 深度学习研究者 / 顶会投稿人</span>
+    <span>🎯 顶会规范: CVPR / NeurIPS / ICML</span>
+    <span>📖 阅读: 1 页</span>
+  </div>
+</header>
+
+<!-- ============================== ② 导览总览 ============================== -->
+<section class="overview">
+  <h2>一页图导航 <span class="en">Overview</span></h2>
+  <p class="lead">从"是什么"到"怎么做"到"怎么报告"再到"避坑",6 个视角覆盖消融实验的全流程。</p>
+
+  <div class="cards">
+    <div class="card c1">
+      <span class="icn">🔬</span>
+      <div class="name">是什么</div>
+      <div class="en">WHAT</div>
+    </div>
+    <div class="card c2">
+      <span class="icn">🎯</span>
+      <div class="name">为什么做</div>
+      <div class="en">WHY</div>
+    </div>
+    <div class="card c3">
+      <span class="icn">⏰</span>
+      <div class="name">何时做</div>
+      <div class="en">WHEN</div>
+    </div>
+    <div class="card c4">
+      <span class="icn">🛠️</span>
+      <div class="name">怎么做</div>
+      <div class="en">HOW</div>
+    </div>
+    <div class="card c5">
+      <span class="icn">📋</span>
+      <div class="name">怎么报告</div>
+      <div class="en">TABLE</div>
+    </div>
+    <div class="card c6">
+      <span class="icn">⚠️</span>
+      <div class="name">常见误区</div>
+      <div class="en">PITFALL</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== ③ 4 个编号主模块 ============================== -->
+
+<!-- 模块 01: 什么是消融实验 -->
+<section class="module m1">
+  <div class="module-head">
+    <div class="num">01</div>
+    <h3>什么是消融实验?<span class="en">Ablation Study · The Core Idea</span></h3>
+  </div>
+
+  <p>
+    消融实验 (<b>Ablation Study</b>) 源自神经科学:神经外科医生为了研究大脑不同区域的功能,会
+    <b>逐一切除特定区域</b>,观察患者哪些能力丧失 —— 从而反推该区域负责什么。
+  </p>
+  <p>
+    深度学习借用这个思路:<b>逐步移除或替换模型的某个组件,量化该组件对最终性能的贡献</b>。
+    如果去掉某个组件后性能暴跌,说明这个组件是"真有用";如果性能不变甚至上升,说明它是冗余的。
+  </p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr-m1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7280"/>
+        </marker>
+      </defs>
+      <!-- 完整模型 -->
+      <g transform="translate(20,40)">
+        <rect x="0" y="0" width="120" height="80" rx="6" fill="#4c1d95" opacity="0.92"/>
+        <text x="60" y="32" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">完整模型</text>
+        <text x="60" y="50" text-anchor="middle" fill="#fff" font-size="11">A + B + C + D</text>
+        <text x="60" y="70" text-anchor="middle" fill="#fde047" font-size="11" font-weight="700">mIoU 80.2</text>
+      </g>
+      <!-- 移除 A -->
+      <g transform="translate(200,40)">
+        <rect x="0" y="0" width="120" height="80" rx="6" fill="#fff" stroke="#4c1d95" stroke-width="2"/>
+        <text x="60" y="32" text-anchor="middle" fill="#4c1d95" font-size="12" font-weight="700">移除 A</text>
+        <text x="60" y="50" text-anchor="middle" fill="#6b7280" font-size="11">B + C + D</text>
+        <text x="60" y="70" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="700">mIoU 75.3 ↓</text>
+      </g>
+      <!-- 移除 B -->
+      <g transform="translate(380,40)">
+        <rect x="0" y="0" width="120" height="80" rx="6" fill="#fff" stroke="#4c1d95" stroke-width="2"/>
+        <text x="60" y="32" text-anchor="middle" fill="#4c1d95" font-size="12" font-weight="700">移除 B</text>
+        <text x="60" y="50" text-anchor="middle" fill="#6b7280" font-size="11">A + C + D</text>
+        <text x="60" y="70" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="700">mIoU 78.6 ↓</text>
+      </g>
+      <!-- 移除 C -->
+      <g transform="translate(560,40)">
+        <rect x="0" y="0" width="120" height="80" rx="6" fill="#fff" stroke="#4c1d95" stroke-width="2"/>
+        <text x="60" y="32" text-anchor="middle" fill="#4c1d95" font-size="12" font-weight="700">移除 C</text>
+        <text x="60" y="50" text-anchor="middle" fill="#6b7280" font-size="11">A + B + D</text>
+        <text x="60" y="70" text-anchor="middle" fill="#10b981" font-size="11" font-weight="700">mIoU 79.8 ≈</text>
+      </g>
+      <!-- 箭头 -->
+      <line x1="140" y1="80" x2="200" y2="80" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr-m1)"/>
+      <line x1="320" y1="80" x2="380" y2="80" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr-m1)"/>
+      <line x1="500" y1="80" x2="560" y2="80" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr-m1)"/>
+      <!-- 标签 -->
+      <text x="20" y="20" fill="#4c1d95" font-size="11" font-weight="700">🔬 Baseline</text>
+      <text x="200" y="20" fill="#4c1d95" font-size="11" font-weight="700">A 重要 (-4.9)</text>
+      <text x="380" y="20" fill="#4c1d95" font-size="11" font-weight="700">B 次要 (-1.6)</text>
+      <text x="560" y="20" fill="#4c1d95" font-size="11" font-weight="700">C 冗余 (-0.4)</text>
+      <!-- 底部说明 -->
+      <text x="360" y="160" text-anchor="middle" fill="#6b7280" font-size="12" font-style="italic">
+        一次只去掉一个组件,其他保持不变 → 量化该组件的边际贡献
+      </text>
+      <text x="360" y="180" text-anchor="middle" fill="#6b7280" font-size="11">
+        真实样例:语义分割任务 (A=注意力, B=多尺度融合, C=对比损失, D=基线 backbone)
+      </text>
+    </svg>
+    <div class="svg-cap">图 1:消融实验的核心思想 —— 一次只动一个组件,反推其贡献度</div>
+  </div>
+
+  <div class="callout">
+    <b>目的</b>:验证设计选择的必要性 + 提供可解释性 + 应对审稿人 "Which part matters most?" 的灵魂拷问。
+  </div>
+</section>
+
+<!-- 模块 02: 什么时候必须做 -->
+<section class="module m2">
+  <div class="module-head">
+    <div class="num">02</div>
+    <h3>什么时候必须做?<span class="en">When to Do Ablation Study</span></h3>
+  </div>
+
+  <p>
+    不是所有论文都需要消融表。<b>只有当你"加了新东西"或"组合了多种技术"</b>时,审稿人才会追问:
+    "这个新东西到底有没有用?"
+  </p>
+
+  <ul>
+    <li><b>提出新模块 / 新结构</b> —— 新 attention、新 loss、新 backbone、新解码器</li>
+    <li><b>引入新训练策略</b> —— 新的学习率调度、数据增强、正则化、蒸馏方法</li>
+    <li><b>组合多种已有技术</b> —— A+B+C 一起涨点 5%,需要验证各组件的边际收益</li>
+    <li><b>报告性能大幅提升时</b> —— SOTA 涨 3 个点以上,审稿人默认会要求逐项归因</li>
+  </ul>
+
+  <div class="callout">
+    <b>审稿人最常追问的 3 个问题</b>:<br>
+    ① "Why does it work?" — 你提出的核心组件真的有效吗?<br>
+    ② "Which part matters most?" — 这么多模块,谁是关键?<br>
+    ③ "Is it the architecture or just the training trick?" — 结构和训练策略各贡献多少?
+  </div>
+
+  <p>
+    <b>顶会标配</b>:CVPR、NeurIPS、ICML、ICLR 几乎所有 <b>提出新模型</b>的论文都在实验章节有消融表。
+    一篇 8 页正文 + 6 页附录的论文,通常 1-2 页专门留给消融。
+  </p>
+</section>
+
+<!-- 模块 03: 5 步法完整流程 -->
+<section class="module m3">
+  <div class="module-head">
+    <div class="num">03</div>
+    <h3>5 步法完整流程<span class="en">5-Step Workflow</span></h3>
+  </div>
+
+  <p>从"想法"到"可发表的消融表",标准 5 步法:</p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 760 140" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr-m3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f2937"/>
+        </marker>
+      </defs>
+      <!-- 5 个步骤方块 (统一 120 宽, 间隙 35) -->
+      <g>
+        <rect x="10" y="40" width="120" height="60" rx="8" fill="#1f2937"/>
+        <text x="70" y="65" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">① 确定基线</text>
+        <text x="70" y="83" text-anchor="middle" fill="#9ca3af" font-size="10">完整模型</text>
+      </g>
+      <g>
+        <rect x="165" y="40" width="120" height="60" rx="8" fill="#1f2937"/>
+        <text x="225" y="65" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">② 单变量消融</text>
+        <text x="225" y="83" text-anchor="middle" fill="#9ca3af" font-size="10">一次只动 1 个</text>
+      </g>
+      <g>
+        <rect x="320" y="40" width="120" height="60" rx="8" fill="#1f2937"/>
+        <text x="380" y="65" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">③ 记录指标</text>
+        <text x="380" y="83" text-anchor="middle" fill="#9ca3af" font-size="10">多次取平均</text>
+      </g>
+      <g>
+        <rect x="475" y="40" width="120" height="60" rx="8" fill="#1f2937"/>
+        <text x="535" y="65" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">④ 绘制消融表</text>
+        <text x="535" y="83" text-anchor="middle" fill="#9ca3af" font-size="10">组件→指标</text>
+      </g>
+      <g>
+        <rect x="630" y="40" width="120" height="60" rx="8" fill="#1f2937"/>
+        <text x="690" y="65" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">⑤ 可视化</text>
+        <text x="690" y="83" text-anchor="middle" fill="#9ca3af" font-size="10">柱状/雷达</text>
+      </g>
+      <!-- 箭头 -->
+      <line x1="130" y1="70" x2="165" y2="70" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr-m3)"/>
+      <line x1="285" y1="70" x2="320" y2="70" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr-m3)"/>
+      <line x1="440" y1="70" x2="475" y2="70" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr-m3)"/>
+      <line x1="595" y1="70" x2="630" y2="70" stroke="#1f2937" stroke-width="1.5" marker-end="url(#arr-m3)"/>
+      <text x="380" y="125" text-anchor="middle" fill="#6b7280" font-size="12" font-style="italic">
+        每一步都是"控制变量":评测集、随机种子、超参、训练 epoch 全部保持一致
+      </text>
+    </svg>
+    <div class="svg-cap">图 2:5 步法完整流程 —— 每步都强调"控制变量"</div>
+  </div>
+
+  <ul>
+    <li><b>① 确定基线 (Baseline)</b> —— 完整模型开箱即用,记录所有组件都开启时的性能 (= 你的 SOTA 数字)</li>
+    <li><b>② 单变量消融</b> —— 每次只关闭/替换 1 个组件,其他保持不变 (这是核心原则!)</li>
+    <li><b>③ 记录指标</b> —— 同一评测集、同一随机种子、<b>≥ 3 次独立运行取平均 ± 标准差</b></li>
+    <li><b>④ 绘制消融表</b> —— 行=组件,列=配置,单元格 = ✓/✗ 或具体超参值,最后一列是指标</li>
+    <li><b>⑤ 可视化贡献度</b> —— 柱状图 (各组件 Δ) 或雷达图 (各维度性能),让"贡献大小"一眼可见</li>
+  </ul>
+
+  <div class="callout">
+    <b>统计显著性</b>:深度学习实验有随机性 (初始化、数据 shuffle、dropout),单次结果不可信。
+    标准做法是 <b>3-5 次独立运行</b>,报告均值 ± 标准差,并做配对 t 检验或 bootstrap 置信区间。
+    审稿人看到 "80.2 ± 0.3" 会比 "80.2" 信服得多。
+  </div>
+</section>
+
+<!-- 模块 04: 报告规范与表格模板 -->
+<section class="module m4">
+  <div class="module-head">
+    <div class="num">04</div>
+    <h3>报告规范与表格模板<span class="en">Table Design &amp; Reporting</span></h3>
+  </div>
+
+  <p>
+    消融表是消融实验的"<b>门面</b>"。表格设计差,实验做得再好审稿人也看不到。
+    下面是顶会论文里常见的消融表结构 (语义分割任务示例):
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>组件 / 配置</th>
+        <th>(a)</th>
+        <th>(b)</th>
+        <th>(c)</th>
+        <th>(d) Full</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>注意力机制</code> Attention</td>
+        <td>✗</td>
+        <td>✓</td>
+        <td>✓</td>
+        <td>✓</td>
+      </tr>
+      <tr>
+        <td><code>多尺度融合</code> Multi-scale</td>
+        <td>✗</td>
+        <td>✗</td>
+        <td>✓</td>
+        <td>✓</td>
+      </tr>
+      <tr>
+        <td><code>对比损失</code> Contrastive</td>
+        <td>✗</td>
+        <td>✗</td>
+        <td>✗</td>
+        <td>✓</td>
+      </tr>
+      <tr>
+        <td><b>mIoU (%) ↑</b></td>
+        <td>72.1</td>
+        <td>75.3</td>
+        <td>78.6</td>
+        <td><b>80.2</b></td>
+      </tr>
+      <tr>
+        <td>Δ vs (a)</td>
+        <td>—</td>
+        <td>+3.2</td>
+        <td>+6.5</td>
+        <td><b>+8.1</b></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <b>读表方法</b>:(a) 是 baseline (啥都没有),(d) 是完整模型。每一列的 Δ vs (a) 告诉你
+    "加上这一行之前累积的组件后涨了多少"—— 边际贡献一目了然,审稿人最爱看这一行。
+  </div>
+
+  <p><b>表格设计 5 大黄金法则</b>:</p>
+  <ul>
+    <li><b>必须有 baseline 列</b> (最简配置,通常标 (a) 或 "None"),所有 Δ 都相对它计算</li>
+    <li><b>必须有 full 列</b> (完整模型,标 (d) 或 "Full"),展示上限性能</li>
+    <li><b>每行一个组件</b>,单元格用 ✓/✗ 或具体数值 (学习率、损失权重等),不要混合</li>
+    <li><b>指标行用粗体</b>,full 列的数字也粗体,引导读者视线</li>
+    <li><b>附 Δ 行</b> (vs baseline),让审稿人秒读"每加一个组件涨多少"</li>
+  </ul>
+
+  <p><b>进阶消融设计</b>:</p>
+  <ul>
+    <li><b>Pairwise</b> —— 一次只对比两个组件,适合"哪个更关键"的问题</li>
+    <li><b>Leave-one-out (LOO)</b> —— 每次去掉一个组件,看哪个去掉后掉得最猛 (就是最重要的)</li>
+    <li><b>组件交互</b> —— 报告 (A+B) vs A + B 的增益,验证组件是协同还是独立</li>
+  </ul>
+
+  <div class="callout">
+    <b>不要混消</b>:超参 (学习率、温度 τ) 和结构 (注意力、损失) 要分开两张表,不要混在一张里——
+    审稿人无法判断"涨点来自新结构还是新超参"。超参消融放附录,结构消融放正文。
+  </div>
+</section>
+
+<!-- ============================== ④ 误区警示 ============================== -->
+<section class="pitfall">
+  <h2>5 大常见误区 <span class="en">Pitfalls to Avoid</span></h2>
+  <p class="lead">这 5 个坑,顶会审稿人几乎"必挑"。中任何一个,rebuttal 就要多花一周。</p>
+
+  <ul class="pit-list">
+    <li class="pit-item">
+      <div class="pit-icon">✗</div>
+      <div class="pit-body">
+        <div class="pit-wrong">一次改太多组件,无法归因 "涨点来自 A 还是 B?"</div>
+        <div class="pit-right">一次只动 1 个组件,其他保持不变 = 真正的"控制变量法"</div>
+      </div>
+    </li>
+    <li class="pit-item">
+      <div class="pit-icon">✗</div>
+      <div class="pit-body">
+        <div class="pit-wrong">没报告 baseline (最简配置),只有完整模型,无法算 Δ</div>
+        <div class="pit-right">必须留一列 baseline (a),所有指标 Δ vs (a),边际贡献一目了然</div>
+      </div>
+    </li>
+    <li class="pit-item">
+      <div class="pit-icon">✗</div>
+      <div class="pit-body">
+        <div class="pit-wrong">单次运行就报告结果,不报告标准差/置信区间</div>
+        <div class="pit-right">≥ 3 次独立运行 (不同随机种子),报告 mean ± std 或 95% CI</div>
+      </div>
+    </li>
+    <li class="pit-item">
+      <div class="pit-icon">✗</div>
+      <div class="pit-body">
+        <div class="pit-wrong">不同变体用了不同评测集 / 不同的预处理 / 不同的输入分辨率</div>
+        <div class="pit-right">统一评测集 + 统一预处理 + 统一输入尺寸,只允许改"被消融的组件"</div>
+      </div>
+    </li>
+    <li class="pit-item">
+      <div class="pit-icon">✗</div>
+      <div class="pit-body">
+        <div class="pit-wrong">只消融超参 (学习率、batch size) 不消融结构,审稿人怀疑"结构创新是噱头"</div>
+        <div class="pit-right">结构消融放正文表 (主菜),超参消融放附录 (甜点),两者都要有</div>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- ============================== ⑤ TL;DR ============================== -->
+<section class="summary">
+  <h2>这一页先记住 <span class="en">TL;DR</span></h2>
+
+  <div class="tldr-grid">
+    <div class="tldr">
+      <div class="tag">核心定义</div>
+      <p>消融实验 = <b>控制变量法</b>:一次只动 1 个组件,量化其对最终性能的边际贡献。</p>
+    </div>
+    <div class="tldr t2">
+      <div class="tag">5 步流程</div>
+      <p>Baseline → 单变量消融 → 多次取平均 → 绘制消融表 → 可视化贡献度。</p>
+    </div>
+    <div class="tldr t3">
+      <div class="tag">报告标配</div>
+      <p>Baseline + Full 两列必须有,每行 1 个组件,附 Δ vs baseline,mean ± std。</p>
+    </div>
+  </div>
+
+  <div class="oneliner">
+    消融实验是深度学习论文的<b>"良心工程"</b> ——<br>
+    不做,审稿人会问 "Why does it work?";做不好,审稿人会说 "不严谨"。<br>
+    标准 5 步法 + 真实 Δ 表 + 统计显著性,三件套到位 = 顶会标配。
+  </div>
+
+  <div class="refs">
+    <b>参考来源</b><br>
+    · CVPR / NeurIPS / ICML 论文规范 (实验章节)<br>
+    · Goodfellow et al., <i>Deep Learning</i>, MIT Press 2016 (Chapter 11: Practical Methodology)<br>
+    · Papers with Code · Ablation Study 实战样例 (paperswithcode.com)
+  </div>
+</section>
+
+<!-- ============================== 版权 footer ============================== -->
+<div class="credit" style="margin-top: 14px; padding-top: 12px;
+  border-top: 1px solid var(--line); font-size: 11.5px; color: var(--ink-3);
+  text-align: center; line-height: 1.6;">
+  <b style="color: var(--ink); font-weight: 700;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+  <span style="font-size: 10.5px; color: var(--ink-3);">© 2026 DONG XINGBO · All rights reserved</span>
+</div>
+
+</div><!-- /.poster -->
+</body>
+</html>
