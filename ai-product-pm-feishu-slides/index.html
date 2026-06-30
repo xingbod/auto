@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 模板识别 (农产品识别筛选) 项目管理全套方案 · 飞书落地</title>
+<style>
+:root {
+  --bg: #0b1020;
+  --slide: #0f172a;
+  --ink: #e6edf3;
+  --ink-2: #c9d1d9;
+  --ink-3: #8b949e;
+  --line: #30363d;
+  --accent: #3b82f6;       /* 海军蓝 - PM 主色 */
+  --accent2: #f59e0b;      /* 琥珀 - 风险/警示 */
+  --green: #10b981;        /* 翠绿 - 质量/成功 */
+  --red: #ef4444;          /* 红 - 错误 */
+  --purple: #a78bfa;       /* 紫 - 策略 */
+  --pink: #ec4899;         /* 粉 - 关键节点 */
+  --teal: #14b8a6;         /* 青 - 文档/沟通 */
+  --feishu: #00d6b9;       /* 飞书绿 - 飞书载体标识 */
+  --agri: #15803d;         /* 农业绿 - 农产品感 */
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.deck { position: relative; width: 100vw; height: 100vh; }
+.slide {
+  position: absolute; inset: 0;
+  padding: 90px 60px 88px;
+  display: none;
+  flex-direction: column;
+  background: var(--slide);
+  overflow: hidden;
+}
+.slide.active { display: flex; }
+.slide.tight { padding: 50px 50px 78px; }
+.slide.tight h3 { margin: 8px 0 4px; }
+.slide.tight table { font-size: 12.5px; }
+.slide.tight th, .slide.tight td { padding: 4px 8px; line-height: 1.3; }
+.slide.tight th { font-size: 11.5px; }
+.slide.tight .hl { padding: 4px 10px; font-size: 13px; margin: 4px 0; }
+.slide.tight h1 { font-size: 28px; margin-bottom: 4px; }
+.slide.tight h2 { font-size: 12.5px; margin-bottom: 10px; }
+.slide.tight.denser { padding: 44px 44px 70px; }
+.slide.tight.denser h3, .slide.tight.denser h4 { font-size: 13.5px; margin: 4px 0 2px; }
+.slide.tight.denser p, .slide.tight.denser li { font-size: 12.5px; line-height: 1.4; margin: 1px 0; }
+.slide.tight.denser table { font-size: 11.5px; }
+.slide.tight.denser th, .slide.tight.denser td { padding: 3px 7px; line-height: 1.25; }
+.slide.tight.denser th { font-size: 11px; }
+.slide.tight.denser .card { padding: 8px 10px; }
+.slide.tight.denser .card .ttl { font-size: 11px; margin-bottom: 3px; }
+.slide.tight.denser .hl { padding: 3px 9px; font-size: 12px; margin: 3px 0; }
+.slide.tight.denser .tree { font-size: 10.5px; line-height: 1.3; padding: 7px 10px; }
+.slide.tight.denser pre { font-size: 10.5px; line-height: 1.35; }
+.slide.tight.denser ul { margin: 3px 0; }
+.slide.tight.denser .grid2 { gap: 10px; }
+.slide h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 6px; }
+.slide h1 .accent { color: var(--accent); }
+.slide h1 .feishu { color: var(--feishu); }
+.slide h1 .agri { color: var(--agri); }
+.slide h2 { font-size: 13px; color: var(--ink-3); font-weight: 500; letter-spacing: 0.04em; margin-bottom: 16px; }
+.slide h3 { font-size: 17px; color: var(--accent); font-weight: 700; margin: 12px 0 6px; }
+.slide h3.feishu { color: var(--feishu); }
+.slide h3.agri { color: var(--agri); }
+.slide h4 { font-size: 14.5px; color: var(--ink); font-weight: 600; margin: 6px 0 3px; }
+.slide p { color: var(--ink-2); font-size: 14.5px; line-height: 1.6; margin: 3px 0; }
+.slide ul { padding-left: 22px; margin: 4px 0; }
+.slide li { color: var(--ink-2); font-size: 14.5px; line-height: 1.55; margin: 2px 0; }
+.slide li b { color: var(--ink); }
+.slide .small { font-size: 12px; color: var(--ink-3); }
+.slide .gray { color: var(--ink-3); }
+.slide .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.slide .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.slide .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+.slide .grid5 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 8px; }
+
+/* cover */
+.cover { align-items: center; justify-content: center; text-align: center;
+         background: radial-gradient(ellipse 800px 500px at 30% 20%, rgba(59,130,246,0.14), transparent 60%),
+                     radial-gradient(ellipse 600px 400px at 80% 80%, rgba(0,214,185,0.10), transparent 60%),
+                     var(--slide); }
+.cover h1 { font-size: 46px; margin-bottom: 14px; line-height: 1.2; }
+.cover .sub { color: var(--ink-3); font-size: 15.5px; max-width: 880px; margin: 0 auto 24px; line-height: 1.6; }
+.cover .badges { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; }
+.cover .hint { color: var(--ink-3); font-size: 12px; margin-top: 24px; }
+
+/* chips */
+.chip { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;
+        background: rgba(59,130,246,0.12); color: var(--accent); border: 1px solid rgba(59,130,246,0.4); margin: 1px 3px; }
+.chip.green { background: rgba(16,185,129,0.12); color: var(--green); border-color: rgba(16,185,129,0.4); }
+.chip.purple { background: rgba(167,139,250,0.12); color: var(--purple); border-color: rgba(167,139,250,0.4); }
+.chip.amber { background: rgba(245,158,11,0.12); color: var(--accent2); border-color: rgba(245,158,11,0.4); }
+.chip.pink { background: rgba(236,72,153,0.12); color: var(--pink); border-color: rgba(236,72,153,0.4); }
+.chip.red { background: rgba(239,68,68,0.12); color: var(--red); border-color: rgba(239,68,68,0.4); }
+.chip.muted { background: rgba(139,148,158,0.12); color: var(--ink-3); border-color: rgba(139,148,158,0.4); }
+.chip.teal { background: rgba(20,184,166,0.12); color: var(--teal); border-color: rgba(20,184,166,0.4); }
+.chip.feishu { background: rgba(0,214,185,0.12); color: var(--feishu); border-color: rgba(0,214,185,0.4); }
+.chip.agri { background: rgba(21,128,61,0.18); color: var(--agri); border-color: rgba(21,128,61,0.5); }
+
+/* cards */
+.card { background: rgba(255,255,255,0.04); border: 1px solid var(--line); border-radius: 10px;
+        padding: 12px 14px; }
+.card .ttl { font-size: 12px; color: var(--accent); font-weight: 700; letter-spacing: 0.06em;
+             text-transform: uppercase; margin-bottom: 6px; }
+.card p, .card li { font-size: 13.5px; }
+.card.green .ttl { color: var(--green); }
+.card.amber .ttl { color: var(--accent2); }
+.card.purple .ttl { color: var(--purple); }
+.card.red .ttl { color: var(--red); }
+.card.teal .ttl { color: var(--teal); }
+.card.feishu .ttl { color: var(--feishu); }
+.card.agri .ttl { color: var(--agri); }
+
+/* highlight box */
+.hl { border-left: 3px solid var(--accent); padding: 6px 12px; background: rgba(59,130,246,0.06);
+      border-radius: 0 6px 6px 0; margin: 6px 0; font-size: 13.5px; color: var(--ink-2); }
+.hl.green { border-color: var(--green); background: rgba(16,185,129,0.06); }
+.hl.purple { border-color: var(--purple); background: rgba(167,139,250,0.06); }
+.hl.amber { border-color: var(--accent2); background: rgba(245,158,11,0.06); }
+.hl.red { border-color: var(--red); background: rgba(239,68,68,0.06); }
+.hl.teal { border-color: var(--teal); background: rgba(20,184,166,0.06); }
+.hl.feishu { border-color: var(--feishu); background: rgba(0,214,185,0.06); }
+.hl b { color: var(--ink); }
+
+/* timeline */
+.timeline { display: flex; align-items: stretch; gap: 4px; margin: 6px 0; overflow-x: auto; }
+.tl-item { flex: 1; min-width: 100px; background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+           border-radius: 6px; padding: 7px 9px; text-align: center; }
+.tl-item .step { font-size: 10.5px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.04em; }
+.tl-item .name { font-size: 13px; font-weight: 700; color: var(--ink); margin: 2px 0; }
+.tl-item .what { font-size: 10.5px; color: var(--ink-3); line-height: 1.35; }
+.tl-item.hl-y { border-color: var(--accent2); background: rgba(245,158,11,0.08); }
+.tl-item.hl-y .name { color: var(--accent2); }
+
+/* split */
+.split { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+.split.flip { grid-template-columns: 1fr 1.4fr; }
+
+/* metric */
+.metric { background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+          border-radius: 8px; padding: 8px 10px; text-align: center; }
+.metric .v { font-size: 22px; font-weight: 800; font-family: "SF Mono", Menlo, monospace; color: var(--accent); }
+.metric .l { font-size: 10.5px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+.metric.green .v { color: var(--green); }
+.metric.amber .v { color: var(--accent2); }
+.metric.purple .v { color: var(--purple); }
+.metric.red .v { color: var(--red); }
+.metric.feishu .v { color: var(--feishu); }
+
+/* ASCII tree */
+.tree { font-family: "SF Mono", Menlo, "Consolas", monospace; font-size: 12px;
+        white-space: pre; background: #0b1220; padding: 10px 14px; border-radius: 6px;
+        border: 1px solid var(--line); line-height: 1.4; color: var(--ink-2); }
+
+/* comparison table */
+table { width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 13px; }
+th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--line); }
+th { color: var(--accent); font-weight: 700; font-size: 11.5px; letter-spacing: 0.04em; text-transform: uppercase; background: rgba(59,130,246,0.06); }
+tr:hover td { background: rgba(255,255,255,0.02); }
+td.num { font-family: "SF Mono", Menlo, monospace; text-align: right; }
+td.center { text-align: center; }
+
+/* nav */
+.nav-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 38px;
+  background: rgba(15,23,42,0.94); border-top: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 22px; z-index: 9998;
+  font-size: 12px; color: var(--ink-3);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.nav-bar .ctrls { display: flex; gap: 14px; }
+.nav-bar kbd { background: rgba(255,255,255,0.08); border: 1px solid var(--line);
+               border-radius: 4px; padding: 1px 6px; font-family: "SF Mono", Menlo, monospace; font-size: 11px; }
+.nav-bar .pager { font-family: "SF Mono", Menlo, monospace; }
+.nav-bar .pager b { color: var(--ink); }
+
+/* progress */
+.progress {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--feishu));
+  z-index: 9999; transition: width 0.25s ease;
+}
+
+/* copyright (fixed 浮条) */
+.copyright {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 5px 16px; text-align: center; font-size: 11px; color: #6b7280;
+  background: rgba(250, 250, 250, 0.92);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  line-height: 1.4; margin: 0;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.copyright b { color: #111827; font-weight: 600; }
+.deck .copyright { bottom: 38px; }
+.nav-bar { bottom: 26px; }
+
+/* number badge */
+.nbadge { display: inline-block; width: 26px; height: 26px; border-radius: 6px;
+          background: var(--accent); color: #fff; font-weight: 800; font-size: 14px;
+          text-align: center; line-height: 26px; margin-right: 8px; flex-shrink: 0; }
+.nbadge.green { background: var(--green); }
+.nbadge.amber { background: var(--accent2); }
+.nbadge.purple { background: var(--purple); }
+.nbadge.red { background: var(--red); }
+.nbadge.teal { background: var(--teal); }
+.nbadge.feishu { background: var(--feishu); color: #003c30; }
+.nbadge.agri { background: var(--agri); }
+.row { display: flex; align-items: flex-start; gap: 8px; }
+.row .body { flex: 1; }
+
+/* status tag */
+.tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 700;
+       letter-spacing: 0.04em; margin: 0 2px; }
+.tag.todo { background: rgba(139,148,158,0.18); color: var(--ink-3); }
+.tag.doing { background: rgba(59,130,246,0.20); color: var(--accent); }
+.tag.review { background: rgba(167,139,250,0.20); color: var(--purple); }
+.tag.done { background: rgba(16,185,129,0.20); color: var(--green); }
+.tag.block { background: rgba(239,68,68,0.20); color: var(--red); }
+</style>
+</head>
+<body>
+
+<div class="progress" id="prog"></div>
+
+<div class="deck" id="deck">
+
+  <!-- ====== Slide 1: 封面 ====== -->
+  <section class="slide cover active">
+    <h1>AI 模板识别 <span class="agri">(农产品识别筛选)</span><br>项目管理全套方案 <span class="feishu">· 飞书落地</span></h1>
+    <p class="sub">AI 算法研发 + 工程落地 + 业务验收 混合项目 · 全程依托飞书文档 / 飞书项目 / 多维表格<br>5 大阶段 + 4 份基线文档 + 7 套模板库 + RACI 矩阵 + 风险台账 · 沉淀可复用的 AI 项目 PM 方法论</p>
+    <div class="badges">
+      <span class="chip feishu">📚 飞书多维空间</span>
+      <span class="chip">🎯 5 大阶段</span>
+      <span class="chip agri">🌾 农产品 + AI</span>
+      <span class="chip green">✅ 4 份基线文档</span>
+      <span class="chip purple">👥 RACI 6 角色</span>
+      <span class="chip amber">⚠️ 风险前置</span>
+      <span class="chip teal">📊 数据/算法资产沉淀</span>
+    </div>
+    <p class="hint">← / → 翻页 &nbsp; · &nbsp; Home / End 首尾 &nbsp; · &nbsp; P 打印 / 导出 PDF</p>
+  </section>
+
+  <!-- ====== Slide 2: 学习目标 ====== -->
+  <section class="slide">
+    <h1>本课要解决的 <span class="accent">5 个核心问题</span></h1>
+    <h2>5 个能力目标,1 个核心场景贯穿——AI 项目 PM 怎么不翻车</h2>
+    <div class="grid3">
+      <div class="card">
+        <div class="ttl">❶ 怎么启动</div>
+        <p>用 <span class="chip feishu">飞书多维空间</span> 搭项目总阵地,输出 <b>4 份基线文档</b> 锁定范围,避免无限加需求。</p>
+      </div>
+      <div class="card green">
+        <div class="ttl">❷ 怎么规划</div>
+        <p>用 <b>WBS 5 大层</b> 拆解任务,飞书文档存方案 + 飞书项目管进度,变更走标准化流程。</p>
+      </div>
+      <div class="card amber">
+        <div class="ttl">❸ 怎么执行</div>
+        <p>用 <b>3 套固定会议 + 6 套核心台账</b> 把日常进度/算法评审/数据沉淀标准化,不靠口头。</p>
+      </div>
+      <div class="card purple">
+        <div class="ttl">❹ 怎么监控</div>
+        <p>用 <b>4 维监控</b> (进度/质量/资源/成本) 提前发现滞后,纠偏动作全部书面化。</p>
+      </div>
+      <div class="card feishu">
+        <div class="ttl">❺ 怎么收尾</div>
+        <p>用 <b>交付包 + 复盘 + 归档</b> 沉淀全套资产,成为下一个同类 AI 项目的参考模板。</p>
+      </div>
+      <div class="card red">
+        <div class="ttl">🎯 核心场景</div>
+        <p>AI 项目 3 重风险: <b>算法不确定 / 跨角色协同 / 业务验收约束</b>。<br>本套方案 = 应对这 3 重风险的全套打法。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Slide 3: 项目背景 & 三重风险 ====== -->
+  <section class="slide tight">
+    <h1>项目背景 & <span class="accent">3 重风险</span></h1>
+    <h2>AI 算法研发 + 工程落地 + 业务验收 混合项目,3 重风险全程伴随</h2>
+    <div class="grid2">
+      <div class="card red">
+        <div class="ttl">🔴 风险 1 · 算法不确定性</div>
+        <p>模板匹配 / 图像识别精度不可控,数据集标注迭代周期长,模型效果现场可能跟实验室不一致。</p>
+        <p style="font-size: 12.5px; color: var(--ink-3); margin-top: 4px;"><b>管理对策:</b> 多轮迭代机制 + 现场环境提前纳入测试 + 持续模板更新流程</p>
+      </div>
+      <div class="card amber">
+        <div class="ttl">🟡 风险 2 · 跨角色协同</div>
+        <p>6 角色混合: <b>算法 / 标注 / 后端 / 前端 / 业务 / 测试</b>,各角色关注点不同,沟通断层是延期主因。</p>
+        <p style="font-size: 12.5px; color: var(--ink-3); margin-top: 4px;"><b>管理对策:</b> RACI 权责矩阵 + 飞书项目看板 + 跨角色同步会议</p>
+      </div>
+      <div class="card purple">
+        <div class="ttl">🟣 风险 3 · 业务验收约束</div>
+        <p>业务侧要求 <b>识别准确率 / 漏检 / 误检 / 分拣效率</b> 等硬指标,验收不通过要返工。</p>
+        <p style="font-size: 12.5px; color: var(--ink-3); margin-top: 4px;"><b>管理对策:</b> 验收标准全部书面化 + 业务签字 + 现场逐项勾选</p>
+      </div>
+      <div class="card green">
+        <div class="ttl">🟢 风险 4 · 持续迭代需求</div>
+        <p>上线 ≠ 结束,需持续补充 <b>农产品模板 / 优化识别模型 / 适配新场景</b>。</p>
+        <p style="font-size: 12.5px; color: var(--ink-3); margin-top: 4px;"><b>管理对策:</b> 模板持续更新流程文档化 + 运维期任务模板化</p>
+      </div>
+    </div>
+    <div class="hl red">
+      <b>核心洞察:</b> AI 项目最大的 4 个风险,90% 出在"需求模糊 / 数据延迟 / 验收扯皮 / 上线后无人维护"——这 4 个都靠 <b>文档化 + 流程化 + RACI</b> 解决,而不是靠"加班"。
+    </div>
+  </section>
+
+  <!-- ====== Slide 4: 项目管理 4 大核心抓手 ====== -->
+  <section class="slide tight">
+    <h1>项目管理 <span class="accent">4 大核心抓手</span> (全程贯穿飞书)</h1>
+    <h2>不是临时应付,而是 4 条线全程绷紧,缺一不可</h2>
+    <div class="grid4">
+      <div class="card" style="border-color: var(--accent);">
+        <div class="ttl">🎯 抓手 1 · 范围管控</div>
+        <p><b>不让需求无限扩张</b>。4 份基线文档锁定范围,任何变更走变更申请单。</p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">载体: 飞书项目 / 变更申请单文档</p>
+      </div>
+      <div class="card green" style="border-color: var(--green);">
+        <div class="ttl">🚦 抓手 2 · 里程碑节点</div>
+        <p><b>5 大里程碑清晰可量化</b>:M1 需求 → M2 模型初版 → M3 联调 → M4 现场验收 → M5 上线。</p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">载体: 飞书项目里程碑视图</p>
+      </div>
+      <div class="card amber" style="border-color: var(--accent2);">
+        <div class="ttl">⚠️ 抓手 3 · 风险前置</div>
+        <p><b>风险清单启动时建好</b>,每日更新,高风险置顶,周会重点复盘。</p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">载体: 飞书多维表格《风险跟踪台账》</p>
+      </div>
+      <div class="card feishu" style="border-color: var(--feishu);">
+        <div class="ttl">📊 抓手 4 · 数据化进度</div>
+        <p><b>进度用数字说话</b>:完成率、滞后天数、算法指标、返工率,全部上墙。</p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">载体: 飞书周报 + 看板截图</p>
+      </div>
+    </div>
+    <div class="hl feishu">
+      <b>贯穿原则:</b> 所有抓手都通过 <span class="chip feishu">飞书文档</span> + <span class="chip feishu">飞书项目</span> + <span class="chip feishu">多维表格</span> 三件套承载——文档存详细方案,项目管任务进度,表格做台账可视化。
+    </div>
+    <div class="hl" style="margin-top: 4px;">
+      <b>附加: 文档资产沉淀。</b> 项目结束时,所有飞书文档归档,作为下一个同类 AI 项目的模板——<b>一次做项目,长期攒资产</b>。
+    </div>
+  </section>
+
+  <!-- ====== Slide 5: 5 大阶段总览 ====== -->
+  <section class="slide tight">
+    <h1>整体框架 · <span class="accent">5 大阶段</span>飞书全链路承载</h1>
+    <h2>从启动到收尾,5 个阶段 + 飞书文档 / 项目 / 表格全程联动</h2>
+    <div class="timeline" style="margin: 12px 0;">
+      <div class="tl-item">
+        <div class="step">阶段 1</div>
+        <div class="name">项目启动</div>
+        <div class="what">飞书空间搭建<br>+ 4 份基线文档</div>
+      </div>
+      <div class="tl-item">
+        <div class="step">阶段 2</div>
+        <div class="name">规划拆解</div>
+        <div class="what">WBS 5 层拆解<br>+ 排期 + 变更机制</div>
+      </div>
+      <div class="tl-item">
+        <div class="step">阶段 3</div>
+        <div class="name">执行管控</div>
+        <div class="what">3 套会议 +<br>4 套核心台账</div>
+      </div>
+      <div class="tl-item">
+        <div class="step">阶段 4</div>
+        <div class="name">监控纠偏</div>
+        <div class="what">4 维监控<br>+ 纠偏书面化</div>
+      </div>
+      <div class="tl-item hl-y">
+        <div class="step">阶段 5</div>
+        <div class="name">收尾交付</div>
+        <div class="what">交付包 + 复盘<br>+ 归档</div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card feishu">
+        <div class="ttl">📚 飞书多维空间 (唯一项目入口)</div>
+        <p>5 大文件夹:①项目总纲 ②需求&业务 ③算法研发 ④工程开发&测试 ⑤交付运营&归档</p>
+        <p style="font-size: 12.5px; color: var(--ink-3); margin-top: 4px;">配套 <span class="chip feishu">飞书项目</span> 做进度看板,文档作为所有资料载体,二者联动</p>
+      </div>
+      <div class="card green">
+        <div class="ttl">🎯 5 大里程碑 (粗排)</div>
+        <p>M1 需求&数据集确认 → M2 模型初版训练完成 → M3 系统联调 → M4 现场测试验收 → M5 上线运维</p>
+        <p style="font-size: 12.5px; color: var(--ink-3); margin-top: 4px;">每个里程碑对应 1 份核心交付物 + 1 次评审会</p>
+      </div>
+    </div>
+    <div class="hl">
+      <b>5 大阶段的核心特征:</b> <span class="tag doing">启动</span> 锁范围 &nbsp; <span class="tag review">规划</span> 拆任务 &nbsp; <span class="tag doing">执行</span> 沉资产 &nbsp; <span class="tag block">监控</span> 早纠偏 &nbsp; <span class="tag done">收尾</span> 攒模板
+    </div>
+  </section>
+
+  <!-- ====== Slide 6: 第 1 章·启动 (1) 飞书空间顶层设计 ====== -->
+  <section class="slide tight denser">
+    <h1>第 1 章 · <span class="accent">项目启动</span> ① 飞书空间顶层设计</h1>
+    <h2>唯一项目入口:多维空间 + 飞书项目,二者联动</h2>
+    <div class="grid2">
+      <div>
+        <h3>飞书多维空间 · 5 大文件夹</h3>
+        <div class="tree" style="font-size: 11.5px;">【XX 农产品 AI 模板识别分拣项目】
+│
+├── 📁 1. 项目总纲
+│   ├── 立项总文档 (RACI 矩阵)
+│   ├── 协作规范
+│   └── 风险初始清单
+│
+├── 📁 2. 需求 & 业务
+│   ├── 业务需求规格说明书
+│   ├── 业务沟通记录
+│   └── 验收 checklist
+│
+├── 📁 3. 算法研发
+│   ├── 总体技术方案
+│   ├── 模型实验台账
+│   ├── 算法评审记录
+│   └── 问题案例库
+│
+├── 📁 4. 工程开发 & 测试
+│   ├── 联调测试用例
+│   ├── 部署手册
+│   └── 测试报告
+│
+└── 📁 5. 交付运营 & 归档
+    ├── 交付包
+    ├── 运维操作文档
+    └── 项目复盘</div>
+      </div>
+      <div>
+        <h3>飞书项目 (项目模块,非文档)</h3>
+        <div class="card feishu" style="margin-bottom: 8px;">
+          <div class="ttl">📊 作为进度看板使用</div>
+          <p>按 5 大阶段分泳道,任务类型分组,阻塞任务单独泳道</p>
+        </div>
+        <div class="card green" style="margin-bottom: 8px;">
+          <div class="ttl">🔗 与飞书文档双向联动</div>
+          <p>任务附件 → 关联飞书文档;文档更新 → 任务状态自动提醒</p>
+        </div>
+        <div class="card amber" style="margin-bottom: 8px;">
+          <div class="ttl">📅 里程碑管理</div>
+          <p>5 大里程碑作为甘特图节点,自动计算进度</p>
+        </div>
+        <div class="hl feishu">
+          <b>关键:</b> 文档 = <b>详细方案</b>,项目 = <b>任务进度</b>,二者一一关联,任务点开能跳到对应文档,文档改完能反推任务更新。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Slide 7: 第 1 章·启动 (2) 4 份核心基线文档 ====== -->
+  <section class="slide tight">
+    <h1>第 1 章 · <span class="accent">项目启动</span> ② 4 份核心基线文档</h1>
+    <h2>锁定范围,避免无限加需求——AI 项目最容易翻车在需求模糊</h2>
+    <div class="grid2">
+      <div class="card">
+        <div class="ttl">📄 文档 1 · 项目立项总文档 (总首页)</div>
+        <p><b>所有人第一看的文档</b>,固定模块:</p>
+        <ul style="font-size: 12.5px; line-height: 1.55; margin-top: 4px;">
+          <li><b>项目目标</b>:量化指标 (例:20 类农产品,误检率 &lt; 1%,单图 &lt; 200ms,分拣通过率 98%)</li>
+          <li><b>干系人清单 + RACI 权责矩阵</b> (飞书 @ 人)</li>
+          <li><b>整体总里程碑</b> (粗排 3-6 个大节点,录入飞书项目)</li>
+          <li><b>预算、资源、硬件清单</b> (GPU / 相机 / 分拣设备)</li>
+          <li><b>核心约束</b>:交付时间 / 准确率底线 / 硬件成本上限</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <div class="ttl">📄 文档 2 · 业务需求规格说明书 (业务侧唯一标准)</div>
+        <p>由 <b>产品/业务</b> 填写,飞书在线协同评审:</p>
+        <ul style="font-size: 12.5px; line-height: 1.55; margin-top: 4px;">
+          <li><b>农产品清单</b>:需识别品类 + 特征模板 (大小/色泽/瑕疵/分级)</li>
+          <li><b>分拣规则</b>:合格/次品/分类逻辑</li>
+          <li><b>识别场景</b>:流水线动态拍摄 / 光照差异 / 遮挡 / 堆叠</li>
+          <li><b>验收指标</b>:准确率/漏检/误检/响应速度,<b>全部书面化 + 业务签字</b></li>
+        </ul>
+        <p style="font-size: 11.5px; color: var(--red); margin-top: 4px;"><b>⚠️ 重点:</b> AI 项目最容易翻车是需求模糊,所有验收标准必须书面签字。</p>
+      </div>
+      <div class="card purple">
+        <div class="ttl">📄 文档 3 · 项目组织与协作规范 (统一工作方式)</div>
+        <p>飞书文档固化协作规则:</p>
+        <ul style="font-size: 12.5px; line-height: 1.55; margin-top: 4px;">
+          <li><b>会议机制</b>:晨会 / 周会 / 算法评审会 / 业务同步会 (固定飞书日程)</li>
+          <li><b>文档规范</b>:统一命名规则 / 存放路径 / 更新人</li>
+          <li><b>反馈渠道</b>:bug / 算法问题统一飞书项目提任务,禁止私发</li>
+          <li><b>权限分级</b>:标注员仅看数据集 / 算法可读全部技术 / 业务仅可读需求验收</li>
+        </ul>
+      </div>
+      <div class="card red">
+        <div class="ttl">📄 文档 4 · 风险初始清单 (启动阶段就识别 AI 特有风险)</div>
+        <p>示例 AI 项目风险 (启动时就要建好):</p>
+        <ul style="font-size: 12.5px; line-height: 1.55; margin-top: 4px;">
+          <li><b>数据集不足</b> — 农产品数据采集难,品类不全</li>
+          <li><b>模板相似度高</b> — 部分农产品外观相近,易混淆</li>
+          <li><b>现场光照干扰</b> — 实验室 OK 现场崩</li>
+          <li><b>硬件延迟</b> — 推理服务响应不达 200ms</li>
+          <li><b>业务临时新增品类</b> — 范围蔓延</li>
+        </ul>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">每条标注:影响等级 / 应对预案 / 负责人</p>
+      </div>
+    </div>
+    <div class="hl red">
+      <b>4 份基线文档的总原则:</b> 范围不清不写代码 · 验收不明不写代码 · 权责不明不写代码 · 风险不明不写代码。
+    </div>
+  </section>
+
+  <!-- ====== Slide 8: 第 1 章·启动 (3) RACI 权责矩阵 ====== -->
+  <section class="slide tight">
+    <h1>第 1 章 · <span class="accent">项目启动</span> ③ RACI 权责矩阵</h1>
+    <h2>6 角色 × 4 权责类型,飞书 @ 人,谁干什么一目了然</h2>
+    <div class="hl">
+      <b>RACI 4 字母含义:</b> <span class="tag doing">R</span> 执行 (Responsibility) · <span class="tag review">A</span> 审批 (Accountability) · <span class="tag todo">C</span> 咨询 (Consult) · <span class="tag done">I</span> 知会 (Inform)
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>角色</th><th>主要职责</th><th>R</th><th>A</th><th>C</th><th>I</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>项目负责人 (你)</b></td>
+          <td>整体协调、进度把控、风险升级、对外汇报</td>
+          <td>—</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td><b>算法工程师</b></td>
+          <td>模型选型/训练/优化、算法评审、问题排查</td>
+          <td>✅</td>
+          <td>—</td>
+          <td>—</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td><b>数据标注员 / 标注主管</b></td>
+          <td>数据集采集、标注规范、标注执行、质检</td>
+          <td>✅</td>
+          <td>标注内部</td>
+          <td>—</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td><b>后端开发</b></td>
+          <td>推理服务、相机 SDK 接入、分拣联动接口</td>
+          <td>✅</td>
+          <td>—</td>
+          <td>—</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td><b>前端开发</b></td>
+          <td>可视化后台、识别结果展示、数据统计看板</td>
+          <td>✅</td>
+          <td>—</td>
+          <td>—</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td><b>测试</b></td>
+          <td>算法指标测试、整机联调测试、现场验收</td>
+          <td>✅</td>
+          <td>—</td>
+          <td>—</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td><b>业务负责人 (分拣车间)</b></td>
+          <td>需求定义、现场验收签字、运营反馈</td>
+          <td>—</td>
+          <td>业务侧</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td><b>技术总监</b></td>
+          <td>架构审批、资源协调、跨团队协作</td>
+          <td>—</td>
+          <td>技术侧</td>
+          <td>✅</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><b>采购 / 车间操作员</b></td>
+          <td>硬件采购、现场使用反馈、需求咨询</td>
+          <td>—</td>
+          <td>—</td>
+          <td>✅</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="hl purple">
+      <b>关键原则:</b> 每个任务/决策/文档都 <b>必有且只有 1 个 A (审批者)</b>。A 不止 1 个 = 扯皮;没有 A = 没人拍板。
+    </div>
+    <div class="hl" style="margin-top: 4px;">
+      <b>落地动作:</b> 把 RACI 表写进《项目立项总文档》第 2 节,飞书 @ 人,所有人 review 确认。
+    </div>
+  </section>
+
+  <!-- ====== Slide 9: 第 1 章·启动 (4) 飞书配套初始化 ====== -->
+  <section class="slide tight">
+    <h1>第 1 章 · <span class="accent">项目启动</span> ④ 飞书配套初始化</h1>
+    <h2>4 步把项目"骨架"搭好,文档 + 项目 + 群 + 权限同步到位</h2>
+    <div class="grid4">
+      <div class="card">
+        <div class="ttl">① 飞书项目看板</div>
+        <p>按 <b>5 大阶段</b> 分 5 个泳道</p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">每阶段任务分:数据/算法/开发/测试/业务 5 类</p>
+      </div>
+      <div class="card green">
+        <div class="ttl">② 项目群</div>
+        <p>绑定多维空间,群公告 <b>置顶立项文档</b></p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">所有 6 角色 + 干系人拉进群</p>
+      </div>
+      <div class="card amber">
+        <div class="ttl">③ 权限分级</div>
+        <p>按 RACI 分配空间文件夹 <b>只读/可编辑</b></p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">关键决策文档 6 角色全部可读</p>
+      </div>
+      <div class="card feishu">
+        <div class="ttl">④ 资源台账</div>
+        <p>飞书多维表格《资源台账》</p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">字段:GPU/人员/标注人力/外协</p>
+      </div>
+    </div>
+    <div class="hl feishu">
+      <b>核心原则:</b> 飞书项目"骨架"在启动阶段 1 天内必须搭完,后续所有任务都基于这个骨架运转,不在中途切换工具。
+    </div>
+    <div class="grid2" style="margin-top: 4px;">
+      <div class="card red">
+        <div class="ttl">🚫 启动期常见翻车</div>
+        <ul style="font-size: 12.5px; line-height: 1.55;">
+          <li>飞书空间建了,但 RACI 没分 → 1 周后权限混乱</li>
+          <li>项目群建了,但没绑多维空间 → 文档分散</li>
+          <li>看板建了,但泳道不清晰 → 任务乱堆</li>
+          <li>权限全开 → 业务方误改算法文档</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <div class="ttl">✅ 启动期 checklist</div>
+        <ul style="font-size: 12.5px; line-height: 1.55;">
+          <li>☐ 多维空间建好 + 5 文件夹分类</li>
+          <li>☐ 项目群建好 + 群公告置顶立项文档</li>
+          <li>☐ 飞书项目看板建好 + 5 泳道 + RACI 权限</li>
+          <li>☐ 资源台账表格建好 + 初始化数据</li>
+          <li>☐ 4 份基线文档模板就位</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Slide 10: 第 2 章·规划 (1) WBS 5 大层拆解 ====== -->
+  <section class="slide tight denser">
+    <h1>第 2 章 · <span class="accent">规划阶段</span> ① WBS 5 大层拆解</h1>
+    <h2>AI 识别项目专属拆解,5 大层 × 4-5 子项 = 23 个原子任务</h2>
+    <div class="grid2">
+      <div>
+        <div class="tree" style="font-size: 10.5px; line-height: 1.35;">1. 业务与数据层
+   1.1 农产品图像采集
+   1.2 数据标注规范制定
+   1.3 数据集标注、清洗、增广
+   1.4 数据集版本管理
+
+2. AI 算法模板识别层
+   2.1 模板匹配算法选型
+       (传统模板 / YOLO / 特征匹配)
+   2.2 基线模型训练
+   2.3 多版本模型对比测试
+   2.4 瑕疵 / 分级模板优化迭代
+
+3. 系统工程层
+   3.1 图像采集对接相机 SDK
+   3.2 AI 推理服务封装
+   3.3 分拣联动后端接口
+   3.4 可视化后台
+
+4. 测试验收层
+   4.1 算法指标测试
+   4.2 整机流水线联调测试
+   4.3 现场小批量试生产测试
+
+5. 交付运维层
+   5.1 部署包制作
+   5.2 现场落地调试
+   5.3 模板持续更新机制搭建</div>
+      </div>
+      <div>
+        <h3>WBS 拆解的 3 个原则</h3>
+        <div class="card" style="margin-bottom: 6px;">
+          <div class="ttl">原则 1 · 每条任务 ≤ 2 人天</div>
+          <p style="font-size: 13px;">超过 2 人天的子项要再拆;估时不准时,把"完成"具体化。</p>
+        </div>
+        <div class="card green" style="margin-bottom: 6px;">
+          <div class="ttl">原则 2 · 显式依赖关系</div>
+          <p style="font-size: 13px;">每条任务标"前置依赖"。例:2.2 依赖 1.3 完成;3.1 依赖 3.2 接口定义。</p>
+        </div>
+        <div class="card purple" style="margin-bottom: 6px;">
+          <div class="ttl">原则 3 · 交付物必须明确</div>
+          <p style="font-size: 13px;">每条任务必有"交付物"——飞书文档链接 / 代码 commit / 报告。</p>
+        </div>
+        <div class="hl feishu">
+          <b>飞书落地:</b> 23 个原子任务全部录入飞书项目,按 5 大阶段分泳道,任务附件挂对应飞书文档链接。
+        </div>
+        <div class="hl" style="margin-top: 4px;">
+          <b>重要:</b> 数据标注任务单独建一个飞书多维表格跟踪每日产能(见 slide 16)。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Slide 11: 第 2 章·规划 (2) 2 份规划文档 + 排期表字段 ====== -->
+  <section class="slide tight">
+    <h1>第 2 章 · <span class="accent">规划阶段</span> ② 2 份规划文档 + 排期表</h1>
+    <h2>飞书文档存方案,飞书多维表格管排期,一一关联</h2>
+    <div class="grid2">
+      <div>
+        <h3>📄 文档 1 · 总体技术方案文档</h3>
+        <div class="card">
+          <div class="ttl">算法负责人主写,全员评审</div>
+          <ul style="font-size: 13px; line-height: 1.6;">
+            <li><b>模板识别技术路线</b> (选型 + 理由)</li>
+            <li><b>模型迭代计划</b> (2-3 轮)</li>
+            <li><b>推理性能优化方案</b> (延迟 / QPS)</li>
+            <li><b>异常图像处理逻辑</b> (遮挡 / 光照)</li>
+            <li><b>附:版本迭代计划表</b></li>
+          </ul>
+        </div>
+        <h3 style="margin-top: 8px;">📄 文档 2 · 项目排期 & 任务拆解表 (飞书多维表格)</h3>
+        <div class="card feishu" style="margin-top: 4px;">
+          <div class="ttl">核心字段 (8 列)</div>
+          <div class="tree" style="font-size: 11px;">任务名称 | 所属 WBS | 负责人
+前置依赖 | 计划起止时间 | 里程碑归属
+交付物 (飞书文档链接) | 风险标记 | 完成状态</div>
+        </div>
+      </div>
+      <div>
+        <h3>排期表使用技巧</h3>
+        <div class="card" style="margin-bottom: 6px;">
+          <div class="ttl">技巧 1 · 任务 → 文档一键跳转</div>
+          <p style="font-size: 12.5px;">每条任务的"交付物"字段,粘贴对应飞书文档链接 → 任务点开直接跳文档</p>
+        </div>
+        <div class="card green" style="margin-bottom: 6px;">
+          <div class="ttl">技巧 2 · 多视图切换</div>
+          <p style="font-size: 12.5px;">按里程碑视图 / 按负责人视图 / 按状态视图 / 阻塞任务视图</p>
+        </div>
+        <div class="card purple" style="margin-bottom: 6px;">
+          <div class="ttl">技巧 3 · 截止前自动提醒</div>
+          <p style="font-size: 12.5px;">飞书多维表格设截止时间 → 到期前 3 天 / 1 天自动 @ 负责人 + 项目群</p>
+        </div>
+        <div class="card amber">
+          <div class="ttl">技巧 4 · 关键路径标注</div>
+          <p style="font-size: 12.5px;">识别"必须按期"的关键路径任务 (例:数据集标注),颜色标红,周会重点跟</p>
+        </div>
+        <div class="hl feishu">
+          <b>核心:</b> 排期表不是 Excel 表格塞满数字——而是 <b>飞书多维表格的视图系统</b>,随时切换维度看进度。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Slide 12: 第 2 章·规划 (3) 飞书项目看板精细化配置 ====== -->
+  <section class="slide tight">
+    <h1>第 2 章 · <span class="accent">规划阶段</span> ③ 飞书项目看板精细化配置</h1>
+    <h2>任务分类 / 状态 / 泳道,看板不只是看板,是要"会说话"的进度盘</h2>
+    <div class="grid3">
+      <div class="card">
+        <div class="ttl">① 任务类型分组 (5 类)</div>
+        <p><span class="chip agri">数据任务</span></p>
+        <p><span class="chip purple">算法任务</span></p>
+        <p><span class="chip">开发任务</span></p>
+        <p><span class="chip teal">测试任务</span></p>
+        <p><span class="chip amber">业务任务</span></p>
+        <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;">每类任务有 <b>独立颜色</b>,一眼能区分</p>
+      </div>
+      <div class="card green">
+        <div class="ttl">② 自定义状态 (5 段)</div>
+        <p><span class="tag todo">待开始</span></p>
+        <p><span class="tag doing">进行中</span></p>
+        <p><span class="tag review">待评审</span></p>
+        <p><span class="tag done">已完成</span></p>
+        <p><span class="tag block">阻塞</span></p>
+        <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;">每条任务必填:交付物 + 验收标准</p>
+      </div>
+      <div class="card amber">
+        <div class="ttl">③ 阻塞任务单独泳道</div>
+        <p>所有 <span class="tag block">阻塞</span> 状态任务单独放最顶部</p>
+        <p>每天 <b>晨会重点跟进</b></p>
+        <p>超过 2 天的阻塞 → 升级到 PM</p>
+        <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;">阻塞 = 风险信号,必须显式化</p>
+      </div>
+    </div>
+    <div class="hl">
+      <b>看板的"会说话"特征:</b> PM 一眼能看出"上周完成 12 / 在做 8 / 阻塞 2 / 待评审 3"——<b>不需要问任何人</b>。
+    </div>
+    <div class="grid2" style="margin-top: 4px;">
+      <div class="card purple">
+        <div class="ttl">每条任务必填字段</div>
+        <ul style="font-size: 12.5px; line-height: 1.55;">
+          <li><b>交付物文档链接</b> — 飞书文档 URL</li>
+          <li><b>验收标准</b> — 具体可验证的完成定义</li>
+          <li><b>WBS 归属</b> — 业务/算法/工程/测试/运维 5 类</li>
+          <li><b>里程碑归属</b> — M1-M5 哪个</li>
+          <li><b>风险标记</b> — 是否有依赖/外部风险</li>
+        </ul>
+      </div>
+      <div class="card feishu">
+        <div class="ttl">看板每周必看 3 个数字</div>
+        <p style="font-size: 13px;"><b>完成率</b>:本周完成 / 本周计划 → 70-90% 健康</p>
+        <p style="font-size: 13px;"><b>阻塞数</b>:红色泳道任务数 → &gt; 3 必升级</p>
+        <p style="font-size: 13px;"><b>滞后任务数</b>:超过截止日未完成 → &gt; 5 需调整计划</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Slide 13: 第 2 章·规划 (4) 变更管理机制 ====== -->
+  <section class="slide tight">
+    <h1>第 2 章 · <span class="accent">规划阶段</span> ④ 变更管理机制</h1>
+    <h2>AI 项目重中之重——不加变更流程 = 无休止改模板 / 加品类</h2>
+    <div class="hl red">
+      <b>AI 项目变更灾难典型:</b> "再加 3 个品类就行" → "模板再调一下" → "识别规则改一下" → 项目延期 2 倍。
+    </div>
+    <div class="grid2">
+      <div>
+        <h3>📋 飞书《需求变更申请单》固定流程</h3>
+        <div class="card amber">
+          <div class="ttl">① 申请人填写</div>
+          <p style="font-size: 13px;">变更内容 / 影响范围 (数据集 / 模型 / 工期 / 成本) / 紧急程度</p>
+        </div>
+        <div class="card purple" style="margin-top: 6px;">
+          <div class="ttl">② 三方评审 (飞书评论审批)</div>
+          <p style="font-size: 13px;"><b>算法 + 业务 + 项目负责人</b> 三方评论确认,任何一方反对 = 不通过</p>
+        </div>
+        <div class="card green" style="margin-top: 6px;">
+          <div class="ttl">③ 通过后同步更新</div>
+          <p style="font-size: 13px;">需求文档 / 排期表 / 飞书项目任务 三处同步更新,不留版本不一致</p>
+        </div>
+        <div class="card red" style="margin-top: 6px;">
+          <div class="ttl">④ 未走流程 → 一律不执行</div>
+          <p style="font-size: 13px;">无论谁口头说"加这个吧",没走变更单就不动。</p>
+        </div>
+      </div>
+      <div>
+        <h3>变更分级 (按影响范围)</h3>
+        <table>
+          <thead>
+            <tr><th>等级</th><th>影响</th><th>处理</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="tag doing">L1 小变更</span></td>
+              <td>单任务 &lt; 2 天 / 0 成本</td>
+              <td>PM 直接审批</td>
+            </tr>
+            <tr>
+              <td><span class="tag review">L2 中变更</span></td>
+              <td>1 周 / &lt; 1 万 / 1-3 任务</td>
+              <td>算法+业务+PM 三方评审</td>
+            </tr>
+            <tr>
+              <td><span class="tag block">L3 大变更</span></td>
+              <td>&gt; 1 周 / &gt; 1 万 / 影响里程碑</td>
+              <td>+ 技术总监 / 业务总监</td>
+            </tr>
+            <tr>
+              <td><span class="tag block" style="background: rgba(239,68,68,0.4);">L4 颠覆</span></td>
+              <td>目标重定义 / 范围重谈</td>
+              <td>启动新项目</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="hl">
+          <b>变更台账:</b> 飞书多维表格《变更登记》,字段:编号/申请人/等级/影响/审批人/状态/完成时间<br>
+          <b>目的:</b> 任何变更都可追溯,周会复盘"本月改了几次",识别"业务需求飘移"信号
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Slide 14: 第 3 章·执行 (1) 3 套固定会议 ====== -->
+  <section class="slide tight">
+    <h1>第 3 章 · <span class="accent">执行管控</span> ① 3 套固定会议 + 文档模板</h1>
+    <h2>固定会议 + 固定模板 = 不靠主持人记忆,不靠"我刚说过了"</h2>
+    <div class="grid3">
+      <div class="card">
+        <div class="ttl">🕐 每日站会 (15 分钟)</div>
+        <p>→ 飞书《每日站会纪要模板》</p>
+        <p style="font-size: 12.5px; margin-top: 4px;"><b>4 个模块 (固定):</b></p>
+        <ul style="font-size: 12px; line-height: 1.55;">
+          <li>昨日完成 (附交付文档链接)</li>
+          <li>今日计划</li>
+          <li>阻塞问题 (关联飞书项目阻塞任务)</li>
+          <li>需要协调资源</li>
+        </ul>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">会后 10 分钟内更新文档,同步项目群</p>
+      </div>
+      <div class="card green">
+        <div class="ttl">📅 每周项目周会</div>
+        <p>→ 飞书《周进度报告模板》</p>
+        <p style="font-size: 12.5px; margin-top: 4px;"><b>6 大模块 (见下页详解):</b></p>
+        <ul style="font-size: 12px; line-height: 1.55;">
+          <li>里程碑完成度 (飞书项目截图)</li>
+          <li>算法指标周报</li>
+          <li>数据集进度</li>
+          <li>风险更新、变更汇总</li>
+          <li>下周重点任务</li>
+          <li>待决策事项 (@ 负责人)</li>
+        </ul>
+      </div>
+      <div class="card purple">
+        <div class="ttl">🧪 算法专项评审会 (每 2 周)</div>
+        <p>→ 飞书《算法评审记录》</p>
+        <p style="font-size: 12.5px; margin-top: 4px;"><b>3 个核心内容:</b></p>
+        <ul style="font-size: 12px; line-height: 1.55;">
+          <li>不同农产品识别效果对比</li>
+          <li>错误案例截图 + 原因分析</li>
+          <li>下一轮优化方案</li>
+        </ul>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">所有实验记录 / 测试结果存入该文档,形成<b>算法资产</b></p>
+      </div>
+    </div>
+    <div class="hl">
+      <b>3 套会议的总时长:</b> 每日 15min + 每周 1h + 两周 1h 算法评审 ≈ 一周 <b>3.5 小时</b>,信息覆盖完整。
+    </div>
+    <div class="hl feishu" style="margin-top: 4px;">
+      <b>关键:</b> 每个会议都有 <b>专属飞书文档模板</b>,会前打开模板 → 会中填写 → 会后 10 分钟内同步项目群。模板化 = 不用主持人回忆,新员工也能立刻上手。
+    </div>
+  </section>
+
+  <!-- ====== Slide 15: 第 3 章·执行 (2) 周报 6 大模块 ====== -->
+  <section class="slide tight denser" style="padding-top: 50px;">
+    <h1 style="font-size: 24px; margin-bottom: 2px;">第 3 章 · <span class="accent">执行管控</span> ② 周报 6 大模块</h1>
+    <h2>周报不是流水账,是"上周发生了什么 + 下周怎么打"的可决策文档</h2>
+    <div class="card feishu">
+      <div class="ttl">📋 飞书《周进度报告模板》真实示例 (节选)</div>
+      <pre style="font-size: 9.5px; line-height: 1.25; color: var(--ink-2); white-space: pre-wrap; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px;"><b># 周报 · W23 (2026-06-23 ~ 06-29)</b>
+
+## 1. 里程碑完成度
+- M1 需求&数据集: <b>100% ✅</b> | M2 模型初版训练: <b>60% 🔵</b> | 整体: <b>27%</b>
+
+## 2. 算法指标周报
+| 品类 | 准确率 | 漏检 | 趋势 |
+|------|--------|------|------|
+| 苹果 (红) | 96.2% | 1.1% | ↑ +1.5% |
+| 苹果 (青) | 88.4% | 4.2% | ↑ +0.8% |
+| 梨 | 92.1% | 3.1% | = |
+| 桃子 | <b>76.3% ⚠️</b> | 12.4% | ↓ -2.1% |
+
+## 3. 数据集进度
+- 已标注: <b>12,400 / 18,000 (69%)</b> | 标注人力: 3 人 | 缺口: ⚠️
+
+## 4. 风险 / 变更汇总
+- ⚠️ 桃子识别率下滑 → 新增优化任务
+- 新风险: 相机 SDK 延迟 280ms > 200ms
+
+## 5. 下周重点
+数据集 v1.1 | 桃子专项优化 | SDK 调优
+
+## 6. 待决策
+- @技术总监: 推理服务是否上 GPU 加速?
+- @业务: 桃子识别率 &lt; 90% 是否接受?</pre>
+    </div>
+    <div class="hl green">
+      <b>周报的 3 个铁律:</b> ① 必须有<b>数字</b>不靠感觉 ② 必须有<b>风险</b>不藏问题 ③ 必须有<b>待决策</b>不悬而未决。
+    </div>
+    <div class="hl" style="margin-top: 4px;">
+      <b>飞书落地:</b> 周报文档开"项目周报"子页面,每周一个,目录自动按时间排列,新人 1 分钟看完 12 周进度。
+    </div>
+  </section>
+
+  <!-- ====== Slide 16: 第 3 章·执行 (3) 数据 & 算法资产沉淀 ====== -->
+  <section class="slide tight">
+    <h1>第 3 章 · <span class="accent">执行管控</span> ③ 数据 & 算法资产沉淀 (4 套台账)</h1>
+    <h2>AI 项目最大痛点:实验无留存 / 人员交接断层 → 用飞书固化 4 套台账</h2>
+    <div class="grid2">
+      <div class="card agri">
+        <div class="ttl">📊 台账 1 · 数据集管理 (飞书多维表格)</div>
+        <p><b>字段:</b> 版本 / 图片数量 / 品类分布 / 标注人员 / 标注规范链接 / 清洗记录</p>
+        <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;">→ 每日标注产能单独一张多维表格跟踪,缺口提前预警</p>
+        <p style="font-size: 12px; color: var(--red); margin-top: 4px;"><b>⚠️ 数据标注 = AI 项目第一生命线</b></p>
+      </div>
+      <div class="card purple">
+        <div class="ttl">🧪 台账 2 · 模型实验台账 (飞书多维表格)</div>
+        <p><b>字段:</b> 训练参数 / 数据集版本 / 识别指标 / 模型文件地址 / 优缺点 / 实验人</p>
+        <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;">→ 每轮训练必登 1 条,后续可以横向对比 5-10 轮迭代效果</p>
+      </div>
+      <div class="card green">
+        <div class="ttl">🌾 台账 3 · 农产品模板库 (飞书文档)</div>
+        <p><b>内容:</b> 每类农产品标准模板图片 / 分级标准 / 瑕疵样本</p>
+        <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;">→ 业务随时查阅核对,新员工 onboarding 必看</p>
+      </div>
+      <div class="card amber">
+        <div class="ttl">⚠️ 台账 4 · 问题案例库 (飞书文档)</div>
+        <p><b>内容:</b> 识别失败图片 / 原因 / 优化方案 / 状态</p>
+        <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;">→ 持续更新,作为后续模型迭代的<b>高价值训练数据</b></p>
+      </div>
+    </div>
+    <div class="hl feishu">
+      <b>4 套台账的核心价值:</b> 任何时候项目交接 / 人员变动 / 算法复现,只看 4 套台账就能 80% 还原项目历史——<b>而不是问"小王你当时为什么这么调?"</b>
+    </div>
+    <div class="hl red" style="margin-top: 4px;">
+      <b>数据标注专属管理 (第一生命线):</b> 单独建飞书表格跟踪每日标注产能,提前储备标注人力 (高峰期可申请外协),制定清晰标注规范文档减少返工。
+    </div>
+  </section>
+
+  <!-- ====== Slide 17: 第 3 章·执行 (4) 质量管控 ====== -->
+  <section class="slide tight">
+    <h1>第 3 章 · <span class="accent">执行管控</span> ④ 质量管控</h1>
+    <h2>文档固化验收标准,避免"口头扯皮"</h2>
+    <div class="grid3">
+      <div class="card">
+        <div class="ttl">🧪 单元测试记录</div>
+        <p>算法单品类识别测试结果存入飞书多维表格</p>
+        <p style="font-size: 12.5px; color: var(--ink-3); margin-top: 4px;"><b>字段:</b> 品类 / 测试样本数 / 准确率 / 漏检 / 误检 / 测试时间 / 责任人</p>
+        <p style="font-size: 12.5px; color: var(--green); margin-top: 4px;">→ 每轮模型训练后必跑</p>
+      </div>
+      <div class="card green">
+        <div class="ttl">🔗 联调测试用例文档</div>
+        <p>流水线全场景测试步骤 + 预期结果</p>
+        <p style="font-size: 12.5px; color: var(--ink-3); margin-top: 4px;"><b>覆盖场景:</b> 正常 / 边界 / 异常 / 极限 (堆叠 / 遮挡 / 光照 / 流水线速度)</p>
+        <p style="font-size: 12.5px; color: var(--green); margin-top: 4px;">→ 系统联调前必写完</p>
+      </div>
+      <div class="card amber">
+        <div class="ttl">✅ 现场验收 checklist (可打印)</div>
+        <p>所有指标 / 分拣场景 / 边界案例</p>
+        <p style="font-size: 12.5px; color: var(--ink-3); margin-top: 4px;">业务现场逐项勾选确认 + 签字</p>
+        <p style="font-size: 12.5px; color: var(--green); margin-top: 4px;">→ 飞书文档打印版,纸版+电子版双留底</p>
+      </div>
+    </div>
+    <div class="hl">
+      <b>质量管控铁律:</b> 验收标准 <b>不能只在 PM 脑子里</b>,必须落到飞书文档 + 业务签字。改任何验收标准,走变更流程。
+    </div>
+    <div class="hl amber" style="margin-top: 4px;">
+      <b>现场环境提前纳入测试:</b> 光照 / 遮挡 / 流水线速度 / 真实拍摄角度等场景,提前写入测试用例,避免"实验室 98% 准确率,现场 70%"的崩盘。
+    </div>
+    <div class="grid2" style="margin-top: 4px;">
+      <div class="card red">
+        <div class="ttl">🚫 质量翻车典型场景</div>
+        <ul style="font-size: 12.5px; line-height: 1.55;">
+          <li>实验室效果 → 现场崩盘 (环境没测)</li>
+          <li>验收后才发现某品类漏检率 15%</li>
+          <li>返工因为没跑全场景测试</li>
+          <li>业务对"准确率"定义不一致 (脚本漏)</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <div class="ttl">✅ 质量管理 4 步</div>
+        <ul style="font-size: 12.5px; line-height: 1.55;">
+          <li>① 算法评审会:每 2 周 1 次 (1 必)</li>
+          <li>② 单元测试:每轮训练后必跑 (2 必)</li>
+          <li>③ 联调测试:全场景覆盖 (3 必)</li>
+          <li>④ 现场验收:业务签字 (4 必)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Slide 18: 第 3 章·执行 (5) 风险动态跟踪 ====== -->
+  <section class="slide tight">
+    <h1>第 3 章 · <span class="accent">执行管控</span> ⑤ 风险动态跟踪</h1>
+    <h2>风险台账每日更新,高风险置顶,周会重点复盘</h2>
+    <div class="card amber">
+      <div class="ttl">⚠️ 飞书《风险跟踪台账》多维表格</div>
+      <table>
+        <thead>
+          <tr><th>风险</th><th>等级</th><th>当前状态</th><th>应对动作</th><th>截止时间</th><th>负责人</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>桃子识别率下滑 76%</td>
+            <td><span class="tag block">高</span></td>
+            <td>优化中</td>
+            <td>新增优化任务 2.4.1, 调参 + 增样本</td>
+            <td>2026-07-05</td>
+            <td>算法-小张</td>
+          </tr>
+          <tr>
+            <td>数据集标注滞后 31%</td>
+            <td><span class="tag block">高</span></td>
+            <td>追赶中</td>
+            <td>申请 2 名外协标注员</td>
+            <td>2026-06-30</td>
+            <td>标注-小李</td>
+          </tr>
+          <tr>
+            <td>相机 SDK 延迟 280ms &gt; 200</td>
+            <td><span class="tag review">中</span></td>
+            <td>调研中</td>
+            <td>联系厂商, 评估换 SDK</td>
+            <td>2026-07-03</td>
+            <td>后端-小王</td>
+          </tr>
+          <tr>
+            <td>业务临时新增 3 个品类</td>
+            <td><span class="tag review">中</span></td>
+            <td>变更中</td>
+            <td>走 L2 变更流程, 评估工期 +2 周</td>
+            <td>2026-06-29</td>
+            <td>PM-你</td>
+          </tr>
+          <tr>
+            <td>GPU 资源不足</td>
+            <td><span class="tag doing">低</span></td>
+            <td>已解决</td>
+            <td>申请 1 张 A100, 已到货</td>
+            <td>—</td>
+            <td>运维-小赵</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid3" style="margin-top: 6px;">
+      <div class="card red">
+        <div class="ttl">🔴 高风险处置</div>
+        <p>每日 17:00 自动推送,周会 <b>单独议程</b> 15min</p>
+        <p style="font-size: 12px;">连续 3 天高风险 = 升级到技术总监</p>
+      </div>
+      <div class="card amber">
+        <div class="ttl">🟡 中风险处置</div>
+        <p>周会 <b>5 分钟</b> 集中过</p>
+        <p style="font-size: 12px;">每周趋势向好 = 降级</p>
+      </div>
+      <div class="card green">
+        <div class="ttl">🟢 低风险处置</div>
+        <p>月会过 1 次即可</p>
+        <p style="font-size: 12px;">连续 2 周稳定 = 关闭</p>
+      </div>
+    </div>
+    <div class="hl red">
+      <b>风险信号最常出现在哪里:</b> 数据集标注滞后 / 算法指标下滑 / 现场环境与实验室差异 / 业务临时改需求。<b>前 2 个是 AI 项目独有风险,必须每日盯。</b>
+    </div>
+  </section>
+
+  <!-- ====== Slide 19: 第 4 章·监控 (1) 4 维监控 ====== -->
+  <section class="slide tight">
+    <h1>第 4 章 · <span class="accent">监控与纠偏</span> ① 4 维监控</h1>
+    <h2>用 4 维数据看项目健康度,滞后提前 1 周预警</h2>
+    <div class="grid4">
+      <div class="metric">
+        <div class="v">进度</div>
+        <div class="l">PROGRESS</div>
+        <p style="font-size: 11px; color: var(--ink-3); margin-top: 4px;">完成率 / 滞后任务数<br>健康: ≥ 70% / ≤ 5</p>
+      </div>
+      <div class="metric green">
+        <div class="v">质量</div>
+        <div class="l">QUALITY</div>
+        <p style="font-size: 11px; color: var(--ink-3); margin-top: 4px;">算法准确率 / 漏检<br>健康: ≥ 90% / ≤ 5%</p>
+      </div>
+      <div class="metric amber">
+        <div class="v">资源</div>
+        <div class="l">RESOURCE</div>
+        <p style="font-size: 11px; color: var(--ink-3); margin-top: 4px;">GPU 占用 / 人力负荷<br>健康: ≤ 80% / ≤ 100%</p>
+      </div>
+      <div class="metric feishu">
+        <div class="v">成本</div>
+        <div class="l">COST</div>
+        <p style="font-size: 11px; color: var(--ink-3); margin-top: 4px;">硬件 + 外协费用<br>健康: 实际 ≤ 预算</p>
+      </div>
+    </div>
+    <table style="margin-top: 8px;">
+      <thead>
+        <tr><th>维度</th><th>数据来源</th><th>更新频率</th><th>预警阈值</th><th>超阈值动作</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>进度</b></td>
+          <td>飞书项目任务完成率</td>
+          <td>实时 (飞书自动) + 每周导出</td>
+          <td>完成率 &lt; 60% 持续 2 周</td>
+          <td>调整排期 + 增资源</td>
+        </tr>
+        <tr>
+          <td><b>质量</b></td>
+          <td>算法实验台账 + 周报</td>
+          <td>每轮训练后 + 每周</td>
+          <td>任一指标 &lt; 验收标准</td>
+          <td>新增专项优化任务</td>
+        </tr>
+        <tr>
+          <td><b>资源</b></td>
+          <td>资源台账 (多维表格)</td>
+          <td>每日</td>
+          <td>GPU &gt; 85% 持续 / 人力 &gt; 100%</td>
+          <td>申请外协 / 排队</td>
+        </tr>
+        <tr>
+          <td><b>成本</b></td>
+          <td>资源台账 + 采购记录</td>
+          <td>实时</td>
+          <td>超预算 10%</td>
+          <td>提前预警 + 申请追加</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="hl">
+      <b>4 维监控的核心:</b> 数据从飞书台账来,自动计算 → 飞书多维表格设阈值 → 超阈值自动 @ PM + 同步项目群。
+    </div>
+  </section>
+
+  <!-- ====== Slide 20: 第 4 章·监控 (2) 纠偏动作书面化 ====== -->
+  <section class="slide tight">
+    <h1>第 4 章 · <span class="accent">监控与纠偏</span> ② 纠偏动作书面化</h1>
+    <h2>不口头安排工作——所有纠偏都进周报,形成追溯</h2>
+    <div class="grid2">
+      <div>
+        <h3>4 大典型纠偏场景</h3>
+        <div class="card red" style="margin-bottom: 6px;">
+          <div class="ttl">场景 1 · 进度滞后</div>
+          <p style="font-size: 13px;"><b>信号:</b> 完成率 &lt; 60% / 阻塞 &gt; 3 个 / 关键路径任务延期<br><b>纠偏:</b> ① 周会专题讨论 ② 增资源 / 减范围 ③ 走变更流程 ④ 写到周报</p>
+        </div>
+        <div class="card amber" style="margin-bottom: 6px;">
+          <div class="ttl">场景 2 · 质量不达标</div>
+          <p style="font-size: 13px;"><b>信号:</b> 算法准确率下滑 / 漏检率超阈值<br><b>纠偏:</b> ① 新增专项优化任务 ② 算法评审会专题 ③ 调增数据集 ④ 周报记录</p>
+        </div>
+        <div class="card purple" style="margin-bottom: 6px;">
+          <div class="ttl">场景 3 · 资源不足</div>
+          <p style="font-size: 13px;"><b>信号:</b> GPU 满载 / 人力超负荷 / 标注产能不足<br><b>纠偏:</b> ① 申请外协 ② 排队优先级 ③ 跨团队借调 ④ 写入资源台账</p>
+        </div>
+        <div class="card feishu">
+          <div class="ttl">场景 4 · 成本超支</div>
+          <p style="font-size: 13px;"><b>信号:</b> 实际 &gt; 预算 10% / GPU 费用超预期<br><b>纠偏:</b> ① 重新估算 ② 申请追加预算 ③ 砍非必要采购 ④ 财务对齐</p>
+        </div>
+      </div>
+      <div>
+        <h3>纠偏动作的"5 个 W"模板</h3>
+        <div class="card" style="margin-bottom: 6px;">
+          <div class="ttl">📋 周报纠偏记录模板</div>
+          <div class="tree" style="font-size: 11px; line-height: 1.4;"><b>WHAT</b> · 发现什么问题 / 滞后了哪项
+  - 例: 数据集标注仅完成 69% (落后 31%)
+
+<b>WHY</b> · 根因是什么
+  - 例: 标注规范返工 2 次, 1 名标注员请假
+
+<b>WHO</b> · 谁负责纠偏
+  - 例: 标注主管-小李 + PM-你
+
+<b>WHEN</b> · 截止时间
+  - 例: 2026-06-30 完成缺口补齐
+
+<b>HOW</b> · 具体动作
+  - 例: 申请 2 名外协, 简化标注规范 v2.0
+       每日 17:00 同步标注产能数字</div>
+        </div>
+        <div class="hl">
+          <b>书面化 = 可追溯。</b>3 个月后复盘,所有纠偏动作有据可查,而不是"我记得当时说过"。
+        </div>
+        <div class="hl red" style="margin-top: 4px;">
+          <b>🚫 禁止:</b> 口头安排纠偏动作 / 微信私聊部署 / 邮件回复零散讨论。所有纠偏必须进周报 / 飞书任务。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Slide 21: 第 5 章·收尾 (1) 交付包文档集合 ====== -->
+  <section class="slide tight">
+    <h1>第 5 章 · <span class="accent">收尾交付</span> ① 交付包文档集合</h1>
+    <h2>交付客户 / 业务全套资料,全部飞书导出,纸版 + 电子版双留底</h2>
+    <div class="grid3">
+      <div class="card">
+        <div class="ttl">📋 1. 需求 & 业务类</div>
+        <ul style="font-size: 12.5px; line-height: 1.6;">
+          <li>需求规格说明书 (签字版)</li>
+          <li>业务沟通记录</li>
+          <li>验收 checklist (签字版)</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <div class="ttl">🧪 2. 数据 & 算法类</div>
+        <ul style="font-size: 12.5px; line-height: 1.6;">
+          <li>数据集说明 (版本/分布/规范)</li>
+          <li>农产品模板库</li>
+          <li>模型实验报告 (全部迭代)</li>
+          <li>问题案例库</li>
+        </ul>
+      </div>
+      <div class="card purple">
+        <div class="ttl">⚙️ 3. 工程 & 测试类</div>
+        <ul style="font-size: 12.5px; line-height: 1.6;">
+          <li>技术方案文档</li>
+          <li>联调测试报告</li>
+          <li>验收测试报告</li>
+          <li>代码仓库 + 部署包</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <div class="ttl">🚀 4. 部署 & 运维类</div>
+        <ul style="font-size: 12.5px; line-height: 1.6;">
+          <li>部署手册</li>
+          <li>运维操作文档</li>
+          <li>现场调试记录</li>
+          <li>模板持续更新流程</li>
+        </ul>
+      </div>
+      <div class="card feishu">
+        <div class="ttl">📑 5. 验收 & 签字类</div>
+        <ul style="font-size: 12.5px; line-height: 1.6;">
+          <li>现场验收签字文档</li>
+          <li>交付清单 (按项勾选)</li>
+          <li>问题遗留清单</li>
+        </ul>
+      </div>
+      <div class="card red">
+        <div class="ttl">📚 6. 项目管理类</div>
+        <ul style="font-size: 12.5px; line-height: 1.6;">
+          <li>立项文档 / RACI</li>
+          <li>协作规范</li>
+          <li>风险台账 / 变更记录</li>
+          <li>周报合集 (12-24 周)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hl feishu">
+      <b>飞书导出方式:</b> ① 多维表格 → 导出 Excel/PDF ② 文档 → 导出 PDF/Word ③ 飞书项目 → 导出甘特图 PNG。统一放在交付包根目录,按上述 6 类组织。
+    </div>
+    <div class="hl green" style="margin-top: 4px;">
+      <b>交付清单 Checklist:</b> 每一类资料都打印一张"交付清单",客户逐项勾选,签收——避免"我们以为给过了 / 客户说没收到"的扯皮。
+    </div>
+  </section>
+
+  <!-- ====== Slide 22: 第 5 章·收尾 (2) 项目复盘 4 大模块 ====== -->
+  <section class="slide tight">
+    <h1>第 5 章 · <span class="accent">收尾交付</span> ② 项目复盘 4 大模块</h1>
+    <h2>复盘不是批斗会,是为了"下一个同类 AI 项目不踩同样的坑"</h2>
+    <div class="grid2">
+      <div>
+        <div class="card green" style="margin-bottom: 6px;">
+          <div class="ttl">✅ 模块 1 · 做得好 (复用)</div>
+          <p style="font-size: 13px;">哪些做法有效,值得在下一个项目沿用?</p>
+          <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;"><b>例:</b> 数据沉淀机制 / 算法评审流程 / 飞书周报模板</p>
+        </div>
+        <div class="card red" style="margin-bottom: 6px;">
+          <div class="ttl">⚠️ 模块 2 · 问题卡点 (避坑)</div>
+          <p style="font-size: 13px;">哪些环节出了问题,下次怎么避免?</p>
+          <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;"><b>例:</b> 标注延迟 / 模板相似度预估不足 / 业务需求反复变更 / 现场环境未测</p>
+        </div>
+        <div class="card purple" style="margin-bottom: 6px;">
+          <div class="ttl">🔍 模块 3 · 根因分析 (5-Why)</div>
+          <p style="font-size: 13px;">问题卡点的根因是什么?穿透到机制层。</p>
+          <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;"><b>例:</b> 标注延迟 → 规范返工 2 次 → 需求方没参与规范制定 → 立项时遗漏业务方代表</p>
+        </div>
+        <div class="card feishu">
+          <div class="ttl">🚀 模块 4 · 后续 AI 项目改进方案</div>
+          <p style="font-size: 13px;">针对根因,下一个项目要改什么?具体到模板 / 流程 / 文档</p>
+          <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;"><b>例:</b> 立项时加 1 名业务方标注审核员 + 标注规范双签</p>
+        </div>
+      </div>
+      <div>
+        <h3>复盘的"3 不"原则</h3>
+        <div class="card red" style="margin-bottom: 6px;">
+          <div class="ttl">🚫 不批斗个人</div>
+          <p style="font-size: 13px;">对事不对人,讨论"机制哪里缺",不讨论"谁犯了错"</p>
+        </div>
+        <div class="card amber" style="margin-bottom: 6px;">
+          <div class="ttl">🚫 不只夸不批</div>
+          <p style="font-size: 13px;">只夸 → 没有改进价值;只批 → 团队不敢说真话</p>
+        </div>
+        <div class="card green" style="margin-bottom: 6px;">
+          <div class="ttl">🚫 不悬而未决</div>
+          <p style="font-size: 13px;">每个"问题卡点"必须出 1 条"改进方案",有 Owner + 截止时间</p>
+        </div>
+        <div class="hl">
+          <b>复盘文档化:</b> 飞书《项目复盘》模板, 全员编辑评论 → 沉淀为公司 <b>AI 项目管理经验库</b>。
+        </div>
+        <div class="hl feishu" style="margin-top: 4px;">
+          <b>复盘时机:</b> 项目上线 + 现场验收完成后 1 周内,趁记忆清晰,不要拖到 1 个月后。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Slide 23: 第 5 章·收尾 (3) 归档处理 ====== -->
+  <section class="slide tight">
+    <h1>第 5 章 · <span class="accent">收尾交付</span> ③ 归档处理</h1>
+    <h2>一次做项目,长期攒资产——飞书空间归档成为下一个项目的模板</h2>
+    <div class="grid2">
+      <div>
+        <h3>📦 飞书空间归档 3 步</h3>
+        <div class="card" style="margin-bottom: 6px;">
+          <div class="ttl">① 创建【归档】文件夹</div>
+          <p style="font-size: 13px;">在多维空间根目录新建"📦 归档"文件夹,与 5 大业务文件夹同级</p>
+        </div>
+        <div class="card green" style="margin-bottom: 6px;">
+          <div class="ttl">② 移入所有资料</div>
+          <p style="font-size: 13px;">所有阶段性文档 / 任务记录 / 周报 / 复盘,按原目录结构移入归档</p>
+        </div>
+        <div class="card purple" style="margin-bottom: 6px;">
+          <div class="ttl">③ 权限设为只读</div>
+          <p style="font-size: 13px;">归档文件夹权限 = 团队全员只读,防止后续被误改</p>
+        </div>
+        <div class="hl feishu">
+          <b>关键:</b> 归档 ≠ 删除,只读 ≠ 不可见。下一个项目随时可以参考模板、复用文档、查阅历史决策。
+        </div>
+      </div>
+      <div>
+        <h3>📚 归档后形成的 3 类资产</h3>
+        <div class="card" style="margin-bottom: 6px;">
+          <div class="ttl">资产 1 · 文档模板库</div>
+          <p style="font-size: 13px;">7 套管理文档模板 (立项 / 需求 / 协作 / 周报 / 站会 / 变更 / 复盘)</p>
+          <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;">→ 下个项目直接复制使用,不用从零写</p>
+        </div>
+        <div class="card green" style="margin-bottom: 6px;">
+          <div class="ttl">资产 2 · 行业知识库</div>
+          <p style="font-size: 13px;">农产品模板库 / 难点品类清单 / 现场环境问题集</p>
+          <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;">→ 下一个农产品 AI 项目, 起点不是 0</p>
+        </div>
+        <div class="card amber" style="margin-bottom: 6px;">
+          <div class="ttl">资产 3 · 流程优化经验</div>
+          <p style="font-size: 13px;">复盘文档 / 改进方案落地情况 / RACI 模板</p>
+          <p style="font-size: 12px; color: var(--ink-3); margin-top: 4px;">→ 公司 AI 项目管理能力 <b>螺旋上升</b></p>
+        </div>
+        <div class="hl red">
+          <b>📌 终极目标:</b> 公司每做一个 AI 项目,下一个 AI 项目的启动时间 <b>减少 50%</b>,翻车概率 <b>减少 70%</b>。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Slide 24: 第 6 章·飞书联动 (1) 4 大设计规则 ====== -->
+  <section class="slide tight">
+    <h1>第 6 章 · <span class="feishu">飞书联动</span> ① 4 大核心设计规则</h1>
+    <h2>落地关键:4 条规则贯穿所有阶段,飞书才能真正"动起来"</h2>
+    <div class="grid2">
+      <div class="card feishu">
+        <div class="ttl">规则 1 · 一物一文档,任务必附链接</div>
+        <p style="font-size: 13px;">任何交付物 / 规范 / 报告 <b>独立成文</b>;</p>
+        <p style="font-size: 13px;">飞书项目内 <b>所有任务附件</b> 必须关联对应文档;</p>
+        <p style="font-size: 13px; color: var(--red); margin-top: 4px;"><b>目的:</b> 杜绝文档 / 任务脱节</p>
+      </div>
+      <div class="card green">
+        <div class="ttl">规则 2 · 统一模板体系,减少重复写</div>
+        <p style="font-size: 13px;">飞书空间建【<b>模板库</b>】文件夹,存放 7 套固定模板 (见下页)</p>
+        <p style="font-size: 13px; color: var(--ink-3); margin-top: 4px;">新项目 → 直接复制模板 → 填充本项目信息</p>
+      </div>
+      <div class="card amber">
+        <div class="ttl">规则 3 · 权限分层,保证数据安全</div>
+        <p style="font-size: 13px;"><b>业务方:</b> 仅可读需求 / 验收 / 模板库,不可编辑算法实验 / 排期</p>
+        <p style="font-size: 13px;"><b>标注团队:</b> 仅编辑数据集表格 / 标注规范</p>
+        <p style="font-size: 13px;"><b>技术团队:</b> 全空间可编辑</p>
+        <p style="font-size: 13px;"><b>管理层:</b> 只读所有文档,可评论审批</p>
+      </div>
+      <div class="card purple">
+        <div class="ttl">规则 4 · 自动化联动降低管理成本</div>
+        <p style="font-size: 13px;">① 飞书日程绑定会议文档 → 开会自动打开对应纪要</p>
+        <p style="font-size: 13px;">② 飞书项目任务到期 → 自动 @ 负责人 + 同步项目群</p>
+        <p style="font-size: 13px;">③ 多维表格设视图 → 按里程碑/负责人/阻塞筛选</p>
+        <p style="font-size: 13px;">④ 关键文档开<b>「版本历史」</b> → 所有修改留痕,需求变更有据可查</p>
+      </div>
+    </div>
+    <div class="hl feishu">
+      <b>核心:</b> 飞书不是"装文档的网盘",而是 <b>装"工作流"的操作系统</b>。4 条规则让文档、项目、表格、人 4 件事自动联动。
+    </div>
+  </section>
+
+  <!-- ====== Slide 25: 第 6 章·飞书联动 (2) 7 套标准模板库 ====== -->
+  <section class="slide tight">
+    <h1>第 6 章 · <span class="feishu">飞书联动</span> ② 7 套标准模板库</h1>
+    <h2>在【模板库】文件夹集中存放,新项目直接复制,不用从零写</h2>
+    <div class="grid4">
+      <div class="card">
+        <div class="ttl">📄 1. 立项模板</div>
+        <p>项目目标 / RACI / 里程碑 / 预算 / 约束</p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">→ 启动阶段</p>
+      </div>
+      <div class="card green">
+        <div class="ttl">📋 2. 业务需求规格</div>
+        <p>农产品清单 / 分拣规则 / 场景 / 验收标准</p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">→ 启动阶段</p>
+      </div>
+      <div class="card purple">
+        <div class="ttl">🤝 3. 协作规范</div>
+        <p>会议 / 命名 / 反馈渠道 / 权限</p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">→ 启动阶段</p>
+      </div>
+      <div class="card amber">
+        <div class="ttl">📝 4. 每日站会纪要</div>
+        <p>昨日完成 / 今日计划 / 阻塞 / 协调</p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">→ 每日</p>
+      </div>
+      <div class="card feishu">
+        <div class="ttl">📊 5. 周进度报告</div>
+        <p>里程碑 / 算法指标 / 数据集 / 风险 / 下周 / 决策</p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">→ 每周</p>
+      </div>
+      <div class="card red">
+        <div class="ttl">🔄 6. 需求变更单</div>
+        <p>内容 / 影响 / 三方评审 / 同步更新</p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">→ 变更时</p>
+      </div>
+      <div class="card">
+        <div class="ttl" style="color: var(--agri);">✅ 7. 现场验收 checklist</div>
+        <p>所有指标 / 场景 / 边界案例 + 业务签字</p>
+        <p style="font-size: 11.5px; color: var(--ink-3); margin-top: 4px;">→ M4 验收</p>
+      </div>
+    </div>
+    <div class="hl feishu">
+      <b>模板库的存放规则:</b> 7 套模板放在飞书多维空间根目录的 <b>【模板库】文件夹</b> 集中管理,所有人可读,仅 PM / 技术总监可编辑。
+    </div>
+    <div class="hl green" style="margin-top: 4px;">
+      <b>用模板的核心收益:</b> 新项目启动时间 <b>从 1 周 → 1 天</b>;新员工 onboarding 看 7 套模板 = 10 分钟掌握工作方式。
+    </div>
+    <div class="hl" style="margin-top: 4px;">
+      <b>附加收益:</b> 多个 AI 项目用同一套模板,公司 AI 项目管理风格 <b>统一</b>,跨项目调动 / 复用人员时无缝衔接。
+    </div>
+  </section>
+
+  <!-- ====== Slide 26: 第 6 章·AI 项目专属避坑 + 9 步落地 ====== -->
+  <section class="slide tight">
+    <h1>第 6 章 · <span class="accent">AI 项目专属避坑</span> + 9 步落地</h1>
+    <h2>针对模板识别项目 4 条避坑 + 你可以立刻照做的 9 步落地</h2>
+    <div class="grid2">
+      <div>
+        <h3>🚫 4 条 AI 项目专属避坑</h3>
+        <div class="card red" style="margin-bottom: 6px;">
+          <div class="ttl">坑 1 · 数据标注 = 第一生命线 (单独里程碑)</div>
+          <p style="font-size: 13px;">很多 AI 项目延期都是 <b>标注滞后</b>。单独建飞书表格跟踪每日标注产能,提前储备标注人力,清晰标注规范减少返工。</p>
+        </div>
+        <div class="card amber" style="margin-bottom: 6px;">
+          <div class="ttl">坑 2 · 模板识别 = 迭代特性 (预留 2-3 轮优化)</div>
+          <p style="font-size: 13px;">不要只规划一轮训练。排期预留 <b>2-3 轮模板优化任务</b>,每轮效果全部记录在实验文档,量化迭代提升幅度。</p>
+        </div>
+        <div class="card purple" style="margin-bottom: 6px;">
+          <div class="ttl">坑 3 · 业务现场环境提前纳入测试</div>
+          <p style="font-size: 13px;">光照 / 遮挡 / 流水线速度 / 真实拍摄角度,提前写入测试用例。避免"实验室 98% → 现场 70%"的崩盘。</p>
+        </div>
+        <div class="card green">
+          <div class="ttl">坑 4 · 模板持续更新流程 (上线 ≠ 结束)</div>
+          <p style="font-size: 13px;">文档固化 <b>新增模板采集 / 标注 / 重训 / 更新推理服务</b> 的标准化流程,方便后期运维迭代。</p>
+        </div>
+      </div>
+      <div>
+        <h3>✅ 9 步落地执行 (你可以立刻照做)</h3>
+        <div class="card feishu">
+          <div class="ttl">📋 启动日 → 上线日 全流程</div>
+          <div class="tree" style="font-size: 10.5px; line-height: 1.4;">① 飞书创建多维空间 + 项目群 + 飞书项目看板
+② 复制 7 套标准管理文档模板, 填充本项目基础信息
+③ 输出立项文档 + 需求说明书, 组织业务 & 技术评审签字
+④ 拆解 WBS (5 大层), 制作排期多维表格
+   批量创建飞书项目任务并绑定文档
+⑤ 启动数据采集标注任务, 同步维护数据集 + 模板库文档
+⑥ 按日 / 周固定会议, 持续更新周报 + 风险台账 + 算法实验记录
+⑦ 阶段性算法评审 (每 2 周), 不达指标立即新增优化任务
+⑧ 完成联调 + 现场验收, 整理全套交付文档
+⑨ 编写复盘文档, 统一归档所有资料</div>
+        </div>
+        <div class="hl">
+          <b>9 步对应 5 大阶段:</b> ①② 启动 / ③④ 规划 / ⑤⑥⑦ 执行 / ⑧ 监控 + 收尾 / ⑨ 复盘归档
+        </div>
+        <div class="hl green" style="margin-top: 4px;">
+          <b>关键:</b> 9 步不是 <b>串行</b>,而是 <b>部分并行</b>:③ 评审签字跟 ④ 拆解 WBS 可以并行;⑥ ⑦ 持续运行 6-12 周。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Slide 27: Q&A + 参考 ====== -->
+  <section class="slide tight denser">
+    <h1>Q&amp;A <span class="accent">+ 参考资源</span></h1>
+    <h2>一页带走 + 推荐书 / 文档 / 工具 / 飞书使用技巧</h2>
+    <div class="grid2">
+      <div>
+        <h3>✅ 本课核心要点</h3>
+        <ul>
+          <li><b>5 大阶段:</b> 启动 → 规划 → 执行 → 监控 → 收尾 (全程飞书承载)</li>
+          <li><b>4 份基线文档:</b> 立项总 + 需求规格 + 协作规范 + 风险清单</li>
+          <li><b>RACI 矩阵:</b> 6 角色 × 4 类型,每件事必有 1 个 A</li>
+          <li><b>WBS 5 大层:</b> 业务数据 / 算法 / 工程 / 测试 / 运维</li>
+          <li><b>3 套会议 + 6 套台账:</b> 标准化执行, 不靠口头</li>
+          <li><b>4 维监控:</b> 进度 / 质量 / 资源 / 成本 (飞书自动预警)</li>
+          <li><b>4 条 AI 避坑:</b> 标注生命线 / 模板迭代 / 现场环境 / 持续更新</li>
+        </ul>
+        <div class="hl feishu">
+          <b>整套方案的核心:</b> 飞书多维空间 + 飞书项目 + 飞书多维表格 三件套 → <b>5 大阶段 + 4 大抓手 + 7 套模板</b> = 一次做项目,长期攒资产。
+        </div>
+        <h3 style="margin-top: 8px;">❓ 常见追问</h3>
+        <ul style="font-size: 12.5px; line-height: 1.55;">
+          <li><b>Q: 小项目也用 9 步吗?</b> A: 是的,9 步是 3-12 个月 AI 项目的最小集合。小项目可压缩部分会议频率。</li>
+          <li><b>Q: 飞书 vs 钉钉 vs 企业微信?</b> A: 飞书在 <b>多维表格 + 文档协同 + 项目联动</b> 上最强,AI 项目 PM 首选。</li>
+          <li><b>Q: 数据标注外协怎么管?</b> A: 飞书多维表格《标注任务表》,外协人员给文件夹子权限,产出数据按版本管理。</li>
+        </ul>
+      </div>
+      <div>
+        <h3>📚 参考资源</h3>
+        <ul style="font-size: 12.5px; line-height: 1.6;">
+          <li>📖 <b>《项目管理知识体系指南》(PMBOK)</b> — PMI, 第 6/7 版. AI 项目可裁剪,核心 5 过程组 + 10 知识领域</li>
+          <li>📖 <b>《AI 项目管理手册》</b> — <code>martinfowler.com/articles/exploring-gen-ai.html</code> (Martin Fowler 团队)</li>
+          <li>📖 <b>《Data-Centric AI》</b> — Andrew Ng, 强调数据质量而非模型, 与本课"数据标注 = 第一生命线"一致</li>
+          <li>🌐 <b>飞书多维表格最佳实践</b> — <code>open.feishu.cn/docx</code> (官方模板库)</li>
+          <li>🌐 <b>飞书项目模块使用指南</b> — 飞书帮助中心, 看板 / 甘特图 / 自动化规则</li>
+          <li>🌐 <b>《机器学习项目管理指南》</b> — Google, <code>developers.google.com/machine-learning/guides/rules-of-ml</code></li>
+          <li>📄 <b>《需求变更管理实践》</b> — IEEE Std 830-1998 (SRS 规范)</li>
+          <li>🛠️ <b>工具</b> — 飞书 (<code>feishu.cn</code>) / 飞书多维表格 / 飞书项目</li>
+        </ul>
+        <h3>🎓 配套资源</h3>
+        <ul style="font-size: 12.5px; line-height: 1.6;">
+          <li>本项目的 <b>pm.txt 全套方案</b> (用户提供的 208 行源文档) 已结构化到此 slides</li>
+          <li>7 套飞书文档模板 → 见 <code>ai-product-pm-feishu-slides/templates/</code> (若已建)</li>
+          <li>本项目 RACI 矩阵 → 见 <code>ai-product-pm-feishu-slides/raci.csv</code> (若已建)</li>
+        </ul>
+      </div>
+    </div>
+    <p class="small gray" style="margin-top: 6px;">📅 编写时间: 2026-06-30 · 27 页 · 5 阶段 + 飞书联动 + Q&A · 适用 AI 算法研发 + 工程落地 + 业务验收 混合项目</p>
+  </section>
+
+</div>
+
+<div class="nav-bar">
+  <div class="ctrls">
+    <span><kbd>←</kbd> <kbd>→</kbd> 翻页</span>
+    <span><kbd>Home</kbd>/<kbd>End</kbd> 首尾</span>
+    <span><kbd>P</kbd> 打印</span>
+  </div>
+  <div class="pager"><b id="cur">1</b> / <span id="tot">27</span></div>
+</div>
+
+<div class="copyright">
+  <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const tot = slides.length;
+  document.getElementById('tot').textContent = tot;
+  let cur = 0;
+
+  function show(i) {
+    i = Math.max(0, Math.min(tot - 1, i));
+    slides.forEach(s => s.classList.remove('active'));
+    slides[i].classList.add('active');
+    cur = i;
+    document.getElementById('cur').textContent = i + 1;
+    document.getElementById('prog').style.width = ((i + 1) / tot * 100) + '%';
+  }
+  function next() { show(cur + 1); }
+  function prev() { show(cur - 1); }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') { e.preventDefault(); show(0); }
+    else if (e.key === 'End') { e.preventDefault(); show(tot - 1); }
+    else if (e.key === 'p' || e.key === 'P') { window.print(); }
+  });
+
+  // touch swipe
+  let tx = 0;
+  document.addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+  });
+</script>
+
+</body>
+</html>
