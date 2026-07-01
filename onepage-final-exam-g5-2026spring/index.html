@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>龙岗区期末考 · 5 大模块全复盘 · 五年级数学</title>
+<style>
+  :root {
+    --bg: #faf7f2;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    /* 期末考 · 深酒红主色 (压轴/总结 语义) */
+    --primary: #881337;
+    --primary-soft: #fff1f4;
+    --primary-deep: #4c0d1f;
+
+    /* 5 大模块配色 (差异化 + 同色系 5 阶过渡) */
+    --m1:    #881337;        /* 01 分数乘除法  : 深酒红 (主色) */
+    --m1-soft: #fff1f4;
+    --m1-deep: #4c0d1f;
+
+    --m2:    #1f2937;        /* 02 长方体       : 深炭灰 (几何) */
+    --m2-soft: #f1f5f9;
+    --m2-deep: #0f172a;
+
+    --m3:    #0c4a6e;        /* 03 列方程       : 深 sky (推算) */
+    --m3-soft: #f0f9ff;
+    --m3-deep: #082f49;
+
+    --m4:    #7c3aed;        /* 04 统计图       : 紫罗兰 (数据) */
+    --m4-soft: #f5f3ff;
+    --m4-deep: #4c1d95;
+
+    --m5:    #a16207;        /* 05 位置方向     : 橄榄黄 (罗盘) */
+    --m5-soft: #fefce8;
+    --m5-deep: #713f12;
+
+    --err:    #ef4444;
+    --err-soft: #fef2f2;
+    --ok:     #16a34a;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.55;
+    padding: 24px 16px 48px;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  /* ========== ① 标题区 ========== */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%);
+    color: #fff;
+    border-radius: 18px;
+    padding: 30px 36px 26px;
+    box-shadow: 0 8px 28px rgba(136, 19, 55, 0.18);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "📝";
+    position: absolute;
+    right: 24px; top: 18px;
+    font-size: 88px;
+    opacity: 0.13;
+  }
+  .hero h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    letter-spacing: -0.005em;
+    line-height: 1.25;
+  }
+  .hero .subtitle {
+    margin: 0 0 16px;
+    font-size: 15px;
+    opacity: 0.92;
+    line-height: 1.6;
+  }
+  .hero .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    font-size: 12.5px;
+    opacity: 0.9;
+  }
+  .hero .meta b { font-weight: 600; opacity: 1; }
+
+  /* ========== ② 总览 4 卡片 ========== */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin: 22px 0 24px;
+  }
+  .ov-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 16px 14px;
+  }
+  .ov-card .ov-num {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .ov-card .ov-num small {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-3);
+    margin-left: 4px;
+  }
+  .ov-card .ov-title {
+    font-size: 12.5px;
+    color: var(--ink-2);
+    margin-top: 6px;
+    line-height: 1.45;
+  }
+  .ov-card .ov-en {
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .ov-card.m1 { border-top: 3px solid var(--m1); }
+  .ov-card.m2 { border-top: 3px solid var(--m2); }
+  .ov-card.m3 { border-top: 3px solid var(--m3); }
+  .ov-card.m4 { border-top: 3px solid var(--m4); }
+
+  /* ========== 主模块 ========== */
+  .module {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 26px 20px;
+    margin-bottom: 18px;
+    border-left: 5px solid var(--m1);
+  }
+  .module.m1 { border-left-color: var(--m1); }
+  .module.m2 { border-left-color: var(--m2); }
+  .module.m3 { border-left-color: var(--m3); }
+  .module.m4 { border-left-color: var(--m4); }
+  .module.m5 { border-left-color: var(--m5); }
+
+  .mod-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .mod-num {
+    display: inline-block;
+    background: var(--m1);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 5px;
+    letter-spacing: 0.04em;
+  }
+  .module.m1 .mod-num { background: var(--m1); }
+  .module.m2 .mod-num { background: var(--m2); }
+  .module.m3 .mod-num { background: var(--m3); }
+  .module.m4 .mod-num { background: var(--m4); }
+  .module.m5 .mod-num { background: var(--m5); }
+
+  .mod-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .mod-title .en {
+    font-size: 11px;
+    color: var(--ink-3);
+    font-weight: 500;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    margin-left: 8px;
+  }
+  .mod-score {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--ink-2);
+    background: var(--line-2);
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .mod-score b { color: var(--m1); font-size: 14px; }
+  .module.m2 .mod-score b { color: var(--m2); }
+  .module.m3 .mod-score b { color: var(--m3); }
+  .module.m4 .mod-score b { color: var(--m4); }
+  .module.m5 .mod-score b { color: var(--m5); }
+
+  .callout {
+    background: var(--m1-soft);
+    border-left: 3px solid var(--m1);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    font-size: 13.5px;
+    color: var(--ink-2);
+    margin: 10px 0 14px;
+  }
+  .module.m1 .callout { background: var(--m1-soft); border-left-color: var(--m1); }
+  .module.m2 .callout { background: var(--m2-soft); border-left-color: var(--m2); }
+  .module.m3 .callout { background: var(--m3-soft); border-left-color: var(--m3); }
+  .module.m4 .callout { background: var(--m4-soft); border-left-color: var(--m4); }
+  .module.m5 .callout { background: var(--m5-soft); border-left-color: var(--m5); }
+  .callout b { color: var(--m1-deep); }
+  .module.m1 .callout b { color: var(--m1-deep); }
+  .module.m2 .callout b { color: var(--m2-deep); }
+  .module.m3 .callout b { color: var(--m3-deep); }
+  .module.m4 .callout b { color: var(--m4-deep); }
+  .module.m5 .callout b { color: var(--m5-deep); }
+
+  /* 表格 */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 10px 0 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line-2);
+  }
+  th {
+    background: var(--m1-soft);
+    color: var(--m1-deep);
+    font-weight: 600;
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+  }
+  .module.m1 th { background: var(--m1-soft); color: var(--m1-deep); }
+  .module.m2 th { background: var(--m2-soft); color: var(--m2-deep); }
+  .module.m3 th { background: var(--m3-soft); color: var(--m3-deep); }
+  .module.m4 th { background: var(--m4-soft); color: var(--m4-deep); }
+  .module.m5 th { background: var(--m5-soft); color: var(--m5-deep); }
+  td code, .formula {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12.5px;
+    color: var(--m1-deep);
+    background: var(--m1-soft);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .module.m1 code, .module.m1 .formula { color: var(--m1-deep); background: var(--m1-soft); }
+  .module.m2 code, .module.m2 .formula { color: var(--m2-deep); background: var(--m2-soft); }
+  .module.m3 code, .module.m3 .formula { color: var(--m3-deep); background: var(--m3-soft); }
+  .module.m4 code, .module.m4 .formula { color: var(--m4-deep); background: var(--m4-soft); }
+  .module.m5 code, .module.m5 .formula { color: var(--m5-deep); background: var(--m5-soft); }
+
+  .example {
+    background: var(--line-2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 8px 0 14px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .example .q {
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .example .a {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    color: var(--m1-deep);
+    background: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-top: 6px;
+    font-size: 12.5px;
+    border-left: 2px solid var(--m1);
+  }
+  .module.m2 .example .a { color: var(--m2-deep); border-left-color: var(--m2); }
+  .module.m3 .example .a { color: var(--m3-deep); border-left-color: var(--m3); }
+  .module.m4 .example .a { color: var(--m4-deep); border-left-color: var(--m4); }
+  .module.m5 .example .a { color: var(--m5-deep); border-left-color: var(--m5); }
+
+  /* ========== 红叉误区 ========== */
+  .errors {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 26px 20px;
+    margin: 18px 0;
+  }
+  .errors h2 {
+    font-size: 18px;
+    color: var(--err);
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .errors h2 small {
+    font-size: 11.5px;
+    color: var(--ink-3);
+    font-weight: 500;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    margin-left: 4px;
+  }
+  .err-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .err-item {
+    background: var(--err-soft);
+    border: 1px solid #fecaca;
+    border-left: 3px solid var(--err);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  .err-item .err-title {
+    font-weight: 700;
+    color: var(--err);
+    margin-bottom: 4px;
+    font-size: 13.5px;
+  }
+  .err-item .err-wrong {
+    text-decoration: line-through;
+    color: #b91c1c;
+    opacity: 0.85;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12.5px;
+    margin: 4px 0;
+  }
+  .err-item .err-right {
+    color: var(--ok);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12.5px;
+    font-weight: 600;
+    margin: 4px 0;
+  }
+  .err-item .err-note {
+    color: var(--ink-2);
+    font-size: 12.5px;
+    margin-top: 4px;
+  }
+
+  /* ========== TL;DR ========== */
+  .tldr {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%);
+    border-radius: 14px;
+    padding: 22px 26px 20px;
+    color: #fff;
+    margin: 18px 0 12px;
+  }
+  .tldr h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tldr h2 small {
+    font-size: 11.5px;
+    opacity: 0.7;
+    font-weight: 500;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    margin-left: 4px;
+  }
+  .tldr-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  .tldr-card {
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .tldr-card .tldr-label {
+    font-size: 11.5px;
+    opacity: 0.75;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .tldr-card .tldr-text {
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .tldr-line {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    font-size: 13.5px;
+    line-height: 1.6;
+    opacity: 0.95;
+  }
+
+  footer {
+    text-align: center;
+    color: var(--ink-3);
+    font-size: 11.5px;
+    margin-top: 24px;
+    line-height: 1.6;
+  }
+  footer b { color: var(--ink-2); }
+
+  @media (max-width: 900px) {
+    .overview { grid-template-columns: 1fr 1fr; }
+    .err-grid { grid-template-columns: 1fr; }
+    .tldr-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 24px; }
+  }
+  @media (max-width: 540px) {
+    .overview { grid-template-columns: 1fr; }
+    .hero { padding: 24px 22px 20px; }
+    .module, .errors, .tldr { padding: 18px 18px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ① 标题区 -->
+  <header class="hero">
+    <h1>龙岗区期末考 · 5 大模块全复盘</h1>
+    <p class="subtitle">
+      2025-2026 学年第二学期 · 五年级数学 · 学科素养期末巩固卷<br>
+      80 分钟 · 30 道题 · 100 分 · 1 张表拆给你看<br>
+      <span style="opacity:0.85; font-size:13px;">📘 覆盖全册 U1-U8 核心考点 · 重点分数乘除法 (55 分) + 长方体 (25 分) + 方程 (15 分)</span>
+    </p>
+    <div class="meta">
+      <span>📊 <b>5 大模块</b></span>
+      <span>🎯 <b>30 道题</b></span>
+      <span>⏱ <b>80 分钟</b></span>
+      <span>📐 <b>5 类核心题型</b></span>
+      <span>⚠️ <b>5 个易错点</b></span>
+    </div>
+  </header>
+
+  <!-- ② 总览 4 卡片 -->
+  <section class="overview">
+    <div class="ov-card m1">
+      <div class="ov-en">EXAM STRUCTURE</div>
+      <div class="ov-num">30<small>道题</small></div>
+      <div class="ov-title">选择 15 · 填空 8<br>计算 6 · 操作 1 · 解决问题 5</div>
+    </div>
+    <div class="ov-card m2">
+      <div class="ov-en">SCORE LAYOUT</div>
+      <div class="ov-num">100<small>分</small></div>
+      <div class="ov-title">数与代数 55 · 图形几何 25<br>统计 10 · 综合实践 10</div>
+    </div>
+    <div class="ov-card m3">
+      <div class="ov-en">KEY CHAPTERS</div>
+      <div class="ov-num">5<small>大考点</small></div>
+      <div class="ov-title">分数乘除 · 长方体 · 方程<br>统计图 · 位置方向</div>
+    </div>
+    <div class="ov-card m4">
+      <div class="ov-en">TIME BUDGET</div>
+      <div class="ov-num">80<small>分钟</small></div>
+      <div class="ov-title">选 12 + 填 10 + 算 12 + 操 8 + 解 28<br>+ 留 10 分钟检查</div>
+    </div>
+  </section>
+
+  <!-- ③ 主模块 -->
+
+  <!-- 01 分数乘除法综合 (55分) -->
+  <section class="module m1">
+    <div class="mod-head">
+      <span class="mod-num">01</span>
+      <h2 class="mod-title">分数乘除法综合 <span class="en">FRACTIONS · 55 PTS</span></h2>
+      <span class="mod-score">占分 <b>55</b>/100</span>
+    </div>
+    <div class="callout">
+      <b>口诀：</b>乘法看单位"1"（求一个数的几分之几用 ×） · 除法看已知（已知几分之几是多少求整体用 ÷，求的是单位"1"）
+    </div>
+
+    <table>
+      <thead><tr><th>考点</th><th>算理</th><th>判定</th></tr></thead>
+      <tbody>
+        <tr><td>分数 × 整数</td><td>分子 × 整数，能约分先约分</td><td>例：<code>5/8 × 4 = 20/8 = 5/2</code></td></tr>
+        <tr><td>分数 × 分数</td><td>分子 × 分子 / 分母 × 分母</td><td>例：<code>1/2 × 2/3 = 1/3</code></td></tr>
+        <tr><td>分数 ÷ 整数</td><td>分数 × 这个整数的倒数</td><td>例：<code>4/5 ÷ 2 = 4/5 × 1/2 = 2/5</code></td></tr>
+        <tr><td>分数 ÷ 分数</td><td>除以一个分数 = 乘它的倒数</td><td>例：<code>4 ÷ 2/5 = 4 × 5/2 = 10</code></td></tr>
+        <tr><td>找单位"1"</td><td>"的"字前面的是单位"1"</td><td>求部分用 ×，求整体用 ÷</td></tr>
+      </tbody>
+    </table>
+
+    <div class="example">
+      <div class="q">📌 试卷第 6 题 · 4200 × 2/7 的意义</div>
+      <div>A. 4200 + 2/7 &nbsp; B. 4200 的 2/7 是多少<br>
+      C. 已知一个数的 2/7 是 4200，求这个数 &nbsp; D. 4200 - 2/7
+      <div class="a">答案：B（a × b/c = a 的 b/c 是多少，求部分用 ×）</div>
+    </div>
+
+    <div class="example">
+      <div class="q">📌 试卷第 7 题 · 4 ÷ 2/5 的等价变形（哪个不等？）</div>
+      A. (4×5) ÷ (2/5×5) &nbsp; B. 4 ÷ 0.4<br>
+      C. 20/5 ÷ 2/5 = 20 ÷ 2 &nbsp; D. 4 × 2 ÷ 5
+      <div class="a">答案：D。❌ 4 ÷ 2/5 ≠ 4 × 2 ÷ 5 = 8/5；✅ 4 × 5/2 = 10<br>（商不变性质: 分子分母同乘同除；不能直接交叉相乘）</div>
+    </div>
+
+    <div class="example">
+      <div class="q">📌 试卷解决问题 1 · 种植地问题</div>
+      整块地的 1/2 种蔬菜，蔬菜区的 2/3 种生菜。生菜占整块地的几分之几？
+      <div class="a">1/2 × 2/3 = <b>1/3</b>（求一个数的几分之几用 ×，连乘即连个几分之几）</div>
+    </div>
+  </section>
+
+  <!-- 02 长方体表面积与体积 (25分) -->
+  <section class="module m2">
+    <div class="mod-head">
+      <span class="mod-num">02</span>
+      <h2 class="mod-title">长方体表面积与体积 <span class="en">CUBOID · 25 PTS</span></h2>
+      <span class="mod-score">占分 <b>25</b>/100</span>
+    </div>
+    <div class="callout">
+      <b>口诀：</b>表面积看"面数"（无盖 5 面 / 通风管 4 面）· 体积三相乘 · 单位换算 1000 进位
+    </div>
+
+    <table>
+      <thead><tr><th>公式</th><th>适用</th><th>关键提醒</th></tr></thead>
+      <tbody>
+        <tr><td>S = 2(ab + ah + bh)</td><td>完整长方体 6 面</td><td>标准题</td></tr>
+        <tr><td>S = ab + 2ah + 2bh</td><td>无盖长方体（5 面）</td><td>水池、鱼缸、粉笔盒</td></tr>
+        <tr><td>S = 4ah + 2ab</td><td>通风管（4 个侧面）</td><td>无上下底</td></tr>
+        <tr><td>V = a × b × h</td><td>长方体体积</td><td>横截面 × 长</td></tr>
+        <tr><td>V = a³</td><td>正方体体积</td><td>棱长 × 棱长 × 棱长</td></tr>
+      </tbody>
+    </table>
+
+    <h4 style="margin: 14px 0 4px; font-size: 14px;">📏 单位换算（必背）</h4>
+    <div style="font-size: 13px; color: var(--ink-2); line-height: 1.8; padding-left: 8px;">
+      1 m³ = <b>1000</b> dm³ &nbsp;|&nbsp; 1 dm³ = <b>1000</b> cm³ &nbsp;|&nbsp; 1 L = 1 dm³ = <b>1000</b> mL<br>
+      体积单位从大到小：m³ → dm³ → cm³，<b>每级 × 1000</b>（相邻进率 1000）
+    </div>
+
+    <div class="example">
+      <div class="q">📌 试卷解决问题 2 · 景观水池（30m × 15m × 2m）</div>
+      (1) 水位线 1.5m 处的全长？(2) 底面和四周贴瓷砖，至少多少 m²？
+      <div class="a">
+      (1) (30 + 15) × 2 = <b>90 米</b>（顶部周长，与深度无关）<br>
+      (2) 30×15 + 30×2×2 + 15×2×2 = 450 + 120 + 60 = <b>630 m²</b>（无盖 5 面）
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="q">📌 试卷填空 7 · 锯木头问题</div>
+      长 1.5m 的长方体木料，横截面是边长 4dm 的正方形，锯成 3 段。
+      <div class="a">
+      锯 3 段 = 锯 <b>2 次</b>，增加 <b>4 个横截面</b>（不是 6 个！）<br>
+      1 个横截面 = 4×4 = 16 dm² → 4 个 = 64 dm²<br>
+      体积 = 15 × 16 = <b>240 dm³</b>（1.5m = 15dm）
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 列方程解应用题 (15分) -->
+  <section class="module m3">
+    <div class="mod-head">
+      <span class="mod-num">03</span>
+      <h2 class="mod-title">列方程解应用题 <span class="en">EQUATIONS · 15 PTS</span></h2>
+      <span class="mod-score">占分 <b>15</b>/100</span>
+    </div>
+    <div class="callout">
+      <b>5 步骤：</b>审题 → 设未知数 x（单位"1"用 x）→ 找等量关系列方程 → 解方程 → 检验写答
+    </div>
+
+    <table>
+      <thead><tr><th>题型</th><th>等量关系</th><th>设未知数</th></tr></thead>
+      <tbody>
+        <tr><td>相遇问题</td><td>速度和 × 时间 = 总路程</td><td>设相遇时 x 分钟</td></tr>
+        <tr><td>追及问题</td><td>速度差 × 时间 = 路程差</td><td>设追上时 x 分钟</td></tr>
+        <tr><td>倍数问题</td><td>1 倍数 + 多份 = 总量</td><td>设 1 倍数为 x</td></tr>
+        <tr><td>连续问题</td><td>3x + 40 = 320</td><td>一个量为 x，其他用 x 表达</td></tr>
+      </tbody>
+    </table>
+
+    <div class="example">
+      <div class="q">📌 试卷解决问题 4 · 相遇问题</div>
+      学校和少年宫相距 800m，鹏鹏 85m/分、城城 75m/分 同时相向而行。相遇时各走几分钟？
+      <div class="a">
+      设相遇时都走了 x 分钟<br>
+      85x + 75x = 800<br>
+      160x = 800<br>
+      <b>x = 5（分钟）</b><br>
+      （鹏鹏 5×85=425m，城城 5×75=375m，合计 800m ✓）
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="q">📌 试卷选择题 13 · 3x + 40 = 320 的意义</div>
+      "一个数的 3 倍加上 40 等于 320，求这个数"
+      <div class="a">选 B（3x + 40 = 320）<br>解：3x = 280 → <b>x = 280/3 ≈ 93.3</b></div>
+    </div>
+  </section>
+
+  <!-- 04 复式折线统计图 (10分) -->
+  <section class="module m4">
+    <div class="mod-head">
+      <span class="mod-num">04</span>
+      <h2 class="mod-title">复式折线统计图 <span class="en">STATISTICS · 10 PTS</span></h2>
+      <span class="mod-score">占分 <b>10</b>/100</span>
+    </div>
+    <div class="callout">
+      <b>选图决策：</b>看变化趋势 → 复式<b>折线</b>图 · 看数量多少 → 复式<b>条形</b>图 · 看部分占整体 → 扇形图
+    </div>
+
+    <table>
+      <thead><tr><th>统计图</th><th>适用场景</th><th>看什么</th></tr></thead>
+      <tbody>
+        <tr><td>单式折线</td><td>1 个量随时间变化</td><td>增减趋势 / 多少</td></tr>
+        <tr><td>复式折线 ⭐</td><td>2 个量同时变化</td><td>对比趋势 / 找交叉点</td></tr>
+        <tr><td>复式条形</td><td>2 个量并列比较</td><td>数量大小</td></tr>
+        <tr><td>扇形</td><td>占整体的百分比</td><td>部分占整体</td></tr>
+      </tbody>
+    </table>
+
+    <div class="example">
+      <div class="q">📌 试卷选择题 1 · 绿豆芽茎长和叶长</div>
+      龙龙每 3 天测量绿豆芽的茎长和叶长，要反映两者的生长变化。
+      <div class="a">答案：C. <b>复式折线</b>统计图（2 个量 + 看变化趋势）</div>
+    </div>
+
+    <div class="example">
+      <div class="q">📌 试卷解决问题 5 · 深圳/昆明月平均气温</div>
+      复式折线统计图上，植物生长期 5 个月，最适温度 5-14°C，适宜在哪个城市种植？
+      <div class="a">答案：<b>昆明</b>。<br>昆明夏季气温低于深圳，符合 5-14°C 区间月份更多；深圳气温偏高。<br>（看图要找"5-14°C 区间"覆盖的月份数）</div>
+    </div>
+  </section>
+
+  <!-- 05 位置与方向 (6分) -->
+  <section class="module m5">
+    <div class="mod-head">
+      <span class="mod-num">05</span>
+      <h2 class="mod-title">位置与方向（操作题） <span class="en">DIRECTION · 6 PTS</span></h2>
+      <span class="mod-score">占分 <b>6</b>/100</span>
+    </div>
+    <div class="callout">
+      <b>3 要素：</b>方向（8 方位 + 偏角）· 角度 · 距离。比例尺：1cm 代表 1km → 图上 1cm = 实际 1km
+    </div>
+
+    <div style="font-size: 13px; color: var(--ink-2); line-height: 1.8; padding: 4px 0 8px;">
+      <b>描述规范：</b>方向 + 偏 + 角度 + 距离<br>
+      北偏东 30°（先说"北"再说"东"） · 东偏南 30°（先说"东"再说"南"）<br>
+      <b>互逆关系：</b>甲在乙北偏东 30° 距离 X → 乙在甲<b>南偏西 30°</b> 距离 X（方向相反，角度不变，距离不变）
+    </div>
+
+    <div class="example">
+      <div class="q">📌 试卷操作题 28 · 无人机航拍</div>
+      1. 起点向什么方向飞 2km 到航点 A？<br>
+      2. 拍摄目标在 B 的东偏南 30° 方向 3km 处，标出位置。
+      <div class="a">
+      1. 起点向<b>南偏东 30°</b>（或东偏南 60°）方向飞行 2km 到达 A<br>
+      2. 从 B 出发，沿东偏南 30° 量 3cm 标出目标点（3cm = 3km）
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ 红叉误区 -->
+  <section class="errors">
+    <h2>⚠️ 5 大易错点 <small>PITFALLS · 试卷原题雷区</small></h2>
+    <div class="err-grid">
+
+      <div class="err-item">
+        <div class="err-title">1. 锯木头：锯几次增几个面？</div>
+        <div class="err-wrong">锯成 3 段 → 增加 6 个横截面 ❌</div>
+        <div class="err-right">锯 3 段 = 锯 2 次 → 增 4 个横截面 ✅</div>
+        <div class="err-note">口诀：n 段 → (n-1) 刀 → 2(n-1) 个面</div>
+      </div>
+
+      <div class="err-item">
+        <div class="err-title">2. 表面积：看题给的"面"对吗？</div>
+        <div class="err-wrong">水池贴瓷砖 = 6 个面 ❌</div>
+        <div class="err-right">无盖 = 5 个面；通风管 = 4 个面 ✅</div>
+        <div class="err-note">口诀：先画图，标"贴/不贴"</div>
+      </div>
+
+      <div class="err-item">
+        <div class="err-title">3. 分数 ÷ 分数：不是交叉相乘</div>
+        <div class="err-wrong">4 ÷ 2/5 = 4 × 2 ÷ 5 ❌</div>
+        <div class="err-right">4 ÷ 2/5 = 4 × 5/2 = 10 ✅</div>
+        <div class="err-note">口诀：除以一个分数 = 乘它的倒数</div>
+      </div>
+
+      <div class="err-item">
+        <div class="err-title">4. 找单位"1"：求部分 vs 求整体</div>
+        <div class="err-wrong">已知多的求少的用 ÷ ❌</div>
+        <div class="err-right">求一个数的几分之几用 ×；反过来用 ÷ ✅</div>
+        <div class="err-note">口诀："的"字前面是单位"1"</div>
+      </div>
+
+      <div class="err-item">
+        <div class="err-title">5. 排水法：算的是"上升高度"</div>
+        <div class="err-wrong">V物体 = 容器底面积 × 容器高 ❌</div>
+        <div class="err-right">V物体 = 底面积 × (放后水位 - 放前水位) ✅</div>
+        <div class="err-note">例：10×7×(16-12) = 280 cm³（试卷红薯题）</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ⑤ TL;DR -->
+  <section class="tldr">
+    <h2>🎯 TL;DR · 期末考 1 张清单 <small>ONE-PAGER SUMMARY</small></h2>
+    <div class="tldr-grid">
+      <div class="tldr-card">
+        <div class="tldr-label">核心判断</div>
+        <div class="tldr-text">看趋势用 <b>复式折线</b>，看数量用 <b>复式条形</b>，看占比用 <b>扇形</b>。分数乘除必找单位"1"。</div>
+      </div>
+      <div class="tldr-card">
+        <div class="tldr-label">必背公式</div>
+        <div class="tldr-text">S长方体 = 2(ab+ah+bh) · V = a×b×h · 1m³=1000dm³ · 分数除法 = ×倒数</div>
+      </div>
+      <div class="tldr-card">
+        <div class="tldr-label">避坑口诀</div>
+        <div class="tldr-text">锯 3 段 2 刀增 4 面 · 无盖 5 面 / 通风 4 面 · 排水法看上升高度</div>
+      </div>
+    </div>
+    <div class="tldr-line">
+      <b>本卷一句话：</b>55 分看分数乘除，25 分看长方体应用，15 分看方程，10 分看统计图，5 分看位置方向。<br>
+      <b>答题节奏：</b>选择 12' → 填空 10' → 计算 12' → 操作 8' → 解决问题 28' → 检查 10'（共 80 分钟）
+    </div>
+  </section>
+
+  <footer>
+    <div><b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载</div>
+    <div style="margin-top: 4px;">© 2026 DONG XINGBO · All rights reserved</div>
+    <div style="margin-top: 8px; font-size: 10.5px;">试卷来源：龙岗区 2025-2026 学年第二学期五年级数学期末巩固卷 · 题型与答案整理自校内复习资料</div>
+  </footer>
+
+</div>
+</body>
+</html>
