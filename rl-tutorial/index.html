@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>强化学习互动教程 · RL from Scratch</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --bg-2: #161b22;
+  --bg-3: #1c2128;
+  --line: #30363d;
+  --line-2: #444c56;
+  --ink: #e6edf3;
+  --ink-2: #adbac7;
+  --ink-3: #768390;
+  --accent: #58a6ff;
+  --accent-2: #f0883e;
+  --green: #56d364;
+  --red: #f85149;
+  --purple: #bc8cff;
+  --pink: #f778ba;
+  --yellow: #e3b341;
+  --teal: #39c5cf;
+  --shadow: 0 4px 14px rgba(0,0,0,0.4);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+               'Hiragino Sans GB', 'Microsoft YaHei', 'Source Han Sans CN',
+               sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+  font-size: 15px;
+  scroll-behavior: smooth;
+}
+
+/* ========== 顶部 header ========== */
+header.top {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(13, 17, 23, 0.92);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header.top h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+header.top h1 .accent { color: var(--accent); }
+
+header.top .meta {
+  font-size: 12px;
+  color: var(--ink-3);
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+#progress-bar {
+  position: fixed;
+  top: 53px;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  z-index: 99;
+  width: 0%;
+  transition: width 0.15s ease;
+}
+
+/* ========== 主体布局 ========== */
+.layout {
+  display: flex;
+  min-height: calc(100vh - 53px);
+}
+
+nav.sidebar {
+  position: sticky;
+  top: 53px;
+  width: 240px;
+  height: calc(100vh - 53px);
+  overflow-y: auto;
+  background: var(--bg-2);
+  border-right: 1px solid var(--line);
+  padding: 24px 0;
+  flex-shrink: 0;
+}
+
+nav.sidebar h2 {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  margin: 0 24px 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+nav.sidebar ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px;
+  color: var(--ink-2);
+  text-decoration: none;
+  font-size: 14px;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+
+nav.sidebar a:hover {
+  background: var(--bg-3);
+  color: var(--ink);
+}
+
+nav.sidebar a.active {
+  background: var(--bg-3);
+  color: var(--accent);
+  border-left-color: var(--accent);
+  font-weight: 600;
+}
+
+nav.sidebar a .num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg-3);
+  color: var(--ink-3);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+  flex-shrink: 0;
+}
+
+nav.sidebar a.active .num {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+nav.sidebar a.done .num {
+  background: var(--green);
+  color: var(--bg);
+}
+
+main.content {
+  flex: 1;
+  max-width: 920px;
+  padding: 32px 48px 80px;
+}
+
+main.content > section.step {
+  margin-bottom: 80px;
+  scroll-margin-top: 70px;
+}
+
+main.content h2 {
+  font-size: 28px;
+  margin: 0 0 4px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+main.content h2 .step-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(88, 166, 255, 0.12);
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-right: 10px;
+  vertical-align: middle;
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.05em;
+}
+
+main.content .step-tagline {
+  font-size: 15px;
+  color: var(--ink-3);
+  margin: 0 0 24px;
+  font-style: italic;
+}
+
+main.content h3 {
+  font-size: 17px;
+  margin: 28px 0 10px;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+main.content h3::before {
+  content: '';
+  width: 3px;
+  height: 16px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+main.content p {
+  margin: 8px 0;
+  color: var(--ink-2);
+}
+
+main.content code {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.88em;
+  background: var(--bg-3);
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: var(--pink);
+  border: 1px solid var(--line);
+}
+
+main.content pre {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.5;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  color: var(--ink-2);
+  margin: 10px 0;
+}
+
+main.content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+main.content ul, main.content ol {
+  color: var(--ink-2);
+  padding-left: 22px;
+}
+
+main.content li { margin: 4px 0; }
+
+main.content strong { color: var(--ink); }
+
+main.content a { color: var(--accent); text-decoration: none; }
+main.content a:hover { text-decoration: underline; }
+
+/* ========== 互动 demo 容器 ========== */
+.demo {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin: 16px 0;
+}
+
+.demo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.demo-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: ui-monospace, monospace;
+}
+
+.demo-controls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+button.btn {
+  background: var(--bg-3);
+  color: var(--ink);
+  border: 1px solid var(--line-2);
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+button.btn:hover {
+  background: var(--line);
+  border-color: var(--accent);
+}
+
+button.btn:active { transform: translateY(1px); }
+
+button.btn.primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+button.btn.primary:hover {
+  background: #79b8ff;
+  border-color: #79b8ff;
+}
+
+input[type="range"] {
+  width: 100px;
+  vertical-align: middle;
+  accent-color: var(--accent);
+}
+
+input[type="text"], input[type="number"] {
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--line-2);
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-family: ui-monospace, monospace;
+}
+
+/* 标签盒 (复用 html-teaching-slides 的 box 配色) */
+.box {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 12.5px;
+  margin: 1px 3px;
+  border: 1px solid;
+}
+.box.env    { background: rgba(125,211,252,0.12); color: #7dd3fc; border-color: #7dd3fc; }
+.box.agent  { background: rgba(167,139,250,0.12); color: #a78bfa; border-color: #a78bfa; }
+.box.state  { background: rgba(251,191,36,0.12);  color: #fbbf24; border-color: #fbbf24; }
+.box.action { background: rgba(34,197,94,0.12);   color: #22c55e; border-color: #22c55e; }
+.box.reward { background: rgba(248,113,113,0.12); color: #f87171; border-color: #f87171; }
+.box.policy { background: rgba(88,166,255,0.12);  color: #58a6ff; border-color: #58a6ff; }
+.box.value  { background: rgba(63,185,80,0.12);   color: #56d364; border-color: #56d364; }
+.box.warn   { background: rgba(248,113,113,0.12); color: #f87171; border-color: #f87171; }
+.box.tip    { background: rgba(56,139,253,0.10);  color: #58a6ff; border-color: rgba(88,166,255,0.4); }
+
+/* Callout box */
+.callout {
+  border-left: 3px solid var(--accent);
+  background: rgba(88, 166, 255, 0.06);
+  padding: 12px 16px;
+  margin: 14px 0;
+  border-radius: 0 6px 6px 0;
+  color: var(--ink-2);
+  font-size: 14px;
+}
+
+.callout.warn {
+  border-left-color: var(--accent-2);
+  background: rgba(240, 136, 62, 0.06);
+}
+
+.callout .callout-title {
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 13px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Code reference 块 */
+.code-ref {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent-2);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 14px 0;
+  font-size: 13.5px;
+}
+
+.code-ref .label {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--accent-2);
+  background: rgba(240, 136, 62, 0.12);
+  padding: 2px 8px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.code-ref .filename {
+  font-family: ui-monospace, monospace;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.code-ref .desc {
+  color: var(--ink-2);
+  margin: 4px 0 8px;
+  font-size: 13.5px;
+}
+
+.code-ref pre {
+  margin: 6px 0 0;
+  font-size: 12px;
+  background: var(--bg);
+}
+
+/* 表格 */
+table.compare {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 12px 0;
+}
+
+table.compare th, table.compare td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+table.compare th {
+  background: var(--bg-2);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+table.compare tr:hover td { background: var(--bg-2); }
+
+/* 流程图 */
+.flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+}
+
+.flow-node {
+  padding: 8px 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.flow-node.agent { border-color: var(--purple); color: var(--purple); background: rgba(167, 139, 250, 0.08); }
+.flow-node.env   { border-color: var(--accent); color: var(--accent); background: rgba(88, 166, 255, 0.08); }
+.flow-node.rwd   { border-color: var(--red); color: var(--red); background: rgba(248, 113, 113, 0.08); }
+
+.flow-arrow {
+  color: var(--ink-3);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ====== 各 step 专用 demo 样式 ====== */
+
+/* Bandit demo */
+.bandit-table {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.bandit-arm {
+  background: var(--bg-3);
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.bandit-arm:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.bandit-arm.disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.bandit-arm .arm-id {
+  font-size: 11px;
+  color: var(--ink-3);
+  font-family: ui-monospace, monospace;
+}
+
+.bandit-arm .arm-q {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: ui-monospace, monospace;
+  margin: 4px 0;
+}
+
+.bandit-arm .arm-n {
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.bandit-arm .arm-reward {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.bandit-arm .arm-reward.show { opacity: 1; }
+.bandit-arm .arm-reward.pos { color: var(--green); }
+.bandit-arm .arm-reward.neg { color: var(--red); }
+
+.bandit-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--ink-2);
+  padding: 8px 12px;
+  background: var(--bg);
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+}
+
+/* Q-Learning grid demo */
+.qgrid {
+  display: grid;
+  grid-template-columns: repeat(4, 64px);
+  grid-template-rows: repeat(4, 64px);
+  gap: 3px;
+  margin: 12px auto;
+  width: max-content;
+}
+
+.qcell {
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  font-family: ui-monospace, monospace;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.qcell.start { background: rgba(125, 211, 252, 0.25); border-color: #7dd3fc; }
+.qcell.goal  { background: rgba(86, 211, 100, 0.30); border-color: var(--green); }
+.qcell.hole  { background: rgba(248, 113, 113, 0.30); border-color: var(--red); }
+.qcell.visited { box-shadow: inset 0 0 0 2px var(--accent); }
+.qcell.q-high  { background: rgba(86, 211, 100, 0.20); }
+.qcell.q-low   { background: rgba(248, 113, 113, 0.10); }
+
+.qcell .qbadge {
+  position: absolute;
+  top: 1px;
+  right: 3px;
+  font-size: 9px;
+  color: var(--ink-3);
+  font-weight: 400;
+}
+
+/* DQN 组件图 */
+.dqn-arch {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  margin: 12px 0;
+}
+
+.dqn-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0;
+  flex-wrap: wrap;
+}
+
+.dqn-box {
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid;
+  font-family: ui-monospace, monospace;
+}
+
+.dqn-box.online  { background: rgba(88, 166, 255, 0.10); color: var(--accent); border-color: var(--accent); }
+.dqn-box.target  { background: rgba(167, 139, 250, 0.10); color: var(--purple); border-color: var(--purple); }
+.dqn-box.buffer  { background: rgba(251, 191, 36, 0.10); color: var(--yellow); border-color: var(--yellow); }
+.dqn-box.env     { background: rgba(125, 211, 252, 0.10); color: #7dd3fc; border-color: #7dd3fc; }
+.dqn-box.loss    { background: rgba(248, 113, 113, 0.10); color: var(--red); border-color: var(--red); }
+
+/* Replay buffer 可视化 */
+.replay-buffer {
+  display: grid;
+  grid-template-columns: repeat(10, 32px);
+  gap: 2px;
+  margin: 12px 0;
+}
+
+.replay-slot {
+  width: 32px;
+  height: 32px;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-family: ui-monospace, monospace;
+  color: var(--ink-3);
+  position: relative;
+}
+
+.replay-slot.filled { background: rgba(88, 166, 255, 0.15); color: var(--accent); border-color: var(--accent); }
+.replay-slot.sampled { background: rgba(167, 139, 250, 0.25); color: var(--purple); border-color: var(--purple); }
+.replay-slot.just-added { box-shadow: 0 0 8px var(--yellow); border-color: var(--yellow); }
+
+/* 策略分布条 */
+.policy-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.policy-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 60px;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.policy-bar-bg {
+  height: 22px;
+  background: var(--bg-3);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.policy-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  transition: width 0.4s ease;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+  font-size: 11px;
+  color: var(--bg);
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+}
+
+/* CartPole 简易可视化 */
+.cartpole-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 180px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  margin: 10px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.cartpole-svg { display: block; }
+
+/* Tiny chart */
+canvas.tiny-chart {
+  display: block;
+  margin: 10px auto;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+/* 进度条 */
+.progress-track {
+  background: var(--bg);
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--accent));
+  transition: width 0.3s;
+}
+
+/* 最终 run-all section */
+.run-all {
+  background: linear-gradient(135deg, rgba(88, 166, 255, 0.08), rgba(167, 139, 250, 0.08));
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin: 24px 0;
+}
+
+.run-all h3 {
+  color: var(--accent);
+  margin-top: 0;
+}
+
+.run-all pre {
+  background: var(--bg);
+  border-color: var(--line-2);
+}
+
+/* footer */
+footer.end {
+  margin-top: 60px;
+  padding: 20px 0;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-3);
+  line-height: 1.7;
+}
+
+footer.end b { color: var(--ink-2); }
+
+/* 移动端 */
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  nav.sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: 0;
+  }
+  main.content { padding: 20px; }
+  .qgrid { grid-template-columns: repeat(4, 50px); grid-template-rows: repeat(4, 50px); }
+  .replay-buffer { grid-template-columns: repeat(10, 24px); }
+  .replay-slot { width: 24px; height: 24px; font-size: 8px; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>RL <span class="accent">from Scratch</span> · 强化学习互动教程</h1>
+  <div class="meta">6 步 · 5 个 Python 脚本 · 一键跑通 CartPole-v1</div>
+</header>
+
+<div id="progress-bar"></div>
+
+<div class="layout">
+
+<!-- ========== 侧边导航 ========== -->
+<nav class="sidebar">
+  <h2>学习路径</h2>
+  <ol>
+    <li><a href="#step-0"><span class="num">0</span>RL 是什么</a></li>
+    <li><a href="#step-1"><span class="num">1</span>多臂老虎机</a></li>
+    <li><a href="#step-2"><span class="num">2</span>Q-Learning 表格</a></li>
+    <li><a href="#step-3"><span class="num">3</span>DQN 深度 Q 网络</a></li>
+    <li><a href="#step-4"><span class="num">4</span>REINFORCE 策略梯度</a></li>
+    <li><a href="#step-5"><span class="num">5</span>PPO 信赖域优化</a></li>
+    <li><a href="#run-all"><span class="num">▶</span>跑完全部</a></li>
+  </ol>
+</nav>
+
+<!-- ========== 主内容 ========== -->
+<main class="content">
+
+<!-- ===================================================================== -->
+<!-- STEP 0: 概念入门 -->
+<!-- ===================================================================== -->
+<section class="step" id="step-0">
+  <h2><span class="step-tag">STEP 0</span>强化学习是什么</h2>
+  <p class="step-tagline">从"试错"出发,看 Agent / Environment / Reward 的闭环。</p>
+
+  <p>在开始写代码前,先把强化学习 (Reinforcement Learning, RL) 的核心循环钉死。
+     它和监督学习的最大区别是: <strong>没有"正确答案"标签</strong>,
+     只有一个滞后的、稀疏的 <span class="box reward">reward</span> 信号。
+     Agent 必须靠"试"出好行为,再靠"奖励"把好行为"强化"下来。</p>
+
+  <div class="flow">
+    <div class="flow-node agent">Agent<br><span style="font-size:10px;color:var(--ink-3);font-weight:400;">智能体</span></div>
+    <div class="flow-arrow">─── action a ───▶</div>
+    <div class="flow-node env">Environment<br><span style="font-size:10px;color:var(--ink-3);font-weight:400;">环境</span></div>
+    <div class="flow-arrow">◀── reward r + state s' ──</div>
+  </div>
+
+  <h3>5 个核心要素</h3>
+  <ul>
+    <li><span class="box state">State s</span> 环境的当前观察 (如 CartPole 的 4 维向量:位置、速度、角度、角速度)</li>
+    <li><span class="box action">Action a</span> Agent 这一步要做的动作 (如左推 / 右推)</li>
+    <li><span class="box reward">Reward r</span> 环境的即时打分 (CartPole 每坚持一帧 +1)</li>
+    <li><span class="box policy">Policy π(a|s)</span> 状态到动作的映射 (Agent 的"大脑")</li>
+    <li><span class="box value">Value V(s) / Q(s,a)</span> 长期回报的期望 (衡量"这个状态有多好")</li>
+  </ul>
+
+  <h3>和其他学习范式对比</h3>
+  <table class="compare">
+    <thead><tr><th>维度</th><th>监督学习</th><th>无监督学习</th><th>强化学习</th></tr></thead>
+    <tbody>
+      <tr><td>信号</td><td>标签 y</td><td>无</td><td>reward r</td></tr>
+      <tr><td>数据</td><td>i.i.d. 样本</td><td>i.i.d. 样本</td><td>轨迹 (有时间相关性)</td></tr>
+      <tr><td>反馈时机</td><td>即时</td><td>—</td><td>可能延迟 (稀疏奖励)</td></tr>
+      <tr><td>目标</td><td>最小化预测误差</td><td>发现结构</td><td>最大化累积奖励</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <div class="callout-title">本教程的主线</div>
+    5 个 Python 脚本,从最简单 (Bandit, 5 步决策) 走到工业级 (PPO, 连续策略优化),
+    全部在 <code>CartPole-v1</code> / <code>FrozenLake-v1</code> 上跑通并画图。
+  </div>
+
+  <h3>互动演示:RL 闭环的"心跳"</h3>
+  <div class="demo">
+    <div class="demo-header">
+      <span class="demo-title">▶ RL Loop · 概念可视化</span>
+      <div class="demo-controls">
+        <button class="btn primary" id="loop-start">开始</button>
+        <button class="btn" id="loop-pause">暂停</button>
+        <button class="btn" id="loop-reset">重置</button>
+        <label>速度: <input type="range" id="loop-speed" min="200" max="1500" value="700"></label>
+      </div>
+    </div>
+    <div class="flow" id="loop-flow">
+      <div class="flow-node agent" id="loop-agent">Agent<br><span style="font-size:10px;color:var(--ink-3);font-weight:400;">π(a|s)</span></div>
+      <div class="flow-arrow" id="loop-arr1">── a ──▶</div>
+      <div class="flow-node env" id="loop-env">Environment</div>
+      <div class="flow-arrow" id="loop-arr2">◀── s', r ──</div>
+    </div>
+    <div id="loop-log" style="font-family:ui-monospace,monospace;font-size:12px;color:var(--ink-2);max-height:120px;overflow-y:auto;background:var(--bg);padding:8px 10px;border-radius:4px;border:1px solid var(--line);">
+      点击"开始"观察 Agent 与环境的交互循环...
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- STEP 1: 多臂老虎机 -->
+<!-- ===================================================================== -->
+<section class="step" id="step-1">
+  <h2><span class="step-tag">STEP 1</span>多臂老虎机 · 探索 vs 利用</h2>
+  <p class="step-tagline">没有"状态"的极简 RL,核心矛盾:多挖一点已经知道好的,还是多试试不确定的?</p>
+
+  <p>想象面前有 5 台老虎机,每台的"中奖概率"你不知道。
+     每拉一次,得到一个 reward。目标:拉 1000 次,让累积 reward 最高。</p>
+
+  <p>这是 RL 里最简单的 <strong>无状态</strong> 问题——只看 action→reward,不关心状态转移。
+     核心问题就是教科书经典的 <strong>exploration vs exploitation</strong>:</p>
+  <ul>
+    <li><b>Exploit (利用)</b>:一直拉目前估值 Q[a] 最高的臂</li>
+    <li><b>Explore (探索)</b>:随机拉别的臂,虽然短期 reward 可能低,但可能发现更好的臂</li>
+  </ul>
+
+  <h3>4 种经典策略</h3>
+  <table class="compare">
+    <thead><tr><th>策略</th><th>核心思想</th><th>超参</th></tr></thead>
+    <tbody>
+      <tr><td>random</td><td>完全随机,无学习</td><td>—</td></tr>
+      <tr><td>ε-greedy (固定)</td><td>ε 概率随机,否则取 argmax Q</td><td>ε ∈ [0,1]</td></tr>
+      <tr><td>UCB1</td><td>给"尝试少"的臂加一个 bonus,鼓励探索</td><td>c (置信度)</td></tr>
+      <tr><td>ε-decay</td><td>前期多探索,后期专注利用</td><td>ε_start, ε_end, decay</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <div class="callout-title">关键公式 · Q 值增量更新</div>
+    每拉一次臂 a 得到 reward r,Q 值的更新是"新样本均值":
+    <pre style="margin:6px 0 0;"><code>Q[a] ← Q[a] + (r − Q[a]) / N[a]</code></pre>
+    等价于 <code>Q[a] = (1 − 1/N[a]) · Q[a] + (1/N[a]) · r</code>,即所有历史 reward 的平均。
+  </div>
+
+  <h3>互动演示:亲手拉 5 台老虎机</h3>
+  <div class="demo">
+    <div class="demo-header">
+      <span class="demo-title">▶ 5-Armed Bandit · ε-greedy 实时学习</span>
+      <div class="demo-controls">
+        <label>ε: <input type="range" id="bandit-eps" min="0" max="1" step="0.05" value="0.1"></label>
+        <span id="bandit-eps-val" style="font-family:ui-monospace,monospace;color:var(--accent);min-width:30px;">0.10</span>
+        <button class="btn primary" id="bandit-pull">拉一次</button>
+        <button class="btn primary" id="bandit-auto">自动跑 50 次</button>
+        <button class="btn" id="bandit-reset">重新生成手臂</button>
+      </div>
+    </div>
+
+    <div class="bandit-table" id="bandit-arms"></div>
+
+    <div class="bandit-stats">
+      <span>总步数: <b id="bandit-steps" style="color:var(--ink);">0</b></span>
+      <span>累积 reward: <b id="bandit-cum" style="color:var(--green);">0.00</b></span>
+      <span>平均 reward: <b id="bandit-avg" style="color:var(--accent);">0.00</b></span>
+      <span>最优臂: <b id="bandit-best" style="color:var(--yellow);">—</b></span>
+    </div>
+  </div>
+
+  <div class="code-ref">
+    <span class="label">Python 代码</span>
+    <div class="filename">~/rl-tutorial/step1_bandit.py</div>
+    <p class="desc">实现了上面 4 种策略,跑 5 个随机种子,画"per-step reward"和"累积 reward"两条曲线。
+       跑完会保存 <code>outputs/bandit.png</code>。</p>
+    <pre><code>$ cd ~/rl-tutorial
+$ python3 step1_bandit.py
+  → outputs/bandit.png
+  → 控制台打印每种策略的最终累积 reward</code></pre>
+  </div>
+
+  <h3>观察要点</h3>
+  <ul>
+    <li>ε 太大 (≥0.3) → 一直随机,平均 reward ≈ 0</li>
+    <li>ε = 0 → 完全利用,可能卡在次优臂上</li>
+    <li><b>ε-decay</b> 是实战最佳:前期探索,后期专注</li>
+    <li>UCB1 理论保证 (regret ~ O(√T)),但实践中往往不如 ε-decay 直观</li>
+  </ul>
+</section>
+
+<!-- ===================================================================== -->
+<!-- STEP 2: Q-Learning 表格 -->
+<!-- ===================================================================== -->
+<section class="step" id="step-2">
+  <h2><span class="step-tag">STEP 2</span>Q-Learning 表格型</h2>
+  <p class="step-tagline">加入"状态"——Agent 不仅看 reward,还要看"我在哪"。</p>
+
+  <p>Bandit 只有一个状态,真实问题里 <strong>状态会变</strong>。
+     这一步引入 RL 的核心数学结构: <strong>马尔可夫决策过程 (MDP)</strong>。</p>
+
+  <h3>MDP 五元组 (S, A, P, R, γ)</h3>
+  <ul>
+    <li><b>S</b>:状态集合 (FrozenLake 4×4 有 16 个格子)</li>
+    <li><b>A</b>:动作集合 (4 个方向)</li>
+    <li><b>P(s'|s,a)</b>:状态转移概率 (在 FrozenLake 里"is_slippery=True" → 走一步会随机滑向左右)</li>
+    <li><b>R(s,a,s')</b>:奖励函数 (到 G 得 +1,其它 0)</li>
+    <li><b>γ ∈ [0,1]</b>:折扣因子,衡量未来 reward 的现值</li>
+  </ul>
+
+  <h3>Bellman 最优方程 (Q 形式)</h3>
+  <pre><code>Q*(s, a) = E[ r + γ · max Q*(s', a') | s, a ]</code></pre>
+  <p>它说:状态 s 下做动作 a 的"长期价值",等于"立刻拿到的 r"加上"到达 s' 之后按最优策略能拿到的折现价值"。</p>
+
+  <h3>Q-Learning 更新规则 (时序差分 / TD)</h3>
+  <pre><code>Q(s, a) ← Q(s, a) + α · [ r + γ · max Q(s', a') − Q(s, a) ]</code></pre>
+  <p>其中 <code>α</code> 是学习率,方括号里就是 <b>TD 误差</b>。这是 off-policy 的:
+     用的"目标"是 max (假设下一步会选最优动作),但行为可以 ε-greedy 探索。</p>
+
+  <h3>互动演示:FrozenLake 4×4 实时学习</h3>
+  <div class="demo">
+    <div class="demo-header">
+      <span class="demo-title">▶ FrozenLake-v1 (slippery) · Q-Learning 实时训练</span>
+      <div class="demo-controls">
+        <label>ε: <input type="range" id="qlearn-eps" min="0" max="1" step="0.05" value="0.5"></label>
+        <span id="qlearn-eps-val" style="font-family:ui-monospace,monospace;color:var(--accent);min-width:30px;">0.50</span>
+        <label>α: <input type="range" id="qlearn-alpha" min="0.05" max="1" step="0.05" value="0.5"></label>
+        <span id="qlearn-alpha-val" style="font-family:ui-monospace,monospace;color:var(--accent);min-width:30px;">0.50</span>
+        <button class="btn primary" id="qlearn-start">开始训练</button>
+        <button class="btn" id="qlearn-step">单步</button>
+        <button class="btn" id="qlearn-reset">重置 Q 表</button>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;">
+      <div>
+        <div class="qgrid" id="qlearn-grid"></div>
+        <div style="text-align:center;font-size:11px;color:var(--ink-3);margin-top:4px;">网格 (S=起点, G=终点, H=洞)</div>
+      </div>
+      <div>
+        <canvas id="qlearn-canvas" class="tiny-chart" width="280" height="180"></canvas>
+        <div style="text-align:center;font-size:11px;color:var(--ink-3);margin-top:4px;">最近 50 ep 成功率</div>
+      </div>
+    </div>
+
+    <div class="bandit-stats">
+      <span>Episode: <b id="qlearn-ep" style="color:var(--ink);">0</b></span>
+      <span>最近 50 ep 成功率: <b id="qlearn-sr" style="color:var(--green);">0%</b></span>
+      <span>当前 ε: <b id="qlearn-cur-eps" style="color:var(--accent);">0.30</b></span>
+    </div>
+  </div>
+
+  <div class="code-ref">
+    <span class="label">Python 代码</span>
+    <div class="filename">~/rl-tutorial/step2_q_learning.py</div>
+    <p class="desc">用 Gymnasium 的 FrozenLake-v1 (4×4, slippery),训练 10000 个 episode,
+       最终画出"训练曲线 + Q 表热图 + 网格最优策略箭头"三联图到 <code>outputs/qlearning.png</code>。</p>
+    <pre><code>$ python3 step2_q_learning.py
+  → outputs/qlearning.png
+  → 控制台打印最终成功率 (滑冰版大约 70-80%)</code></pre>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- STEP 3: DQN -->
+<!-- ===================================================================== -->
+<section class="step" id="step-3">
+  <h2><span class="step-tag">STEP 3</span>DQN · 深度 Q 网络</h2>
+  <p class="step-tagline">状态多到表格装不下时,用神经网络拟合 Q 函数。</p>
+
+  <p>Q-Learning 在小状态空间 (FrozenLake 16 状态) 没问题,
+     但 CartPole 的状态是 4 维连续向量,理论上无穷多状态——Q 表根本建不出来。
+     <strong>DQN (Deep Q-Network, Mnih 2013, Nature)</strong> 用一个神经网络
+     Q(s, a; θ) 拟合 Q 表。</p>
+
+  <h3>DQN 三大件 (原论文贡献)</h3>
+  <div class="dqn-arch">
+    <div class="dqn-row">
+      <span class="box env">Environment</span>
+      <span style="color:var(--ink-3);">─── s, r, done ───▶</span>
+      <span class="dqn-box online">Q-Network θ (online)</span>
+    </div>
+    <div class="dqn-row">
+      <span class="dqn-box buffer">Replay Buffer D</span>
+      <span style="color:var(--ink-3);font-size:11px;">←── (s, a, r, s', done) ──</span>
+      <span class="dqn-box env">Environment</span>
+    </div>
+    <div class="dqn-row">
+      <span class="dqn-box online">Q-Network θ</span>
+      <span style="color:var(--ink-3);">─── sample batch ──▶</span>
+      <span class="dqn-box loss">MSE Loss</span>
+      <span style="color:var(--ink-3);">─── target ──▶</span>
+      <span class="dqn-box target">Target Q-Network θ⁻</span>
+    </div>
+    <div class="dqn-row">
+      <span style="color:var(--ink-3);font-size:11px;">每 C 步把 θ 复制到 θ⁻</span>
+    </div>
+  </div>
+
+  <ul>
+    <li><b>① Replay Buffer (经验回放)</b>:把 (s,a,r,s',done) 存进固定大小的循环队列,
+        训练时随机采样 batch。<br>
+        <b>解决</b>:相邻样本强相关 → 训练不稳定 (类似 SGD 需要 i.i.d.)</li>
+    <li><b>② Target Network (目标网络)</b>:用一份"老"参数 θ⁻ 算 TD 目标,
+        每隔 C 步才把 θ 同步过去。<br>
+        <b>解决</b>:TD 目标和当前网络都在变 → "移动靶"问题</li>
+    <li><b>③ ε-decay</b>:动作选择仍用 ε-greedy,但 ε 从 1.0 指数衰减到 0.05</li>
+  </ul>
+
+  <h3>DQN 损失函数</h3>
+  <pre><code>L(θ) = E_{(s,a,r,s') ~ D} [ ( r + γ · max Q(s', a'; θ⁻) − Q(s, a; θ) )² ]</code></pre>
+  <p>对当前网络 θ 求梯度,target 网络 θ⁻ 不参与反向传播 (设 <code>requires_grad=False</code>)。</p>
+
+  <h3>互动演示:Replay Buffer 采样过程</h3>
+  <div class="demo">
+    <div class="demo-header">
+      <span class="demo-title">▶ Replay Buffer · 写入 / 采样动画</span>
+      <div class="demo-controls">
+        <label>Buffer 大小: <span id="buf-size-val" style="font-family:ui-monospace,monospace;color:var(--accent);">20</span></label>
+        <button class="btn primary" id="buf-add">写入 1 条</button>
+        <button class="btn primary" id="buf-sample">采样 4 条</button>
+        <button class="btn" id="buf-reset">清空</button>
+      </div>
+    </div>
+
+    <div class="replay-buffer" id="buf-grid"></div>
+    <div style="font-size:12px;color:var(--ink-2);font-family:ui-monospace,monospace;margin-top:6px;">
+      黄色边框 = 刚写入 · 紫色 = 本次采样 · 蓝色 = 已存
+    </div>
+  </div>
+
+  <div class="code-ref">
+    <span class="label">Python 代码</span>
+    <div class="filename">~/rl-tutorial/step3_dqn.py</div>
+    <p class="desc">在 CartPole-v1 上跑 DQN。用 <code>utils.py</code> 里的 <code>QNetwork</code> (MLP 4→128→128→2),
+       实现 ReplayBuffer + 双网络 + ε 衰减,目标 reward 475 (满分 500)。
+       跑完保存 <code>outputs/dqn.png</code>。</p>
+    <pre><code>$ python3 step3_dqn.py
+  → outputs/dqn.png
+  → 打印每 20 ep 平均 return,通常 100-300 ep 内 solved</code></pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">观察:为什么 DQN 这么重要?</div>
+    2013 年 Atari 49 款游戏,29 款超过人类水平;2015 改进版 (Nature DQN) 49 款超过人类水平,
+    只用了"像素 + 分数"作为输入。这是 <b>端到端深度 RL</b> 的开山之作。
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- STEP 4: REINFORCE -->
+<!-- ===================================================================== -->
+<section class="step" id="step-4">
+  <h2><span class="step-tag">STEP 4</span>REINFORCE · 策略梯度</h2>
+  <p class="step-tagline">不估计 Q,直接优化策略 π(a|s; θ)。</p>
+
+  <p>DQN 是 <b>value-based</b>:学 Q(s,a),策略是 argmax Q 的副产品。
+     还有一类 <b>policy-based</b> 方法:直接用一个网络 π(a|s; θ) 输出动作概率,
+     对 θ 沿"增加高 reward 轨迹出现概率"的方向做梯度上升。</p>
+
+  <h3>REINFORCE 核心公式 (Williams 1992)</h3>
+  <pre><code>∇θ J(θ) = E_τ [ Σ_t ∇θ log π(a_t | s_t; θ) · G_t ]</code></pre>
+  <p>其中 G<sub>t</sub> 是从时刻 t 开始的折扣累积回报。
+     直觉:<b>把高回报轨迹上出现过的动作概率推高,低回报轨迹上出现过的推低</b>。</p>
+
+  <h3>完整算法 (回合制)</h3>
+  <ol>
+    <li>用当前策略 π(·|; θ) 跑一个完整 episode,记录 (s<sub>t</sub>, a<sub>t</sub>, r<sub>t</sub>)</li>
+    <li>从后往前算每个时刻的折扣回报 G<sub>t</sub> = Σ<sub>k≥t</sub> γ<sup>k-t</sup> r<sub>k</sub></li>
+    <li>loss = − Σ<sub>t</sub> log π(a<sub>t</sub>|s<sub>t</sub>; θ) · G<sub>t</sub> (对 θ 求梯度下降)</li>
+    <li>θ ← θ − lr · ∇loss</li>
+  </ol>
+
+  <h3>为什么 log π · G 是对的? (Policy Gradient Theorem)</h3>
+  <p>完整证明见 Sutton & Barto 第 13 章。简单直觉:
+     <code>log π(a|s;θ)</code> 对 θ 的梯度方向是"提高选 a 概率"的方向;
+     乘上 G (回报越大,权越大),等价于"用高回报样本加权提高对应动作的概率"。</p>
+
+  <h3>互动演示:策略分布 + 回报加权</h3>
+  <div class="demo">
+    <div class="demo-header">
+      <span class="demo-title">▶ Policy Distribution · 模拟一次更新</span>
+      <div class="demo-controls">
+        <label>Episode 回报: <input type="range" id="pg-g" min="-10" max="20" step="0.5" value="5"></label>
+        <span id="pg-g-val" style="font-family:ui-monospace,monospace;color:var(--green);min-width:36px;">+5.0</span>
+        <button class="btn primary" id="pg-update">应用 REINFORCE 更新</button>
+        <button class="btn" id="pg-reset">重置策略</button>
+      </div>
+    </div>
+
+    <div class="policy-bars" id="pg-bars"></div>
+    <div style="font-size:12px;color:var(--ink-2);margin-top:8px;font-family:ui-monospace,monospace;" id="pg-log">
+      上方是当前策略 π(a|·) 的动作概率分布 (3 个动作)。点"应用更新"会按 G 加权修改 log π。
+    </div>
+  </div>
+
+  <div class="code-ref">
+    <span class="label">Python 代码</span>
+    <div class="filename">~/rl-tutorial/step4_reinforce.py</div>
+    <p class="desc">CartPole-v1 + REINFORCE。用 <code>utils.py</code> 里的 <code>PolicyNetwork</code>,
+       手写"从后往前算 G<sub>t</sub> → 构造 loss → 反向传播"。保存 <code>outputs/reinforce.png</code>。
+       提示:REINFORCE 方差大,通常需要 1000+ ep 才稳定。</p>
+    <pre><code>$ python3 step4_reinforce.py
+  → outputs/reinforce.png
+  → 滑动平均曲线会显示高方差 (相比 DQN 抖动大)</code></pre>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- STEP 5: PPO -->
+<!-- ===================================================================== -->
+<section class="step" id="step-5">
+  <h2><span class="step-tag">STEP 5</span>PPO · 信赖域策略优化</h2>
+  <p class="step-tagline">REINFORCE 太抖,PPO 用"裁剪"让更新更稳。</p>
+
+  <p>REINFORCE 最大的问题是 <b>高方差</b>——一次失败的 episode 可能让策略崩溃。
+     <strong>PPO (Proximal Policy Optimization, Schulman 2017)</strong> 是 OpenAI 提出的工业级方案,
+     核心想法:<b>限制新旧策略的差距</b>,别一次步子迈太大。</p>
+
+  <h3>PPO-Clip 目标函数</h3>
+  <pre><code>L_clip(θ) = E_t [ min( r_t(θ) · Â_t,  clip(r_t(θ), 1−ε, 1+ε) · Â_t ) ]
+
+其中 r_t(θ) = π_θ(a_t | s_t) / π_old(a_t | s_t)   (新旧策略的"概率比")</code></pre>
+  <ul>
+    <li><b>Â<sub>t</sub></b>:优势函数,衡量"在 s<sub>t</sub> 做 a<sub>t</sub> 比平均好多少"</li>
+    <li><b>clip</b>:把 r<sub>t</sub> 截到 [1-ε, 1+ε] (典型 ε=0.2),阻止概率比跑太远</li>
+    <li><b>min</b>:取"未裁剪目标"和"裁剪目标"较小者,避免过度优化</li>
+  </ul>
+
+  <h3>PPO 的 Actor-Critic 结构</h3>
+  <div class="dqn-arch">
+    <div class="dqn-row">
+      <span class="dqn-box env">State s</span>
+      <span style="color:var(--ink-3);">──▶</span>
+      <span class="dqn-box online">Actor (policy head)</span>
+      <span style="color:var(--ink-3);">──▶</span>
+      <span class="dqn-box loss">π(a|s) → action</span>
+    </div>
+    <div class="dqn-row">
+      <span class="dqn-box env">State s</span>
+      <span style="color:var(--ink-3);">──▶</span>
+      <span class="dqn-box target">Critic (value head)</span>
+      <span style="color:var(--ink-3);">──▶</span>
+      <span class="dqn-box value">V(s) → baseline</span>
+    </div>
+    <div class="dqn-row">
+      <span style="color:var(--ink-3);font-size:11px;">共享 backbone,两个输出头;Â = G − V(s) (GAE 做平滑)</span>
+    </div>
+  </div>
+
+  <h3>互动演示:clip 区间对更新的影响</h3>
+  <div class="demo">
+    <div class="demo-header">
+      <span class="demo-title">▶ PPO Clip · 概率比 r(θ) 示意图</span>
+      <div class="demo-controls">
+        <label>ε: <input type="range" id="ppo-eps" min="0.05" max="0.4" step="0.05" value="0.2"></label>
+        <span id="ppo-eps-val" style="font-family:ui-monospace,monospace;color:var(--accent);min-width:30px;">0.20</span>
+        <label>Â: <input type="range" id="ppo-adv" min="-1" max="1" step="0.1" value="0.5"></label>
+        <span id="ppo-adv-val" style="font-family:ui-monospace,monospace;color:var(--green);min-width:36px;">+0.5</span>
+      </div>
+    </div>
+    <canvas id="ppo-canvas" class="tiny-chart" width="700" height="220"></canvas>
+    <div style="font-size:12px;color:var(--ink-2);font-family:ui-monospace,monospace;text-align:center;margin-top:6px;" id="ppo-log">
+      蓝线:未裁剪目标 r·Â · 红线:裁剪后目标 · 黑虚线:零线
+    </div>
+  </div>
+
+  <div class="code-ref">
+    <span class="label">Python 代码</span>
+    <div class="filename">~/rl-tutorial/step5_ppo.py</div>
+    <p class="desc">CartPole-v1 + PPO。用 <code>utils.py</code> 里的 <code>ActorCritic</code> (共享 MLP,actor + critic 双头),
+       实现 GAE 优势估计 + clip 目标 + 多次 epoch 同一批数据更新。保存 <code>outputs/ppo.png</code>。
+       PPO 通常 200-500 ep 就 solved,且训练曲线比 REINFORCE 平稳很多。</p>
+    <pre><code>$ python3 step5_ppo.py
+  → outputs/ppo.png
+  → 看 PPO vs REINFORCE vs DQN 三条曲线的对比</code></pre>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">为什么 PPO 是工业默认?</div>
+    <ul style="margin:6px 0;">
+      <li>实现比 TRPO 简单 (不用共轭梯度 / KL 约束)</li>
+      <li>比 REINFORCE / A2C 稳定 (clip 限制步长)</li>
+      <li>兼容离散 / 连续动作 (ChatGPT RLHF 第一阶段就是 PPO)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 跑完全部 -->
+<!-- ===================================================================== -->
+<section class="step" id="run-all">
+  <h2><span class="step-tag">FINAL</span>跑完全部 5 步</h2>
+  <p class="step-tagline">从 Bandit 到 PPO,一条命令把所有图都画出来。</p>
+
+  <div class="run-all">
+    <h3>🚀 一次性环境准备 + 跑完全部</h3>
+    <pre><code>cd ~/rl-tutorial
+
+# 1) 装依赖 (建议 conda 虚拟环境,Python 3.10+)
+pip install gymnasium torch numpy matplotlib "pyglet&lt;2" box2d-py
+
+# 2) 依次跑 5 个 step
+python3 step1_bandit.py        # → outputs/bandit.png
+python3 step2_q_learning.py    # → outputs/qlearning.png
+python3 step3_dqn.py           # → outputs/dqn.png
+python3 step4_reinforce.py     # → outputs/reinforce.png
+python3 step5_ppo.py           # → outputs/ppo.png
+
+# 3) 看对比 (utils.plot_comparison)
+python3 -c "from utils import plot_comparison; \
+            import pickle, os; \
+            curves = {n: pickle.load(open(f'outputs/{n}.pkl','rb')) \
+                       for n in ['dqn','reinforce','ppo']}; \
+            plot_comparison(curves, save_path='outputs/compare.png')"
+ls outputs/</code></pre>
+  </div>
+
+  <h3>5 个算法的对比</h3>
+  <table class="compare">
+    <thead>
+      <tr><th>算法</th><th>类型</th><th>回合要求</th><th>方差</th><th>CartPole 解决</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Bandit (ε-decay)</td><td>无状态</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><td>Q-Learning</td><td>Value, tabular</td><td>10000</td><td>中</td><td>— (在 FrozenLake)</td></tr>
+      <tr><td>DQN</td><td>Value, function approx</td><td>100-300</td><td>中</td><td>✓</td></tr>
+      <tr><td>REINFORCE</td><td>Policy gradient</td><td>1000+</td><td>高</td><td>✓ (不稳)</td></tr>
+      <tr><td>PPO</td><td>Actor-Critic</td><td>200-500</td><td>低</td><td>✓ (稳)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>文件总览</h3>
+  <pre><code>~/rl-tutorial/
+├── tutorial.html           # ← 你正在看的这个
+├── utils.py                # 共享:QNetwork / PolicyNetwork / ActorCritic / evaluate / plot
+├── step1_bandit.py         # 多臂老虎机 4 策略对比
+├── step2_q_learning.py     # FrozenLake 4x4 表格 Q-Learning
+├── step3_dqn.py            # CartPole + DQN
+├── step4_reinforce.py      # CartPole + REINFORCE
+├── step5_ppo.py            # CartPole + PPO
+├── outputs/                # 所有训练曲线 / 热图 / 网格图
+│   ├── bandit.png
+│   ├── qlearning.png
+│   ├── dqn.png
+│   ├── reinforce.png
+│   ├── ppo.png
+│   └── compare.png
+└── README.md               # 快速上手</code></pre>
+</section>
+
+<footer class="end">
+  <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+  <span style="font-size:11px;">© 2026 DONG XINGBO · All rights reserved</span>
+</footer>
+
+</main>
+</div>
+
+<script>
+/* =========================================================
+   通用:导航高亮 + 进度条
+   ========================================================= */
+(function() {
+  const sections = document.querySelectorAll('main.content > section.step');
+  const links = document.querySelectorAll('nav.sidebar a');
+  const bar = document.getElementById('progress-bar');
+
+  function update() {
+    const y = window.scrollY + 100;
+    let cur = 0;
+    sections.forEach((s, i) => { if (s.offsetTop <= y) cur = i; });
+    links.forEach(a => a.classList.remove('active'));
+    if (links[cur]) links[cur].classList.add('active');
+    const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+    bar.style.width = Math.min(100, Math.max(0, pct)) + '%';
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+/* =========================================================
+   STEP 0: RL Loop 动画
+   ========================================================= */
+(function() {
+  const agent = document.getElementById('loop-agent');
+  const env = document.getElementById('loop-env');
+  const arr1 = document.getElementById('loop-arr1');
+  const arr2 = document.getElementById('loop-arr2');
+  const log = document.getElementById('loop-log');
+  const speed = document.getElementById('loop-speed');
+  let timer = null, step = 0;
+
+  function line(s) {
+    const ts = new Date().toISOString().slice(11, 19);
+    log.innerHTML = `<div>[${ts}] ${s}</div>` + log.innerHTML;
+  }
+
+  function tick() {
+    step++;
+    const s = ['cart at pos=0.1, vel=0.02, θ=0.05, ω=-0.01',
+               'cart at pos=0.12, vel=0.05, θ=0.07, ω=-0.02',
+               'cart at pos=0.15, vel=0.08, θ=0.09, ω=-0.03',
+               'cart at pos=0.20, vel=0.12, θ=0.11, ω=-0.05'][step % 4];
+    const a = ['push left (a=0)', 'push right (a=1)'][step % 2];
+    const r = (Math.random() * 0.4 + 0.8).toFixed(2);
+
+    // 闪烁动画
+    agent.style.background = 'rgba(167, 139, 250, 0.3)';
+    setTimeout(() => agent.style.background = '', 200);
+    setTimeout(() => {
+      env.style.background = 'rgba(88, 166, 255, 0.3)';
+      setTimeout(() => env.style.background = '', 200);
+    }, 200);
+
+    line(`t=${step} | <b style="color:#a78bfa">agent</b> 观察 s = (${s})`);
+    setTimeout(() => line(`t=${step} | <b style="color:#a78bfa">agent</b> 选择 ${a}`), 250);
+    setTimeout(() => line(`t=${step} | <b style="color:#58a6ff">env</b> 返回 r=${r}, s'=(next state)`), 500);
+  }
+
+  function start() {
+    if (timer) return;
+    log.innerHTML = '<div style="color:var(--accent);">▶ RL loop started</div>';
+    step = 0;
+    const loop = () => { tick(); timer = setTimeout(loop, +speed.value); };
+    loop();
+  }
+  function pause() {
+    if (timer) { clearTimeout(timer); timer = null; line('<span style="color:var(--ink-3);">⏸ paused</span>'); }
+  }
+  function reset() {
+    pause(); step = 0; log.innerHTML = '点击"开始"观察 Agent 与环境的交互循环...';
+  }
+
+  document.getElementById('loop-start').onclick = start;
+  document.getElementById('loop-pause').onclick = pause;
+  document.getElementById('loop-reset').onclick = reset;
+})();
+
+/* =========================================================
+   STEP 1: Bandit demo
+   ========================================================= */
+(function() {
+  const armsEl = document.getElementById('bandit-arms');
+  const epsEl = document.getElementById('bandit-eps');
+  const epsVal = document.getElementById('bandit-eps-val');
+  const stepsEl = document.getElementById('bandit-steps');
+  const cumEl = document.getElementById('bandit-cum');
+  const avgEl = document.getElementById('bandit-avg');
+  const bestEl = document.getElementById('bandit-best');
+  let Q = [], N = [], trueMeans = [], steps = 0, cum = 0, k = 5;
+
+  function gen() {
+    trueMeans = Array.from({length: k}, () => Math.random() * 1.6 - 0.6);
+    Q = new Array(k).fill(0);
+    N = new Array(k).fill(0);
+    steps = 0; cum = 0;
+    bestEl.textContent = '#' + trueMeans.indexOf(Math.max(...trueMeans)) + ' (μ=' + Math.max(...trueMeans).toFixed(2) + ')';
+    render();
+  }
+
+  function render(highlight) {
+    armsEl.innerHTML = '';
+    for (let i = 0; i < k; i++) {
+      const d = document.createElement('div');
+      d.className = 'bandit-arm';
+      d.innerHTML = `
+        <div class="arm-id">arm #${i}</div>
+        <div class="arm-q">${Q[i].toFixed(2)}</div>
+        <div class="arm-n">N=${N[i]}</div>
+        <div class="arm-reward" id="br-${i}"></div>
+      `;
+      d.onclick = () => pull(i);
+      armsEl.appendChild(d);
+    }
+  }
+
+  function pull(i) {
+    // 显示真实 reward = mean + noise
+    const r = trueMeans[i] + (Math.random() - 0.5) * 0.6;
+    N[i] += 1;
+    Q[i] += (r - Q[i]) / N[i];
+    steps++; cum += r;
+    stepsEl.textContent = steps;
+    cumEl.textContent = cum.toFixed(2);
+    avgEl.textContent = (cum / steps).toFixed(3);
+    render();
+    const re = document.getElementById('br-' + i);
+    re.textContent = (r >= 0 ? '+' : '') + r.toFixed(2);
+    re.className = 'arm-reward show ' + (r >= 0 ? 'pos' : 'neg');
+    setTimeout(() => re.className = 'arm-reward', 800);
+  }
+
+  function auto() {
+    for (let i = 0; i < 50; i++) {
+      const eps = +epsEl.value;
+      let a;
+      if (Math.random() < eps) a = Math.floor(Math.random() * k);
+      else a = Q.indexOf(Math.max(...Q));
+      pull(a);
+    }
+  }
+
+  epsEl.oninput = () => epsVal.textContent = (+epsEl.value).toFixed(2);
+  document.getElementById('bandit-pull').onclick = () => {
+    const eps = +epsEl.value;
+    let a;
+    if (Math.random() < eps) a = Math.floor(Math.random() * k);
+    else a = Q.indexOf(Math.max(...Q));
+    pull(a);
+  };
+  document.getElementById('bandit-auto').onclick = auto;
+  document.getElementById('bandit-reset').onclick = gen;
+
+  gen();
+})();
+
+/* =========================================================
+   STEP 2: Q-Learning FrozenLake 4x4
+   ========================================================= */
+(function() {
+  const gridEl = document.getElementById('qlearn-grid');
+  const canvas = document.getElementById('qlearn-canvas');
+  const ctx = canvas.getContext('2d');
+  const epsEl = document.getElementById('qlearn-eps');
+  const epsVal = document.getElementById('qlearn-eps-val');
+  const alphaEl = document.getElementById('qlearn-alpha');
+  const alphaVal = document.getElementById('qlearn-alpha-val');
+  const epEl = document.getElementById('qlearn-ep');
+  const srEl = document.getElementById('qlearn-sr');
+  const curEpsEl = document.getElementById('qlearn-cur-eps');
+
+  // FrozenLake 4x4: S F F F / F H F F / F F F H / H F F G
+  const MAP = ['SFFF','FHFH','FFFH','HFFG'];
+  const N = 4;
+  // 转移: a=0左 1下 2右 3上。is_slippery: 1/3 概率滑到左右
+  const ACTION_DELTAS = {0:[0,-1], 1:[1,0], 2:[0,1], 3:[-1,0]};
+  const ACTION_SYMBOLS = ['←','↓','→','↑'];
+  // 滑冰:每个 a 有 1/3 概率真的走 a,1/3 滑到 a-1,1/3 滑到 a+1
+  function sampleTransition(a) {
+    const r = Math.random();
+    let actual;
+    if (r < 1/3) actual = a;
+    else if (r < 2/3) actual = (a - 1 + 4) % 4;
+    else actual = (a + 1) % 4;
+    const [dr, dc] = ACTION_DELTAS[actual];
+    return [dr, dc, actual];
+  }
+  let Q, ep = 0, successHist = [], training = false, trainTimer = null;
+
+  function initQ() {
+    Q = Array.from({length: 16}, () => [0,0,0,0]);
+    ep = 0;
+    successHist = [];
+    epEl.textContent = 0;
+    srEl.textContent = '0%';
+    drawChart();
+    renderGrid();
+  }
+
+  function renderGrid(visited) {
+    gridEl.innerHTML = '';
+    for (let i = 0; i < 16; i++) {
+      const r = Math.floor(i/4), c = i%4;
+      const cell = MAP[r][c];
+      const d = document.createElement('div');
+      d.className = 'qcell';
+      if (cell === 'S') d.classList.add('start');
+      if (cell === 'G') d.classList.add('goal');
+      if (cell === 'H') d.classList.add('hole');
+      if (visited && visited.has(i)) d.classList.add('visited');
+      const bestA = Q[i].indexOf(Math.max(...Q[i]));
+      d.innerHTML = `<span class="qbadge">${Math.max(...Q[i]).toFixed(2)}</span>${cell === 'F' || cell === 'S' ? ACTION_SYMBOLS[bestA] : cell}`;
+      gridEl.appendChild(d);
+    }
+  }
+
+  function step_episode() {
+    const eps = +epsEl.value;
+    const alpha = +alphaEl.value;
+    curEpsEl.textContent = eps.toFixed(2);
+    let s = 0, done = false, total = 0, steps = 0, visited = new Set([0]);
+    while (!done && steps < 50) {
+      let a;
+      if (Math.random() < eps) a = Math.floor(Math.random() * 4);
+      else a = Q[s].indexOf(Math.max(...Q[s]));
+      const [dr, dc] = sampleTransition(a);
+      const nr = Math.max(0, Math.min(3, Math.floor(s/4) + dr));
+      const nc = Math.max(0, Math.min(3, (s%4) + dc));
+      const ns = nr * 4 + nc;
+      const cell = MAP[nr][nc];
+      let r = 0;
+      if (cell === 'G') r = 1;
+      if (cell === 'H') r = 0;
+      done = (cell === 'G' || cell === 'H');
+      const target = r + (done ? 0 : 0.9 * Math.max(...Q[ns]));
+      Q[s][a] += alpha * (target - Q[s][a]);
+      s = ns;
+      visited.add(s);
+      total = r;
+      steps++;
+      if (steps >= 100) done = true;  // 防止死循环
+    }
+    ep++;
+    successHist.push(total === 1 ? 1 : 0);
+    epEl.textContent = ep;
+    const recent = successHist.slice(-50);
+    srEl.textContent = ((recent.filter(x=>x).length / recent.length) * 100).toFixed(0) + '%';
+    renderGrid(visited);
+    drawChart();
+  }
+
+  function drawChart() {
+    const w = canvas.width, h = canvas.height;
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, w, h);
+    // 网格
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const y = h - (i/4) * (h - 20) - 20;
+      ctx.beginPath(); ctx.moveTo(20, y); ctx.lineTo(w-10, y); ctx.stroke();
+    }
+    // 折线 (50-ep 滑动成功率)
+    const data = successHist;
+    ctx.strokeStyle = '#56d364';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < data.length; i++) {
+      const window = data.slice(Math.max(0, i-49), i+1);
+      const sr = window.filter(x=>x).length / window.length;
+      const x = 20 + (i / Math.max(1, data.length - 1)) * (w - 30);
+      const y = h - 20 - sr * (h - 30);
+      if (!started) { ctx.moveTo(x, y); started = true; }
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    // 标签
+    ctx.fillStyle = '#adbac7';
+    ctx.font = '10px ui-monospace';
+    ctx.fillText('0', 5, h - 16);
+    ctx.fillText('50%', 0, h/2);
+    ctx.fillText('100%', 0, 24);
+  }
+
+  function startTrain() {
+    if (training) return;
+    training = true;
+    const loop = () => {
+      if (!training) return;
+      step_episode();
+      trainTimer = setTimeout(loop, 8);
+    };
+    loop();
+  }
+  function stopTrain() { training = false; if (trainTimer) clearTimeout(trainTimer); }
+
+  epsEl.oninput = () => epsVal.textContent = (+epsEl.value).toFixed(2);
+  alphaEl.oninput = () => alphaVal.textContent = (+alphaEl.value).toFixed(2);
+  document.getElementById('qlearn-start').onclick = () => {
+    if (training) { stopTrain(); document.getElementById('qlearn-start').textContent = '开始训练'; }
+    else { startTrain(); document.getElementById('qlearn-start').textContent = '暂停训练'; }
+  };
+  document.getElementById('qlearn-step').onclick = step_episode;
+  document.getElementById('qlearn-reset').onclick = () => { stopTrain(); initQ(); document.getElementById('qlearn-start').textContent = '开始训练'; };
+
+  initQ();
+})();
+
+/* =========================================================
+   STEP 3: Replay Buffer 动画
+   ========================================================= */
+(function() {
+  const grid = document.getElementById('buf-grid');
+  const BUF_SIZE = 20;
+  let buffer = new Array(BUF_SIZE).fill(null);
+  let writePtr = 0;
+
+  function render(highlights) {
+    highlights = highlights || new Set();
+    grid.innerHTML = '';
+    for (let i = 0; i < BUF_SIZE; i++) {
+      const s = document.createElement('div');
+      s.className = 'replay-slot';
+      if (buffer[i]) {
+        s.classList.add('filled');
+        s.textContent = i;
+      } else {
+        s.textContent = '.';
+      }
+      if (highlights.has(i)) s.classList.add('sampled');
+      grid.appendChild(s);
+    }
+  }
+
+  document.getElementById('buf-add').onclick = () => {
+    buffer[writePtr] = {t: writePtr};
+    const highlights = new Set([writePtr]);
+    writePtr = (writePtr + 1) % BUF_SIZE;
+    render(highlights);
+    // 黄色闪烁
+    setTimeout(() => render(), 400);
+  };
+
+  document.getElementById('buf-sample').onclick = () => {
+    const filled = buffer.map((v, i) => v ? i : -1).filter(i => i >= 0);
+    const sample = new Set();
+    for (let i = 0; i < Math.min(4, filled.length); i++) {
+      sample.add(filled[Math.floor(Math.random() * filled.length)]);
+    }
+    render(sample);
+  };
+
+  document.getElementById('buf-reset').onclick = () => {
+    buffer = new Array(BUF_SIZE).fill(null);
+    writePtr = 0;
+    render();
+  };
+
+  render();
+})();
+
+/* =========================================================
+   STEP 4: REINFORCE 策略分布 + 更新
+   ========================================================= */
+(function() {
+  const bars = document.getElementById('pg-bars');
+  const gEl = document.getElementById('pg-g');
+  const gVal = document.getElementById('pg-g-val');
+  const log = document.getElementById('pg-log');
+  const ACTIONS = ['push_left (a=0)', 'stay (a=1)', 'push_right (a=2)'];
+  // logits -> softmax -> probs
+  let logits = [0.0, 0.0, 0.0];
+
+  function softmax(z) {
+    const m = Math.max(...z);
+    const e = z.map(v => Math.exp(v - m));
+    const s = e.reduce((a,b)=>a+b, 0);
+    return e.map(v => v / s);
+  }
+
+  function render() {
+    const probs = softmax(logits);
+    bars.innerHTML = '';
+    ACTIONS.forEach((a, i) => {
+      const row = document.createElement('div');
+      row.className = 'policy-row';
+      row.innerHTML = `
+        <span style="color:var(--ink-2);font-family:ui-monospace,monospace;">${a}</span>
+        <div class="policy-bar-bg">
+          <div class="policy-bar" style="width:${(probs[i]*100).toFixed(0)}%;">${(probs[i]*100).toFixed(0)}%</div>
+        </div>
+        <span style="color:var(--ink-3);font-family:ui-monospace,monospace;font-size:11px;">logit=${logits[i].toFixed(2)}</span>
+      `;
+      bars.appendChild(row);
+    });
+  }
+
+  function update() {
+    const G = +gEl.value;
+    // 假设轨迹中采到了 action 1 (stay),G 是其回报
+    // ∇log π(a=1) · G = (e_1 - softmax(logits)[1]) · G   (categorical 的解析梯度)
+    const probs = softmax(logits);
+    const gradLogPi = probs.map((p, i) => i === 1 ? 1 - p : -p);
+    const lr = 0.1;
+    logits = logits.map((l, i) => l + lr * gradLogPi[i] * G);
+    log.innerHTML = `更新: G=${G >= 0 ? '+' : ''}${G.toFixed(1)} · 选中 a=1 · <span style="color:var(--green);">logits 沿 ∇log π · G 方向微调</span>`;
+    render();
+  }
+
+  gEl.oninput = () => gVal.textContent = (gEl.value >= 0 ? '+' : '') + (+gEl.value).toFixed(1);
+  document.getElementById('pg-update').onclick = update;
+  document.getElementById('pg-reset').onclick = () => { logits = [0,0,0]; log.innerHTML = '上方是当前策略 π(a|·) 的动作概率分布 (3 个动作)。点"应用更新"会按 G 加权修改 log π。'; render(); };
+
+  render();
+})();
+
+/* =========================================================
+   STEP 5: PPO Clip 示意图
+   ========================================================= */
+(function() {
+  const canvas = document.getElementById('ppo-canvas');
+  const ctx = canvas.getContext('2d');
+  const epsEl = document.getElementById('ppo-eps');
+  const epsVal = document.getElementById('ppo-eps-val');
+  const advEl = document.getElementById('ppo-adv');
+  const advVal = document.getElementById('ppo-adv-val');
+
+  function draw() {
+    const eps = +epsEl.value;
+    const A = +advEl.value;
+    const w = canvas.width, h = canvas.height;
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, w, h);
+
+    // 坐标轴
+    const x0 = 50, y0 = h/2, xw = w - 70;
+    const yscale = h/2 * 0.8;  // 1.0 单位 = yscale 像素
+    ctx.strokeStyle = '#444c56';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0 + xw, y0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0, 20); ctx.lineTo(x0, h-20); ctx.stroke();
+
+    // 标签
+    ctx.fillStyle = '#adbac7';
+    ctx.font = '11px ui-monospace';
+    ctx.fillText('r(θ) = π_new / π_old →', x0 + xw/2 - 50, h - 6);
+    ctx.save();
+    ctx.translate(12, h/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText('L_clip(θ) →', -30, 0);
+    ctx.restore();
+
+    // x 轴刻度
+    ctx.fillStyle = '#768390';
+    for (let r = 0; r <= 2; r += 0.5) {
+      const x = x0 + r * xw / 2;
+      ctx.fillText(r.toFixed(1), x - 8, y0 + 14);
+    }
+
+    // clip 区间
+    const lo = 1 - eps, hi = 1 + eps;
+    const loX = x0 + lo * xw / 2;
+    const hiX = x0 + hi * xw / 2;
+    ctx.fillStyle = 'rgba(88, 166, 255, 0.08)';
+    ctx.fillRect(loX, 20, hiX - loX, h - 40);
+    ctx.strokeStyle = 'rgba(88, 166, 255, 0.4)';
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(loX, 20); ctx.lineTo(loX, h-20); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(hiX, 20); ctx.lineTo(hiX, h-20); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#58a6ff';
+    ctx.font = '10px ui-monospace';
+    ctx.fillText(`1-ε=${lo.toFixed(2)}`, loX - 22, h - 28);
+    ctx.fillText(`1+ε=${hi.toFixed(2)}`, hiX - 4, h - 28);
+
+    // 未裁剪目标: r · A
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let px = 0; px <= xw; px += 1) {
+      const r = px / xw * 2;
+      const y = y0 - r * A * yscale;
+      if (px === 0) ctx.moveTo(x0 + px, y);
+      else ctx.lineTo(x0 + px, y);
+    }
+    ctx.stroke();
+
+    // 裁剪后目标
+    ctx.strokeStyle = '#f87171';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    let started = false;
+    for (let px = 0; px <= xw; px += 1) {
+      const r = px / xw * 2;
+      const rClip = Math.max(lo, Math.min(hi, r));
+      const y = y0 - rClip * A * yscale;
+      if (!started) { ctx.moveTo(x0 + px, y); started = true; }
+      else ctx.lineTo(x0 + px, y);
+    }
+    ctx.stroke();
+
+    // 说明
+    ctx.fillStyle = '#adbac7';
+    ctx.font = '11px ui-monospace';
+    const sign = A >= 0 ? '+' : '';
+    ctx.fillText(`Â = ${sign}${A.toFixed(1)}`, w - 110, 26);
+    if (A > 0) {
+      ctx.fillStyle = '#f87171';
+      ctx.fillText('裁剪在右 (优势>0)', w - 130, 42);
+    } else {
+      ctx.fillStyle = '#f87171';
+      ctx.fillText('裁剪在左 (优势<0)', w - 130, 42);
+    }
+  }
+
+  epsEl.oninput = () => { epsVal.textContent = epsEl.value; draw(); };
+  advEl.oninput = () => { advVal.textContent = (advEl.value >= 0 ? '+' : '') + (+advEl.value).toFixed(1); draw(); };
+  draw();
+})();
+</script>
+
+</body>
+</html>
