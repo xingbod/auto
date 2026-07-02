@@ -32,7 +32,7 @@
 
     .grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 24px;
     }
 
@@ -57,7 +57,6 @@
 
     .col.slides h2   { color: #1f6feb; }
     .col.onepage h2  { color: #8b5cf6; }
-    .col.math h2     { color: #16a34a; }
     .col.tutorial h2 { color: #ea580c; }
 
     ul {
@@ -84,9 +83,6 @@
     }
     .col.onepage a:hover, .col.onepage a:focus-visible {
       border-color: #8b5cf6;
-    }
-    .col.math a:hover, .col.math a:focus-visible {
-      border-color: #16a34a;
     }
     .col.tutorial a:hover, .col.tutorial a:focus-visible {
       border-color: #ea580c;
@@ -115,7 +111,6 @@
     }
     .col.slides  .badge { color: #1f6feb; background: #ddf4ff; border: 1px solid #b6e3ff; }
     .col.onepage .badge { color: #8b5cf6; background: #f3e8ff; border: 1px solid #ddd6fe; }
-    .col.math    .badge { color: #16a34a; background: #dcfce7; border: 1px solid #bbf7d0; }
     .col.tutorial .badge { color: #ea580c; background: #ffedd5; border: 1px solid #fed7aa; }
 
     /* ---- 按天分组 ---- */
@@ -138,7 +133,6 @@
     }
     .day-header.today { color: #1f6feb; }
     .col.onepage .day-header.today { color: #8b5cf6; }
-    .col.math .day-header.today { color: #16a34a; }
     .col.tutorial .day-header.today { color: #ea580c; }
     .day-items { padding: 0; margin: 0; list-style: none; }
     .day-items li + li { margin-top: 8px; }
@@ -148,7 +142,6 @@
       .day-header .rel { color: #6e7681; }
       .day-header.today { color: #58a6ff; }
       .col.onepage .day-header.today { color: #a78bfa; }
-      .col.math .day-header.today { color: #3fb950; }
       .col.tutorial .day-header.today { color: #fb923c; }
     }
 
@@ -172,13 +165,11 @@
       a { border-color: #30363d; }
       a:hover, a:focus-visible { border-color: #58a6ff; }
       .col.onepage a:hover, .col.onepage a:focus-visible { border-color: #a78bfa; }
-      .col.math a:hover, .col.math a:focus-visible { border-color: #3fb950; }
       .col.tutorial a:hover, .col.tutorial a:focus-visible { border-color: #fb923c; }
       p.lead { color: #8b949e; }
       .col h2 .en { color: #6e7681; }
       .col.slides  .badge { background: #0d2d6b; border-color: #1f6feb; color: #79c0ff; }
       .col.onepage .badge { background: #2e1065; border-color: #8b5cf6; color: #c4b5fd; }
-      .col.math    .badge { background: #14532d; border-color: #16a34a; color: #4ade80; }
       .col.tutorial .badge { background: #7c2d12; border-color: #ea580c; color: #fdba74; }
       footer { border-color: #21262d; }
     }
@@ -315,38 +306,6 @@
         </ul>
       </div>
     </div>
-
-    <!-- ========== 小学数学 列 ========== -->
-    <div class="col math">
-      <h2>小学数学<span class="en">Elementary School Math</span></h2>
-
-      <div class="day-group">
-        <div class="day-header today">2026-07-01<span class="rel">今天</span></div>
-        <ul class="day-items">
-          <li><a href="onepage-final-keypoints-glass-g5-2026spring/">5 年级数学期末通关一页纸 (玻璃拟态 · 龙岗期末真题 · 4 模块 + 4 易错 + 4 真题) <span class="badge">NEW</span></a></li>
-          <li><a href="onepage-final-exam-g5-2026spring/">龙岗区期末考 5 年级 (2026春 · 5 大模块全复盘) <span class="badge">NEW</span></a></li>
-        </ul>
-      </div>
-
-      <div class="day-group">
-        <div class="day-header">2026-06-26<span class="rel">2 天前</span></div>
-        <ul class="day-items">
-          <li><a href="onepage-final-exam-g5-2026spring/">期末试卷全复盘 5年级 龙岗区 (33题)</a></li>
-          <li><a href="onepage-equation-u7/">用方程解决问题 第七单元</a></li>
-          <li><a href="onepage-position-u6/">确定位置 第六单元</a></li>
-          <li><a href="onepage-changfangti-2/">长方体(二) 第四单元</a></li>
-          <li><a href="onepage-longfangti-1/">长方体(一) 第二单元</a></li>
-          <li><a href="onepage-grade5-class5-error-test/">错题周周清 5年5班 (36题)</a></li>
-          <li><a href="onepage-longgao-final-exam/">龙高期末 5年级 (33题)</a></li>
-          <li><a href="onepage-grade5-error-test/">错题周周清 5年6班 (18题)</a></li>
-          <li><a href="onepage-fractions/">分数加减法 第一单元</a></li>
-          <li><a href="onepage-fraction-multiplication/">分数乘法 第三单元</a></li>
-          <li><a href="onepage-fraction-division/">分数除法 第五单元</a></li>
-          <li><a href="onepage-statistical-charts/">统计图三剑客 第八单元</a></li>
-        </ul>
-      </div>
-    </div>
-    <!-- ========== /小学数学 列 ========== -->
 
     <!-- ========== TUTORIAL 列 ========== -->
     <div class="col tutorial">
