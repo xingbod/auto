@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conductor 一页讲清楚 — 流水线并行的多粒度动态编排</title>
+<style>
+  :root {
+    --m-deep: #78350f;          /* 深棕 (主色, 系统/性能/学术) */
+    --m-soft: #fef3c7;          /* 暖浅米黄底 */
+    --m1-deep: #9a3412;         /* 深赭石 — 痛点 */
+    --m1-soft: #fff7ed;
+    --m2-deep: #155e75;         /* 深青 — 粗粒度 */
+    --m2-soft: #ecfeff;
+    --m3-deep: #5b21b6;         /* 深紫 — 细粒度 */
+    --m3-soft: #f5f3ff;
+    --m4-deep: #78350f;         /* 深棕 — 实验 */
+    --m4-soft: #fef3c7;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #6b7280;
+    --line: #f3f4f6;
+    --bg: #ffffff;
+    --red: #ef4444;
+    --red-soft: #fef2f2;
+    --green: #16a34a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #f8fafc; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    color: var(--ink);
+    line-height: 1.55;
+    font-size: 14px;
+  }
+  .page {
+    max-width: 820px;
+    margin: 24px auto;
+    background: var(--bg);
+    border-radius: 14px;
+    box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+  }
+  section { padding: 28px 44px; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+
+  /* ==================== 1. HEADER ==================== */
+  .header { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); padding: 32px 44px 24px; }
+  .header .h-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .header .h-text { flex: 1; }
+  .header h1 {
+    font-size: 27px; line-height: 1.3; margin: 0 0 8px;
+    color: var(--m-deep); font-weight: 800; letter-spacing: -0.01em;
+  }
+  .header .subtitle {
+    font-size: 14.5px; color: var(--ink-2); margin: 0 0 10px; font-weight: 500;
+  }
+  .header .meta {
+    display: flex; flex-wrap: wrap; gap: 8px; font-size: 11.5px; color: var(--ink-3);
+  }
+  .header .meta .chip {
+    background: rgba(120, 53, 15, 0.08); border: 1px solid rgba(120, 53, 15, 0.18);
+    padding: 3px 10px; border-radius: 999px; color: var(--m-deep); font-weight: 500;
+  }
+  .header .meta .chip b { color: var(--m-deep); }
+  .header .h-icons { font-size: 36px; line-height: 1; padding-top: 4px; opacity: 0.85; }
+
+  /* ==================== 2. OVERVIEW ==================== */
+  .overview h2 { font-size: 17px; margin: 0 0 14px; color: var(--ink); font-weight: 700; }
+  .overview h2 .en { display: block; font-size: 11px; color: var(--ink-3); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .ov-card {
+    padding: 12px 14px; border-radius: 10px; border: 1px solid;
+    display: flex; flex-direction: column; gap: 4px; min-height: 92px;
+  }
+  .ov-card .emo { font-size: 22px; }
+  .ov-card .cn { font-size: 14px; font-weight: 700; }
+  .ov-card .en { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+  .ov-card.c1 { background: var(--m1-soft); border-color: #fed7aa; }
+  .ov-card.c1 .cn { color: var(--m1-deep); }
+  .ov-card.c2 { background: var(--m2-soft); border-color: #a5f3fc; }
+  .ov-card.c2 .cn { color: var(--m2-deep); }
+  .ov-card.c3 { background: var(--m3-soft); border-color: #ddd6fe; }
+  .ov-card.c3 .cn { color: var(--m3-deep); }
+  .ov-card.c4 { background: var(--m4-soft); border-color: #fde68a; }
+  .ov-card.c4 .cn { color: var(--m4-deep); }
+
+  /* ==================== 3. MAIN MODULES ==================== */
+  .module { padding: 24px 0; }
+  .module + .module { border-top: 1px dashed var(--line); padding-top: 24px; }
+  .mod-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .mod-num {
+    width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 15px; font-family: 'SF Mono', Menlo, monospace;
+    flex-shrink: 0;
+  }
+  .mod-title { display: flex; flex-direction: column; }
+  .mod-title .cn { font-size: 18px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+  .mod-title .en { font-size: 11px; color: var(--ink-3); letter-spacing: 0.05em; margin-top: 1px; }
+  .m1 .mod-num { background: var(--m1-deep); }
+  .m2 .mod-num { background: var(--m2-deep); }
+  .m3 .mod-num { background: var(--m3-deep); }
+  .m4 .mod-num { background: var(--m4-deep); }
+  .m1 .mod-title .cn { color: var(--m1-deep); }
+  .m2 .mod-title .cn { color: var(--m2-deep); }
+  .m3 .mod-title .cn { color: var(--m3-deep); }
+  .m4 .mod-title .cn { color: var(--m4-deep); }
+
+  .mod-body { font-size: 13.5px; color: var(--ink-2); line-height: 1.7; }
+  .mod-body p { margin: 0 0 8px; }
+  .mod-body b { color: var(--ink); font-weight: 700; }
+  .mod-body code {
+    font-family: 'SF Mono', Menlo, monospace; font-size: 12.5px;
+    background: #f3f4f6; padding: 1px 6px; border-radius: 4px; color: var(--m-deep);
+  }
+
+  /* callout 块 */
+  .callout {
+    background: var(--m-soft); border-left: 4px solid var(--m-deep);
+    padding: 10px 14px; border-radius: 6px; font-size: 13px;
+    line-height: 1.7; margin: 10px 0;
+  }
+  .m1 .callout { background: var(--m1-soft); border-left-color: var(--m1-deep); }
+  .m1 .callout b { color: var(--m1-deep); }
+  .m2 .callout { background: var(--m2-soft); border-left-color: var(--m2-deep); }
+  .m2 .callout b { color: var(--m2-deep); }
+  .m3 .callout { background: var(--m3-soft); border-left-color: var(--m3-deep); }
+  .m3 .callout b { color: var(--m3-deep); }
+  .m4 .callout { background: var(--m4-soft); border-left-color: var(--m4-deep); }
+  .m4 .callout b { color: var(--m4-deep); }
+
+  /* SVG container */
+  .svg-wrap {
+    background: #fafaf9; border: 1px solid var(--line);
+    border-radius: 8px; padding: 14px; margin: 10px 0;
+    display: flex; justify-content: center;
+  }
+  .svg-wrap svg { max-width: 100%; height: auto; }
+  .svg-cap {
+    font-size: 11.5px; color: var(--ink-3); text-align: center; margin-top: 6px; line-height: 1.5;
+  }
+
+  /* formula block */
+  .formula {
+    background: #fffbeb; border: 1px solid #fde68a; border-left: 3px solid var(--m-deep);
+    padding: 10px 14px; border-radius: 6px; font-family: 'SF Mono', Menlo, monospace;
+    font-size: 13px; color: var(--ink); margin: 8px 0; line-height: 1.7;
+  }
+  .formula b { color: var(--m-deep); }
+  .formula sub, .formula sup { font-size: 10px; }
+
+  /* table */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 10px 0; }
+  .tbl th, .tbl td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--line); }
+  .tbl th { background: var(--m-soft); color: var(--m-deep); font-weight: 700; font-size: 11.5px; letter-spacing: 0.03em; }
+  .tbl td.num { font-family: 'SF Mono', Menlo, monospace; color: var(--m-deep); font-weight: 600; text-align: right; }
+  .tbl tr.ours td { background: rgba(120, 53, 15, 0.06); font-weight: 700; }
+  .tbl tr.ours td.num { color: var(--m-deep); }
+
+  /* ==================== 4. PITFALLS ==================== */
+  .pitfalls h2 { font-size: 17px; margin: 0 0 12px; color: var(--red); font-weight: 700; }
+  .pitfalls h2 .en { display: block; font-size: 11px; color: var(--ink-3); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+  .pitfall {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--red-soft); border-left: 4px solid var(--red);
+    padding: 10px 14px; border-radius: 6px; margin-bottom: 8px; font-size: 13px;
+  }
+  .pitfall .x {
+    width: 22px; height: 22px; border-radius: 50%; background: var(--red); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .pitfall .text { flex: 1; line-height: 1.65; }
+  .pitfall .bad { text-decoration: line-through; color: var(--ink-3); }
+  .pitfall .fix { color: var(--green); font-weight: 600; }
+  .pitfall .fix::before { content: "👉 "; }
+
+  /* ==================== 5. TL;DR ==================== */
+  .tldr { background: linear-gradient(135deg, #1f2937 0%, #111827 100%); color: #f9fafb; }
+  .tldr h2 { font-size: 14px; color: #fbbf24; margin: 0 0 4px; font-weight: 700; letter-spacing: 0.06em; }
+  .tldr .h2-en { font-size: 11px; color: #9ca3af; margin: 0 0 14px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; }
+  .tldr-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+  .t-card {
+    background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px; padding: 10px 12px;
+  }
+  .t-card .lab { font-size: 10.5px; color: #fbbf24; font-weight: 700; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .t-card .txt { font-size: 12.5px; line-height: 1.6; color: #e5e7eb; }
+  .tldr .oneliner {
+    background: rgba(120, 53, 15, 0.3); border: 1px solid rgba(251, 191, 36, 0.4);
+    border-radius: 8px; padding: 14px 18px; font-size: 14px; line-height: 1.7;
+    color: #fef3c7; text-align: center; margin-bottom: 12px;
+  }
+  .tldr .oneliner b { color: #fbbf24; font-weight: 800; }
+  .tldr .ref { font-size: 11px; color: #9ca3af; text-align: right; line-height: 1.5; }
+  .tldr .ref b { color: #d1d5db; }
+  .credit {
+    margin-top: 14px; padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 11.5px; color: #9ca3af; text-align: center; line-height: 1.6;
+  }
+  .credit b { color: #fef3c7; font-weight: 700; }
+
+  /* responsive */
+  @media (max-width: 720px) {
+    .page { margin: 0; border-radius: 0; }
+    section { padding: 22px 22px; }
+    .header { padding: 24px 22px 18px; }
+    .header h1 { font-size: 22px; }
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .tldr-grid { grid-template-columns: 1fr; }
+    .tbl { font-size: 11.5px; }
+    .tbl th, .tbl td { padding: 5px 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ==================== 1. HEADER ==================== -->
+  <header class="header">
+    <div class="h-row">
+      <div class="h-text">
+        <h1>为什么 LLM 流水线训练总被 straggler 拖垮?</h1>
+        <p class="subtitle">Conductor: 用 <b>两层动态控制</b> 把流水线气泡从 25% 压到 0.79%</p>
+        <div class="meta">
+          <span class="chip">📄 <b>FGCS</b> · Elsevier</span>
+          <span class="chip">🏛️ 安徽大学 + 拉曼大学</span>
+          <span class="chip">💰 NSFC 62306003</span>
+        </div>
+      </div>
+      <div class="h-icons">⚙️🔀🧠</div>
+    </div>
+  </header>
+
+  <!-- ==================== 2. OVERVIEW ==================== -->
+  <section class="overview">
+    <h2>一眼总览<span class="en">Four Pillars at a Glance</span></h2>
+    <div class="grid-4">
+      <div class="ov-card c1">
+        <div class="emo">⚠️</div>
+        <div class="cn">Straggler 之痛</div>
+        <div class="en">Pipeline Bubble</div>
+      </div>
+      <div class="ov-card c2">
+        <div class="emo">🧠</div>
+        <div class="cn">RL 粗调度</div>
+        <div class="en">Macro Scheduling</div>
+      </div>
+      <div class="ov-card c3">
+        <div class="emo">🔧</div>
+        <div class="cn">算子迁移</div>
+        <div class="en">Micro Migration</div>
+      </div>
+      <div class="ov-card c4">
+        <div class="emo">📈</div>
+        <div class="cn">5–14% 提升</div>
+        <div class="en">Megatron-LM Gains</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 3. MODULES ==================== -->
+  <section>
+    <div class="module m1">
+      <div class="mod-head">
+        <div class="mod-num">01</div>
+        <div class="mod-title">
+          <span class="cn">Pipeline 气泡从何而来?</span>
+          <span class="en">Structural & Dynamic Variance · Section 2</span>
+        </div>
+      </div>
+      <div class="mod-body">
+        <p>流水线并行把 LLM 切成 N 个 stage 串行跑,但每个 microbatch 的真实执行时间 <b>不是常数</b>。最新生产 trace 显示,约 <b>42.5%</b> 的训练任务至少经历一次 10% 减速 (Lin et al. 2025, OSDI)。Straggler 让最快设备等最慢设备,空闲时间 = <code>T<sub>π(D),t</sub> - T<sub>i,t</sub></code>。</p>
+
+        <div class="callout">
+          📊 <b>四大方差源</b>:<br>
+          ① <b>结构层</b>: 端到端 stage 异构,均匀切层仍有 <b>3–7%</b> 执行时间差 (embedding / logits);<br>
+          ② <b>微批次层</b>: Attention 是 O(T²d),同 GPU 跑 8K 序列要 3.616 ms,跑 8×1K 只要 0.569 ms,差 <b>6.3×</b>;<br>
+          ③ <b>F/B/W 反对称</b>: 前向/反向/权重更新计算量天然不等;<br>
+          ④ <b>系统层</b>: 网络抖动 + 内核方差,违反 1F1B 的"均匀时间"假设。
+        </div>
+
+        <div class="svg-wrap">
+          <svg viewBox="0 0 540 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#9a3412"/>
+              </marker>
+            </defs>
+            <!-- 4 个 stage 横道 -->
+            <text x="14" y="20" font-size="11" font-weight="700" fill="#9a3412" font-family="-apple-system, sans-serif">Static 1F1B: Straggler 拖垮全队</text>
+            <g font-family="-apple-system, sans-serif" font-size="10">
+              <text x="6" y="50" fill="#6b7280">Stage 0</text>
+              <rect x="50" y="38" width="40" height="20" fill="#fde68a" stroke="#9a3412" stroke-width="0.8"/>
+              <text x="62" y="52" fill="#7c2d12" text-anchor="middle">F0</text>
+              <rect x="50" y="38" width="40" height="20" fill="none"/>
+              <text x="70" y="34" text-anchor="middle" fill="#ef4444" font-size="9">空闲</text>
+
+              <text x="6" y="85" fill="#6b7280">Stage 1</text>
+              <rect x="50" y="73" width="55" height="20" fill="#fde68a" stroke="#9a3412" stroke-width="0.8"/>
+              <text x="77" y="87" fill="#7c2d12" text-anchor="middle">F0→F1</text>
+
+              <text x="6" y="120" fill="#6b7280">Stage 2</text>
+              <rect x="50" y="108" width="80" height="20" fill="#fed7aa" stroke="#9a3412" stroke-width="0.8"/>
+              <text x="90" y="122" fill="#7c2d12" text-anchor="middle">F0→F2 (慢)</text>
+              <text x="170" y="122" text-anchor="end" fill="#ef4444" font-size="9">← 整个 pipeline 在等它</text>
+
+              <text x="6" y="155" fill="#6b7280">Stage 3</text>
+              <rect x="50" y="143" width="50" height="20" fill="#fde68a" stroke="#9a3412" stroke-width="0.8"/>
+              <text x="75" y="157" fill="#7c2d12" text-anchor="middle">F0→F3</text>
+              <text x="130" y="157" text-anchor="start" fill="#ef4444" font-size="9">空闲 ~50%</text>
+            </g>
+            <!-- 气泡可视化 -->
+            <rect x="140" y="143" width="35" height="20" fill="url(#bubble)" stroke="#ef4444" stroke-dasharray="3 2"/>
+            <text x="190" y="195" text-anchor="middle" font-size="9" fill="#9a3412" font-weight="600" font-family="-apple-system, sans-serif">BUBBLE = 25% of makespan</text>
+            <defs>
+              <pattern id="bubble" patternUnits="userSpaceOnUse" width="6" height="6">
+                <rect width="6" height="6" fill="#fef2f2"/>
+                <line x1="0" y1="0" x2="6" y2="6" stroke="#fecaca" stroke-width="0.5"/>
+              </pattern>
+            </defs>
+          </svg>
+        </div>
+        <div class="svg-cap">图 1 · 静态 1F1B 调度下,Stage 2 慢 → Stage 0/1/3 全员等 (气泡 ≈ 25%)</div>
+      </div>
+    </div>
+
+    <div class="module m2">
+      <div class="mod-head">
+        <div class="mod-num">02</div>
+        <div class="mod-title">
+          <span class="cn">粗粒度: 用 RL 替换 ILP 做全局调度</span>
+          <span class="en">Macro RL Scheduler · Section 4</span>
+        </div>
+      </div>
+      <div class="mod-body">
+        <p>静态 ILP 找最优计划要 <b>指数级时间</b>,且对扰动<b>脆弱</b>。Conductor 把流水线调度形式化为 <b>MDP</b>,让强化学习 agent 在毫秒级给出新计划,响应网络抖动 / 节点抢占等运行时事件。</p>
+
+        <div class="formula">
+          <b>State</b>: s<sub>t</sub> = (stage 状态 3D) + (microbatch 状态 3M) + (全局 4D) + (候选事件 6·3DM)<br>
+          <b>Action</b>: 选下一个执行的操作槽 (有界动作空间,处理组合爆炸)<br>
+          <b>Reward</b>: r<sub>t</sub> = − (执行时长 + 气泡惩罚 + 内存违规惩罚)
+        </div>
+
+        <div class="callout">
+          🎯 <b>两阶段训练</b> (解决动作空间爆炸):<br>
+          Stage 1: <b>Behavioral Cloning</b> 从强启发式 (Zero Bubble) 蒸馏,bootstrap 出合理策略;<br>
+          Stage 2: <b>PPO + Domain Randomization</b> 微调,加 0–30% 噪声 + Pareto 拖尾 + 突发拥塞,确保对系统抖动鲁棒。
+        </div>
+
+        <p style="font-size:12.5px;color:var(--ink-3);margin-top:6px;">
+          💡 <b>调度开销极小</b>: 单次策略推理 <b>0.086–0.093 ms</b> (P99 &lt; 0.17 ms),每次 run 96 次决策共 ~9 ms,相对总训练时间可忽略。
+        </p>
+      </div>
+    </div>
+
+    <div class="module m3">
+      <div class="mod-head">
+        <div class="mod-num">03</div>
+        <div class="mod-title">
+          <span class="cn">细粒度: 把算子从慢设备搬到快设备</span>
+          <span class="en">Computation Migration · Section 5</span>
+        </div>
+      </div>
+      <div class="mod-body">
+        <p>RL 给的是<b>宏观执行顺序</b>,但 <b>slot 内的 variance</b> 仍残留。Conductor 在每个时间槽内,实时 profiling 各设备耗时,把慢设备的 <b>Attention 头</b> 或 <b>MLP 切片</b> 卸载到快设备,把通信开销藏在本地计算的后面。</p>
+
+        <div class="formula">
+          <b>对称配对</b> (Algorithm 2): 把设备按时长排序,快慢配对 (k, N−k+1),<br>
+          目标迁移量 T<sub>transfer</sub><sup>(k),P</sup> = (T<sub>慢</sub> − T<sub>快</sub>) / 2<br>
+          <b>F/B pass</b>: 先迁整数个 attention head,残余用 MLP 分数 α 补足<br>
+          <b>W pass</b>: 没有 attention,只切 MLP (α ≤ 1)
+        </div>
+
+        <div class="svg-wrap">
+          <svg viewBox="0 0 540 220" xmlns="http://www.w3.org/2000/svg">
+            <text x="270" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="#5b21b6" font-family="-apple-system, sans-serif">Migration: 把慢设备的 MLP 切片迁到快设备</text>
+
+            <g font-family="-apple-system, sans-serif" font-size="10">
+              <!-- BEFORE -->
+              <text x="20" y="50" fill="#6b7280" font-weight="700">迁移前</text>
+              <text x="80" y="50" fill="#4b5563">Device 0 (慢)</text>
+              <rect x="80" y="60" width="60" height="22" fill="#ddd6fe" stroke="#5b21b6"/>
+              <text x="110" y="75" fill="#5b21b6" text-anchor="middle">ATT(0)</text>
+              <rect x="80" y="86" width="120" height="22" fill="#ddd6fe" stroke="#5b21b6"/>
+              <text x="140" y="101" fill="#5b21b6" text-anchor="middle">MLP(0) 完整</text>
+              <text x="80" y="125" fill="#6b7280">Device 1 (快)</text>
+              <rect x="80" y="135" width="60" height="22" fill="#ddd6fe" stroke="#5b21b6"/>
+              <text x="110" y="150" fill="#5b21b6" text-anchor="middle">ATT(1)</text>
+              <rect x="80" y="161" width="60" height="22" fill="#ddd6fe" stroke="#5b21b6"/>
+              <text x="110" y="176" fill="#5b21b6" text-anchor="middle">MLP(1)</text>
+              <text x="155" y="170" fill="#ef4444" font-size="9">← 空闲</text>
+
+              <!-- 箭头 -->
+              <line x1="220" y1="115" x2="320" y2="115" stroke="#5b21b6" stroke-width="2" marker-end="url(#arr2)"/>
+              <text x="270" y="108" text-anchor="middle" fill="#5b21b6" font-size="10" font-weight="700">迁移 α 比例的 MLP(0)</text>
+              <defs>
+                <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 Z" fill="#5b21b6"/>
+                </marker>
+              </defs>
+
+              <!-- AFTER -->
+              <text x="340" y="50" fill="#16a34a" font-weight="700">迁移后 (t̂ = 平均)</text>
+              <text x="350" y="65" fill="#4b5563">Device 0 (慢)</text>
+              <rect x="350" y="75" width="40" height="18" fill="#dcfce7" stroke="#16a34a"/>
+              <text x="370" y="88" fill="#15803d" text-anchor="middle">ATT</text>
+              <rect x="350" y="97" width="80" height="18" fill="#dcfce7" stroke="#16a34a"/>
+              <text x="390" y="110" fill="#15803d" text-anchor="middle">MLP' = MLP-α</text>
+
+              <text x="350" y="135" fill="#4b5563">Device 1 (快)</text>
+              <rect x="350" y="145" width="40" height="18" fill="#dcfce7" stroke="#16a34a"/>
+              <text x="370" y="158" fill="#15803d" text-anchor="middle">ATT</text>
+              <rect x="350" y="167" width="80" height="18" fill="#dcfce7" stroke="#16a34a"/>
+              <text x="390" y="180" fill="#15803d" text-anchor="middle">MLP + α·MLP(0)</text>
+              <text x="440" y="178" fill="#16a34a" font-size="9">← 多吃了 α</text>
+
+              <text x="270" y="210" text-anchor="middle" fill="#5b21b6" font-weight="700" font-size="11">耗时 t̂ = (T慢 + T快) / 2,严格小于 T慢</text>
+            </g>
+          </svg>
+        </div>
+        <div class="svg-cap">图 2 · 对称配对 + 算子切分,把快慢设备拉到同一完成时间</div>
+
+        <div class="callout">
+          🔒 <b>Stall-free 通信条件</b> (Eq. 11): α ≤ (T<sub>slow-fwd</sub> − C<sub>send_act</sub> − C<sub>recv</sub>) / (2·T<sub>slow-fwd</sub> + C<sub>send_weights</sub>)<br>
+          A100 + 100 Gb/s 网络下 α<sub>max</sub> ≈ <b>0.307</b>,即最多 30.7% MLP 可无阻塞迁移。<b>通信必须能藏在算力后面</b>,否则得不偿失。
+        </div>
+      </div>
+    </div>
+
+    <div class="module m4">
+      <div class="mod-head">
+        <div class="mod-num">04</div>
+        <div class="mod-title">
+          <span class="cn">实验: Megatron-LM 5–14% 提升, 仿真 0.79% 气泡</span>
+          <span class="en">Empirical Validation · Section 6</span>
+        </div>
+      </div>
+      <div class="mod-body">
+        <p><b>混合评估</b>: 细粒度迁移 <b>实装在 Megatron-LM</b> (16× A100, GPT-3 1.5B/6.2B/14.6B);RL 全局调度器在 <b>4 device 离线仿真器</b> 里跑 (因在线训 RL 太贵)。两者<b>尚未端到端集成</b>,但模块级收益可测。</p>
+
+        <table class="tbl">
+          <thead>
+            <tr><th>调度方案</th><th>完成时间 (ms)</th><th>vs ZB-2p 改进</th><th>气泡率</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>ZB-2p (基线)</td><td class="num">342.23</td><td class="num">0.00%</td><td class="num">25.15%</td></tr>
+            <tr><td>ZB-2p + RL</td><td class="num">321.22</td><td class="num">+6.14%</td><td class="num">20.26%</td></tr>
+            <tr><td>ZB-2p + Migration</td><td class="num">258.80</td><td class="num">+24.38%</td><td class="num">1.02%</td></tr>
+            <tr class="ours"><td>Ours (RL + Migration)</td><td class="num">242.73</td><td class="num">+29.07%</td><td class="num">0.79%</td></tr>
+          </tbody>
+        </table>
+        <div class="svg-cap" style="margin-top:-2px;">表 1 · 4 device · 8 microbatch · 10% 噪声下的消融 (n=5 seeds)</div>
+
+        <div class="callout">
+          🛡️ <b>鲁棒性跨噪声稳定</b> (Table 7): 0%/10%/20%/30% 噪声下,残余气泡率始终 &lt; <b>1.6%</b>;<br>
+          🌪️ <b>极端压测也顶得住</b> (Table 8): Pareto 拖尾 + 突发拥塞下,完成时间 358.81 → <b>266.55 ms</b>;异构容量下 365.89 → <b>255.15 ms</b>;<br>
+          📐 <b>迁移的最优尺寸</b> (Table 9): 序列长 <b>8K</b>、hidden <b>5120</b> 时加速最大 (10.2%)。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 4. PITFALLS ==================== -->
+  <section class="pitfalls">
+    <h2>三个常见误区<span class="en">Three Things to Watch Out For</span></h2>
+
+    <div class="pitfall">
+      <div class="x">✗</div>
+      <div class="text">
+        <span class="bad">"ILP 解一次就够,直接用静态计划"</span><br>
+        <span class="fix">ILP 指数复杂度,且对运行时扰动极脆弱 — 一旦某 microbatch 慢 10%,整个计划崩盘。RL 推理 0.09 ms,实时性完全不是问题。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <div class="x">✗</div>
+      <div class="text">
+        <span class="bad">"DualPipe / DynMo 已经够好了,不需要动态"</span><br>
+        <span class="fix">它们是半动态,优化特定 workload (如 MoE),在通用 stochastic 条件下仍有大块气泡。Conductor 在重尾 + 突发拥塞 + 异构容量压测下都把气泡压到 ~1%。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <div class="x">✗</div>
+      <div class="text">
+        <span class="bad">"RL 和 Migration 是两套独立方案,二选一"</span><br>
+        <span class="fix">它们是<b>互补</b>的:RL 解决<b>跨 stage</b> 宏观执行顺序 (毫秒-秒级),Migration 解决<b>单 slot 内</b> 微观 variance (微秒级)。Table 6 显示两者叠加比单独用 Migration 还快 6.2% (242.73 vs 258.80)。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 5. TLDR ==================== -->
+  <section class="tldr">
+    <h2>这一页先记住 · TL;DR</h2>
+    <div class="h2-en">What to Take Away</div>
+
+    <div class="tldr-grid">
+      <div class="t-card">
+        <div class="lab">问题</div>
+        <div class="txt">流水线气泡 = Straggler 拖垮, 静态调度在 stochastic 硬件上<b>既慢又脆</b>。</div>
+      </div>
+      <div class="t-card">
+        <div class="lab">方案</div>
+        <div class="txt"><b>两层解耦</b>: RL 粗调度 (MDP+BC+PPO) + 算子迁移 (Attention head + MLP 切分)。</div>
+      </div>
+      <div class="t-card">
+        <div class="lab">结果</div>
+        <div class="txt">Megatron-LM 5–14% 吞吐提升; 仿真 0.79% 残余气泡率, 跨 0–30% 噪声稳定。</div>
+      </div>
+    </div>
+
+    <div class="oneliner">
+      🚀 <b>Conductor</b> = 抗 straggler 的 <b>多粒度动态控制</b> — 粗粒度 (RL 重排执行序) + 细粒度 (算子切分迁移) 双管齐下, 把流水线气泡从 <b>25%</b> 压到 <b>&lt; 1%</b>。
+    </div>
+
+    <div class="ref">
+      📚 <b>Dong X, Liu Z, Yang Y, Lai Y-L, Jin Z.</b> Conductor: Dynamically Orchestrating Pipeline Parallelism with Multi-Granularity Control. <i>Future Generation Computer Systems</i> (Elsevier, 投稿 v1). 资助: NSFC 62306003 / 62376003, 安徽省基金 2308085MF200, 广东 AI 与数字经济实验室 GML-KF-24-29.
+    </div>
+
+    <div class="credit">
+      <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size:10.5px;color:#6b7280;">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
