@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模型自进化 · 一页讲清楚</title>
+<style>
+:root {
+  --m1-deep: #9f1239;   /* rose-800: 自我对弈 */
+  --m1-soft: #fff1f2;
+  --m2-deep: #0e7490;   /* cyan-700: 自我训练 */
+  --m2-soft: #ecfeff;
+  --m3-deep: #6d28d9;   /* violet-700: 自我对齐 */
+  --m3-soft: #f5f3ff;
+  --m4-deep: #b45309;   /* amber-700: 递归进化 */
+  --m4-soft: #fffbeb;
+  --ink: #111827;
+  --ink-2: #374151;
+  --ink-3: #6b7280;
+  --line: #f3f4f6;
+  --bg: #ffffff;
+  --red: #ef4444;
+  --red-soft: #fef2f2;
+  --header-bg: #9f1239;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #f5f5f4; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--ink); line-height: 1.6; padding: 24px 12px;
+}
+.poster {
+  max-width: 780px; margin: 0 auto; background: var(--bg);
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 4px 22px rgba(0,0,0,0.08);
+}
+section { padding: 26px 36px; border-bottom: 1px solid var(--line); }
+section:last-child { border-bottom: none; }
+
+/* ① Header */
+header {
+  position: relative;
+  background: linear-gradient(135deg, #9f1239 0%, #be123c 60%, #e11d48 100%);
+  color: #fff; padding: 34px 38px 28px;
+}
+header .eyebrow {
+  display: inline-block; font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; background: rgba(255,255,255,0.18);
+  padding: 4px 10px; border-radius: 4px; margin-bottom: 14px; font-weight: 600;
+}
+header h1 {
+  font-size: 26px; line-height: 1.42; font-weight: 800;
+  margin-bottom: 10px; letter-spacing: -0.005em;
+}
+header h1 .q { color: #fde047; }
+header .subtitle {
+  font-size: 14.5px; color: rgba(255,255,255,0.94);
+  line-height: 1.65; margin-bottom: 16px;
+}
+header .meta {
+  display: flex; gap: 8px; flex-wrap: wrap; font-size: 11px;
+  color: rgba(255,255,255,0.72);
+}
+header .meta .chip {
+  padding: 4px 8px; border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 6px; display: flex; align-items: center; gap: 5px;
+}
+
+/* ② Overview */
+.overview h3 {
+  font-size: 15px; color: var(--ink-2); margin-bottom: 14px; font-weight: 700;
+}
+.card-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+.card-row .card {
+  background: #fafafa; border-radius: 10px; padding: 14px 10px;
+  text-align: center; border: 1px solid var(--line);
+  transition: transform 0.12s;
+}
+.card-row .card:hover { transform: translateY(-2px); }
+.card-row .card .emoji { font-size: 24px; margin-bottom: 6px; }
+.card-row .card .label { font-size: 12.5px; font-weight: 700; color: var(--ink); }
+.card-row .card .en   { font-size: 10px; color: var(--ink-3); letter-spacing: 0.05em; margin-top: 3px; }
+
+/* ③ Numbered Modules */
+.mod { }
+.mod .num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  color: #fff; font-weight: 800; font-size: 15px; margin-bottom: 10px;
+}
+.mod .label { font-size: 19px; font-weight: 700; margin-bottom: 4px; }
+.mod .label-en { font-size: 11px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; }
+.mod .body { font-size: 13.5px; color: var(--ink-2); line-height: 1.7; }
+
+.code-block {
+  background: #1e293b; color: #e2e8f0; border-radius: 8px;
+  padding: 14px 16px; font-family: ui-monospace, SFMono-Regular, 'Cascadia Code', Menlo, monospace;
+  font-size: 12px; line-height: 1.6; margin: 10px 0; overflow-x: auto;
+}
+.code-block .c { color: #94a3b8; }
+.code-block .k { color: #c084fc; }
+
+.paper-list {
+  list-style: none; padding: 0; margin: 10px 0 0;
+}
+.paper-list li {
+  font-size: 12px; color: var(--ink-3); padding: 4px 0;
+  border-bottom: 1px solid var(--line);
+}
+.paper-list li:last-child { border-bottom: none; }
+.paper-list li b { color: var(--ink-2); }
+
+.callout {
+  padding: 12px 16px; border-radius: 8px; margin: 12px 0;
+  font-size: 13.5px; line-height: 1.65;
+  border-left: 4px solid;
+}
+.callout.info { background: #f0f9ff; border-color: #0ea5e9; color: #0c4a6e; }
+.callout.warn { background: var(--red-soft); border-color: var(--red); color: #991b1b; }
+
+/* ④ Pitfalls */
+.pitfall { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 14px; }
+.pitfall:last-child { margin-bottom: 0; }
+.pitfall .x {
+  flex-shrink: 0; width: 24px; height: 24px;
+  background: var(--red); color: #fff; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 13px; margin-top: 1px;
+}
+.pitfall .wrong { color: var(--red); text-decoration: line-through; font-size: 13.5px; }
+.pitfall .right { color: #166534; font-weight: 600; font-size: 13.5px; }
+.pitfall .arrow { color: var(--ink-3); margin: 0 4px; }
+
+/* ⑤ Footer */
+.footer-summary { }
+.footer-summary .tag {
+  font-size: 11px; color: var(--ink-3); letter-spacing: 0.06em; margin-bottom: 12px;
+}
+.footer-summary .points {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px;
+}
+.footer-summary .point {
+  background: #fafafa; border-radius: 10px; padding: 12px 14px; border: 1px solid var(--line);
+}
+.footer-summary .point .p-label {
+  font-size: 10px; letter-spacing: 0.08em; font-weight: 700; color: var(--ink-3); margin-bottom: 4px;
+}
+.footer-summary .point .p-text { font-size: 13px; color: var(--ink-2); line-height: 1.55; }
+.footer-summary .oneliner {
+  background: #1e293b; color: #e2e8f0; border-radius: 10px;
+  padding: 16px 20px; font-size: 14.5px; line-height: 1.65; text-align: center;
+}
+.footer-summary .oneliner .hl { color: #f472b6; font-weight: 700; }
+
+/* Credit */
+.credit {
+  margin-top: 14px; padding-top: 12px;
+  border-top: 1px solid var(--line); font-size: 11.5px; color: var(--ink-3);
+  text-align: center; line-height: 1.6;
+}
+
+/* Table */
+.compact-table {
+  width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12.5px;
+}
+.compact-table th {
+  background: #f9fafb; text-align: left; padding: 8px 10px;
+  font-weight: 700; color: var(--ink-2); border-bottom: 2px solid var(--line);
+  font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.compact-table td {
+  padding: 8px 10px; border-bottom: 1px solid var(--line); color: var(--ink-2);
+}
+.compact-table tr:last-child td { border-bottom: none; }
+
+/* Arrow flow */
+.flow-arrow {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; margin: 14px 0; flex-wrap: wrap;
+}
+.flow-arrow .step {
+  padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700;
+  border: 2px solid;
+}
+.flow-arrow .arr { font-size: 18px; color: var(--ink-3); font-weight: 300; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  section { padding: 20px 20px; }
+  header { padding: 24px 22px 20px; }
+  header h1 { font-size: 22px; }
+  .card-row { grid-template-columns: repeat(3, 1fr); }
+  .footer-summary .points { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="poster">
+
+<!-- ========== ① Header ========== -->
+<header>
+  <div class="eyebrow">AI SELF-EVOLUTION</div>
+  <h1>模型<span class="q">自进化</span>：AI 能不能自己让自己变强？</h1>
+  <p class="subtitle">
+    从 AlphaZero 的自我对弈，到 LLM 的自我奖励与递归改进 ——
+    模型不再只靠人类标注，而是自己生成数据、自己评价、自己升级
+  </p>
+  <div class="meta">
+    <span class="chip">⏱ 8 分钟</span>
+    <span class="chip">👤 AI 研究者 / 工程师</span>
+    <span class="chip">📚 12+ 篇关键论文</span>
+  </div>
+</header>
+
+<!-- ========== ② Overview ========== -->
+<section class="overview">
+  <h3>自进化的五条路线</h3>
+  <div class="card-row">
+    <div class="card">
+      <div class="emoji">♟️</div>
+      <div class="label">自我对弈</div>
+      <div class="en">Self-Play</div>
+    </div>
+    <div class="card">
+      <div class="emoji">🏷️</div>
+      <div class="label">自我训练</div>
+      <div class="en">Self-Training</div>
+    </div>
+    <div class="card">
+      <div class="emoji">⭐</div>
+      <div class="label">自我奖励</div>
+      <div class="en">Self-Rewarding</div>
+    </div>
+    <div class="card">
+      <div class="emoji">🔁</div>
+      <div class="label">递归改进</div>
+      <div class="en">Recursive</div>
+    </div>
+    <div class="card">
+      <div class="emoji">🧬</div>
+      <div class="label">进化算法</div>
+      <div class="en">Evolutionary</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ③-01 自我对弈 ========== -->
+<section class="mod">
+  <div class="num" style="background:var(--m1-deep)">01</div>
+  <div class="label">自我对弈：AlphaZero 范式</div>
+  <div class="label-en">Self-Play · 最强棋手是跟自己对弈练出来的</div>
+  <div class="body">
+    <p>给定游戏规则，模型与自己对弈生成海量棋谱。赢的走法加分，输的走法扣分 —— 纯靠自己迭代，超越所有人类棋谱训练的系统。</p>
+
+    <div class="flow-arrow">
+      <span class="step" style="background:#fff1f2;border-color:#fda4af;color:#9f1239">当前模型</span>
+      <span class="arr">→</span>
+      <span class="step" style="background:#fff1f2;border-color:#fda4af;color:#9f1239">自我对弈</span>
+      <span class="arr">→</span>
+      <span class="step" style="background:#fff1f2;border-color:#fda4af;color:#9f1239">生成数据</span>
+      <span class="arr">→</span>
+      <span class="step" style="background:#fff1f2;border-color:#fda4af;color:#9f1239">训练更强模型</span>
+      <span class="arr">→</span>
+      <span class="step" style="background:#fff1f2;border-color:#fda4af;color:#9f1239">循环…</span>
+    </div>
+
+    <p>MuZero 更进一步：连规则都不需要告诉模型，让它自己学环境动态。</p>
+
+    <ul class="paper-list">
+      <li><b>AlphaZero</b> (Silver et al., 2017) — 围棋/将棋/国际象棋，纯自弈超越 Stockfish</li>
+      <li><b>MuZero</b> (Schrittwieser et al., 2020) — 无规则自弈，Atari 57 款游戏全 SOTA</li>
+      <li><b>EfficientZero</b> (Ye et al., 2021) — 样本高效版，2h 训练超越人类</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ========== ③-02 自我训练 ========== -->
+<section class="mod">
+  <div class="num" style="background:var(--m2-deep)">02</div>
+  <div class="label">自我训练与知识蒸馏</div>
+  <div class="label-en">Self-Training · STaR / ReST / SPIN</div>
+  <div class="body">
+    <p>核心公式：用模型自己生成的数据训练自己。</p>
+
+    <table class="compact-table">
+      <tr><th>方法</th><th>原理</th><th>论文</th></tr>
+      <tr>
+        <td><b>STaR</b></td>
+        <td>模型生成推理链 → 筛选正确答案 → 微调自己</td>
+        <td>Zelikman et al., 2022</td>
+      </tr>
+      <tr>
+        <td><b>ReST</b></td>
+        <td>批量生成 → 过滤 → 多次迭代 ("Grow & Improve")</td>
+        <td>Gülçehre et al., 2023</td>
+      </tr>
+      <tr>
+        <td><b>SPIN</b></td>
+        <td>模型做自己的对手：生成"对手"回复 → 学习击败</td>
+        <td>Chen et al., 2024</td>
+      </tr>
+      <tr>
+        <td><b>Self-Consistency</b></td>
+        <td>多条推理路径投票，多数获胜的作为伪标签</td>
+        <td>Wang et al., 2023</td>
+      </tr>
+    </table>
+
+    <div class="callout info">
+      <b>💡 关键区分：</b>自我训练 ≠ 知识蒸馏。蒸馏需要更大的教师模型；自我训练只用同一个模型，靠多次采样 + 过滤来提升。
+    </div>
+  </div>
+</section>
+
+<!-- ========== ③-03 自我奖励 / 自我对齐 ========== -->
+<section class="mod">
+  <div class="num" style="background:var(--m3-deep)">03</div>
+  <div class="label">自我奖励与自我对齐</div>
+  <div class="label-en">Self-Rewarding · LLM-as-Judge · Constitutional AI</div>
+  <div class="body">
+    <p>RLHF 的瓶颈：需要人类标注偏好。自进化方案 —— <b>让模型自己当裁判</b>。</p>
+
+    <table class="compact-table">
+      <tr><th>方法</th><th>核心思想</th></tr>
+      <tr>
+        <td><b>Constitutional AI</b><br>(Bai et al., 2022)</td>
+        <td>用宪法原则约束模型自我修正：生成 → 按原则批判 → 重写。无需人类偏好数据。</td>
+      </tr>
+      <tr>
+        <td><b>Self-Rewarding LM</b><br>(Yuan et al., 2024)</td>
+        <td>LLM 生成回复 + 评分 + 训练下一代。每轮用最新模型当裁判，奖励信号质量随迭代提升。</td>
+      </tr>
+      <tr>
+        <td><b>SPPO</b><br>(Wu et al., 2024)</td>
+        <td>Self-Play Preference Optimization：不用外部奖励模型，纯对弈式偏好学习。</td>
+      </tr>
+    </table>
+
+    <div class="callout warn">
+      <b>⚠️ 关键风险：奖励黑客 (Reward Hacking)</b><br>
+      模型可能学会迎合自己的评分标准而非真正变好 —— 等价于评卷人和考生是同一个人。
+    </div>
+
+    <div class="code-block">
+<span class="c"># Self-Rewarding 循环（简化）</span>
+<span class="k">for</span> iteration t = 0, 1, 2, ...:
+    D_t = M_t.generate(prompts)         <span class="c"># 模型 M_t 生成候选回复</span>
+    R_t = M_t.evaluate(D_t)             <span class="c"># M_t 自己打分</span>
+    M_{t+1} = DPO(M_t, D_t, R_t)        <span class="c"># 用自评数据偏好优化 → 得到更强 M</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ③-04 递归改进 + 进化 ========== -->
+<section class="mod">
+  <div class="num" style="background:var(--m4-deep)">04</div>
+  <div class="label">递归自我改进 & 进化算法</div>
+  <div class="label-en">Recursive Self-Improvement · Model Merging · Evolution</div>
+  <div class="body">
+    <p><b>递归改进 (Recursive Self-Improvement)</b>：模型 V1 训练出 V2，V2 再训练 V3……每代用更强模型生成数据，理论上可无限升级。代表工作：Self-Refine、Reflexion（模型自己反思错误、迭代修正）。</p>
+
+    <p style="margin-top:10px;"><b>进化算法</b>：不走梯度下降，而是用群体 + 变异 + 选择。</p>
+
+    <table class="compact-table">
+      <tr><th>方法</th><th>要点</th></tr>
+      <tr>
+        <td><b>Model Soups</b><br>(Wortsman et al., 2022)</td>
+        <td>多个 fine-tune 模型的权重直接平均，零额外训练，精度超单个最佳模型</td>
+      </tr>
+      <tr>
+        <td><b>Evolutionary Model Merge</b><br>(Akiba et al., 2024)</td>
+        <td>用进化算法搜索模型融合配方，AutoMerge 自动化合并多模型权重</td>
+      </tr>
+      <tr>
+        <td><b>LLM2LLM</b><br>(Lee et al., 2024)</td>
+        <td>教师模型(强)生成数据 → 学生模型(弱)学习 → 学生变强后当新教师，自举循环</td>
+      </tr>
+    </table>
+
+    <div class="flow-arrow">
+      <span class="step" style="background:#fffbeb;border-color:#fcd34d;color:#b45309">模型</span>
+      <span class="arr">→</span>
+      <span class="step" style="background:#fffbeb;border-color:#fcd34d;color:#b45309">反思/批判</span>
+      <span class="arr">→</span>
+      <span class="step" style="background:#fffbeb;border-color:#fcd34d;color:#b45309">修正输出</span>
+      <span class="arr">→</span>
+      <span class="step" style="background:#fffbeb;border-color:#fcd34d;color:#b45309">训练下一代</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ④ Pitfalls ========== -->
+<section style="background:#fff5f5;">
+  <h3 style="color:var(--red);font-size:15px;margin-bottom:14px;">❌ 三大常见误区</h3>
+
+  <div class="pitfall">
+    <div class="x">✗</div>
+    <div>
+      <span class="wrong">自进化 = 不用任何外部数据</span>
+      <span class="arrow">👉</span>
+      <span class="right">自进化仍需初始训练数据 + 任务定义。它只是把"人工标注"换成"模型自标注"，而非完全真空运行。</span>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="x">✗</div>
+    <div>
+      <span class="wrong">自进化一定越变越强</span>
+      <span class="arrow">👉</span>
+      <span class="right">模型崩溃 (Model Collapse) 是真实风险：用自己生成的数据反复训练会导致多样性消失、性能退化。</span>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="x">✗</div>
+    <div>
+      <span class="wrong">递归改进能无限指数增长</span>
+      <span class="arrow">👉</span>
+      <span class="right">现实中回报递减 (diminishing returns)：每代增益越来越小，且计算成本指数增长。目前 2-3 代后基本持平。</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ⑤ Footer ========== -->
+<section class="footer-summary">
+  <div class="tag">这一页先记住 · TL;DR</div>
+
+  <div class="points">
+    <div class="point">
+      <div class="p-label">核心逻辑</div>
+      <div class="p-text">用模型自己生成的信号（数据/评分/反馈）替代人工标注，形成闭环迭代</div>
+    </div>
+    <div class="point">
+      <div class="p-label">五条路线</div>
+      <div class="p-text">自我对弈 / 自我训练+蒸馏 / 自我奖励+对齐 / 递归改进 / 进化合并 —— 经常相互配合</div>
+    </div>
+    <div class="point">
+      <div class="p-label">最大风险</div>
+      <div class="p-text">模型崩溃 · 奖励黑客 · 回报递减 —— 自进化不是银弹，需要精心设计约束</div>
+    </div>
+  </div>
+
+  <div class="oneliner">
+    一句话总结：<span class="hl">模型自进化 = 用 AI 训练 AI，让模型自己生成数据、自己评价、自己迭代升级。</span>
+    它的上限是"递归自我改进"，它的下限是"模型崩溃" —— 关键在于自监督信号的质量与多样性。
+  </div>
+
+  <div class="credit">
+    <b style="color: var(--ink); font-weight: 700;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+    <span style="font-size: 10.5px; color: var(--ink-3);">© 2026 DONG XINGBO · All rights reserved</span>
+  </div>
+</section>
+
+</div><!-- /.poster -->
+</body>
+</html>
