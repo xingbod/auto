@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI4SCI · AI 驱动的科学发现 · 一页讲清楚</title>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --ink-2: #475569;
+      --ink-3: #94a3b8;
+      --line: #e2e8f0;
+      --line-2: #f1f5f9;
+
+      /* 主色：深赭石 (科学发现的热度与坚实) */
+      --m1:        #9a3412;
+      --m1-soft:   #fff7ed;
+      --m1-deep:   #431407;
+
+      /* 辅色：深蓝 — 生物/药物 */
+      --m2:        #1e40af;
+      --m2-soft:   #eff6ff;
+      --m2-deep:   #1e3a5f;
+
+      /* 辅色：青绿 — 材料/物理 */
+      --m3:        #0d9488;
+      --m3-soft:   #f0fdfa;
+      --m3-deep:   #134e4a;
+
+      /* 辅色：深紫 — 数学 */
+      --m4:        #7c3aed;
+      --m4-soft:   #f5f3ff;
+      --m4-deep:   #4c1d95;
+
+      /* 辅色：深绿 — 天气/地球 */
+      --m5:        #15803d;
+      --m5-soft:   #f0fdf4;
+      --m5-deep:   #14532d;
+
+      --red:       #ef4444;
+      --red-soft:  #fef2f2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                   "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.55;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--card);
+      box-shadow: 0 0 0 1px var(--line);
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      padding: 36px 44px 28px;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(ellipse 600px 200px at top right, var(--m1-soft) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 200px at bottom left, var(--m3-soft) 0%, transparent 70%);
+    }
+    header .tag {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--m1-deep);
+      background: var(--m1-soft);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    header h1 {
+      font-size: 28px;
+      line-height: 1.28;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    header .subtitle {
+      font-size: 14px;
+      color: var(--ink-2);
+      line-height: 1.6;
+    }
+    header .meta {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    header .meta span {
+      font-size: 11.5px;
+      color: var(--ink-3);
+      background: var(--line-2);
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+
+    /* ---------- Sections ---------- */
+    section {
+      padding: 28px 44px;
+      border-bottom: 1px solid var(--line-2);
+    }
+    section:last-of-type { border-bottom: none; }
+
+    /* ---------- Key Numbers ---------- */
+    .kv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .kv-box {
+      text-align: center;
+      padding: 18px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #fafafa;
+    }
+    .kv-box .num { font-size: 24px; font-weight: 800; color: var(--m1); letter-spacing: -0.02em; }
+    .kv-box .label { font-size: 12px; color: var(--ink-2); margin-top: 4px; line-height: 1.4; }
+
+    /* ---------- Overview ---------- */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .ov-card {
+      padding: 14px 10px;
+      border-radius: 10px;
+      text-align: center;
+      border: 1px solid var(--line);
+      font-size: 12.5px;
+    }
+    .ov-card .emoji { font-size: 26px; margin-bottom: 5px; display: block; }
+    .ov-card .name  { font-weight: 700; margin-bottom: 2px; }
+    .ov-card .en    { font-size: 10px; color: var(--ink-3); letter-spacing: 0.04em; }
+    .ov-card.c1 { background: #fff7ed; border-color: #fed7aa; }
+    .ov-card.c2 { background: #eff6ff; border-color: #bfdbfe; }
+    .ov-card.c3 { background: #f0fdfa; border-color: #99f6e4; }
+    .ov-card.c4 { background: #f5f3ff; border-color: #ddd6fe; }
+    .ov-card.c5 { background: #f0fdf4; border-color: #bbf7d0; }
+    .ov-card.c6 { background: #fffbeb; border-color: #fde68a; }
+    .ov-card.c7 { background: #fdf2f8; border-color: #fbcfe8; }
+
+    /* ---------- Numbered module ---------- */
+    .module { margin-bottom: 24px; }
+    .module:last-child { margin-bottom: 0; }
+    .module-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    .module-num {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 10px;
+      font-size: 15px; font-weight: 800; color: #fff;
+      flex-shrink: 0;
+    }
+    .m1 .module-num { background: var(--m1); }
+    .m2 .module-num { background: var(--m2); }
+    .m3 .module-num { background: var(--m3); }
+    .m4 .module-num { background: var(--m4); }
+    .m5 .module-num { background: var(--m5); }
+
+    .module-title { font-size: 18px; font-weight: 700; }
+    .module-title .en { font-size: 11.5px; font-weight: 500; color: var(--ink-3); display: block; letter-spacing: 0.06em; }
+
+    /* ---------- Card lists ---------- */
+    .card-list { display: grid; gap: 10px; }
+    .card-list.col2 { grid-template-columns: 1fr 1fr; }
+    .info-card {
+      padding: 14px 16px;
+      border-radius: 10px;
+      background: var(--line-2);
+      border-left: 4px solid var(--m1);
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+    .info-card b, .info-card strong { color: var(--m1-deep); }
+    .info-card.m2 { border-left-color: var(--m2); }
+    .info-card.m2 b, .info-card.m2 strong { color: var(--m2-deep); }
+    .info-card.m3 { border-left-color: var(--m3); }
+    .info-card.m3 b, .info-card.m3 strong { color: var(--m3-deep); }
+    .info-card.m4 { border-left-color: var(--m4); }
+    .info-card.m4 b, .info-card.m4 strong { color: var(--m4-deep); }
+    .info-card.m5 { border-left-color: var(--m5); }
+    .info-card.m5 b, .info-card.m5 strong { color: var(--m5-deep); }
+
+    /* ---------- Product table ---------- */
+    .prod-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+    .prod-table th {
+      text-align: left;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--ink-3);
+      padding: 8px 12px 6px;
+      border-bottom: 2px solid var(--line);
+      font-weight: 600;
+    }
+    .prod-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line-2);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    .prod-table tr:last-child td { border-bottom: none; }
+    .score {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .score.gold { background: #fef3c7; color: #92400e; }
+    .score.blue { background: #dbeafe; color: #1e40af; }
+    .score.grn { background: #dcfce7; color: #166534; }
+    .score.pur { background: #f3e8ff; color: #6b21a8; }
+
+    /* ---------- Timeline ---------- */
+    .timeline { padding-left: 20px; border-left: 2px solid var(--m1-soft); }
+    .tl-item { position: relative; margin-bottom: 14px; font-size: 13.5px; line-height: 1.6; }
+    .tl-item:last-child { margin-bottom: 0; }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -27px; top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--m1);
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px var(--m1);
+    }
+    .tl-item .date { font-size: 11px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.04em; }
+
+    /* ---------- Pitfalls ---------- */
+    .pitfall-list { display: flex; flex-direction: column; gap: 12px; }
+    .pitfall {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      background: var(--red-soft);
+      border-left: 4px solid var(--red);
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+    .pitfall .cross {
+      flex-shrink: 0;
+      width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; background: var(--red);
+      border-radius: 50%;
+      font-size: 16px; font-weight: 800;
+      margin-top: 1px;
+    }
+    .pitfall .wrong { text-decoration: line-through; color: #b91c1c; }
+    .pitfall .right { color: #15803d; font-weight: 700; }
+
+    /* ---------- Footer ---------- */
+    footer {
+      padding: 28px 44px 32px;
+      background: var(--ink);
+      color: #e2e8f0;
+    }
+    footer .tl-dr {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 14px;
+    }
+    footer .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    footer .sum-item {
+      padding: 14px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    footer .sum-item .label {
+      font-size: 10.5px;
+      letter-spacing: 0.08em;
+      color: #fda4af;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    footer .oneliner {
+      padding: 18px 20px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.7;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    footer .oneliner .hl { color: #fda4af; }
+
+    .credit {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 11.5px;
+      color: #64748b;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 680px) {
+      header, section, footer { padding-left: 24px; padding-right: 24px; }
+      .overview-grid { grid-template-columns: 1fr 1fr; }
+      .card-list.col2 { grid-template-columns: 1fr; }
+      .kv-grid { grid-template-columns: 1fr 1fr; }
+      footer .summary-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+<!-- ====== Header ====== -->
+<header>
+  <div class="tag">AI for Science</div>
+  <h1>AI4SCI：AI 如何加速科学发现？</h1>
+  <p class="subtitle">
+    从蛋白质设计到材料逆向生成，从数学定理证明到全球天气预报——<br>
+    AI 正在成为继实验、理论、计算之后的「第四科学范式」。
+  </p>
+  <div class="meta">
+    <span>📖 阅读约 7 分钟</span>
+    <span>👥 研究人员 / AI 从业者</span>
+    <span>📊 数据截止 2026 年 7 月</span>
+  </div>
+</header>
+
+<!-- ====== Key Numbers ====== -->
+<section>
+  <div class="kv-grid">
+    <div class="kv-box"><div class="num">28/42</div><div class="label">AlphaProof IMO 得分 (银牌)</div></div>
+    <div class="kv-box"><div class="num">2.2M</div><div class="label">GNoME 预测新晶体结构</div></div>
+    <div class="kv-box"><div class="num">10<sup>5</sup>×</div><div class="label">ML势 vs DFT 加速比</div></div>
+    <div class="kv-box"><div class="num">97.2%</div><div class="label">GenCast 超越 ECMWF ENS</div></div>
+  </div>
+</section>
+
+<!-- ====== Overview ====== -->
+<section>
+  <div class="overview-grid">
+    <div class="ov-card c1"><span class="emoji">🧬</span><div class="name">生物/药物</div><div class="en">AF3·ESM3·Evo2</div></div>
+    <div class="ov-card c2"><span class="emoji">🔬</span><div class="name">材料科学</div><div class="en">GNoME·MatterGen</div></div>
+    <div class="ov-card c3"><span class="emoji">📐</span><div class="name">数学推理</div><div class="en">AlphaProof·Geo</div></div>
+    <div class="ov-card c4"><span class="emoji">⚛️</span><div class="name">物理/化学</div><div class="en">MACE·Allegro·Orb</div></div>
+    <div class="ov-card c5"><span class="emoji">🌍</span><div class="name">天气/气候</div><div class="en">GenCast·GraphCast</div></div>
+    <div class="ov-card c6"><span class="emoji">🌊</span><div class="name">流体/PDE</div><div class="en">FNO·PINNs</div></div>
+    <div class="ov-card c7"><span class="emoji">🧠</span><div class="name">神经科学</div><div class="en">FlyWire·BCI</div></div>
+  </div>
+</section>
+
+<!-- ====== Module 01: Biology & Drug Discovery ====== -->
+<section class="module m2">
+  <div class="module-head">
+    <div class="module-num">01</div>
+    <div class="module-title">生物学与药物发现<span class="en">PROTEIN · GENOMICS · DRUG DESIGN</span></div>
+  </div>
+
+  <table class="prod-table">
+    <thead><tr><th>模型 / 项目</th><th>机构</th><th>核心突破</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>AlphaFold 3</b></td>
+        <td>Google DeepMind</td>
+        <td>预测所有生物分子互作（蛋白/DNA/RNA/配体），扩散架构，<span class="score gold">Nature 2024.05</span></td>
+      </tr>
+      <tr>
+        <td><b>ESM3</b></td>
+        <td>EvolutionaryScale</td>
+        <td>98B 参数蛋白生成模型，生成全新荧光蛋白 esmGFP，等效 <span class="score blue">5 亿年自然演化</span></td>
+      </tr>
+      <tr>
+        <td><b>Evo 2</b></td>
+        <td>Arc Inst. + Stanford + NVIDIA</td>
+        <td>40B 基因组基础模型，1M token 上下文，涵盖人类基因组，突变致病性 AUC > 0.92</td>
+      </tr>
+      <tr>
+        <td><b>RFdiffusion</b></td>
+        <td>David Baker Lab (UW)</td>
+        <td>扩散模型从头设计蛋白质，实验成功率 <span class="score grn">10–30%</span> (传统 ~1%)</td>
+      </tr>
+      <tr>
+        <td><b>AlphaProteo</b></td>
+        <td>Google DeepMind</td>
+        <td>设计靶标高亲和力结合蛋白，成功率较传统方法 <span class="score pur">提升 3–300 倍</span></td>
+      </tr>
+      <tr>
+        <td><b>Boltz-1</b></td>
+        <td>MIT Jameel Clinic</td>
+        <td>开源全原子结构预测，性能接近 AF3，BSD 许可</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ====== Module 02: Materials & Physics ====== -->
+<section class="module m3">
+  <div class="module-head">
+    <div class="module-num">02</div>
+    <div class="module-title">材料科学与物理化学<span class="en">MATERIALS · QUANTUM CHEMISTRY · ML POTENTIALS</span></div>
+  </div>
+
+  <div class="card-list col2">
+    <div class="info-card m3">
+      <b>🔮 GNoME (DeepMind)</b><br>
+      预测 <b>220 万种</b>新无机晶体，38 万种稳定候选。<br>
+      A-Lab 自动实验室成功合成 71%。等价 800 年传统实验。
+    </div>
+    <div class="info-card m3">
+      <b>🎯 MatterGen (Microsoft)</b><br>
+      扩散模型实现材料<b>逆向设计</b>——指定性质（带隙、电导率），直接生成满足条件的晶体结构。Nature 2025.01。
+    </div>
+    <div class="info-card m3">
+      <b>⚡ MACE-MP-0 (剑桥)</b><br>
+      通用 ML 原子间势，覆盖 89 种元素。力预测 MAE &lt; 10 meV/Å，DFT 精度 + <b>10⁵–10⁶ 倍</b>加速。
+    </div>
+    <div class="info-card m3">
+      <b>🔗 Allegro (MIT + NVIDIA)</b><br>
+      严格 SE(3) 等变网络，支持 <b>百万原子</b>体系，与 LAMMPS 集成，力误差 &lt; 5 meV/Å。
+    </div>
+    <div class="info-card m3">
+      <b>🧪 Orb-v2 (Orbital Materials)</b><br>
+      开源通用力场，MatBench F1 领先。催化吸附能 MAE &lt; 0.1 eV。
+    </div>
+    <div class="info-card m3">
+      <b>🏭 工业落地</b><br>
+      Ansys / Synopsys / Cadence 发布 AI 加速求解器，仿真从 <b>小时级→秒级</b>。汽车/航空/能源全行业渗透。
+    </div>
+  </div>
+</section>
+
+<!-- ====== Module 03: Mathematics ====== -->
+<section class="module m4">
+  <div class="module-head">
+    <div class="module-num">03</div>
+    <div class="module-title">数学推理与定理证明<span class="en">THEOREM PROVING · FORMAL MATH · REINFORCEMENT LEARNING</span></div>
+  </div>
+
+  <div class="card-list">
+    <div class="info-card m4">
+      <b>🏅 AlphaProof — IMO 银牌 (28/42 分)</b><br>
+      2024 年国际数学奥林匹克：解决 4/6 题（代数×2 + 数论 + 组合）。用 AlphaZero 风格强化学习在 Lean 中自我训练，所有证明经形式化验证，<b>零漏洞</b>。DeepMind 目标 2025–2026 冲刺金牌 (>35 分)。
+    </div>
+    <div class="info-card m4">
+      <b>📐 AlphaGeometry 2 — IMO 几何 83% 正确率</b><br>
+      神经-符号混合：LLM 生成辅助构造（基于 1 亿合成题训练）+ 符号引擎严密推理。在 2000–2022 年 30 道 IMO 几何题中解决 25 道，逼近人类金牌水平。
+    </div>
+    <div class="info-card m4">
+      <b>🔍 FunSearch — AI 做出新数学发现</b><br>
+      LLM + 进化算法首次发现 Cap Set 问题新构造 + 装箱算法新纪录。Nature 2023.12，2024 年持续产出。标志着 AI 从「解题工具」到「新知识生产者」的质变。
+    </div>
+    <div class="info-card m4">
+      <b>📚 Lean 社区 — 形式化数学基础建设</b><br>
+      mathlib4 已覆盖 15 万+ 定理。陶哲轩 (Terry Tao) 2024 年用 Lean 形式化前沿研究。Lean 成为 AI 数学推理的「黄金标准环境」。
+    </div>
+  </div>
+</section>
+
+<!-- ====== Module 04: Weather & Earth ====== -->
+<section class="module m5">
+  <div class="module-head">
+    <div class="module-num">04</div>
+    <div class="module-title">天气预测与地球科学<span class="en">WEATHER · CLIMATE · FLUID DYNAMICS</span></div>
+  </div>
+
+  <div class="card-list col2">
+    <div class="info-card m5">
+      <b>🌤️ GenCast (DeepMind)</b><br>
+      扩散模型集合预报，<b>97.2%</b> 指标超越 ECMWF ENS（金标准）。生成 50 个物理合理轨迹，8 分钟完成 (TPU v5)。Nature 2024.12。
+    </div>
+    <div class="info-card m5">
+      <b>📊 GraphCast (DeepMind)</b><br>
+      GNN 全球中期预报，<b>90%</b> 验证指标优于 ECMWF HRES。&lt;1 分钟生成 10 天预报。Science 2023.11。ECMWF 已将其纳入业务集合。
+    </div>
+    <div class="info-card m5">
+      <b>🌀 NeuralGCM (Google)</b><br>
+      混合动力核 + 神经网络物理参数化。1–15 天预报与 HRES 相当，<b>40 年气候模拟</b>误差比纯物理模式减半。Nature 2024.07。
+    </div>
+    <div class="info-card m5">
+      <b>🇨🇳 Pangu-Weather (华为)</b><br>
+      3D Earth-Specific Transformer，首批超越 ECMWF 的 AI 模型。2024 年升级 v2：0.1° 分辨率 + 集合预报 + 15 天时效。
+    </div>
+    <div class="info-card m5">
+      <b>🌊 FNO (Caltech)</b><br>
+      傅里叶神经算子，网格无关的 PDE 求解。湍流模拟误差比 CNN 降 50–80%，速度比传统求解器快 <b>10³–10⁴ 倍</b>。NVIDIA Modulus 已深度集成。
+    </div>
+    <div class="info-card m5">
+      <b>📐 PINNs / DeepONet</b><br>
+      物理约束直接编码进损失函数，处理逆问题 + 数据稀疏场景。血流动力学、心血管 FSI、声学反演等广泛应用。
+    </div>
+  </div>
+</section>
+
+<!-- ====== Module 05: Neuroscience ====== -->
+<section class="module m1">
+  <div class="module-head">
+    <div class="module-num">05</div>
+    <div class="module-title">神经科学与脑机接口<span class="en">CONNECTOMICS · BRAIN DECODING · BCI</span></div>
+  </div>
+
+  <div class="card-list">
+    <div class="info-card">
+      <b>🪰 FlyWire 果蝇全脑连接组</b><br>
+      2024 年 Nature 9 篇系列论文公布：139,255 个神经元、5,400 万突触的完整连接图谱。AI 完成 ~90% 自动神经元分割，人类志愿者通过游戏化平台校对。下一个目标：小鼠全脑（~7,000 万神经元）。
+    </div>
+    <div class="info-card">
+      <b>💬 脑信号语言解码</b><br>
+      UCSF + Stanford：ECoG + AI 实现瘫痪患者实时文本输出 > 60 词/分钟，错误率 &lt; 10%。Meta AI：非侵入式 MEG/EEG 解码连续语音，可懂度 60–80%。
+    </div>
+    <div class="info-card">
+      <b>🧠 Neuralink / Synchron</b><br>
+      Neuralink 首位患者用脑控光标达 8.0+ bps（传统 BCI &lt; 2 bps）。Synchron 血管内支架 BCI 无需开颅，已获 FDA 突破性设备认定。脑基础模型 (BrainLM) 出现：大规模 fMRI 数据预训练 → 精神疾病分类 / 药物效应预测。
+    </div>
+  </div>
+</section>
+
+<!-- ====== Timeline ====== -->
+<section>
+  <div class="module-head">
+    <div class="module-num" style="background:var(--m1)">⌛</div>
+    <div class="module-title">关键里程碑 (2023–2026)<span class="en">MILESTONES</span></div>
+  </div>
+  <div class="timeline">
+    <div class="tl-item"><div class="date">2023.07</div> Pangu-Weather 登 Nature，首批超越 ECMWF 的 AI 天气模型。</div>
+    <div class="tl-item"><div class="date">2023.11</div> GraphCast (Science) + GNoME (Nature) 同月发布——前者重塑天气预报，后者预测 220 万种新材料。</div>
+    <div class="tl-item"><div class="date">2024.01</div> AlphaGeometry 登 Nature，IMO 几何 83% 正确率。</div>
+    <div class="tl-item"><div class="date">2024.05</div> AlphaFold 3 (Nature)：全原子生物分子互作预测，扩散架构。</div>
+    <div class="tl-item"><div class="date">2024.06</div> ESM3 (Science)：98B 蛋白生成模型，"用计算替代 5 亿年演化"。</div>
+    <div class="tl-item"><div class="date">2024.07</div> AlphaProof 达到 IMO 银牌 (28/42)。NeuralGCM (Nature) 混合天气/气候模型。</div>
+    <div class="tl-item"><div class="date">2024.10</div> FlyWire 果蝇全脑连接组：Nature 9 篇系列论文。</div>
+    <div class="tl-item"><div class="date">2024.12</div> GenCast (Nature)：扩散集合预报全面超越 ECMWF ENS。</div>
+    <div class="tl-item"><div class="date">2025.01</div> MatterGen (Nature)：材料逆向设计成为现实。</div>
+    <div class="tl-item"><div class="date">2025.02</div> Evo 2：40B 基因组基础模型覆盖人类基因组。</div>
+    <div class="tl-item"><div class="date">2025–2026</div> AlphaProof 冲刺 IMO 金牌 | ECMWF AIFS v2 超越所有 AI 模型 | 三大 CAE 巨头全面 AI 化。</div>
+  </div>
+</section>
+
+<!-- ====== Pitfalls ====== -->
+<section>
+  <div class="module-head">
+    <div class="module-num" style="background:var(--red)">✗</div>
+    <div class="module-title">常见误判与挑战<span class="en">PITFALLS</span></div>
+  </div>
+
+  <div class="pitfall-list">
+    <div class="pitfall">
+      <div class="cross">✗</div>
+      <div>
+        <span class="wrong">「AI 替代了科学家」</span> 👉 <span class="right">AI4SCI 的核心是「增强」而非「替代」——AI 处理高通量预测/筛选，人类提出假设、设计实验、解读意义。目前为止，所有 AI 科学发现都由人类团队定义问题并验证。</span>
+      </div>
+    </div>
+    <div class="pitfall">
+      <div class="cross">✗</div>
+      <div>
+        <span class="wrong">「AI 预测就是科学结论」</span> 👉 <span class="right">GNoME 预测的 220 万种材料中，经实验验证的仅数百种。AI 预测必须经过湿实验验证才能成为科学事实。预测→合成→表征→反馈的闭环是必经之路。</span>
+      </div>
+    </div>
+    <div class="pitfall">
+      <div class="cross">✗</div>
+      <div>
+        <span class="wrong">「基础模型越大越好」</span> 👉 <span class="right">MACE / Allegro / Orb 等成功案例证明：在物理约束（等变性、守恒律）指导下的小模型往往比纯数据驱动的大模型更可靠。Physics-informed 是 AI4SCI 区别于通用 AI 的核心竞争力。</span>
+      </div>
+    </div>
+    <div class="pitfall">
+      <div class="cross">✗</div>
+      <div>
+        <span class="wrong">「任何领域都适合大干快上 AI」</span> 👉 <span class="right">AI4SCI 需要高质量标注数据 + 明确评估指标。社会科学的因果推断、临床医学的个体化决策等领域，AI 仍处于早期探索阶段，不能简单复制分子/材料领域的成功。</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== Footer ====== -->
+<footer>
+  <div class="tl-dr">TL;DR · 这一页先记住</div>
+  <div class="summary-grid">
+    <div class="sum-item">
+      <div class="label">① 七大赛道齐头并进</div>
+      生物（AF3/ESM3）、材料（GNoME/MatterGen）、数学（AlphaProof）、物理/化学（MACE/Orb）、天气（GenCast）、流体（FNO）、神经科学（FlyWire）——2024 年每个方向都诞生了 Nature/Science 封面级突破。
+    </div>
+    <div class="sum-item">
+      <div class="label">② 基础模型化 + 物理约束</div>
+      大规模预训练 + 领域微调成为底层范式（ESM3、Evo2、Orb）。但纯粹的端到端黑箱正被 physics-informed 混合方法取代——物理等变性、守恒律是做好的关键。
+    </div>
+    <div class="sum-item">
+      <div class="label">③ 从辅助工具到独立发现者</div>
+      AI 首次独立做出经实验验证的科学发现（esmGFP、GNoME 晶体），IMO 银牌级数学推理。科研范式正在发生质变——AI 成为第四科学范式。
+    </div>
+  </div>
+  <div class="oneliner">
+    一句话总结：<span class="hl">AI 不再只是科学的「加速器」，它正在成为科学的「共同发现者」</span>——2024 年的密集突破标志着 AI4SCI 从量变进入质变，下一个五年将决定 AI 能否真正提出人类未曾想到的科学假设。
+  </div>
+  <div class="credit">
+    <b style="color:#e2e8f0;font-weight:700;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+    <span style="font-size:10.5px;color:#64748b;">© 2026 DONG XINGBO · All rights reserved</span>
+  </div>
+</footer>
+
+</div><!-- /.page -->
+</body>
+</html>
