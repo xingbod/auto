@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>医学 AI 智能体 · 一页讲清楚</title>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --ink-2: #475569;
+      --ink-3: #94a3b8;
+      --line: #e2e8f0;
+      --line-2: #f1f5f9;
+
+      /* 主色：深玫红 (医疗决策的温度) */
+      --m1:        #9f1239;
+      --m1-soft:   #fff1f2;
+      --m1-deep:   #4c0519;
+
+      /* 辅色 1：深蓝 (技术体系) */
+      --m2:        #1d4ed8;
+      --m2-soft:   #eff6ff;
+      --m2-deep:   #1e3a5f;
+
+      /* 辅色 2：青绿 (临床验证) */
+      --m3:        #0d9488;
+      --m3-soft:   #f0fdfa;
+      --m3-deep:   #134e4a;
+
+      /* 辅色 3：琥珀 (落地部署) */
+      --m4:        #b45309;
+      --m4-soft:   #fffbeb;
+      --m4-deep:   #78350f;
+
+      --red:       #ef4444;
+      --red-soft:  #fef2f2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                   "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.55;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--card);
+      box-shadow: 0 0 0 1px var(--line);
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      padding: 36px 44px 28px;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(ellipse 600px 200px at top right, var(--m1-soft) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 200px at bottom left, var(--m3-soft) 0%, transparent 70%);
+    }
+    header .tag {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--m1-deep);
+      background: var(--m1-soft);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    header h1 {
+      font-size: 28px;
+      line-height: 1.28;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    header .subtitle {
+      font-size: 14px;
+      color: var(--ink-2);
+      line-height: 1.6;
+    }
+    header .meta {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    header .meta span {
+      font-size: 11.5px;
+      color: var(--ink-3);
+      background: var(--line-2);
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+
+    /* ---------- Sections ---------- */
+    section {
+      padding: 28px 44px;
+      border-bottom: 1px solid var(--line-2);
+    }
+    section:last-of-type { border-bottom: none; }
+
+    /* ---------- Overview cards ---------- */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .ov-card {
+      padding: 16px 14px;
+      border-radius: 10px;
+      text-align: center;
+      border: 1px solid var(--line);
+    }
+    .ov-card .emoji { font-size: 28px; margin-bottom: 6px; }
+    .ov-card .name  { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+    .ov-card .en    { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.04em; text-transform: uppercase; }
+    .ov-card.c1 { background: #fff1f2; border-color: #fecdd3; }
+    .ov-card.c2 { background: #eff6ff; border-color: #bfdbfe; }
+    .ov-card.c3 { background: #f0fdfa; border-color: #99f6e4; }
+    .ov-card.c4 { background: #fffbeb; border-color: #fde68a; }
+    .ov-card.c5 { background: #f5f3ff; border-color: #ddd6fe; }
+    .ov-card.c6 { background: #fdf2f8; border-color: #fbcfe8; }
+
+    /* ---------- Numbered module ---------- */
+    .module { margin-bottom: 24px; }
+    .module:last-child { margin-bottom: 0; }
+    .module-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    .module-num {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 10px;
+      font-size: 15px; font-weight: 800; color: #fff;
+      flex-shrink: 0;
+    }
+    .m1 .module-num { background: var(--m1); }
+    .m2 .module-num { background: var(--m2); }
+    .m3 .module-num { background: var(--m3); }
+    .m4 .module-num { background: var(--m4); }
+
+    .module-title { font-size: 18px; font-weight: 700; }
+    .module-title .en { font-size: 11.5px; font-weight: 500; color: var(--ink-3); display: block; letter-spacing: 0.06em; }
+
+    /* ---------- Card lists ---------- */
+    .card-list { display: grid; gap: 10px; }
+    .card-list.col2 { grid-template-columns: 1fr 1fr; }
+    .info-card {
+      padding: 14px 16px;
+      border-radius: 10px;
+      background: var(--line-2);
+      border-left: 4px solid var(--m1);
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+    .info-card b, .info-card strong { color: var(--m1-deep); }
+    .info-card.m2 { border-left-color: var(--m2); }
+    .info-card.m2 b, .info-card.m2 strong { color: var(--m2-deep); }
+    .info-card.m3 { border-left-color: var(--m3); }
+    .info-card.m3 b, .info-card.m3 strong { color: var(--m3-deep); }
+    .info-card.m4 { border-left-color: var(--m4); }
+    .info-card.m4 b, .info-card.m4 strong { color: var(--m4-deep); }
+
+    /* ---------- Product table ---------- */
+    .prod-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+    .prod-table th {
+      text-align: left;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--ink-3);
+      padding: 8px 12px 6px;
+      border-bottom: 2px solid var(--line);
+      font-weight: 600;
+    }
+    .prod-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line-2);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    .prod-table tr:last-child td { border-bottom: none; }
+    .prod-table .score {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .score.gold { background: #fef3c7; color: #92400e; }
+    .score.blue { background: #dbeafe; color: #1e40af; }
+
+    /* ---------- Timeline ---------- */
+    .timeline { padding-left: 20px; border-left: 2px solid var(--m1-soft); }
+    .tl-item { position: relative; margin-bottom: 14px; font-size: 13.5px; line-height: 1.6; }
+    .tl-item:last-child { margin-bottom: 0; }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -27px; top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--m1);
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px var(--m1);
+    }
+    .tl-item .date { font-size: 11px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.04em; }
+
+    /* ---------- Pitfalls ---------- */
+    .pitfall-list { display: flex; flex-direction: column; gap: 12px; }
+    .pitfall {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      background: var(--red-soft);
+      border-left: 4px solid var(--red);
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+    .pitfall .cross {
+      flex-shrink: 0;
+      width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; background: var(--red);
+      border-radius: 50%;
+      font-size: 16px; font-weight: 800;
+      margin-top: 1px;
+    }
+    .pitfall .wrong { text-decoration: line-through; color: #b91c1c; }
+    .pitfall .right { color: #15803d; font-weight: 700; }
+
+    /* ---------- Key values ---------- */
+    .kv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .kv-box {
+      text-align: center;
+      padding: 18px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #fafafa;
+    }
+    .kv-box .num { font-size: 26px; font-weight: 800; color: var(--m1); letter-spacing: -0.02em; }
+    .kv-box .label { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+
+    /* ---------- Footer ---------- */
+    footer {
+      padding: 28px 44px 32px;
+      background: var(--ink);
+      color: #e2e8f0;
+    }
+    footer .tl-dr {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 14px;
+    }
+    footer .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    footer .sum-item {
+      padding: 14px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    footer .sum-item .label {
+      font-size: 10.5px;
+      letter-spacing: 0.08em;
+      color: var(--m3);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    footer .oneliner {
+      padding: 18px 20px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.7;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    footer .oneliner .hl { color: #fda4af; }
+
+    .credit {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 11.5px;
+      color: #64748b;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 680px) {
+      header, section, footer { padding-left: 24px; padding-right: 24px; }
+      .overview-grid { grid-template-columns: 1fr 1fr; }
+      .card-list.col2 { grid-template-columns: 1fr; }
+      .kv-grid { grid-template-columns: 1fr 1fr; }
+      footer .summary-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+<!-- ====== Header ====== -->
+<header>
+  <div class="tag">AI × Healthcare</div>
+  <h1>医学 AI 智能体，走到哪了？</h1>
+  <p class="subtitle">
+    从诊断对话、影像判读到药物发现——AI Agent 正在重塑医疗的每一个环节。<br>
+    本文梳理 2024–2026 年全球医疗 AI 智能体的产品生态、技术路线、临床验证与关键挑战。
+  </p>
+  <div class="meta">
+    <span>📖 阅读约 6 分钟</span>
+    <span>👥 研究人员 / 临床医生 / AI 从业者</span>
+    <span>📊 数据截止 2026 年 7 月</span>
+  </div>
+</header>
+
+<!-- ====== Key Numbers ====== -->
+<section>
+  <div class="kv-grid">
+    <div class="kv-box"><div class="num">950+</div><div class="label">FDA 批准的 AI 医疗设备</div></div>
+    <div class="kv-box"><div class="num">$5B+</div><div class="label">医疗 AI 2025 融资总额</div></div>
+    <div class="kv-box"><div class="num">87%</div><div class="label">GPT-4 MedQA 准确率</div></div>
+    <div class="kv-box"><div class="num">90+</div><div class="label">NMPA 三类 AI 器械获批</div></div>
+  </div>
+</section>
+
+<!-- ====== Overview ====== -->
+<section>
+  <div class="overview-grid">
+    <div class="ov-card c1"><div class="emoji">🩺</div><div class="name">诊断助手</div><div class="en">Diagnosis Agent</div></div>
+    <div class="ov-card c2"><div class="emoji">💊</div><div class="name">药物发现</div><div class="en">Drug Discovery</div></div>
+    <div class="ov-card c3"><div class="emoji">🖼️</div><div class="name">影像判读</div><div class="en">Imaging AI</div></div>
+    <div class="ov-card c4"><div class="emoji">🤖</div><div class="name">手术机器人</div><div class="en">Surgical AI</div></div>
+    <div class="ov-card c5"><div class="emoji">📋</div><div class="name">病历质控</div><div class="en">EHR Agent</div></div>
+    <div class="ov-card c6"><div class="emoji">🧬</div><div class="name">基因组学</div><div class="en">Genomics AI</div></div>
+  </div>
+</section>
+
+<!-- ====== Module 01: Product Ecosystem ====== -->
+<section class="module m1">
+  <div class="module-head">
+    <div class="module-num">01</div>
+    <div class="module-title">全球产品生态<span class="en">INTERNATIONAL &amp; CHINA LANDSCAPE</span></div>
+  </div>
+
+  <table class="prod-table">
+    <thead>
+      <tr><th>产品 / 机构</th><th>定位</th><th>关键指标</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>Med-PaLM 2</b> · Google</td>
+        <td>医学大模型，回答临床问题</td>
+        <td><span class="score gold">USMLE 86.5%</span> 专家级</td>
+      </tr>
+      <tr>
+        <td><b>AMIE</b> · Google DeepMind</td>
+        <td>对话式诊断智能体，模拟医患问诊</td>
+        <td><span class="score gold">OSCE 优于 PCP</span> 诊断准确率 + 同理心</td>
+      </tr>
+      <tr>
+        <td><b>Hippocratic AI</b></td>
+        <td>专科护理 Agent（分诊 / 随访 / 用药指导）</td>
+        <td><span class="score blue">$500M 估值</span> B 轮 $141M (2025)</td>
+      </tr>
+      <tr>
+        <td><b>OpenAI / Nuance DAX</b> · Microsoft</td>
+        <td>临床语音转病历 + GPT-4 辅助决策</td>
+        <td><span class="score gold">MedQA 87%</span> 覆盖 200+ 医疗机构</td>
+      </tr>
+      <tr>
+        <td><b>讯飞星火医疗大模型</b></td>
+        <td>中国首个通过执医考试的医疗大模型</td>
+        <td>NMPA 三类证 · 覆盖 300+ 病种</td>
+      </tr>
+      <tr>
+        <td><b>百川智能 (Baichuan)</b></td>
+        <td>百川医疗大模型 · 辅助诊断 + 病历生成</td>
+        <td>Baichuan 4 医疗版 · 2025 发布</td>
+      </tr>
+      <tr>
+        <td><b>医渡云 (YiduCore)</b></td>
+        <td>医疗知识图谱 + Agent 决策引擎</td>
+        <td>覆盖 1000+ 医院 · 港股上市</td>
+      </tr>
+      <tr>
+        <td><b>腾讯觅影 / 鹰瞳 Airdoc</b></td>
+        <td>影像 AI (眼底 / CT / 病理)</td>
+        <td>NMPA 三类证 · 筛查数千万人次</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ====== Module 02: Technical Architecture ====== -->
+<section class="module m2">
+  <div class="module-head">
+    <div class="module-num">02</div>
+    <div class="module-title">技术架构：智能体如何"看诊"<span class="en">AGENT ARCHITECTURE</span></div>
+  </div>
+
+  <div class="card-list col2">
+    <div class="info-card m2">
+      <b>🧠 基础模型 + 医学微调</b><br>
+      GPT-4 / Med-PaLM / 百川 等大模型经医学语料 (论文、病历、考试题) 继续训练或 RLHF，掌握临床推理链 (Chain-of-Thought Diagnosis)。
+    </div>
+    <div class="info-card m2">
+      <b>📚 RAG 医学知识检索</b><br>
+      外挂医学知识库 (PubMed、UpToDate、药品说明书、临床指南)，动态检索最新证据，降低幻觉。医渡云 300 亿级医学知识图谱即此范式。
+    </div>
+    <div class="info-card m2">
+      <b>🤝 多智能体协作 (Multi-Agent)</b><br>
+      一个"分诊 Agent"初筛 → "专科 Agent"深入 → "审核 Agent"校验 → "报告 Agent"生成。AMIE 的自我博弈对话训练即此思路。
+    </div>
+    <div class="info-card m2">
+      <b>👁️ 多模态融合</b><br>
+      影像 (CT/MRI/X 光) + 文本 (病历/检验报告) + 基因组数据联合推理。Google Med-Gemini 系列已展示跨模态诊断能力。
+    </div>
+  </div>
+</section>
+
+<!-- ====== Module 03: Key Capabilities ====== -->
+<section class="module m3">
+  <div class="module-head">
+    <div class="module-num">03</div>
+    <div class="module-title">核心能力矩阵<span class="en">CAPABILITY DEEP DIVE</span></div>
+  </div>
+
+  <div class="card-list">
+    <div class="info-card m3">
+      <b>🩻 影像判读 — 从"辅助"走向"主力"</b><br>
+      眼底照片 → 糖尿病视网膜病变 (Airdoc 灵敏度 93%)；胸部 CT → 肺结节检出 (推想科技)；病理切片 → 癌细胞分割。FDA 950+ AI 设备中影像类占 75%。
+    </div>
+    <div class="info-card m3">
+      <b>💬 对话问诊 — AMIE 实现"比医生更有同理心"</b><br>
+      2024 年 AMIE OSCE 测试：在诊断准确率持平初级保健医生 (PCP) 的前提下，患者评分在「同理心」「沟通清晰度」维度上超越人类医生。采用了自我对弈 + 模拟患者反馈的强化训练。
+    </div>
+    <div class="info-card m3">
+      <b>💊 药物发现 — AlphaFold 3 + Isomorphic Labs</b><br>
+      AlphaFold 3 预测所有生物分子相互作用 (蛋白质/DNA/RNA/配体)。Isomorphic Labs (DeepMind 分拆) 已与 Eli Lilly、Novartis 签署数十亿美元合作，AI 设计分子进入临床前管线。
+    </div>
+    <div class="info-card m3">
+      <b>📋 病历自动化 — 医生每周节省 5-10 小时</b><br>
+      Microsoft DAX Copilot 将医患对话实时转为结构化病历，准确率 > 95%，覆盖 200+ 美国医疗机构，带来医生满意度显著提升。
+    </div>
+  </div>
+</section>
+
+<!-- ====== Module 04: Timeline ====== -->
+<section class="module m4">
+  <div class="module-head">
+    <div class="module-num">04</div>
+    <div class="module-title">关键里程碑时间线<span class="en">MILESTONES 2023–2026</span></div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="date">2023.03</div>
+      GPT-4 发布，MedQA 准确率 87%，首次通过 USMLE，引发「AI 能当医生吗」大讨论。
+    </div>
+    <div class="tl-item">
+      <div class="date">2023.07</div>
+      Google 发布 <b>Med-PaLM 2</b>，USMLE 86.5%，达到「专家级」临床问答水平。
+    </div>
+    <div class="tl-item">
+      <div class="date">2024.01</div>
+      Google DeepMind 发布 <b>AMIE</b>：对话诊断 Agent，OSCE 评估超越初级保健医生。
+    </div>
+    <div class="tl-item">
+      <div class="date">2024.05</div>
+      <b>AlphaFold 3</b> 发布，预测所有生物分子互作结构，药物发现进入「全原子」时代。
+    </div>
+    <div class="tl-item">
+      <div class="date">2024.08</div>
+      讯飞星火医疗大模型通过国家执业医师资格考试，为首个通过的中国医疗大模型。
+    </div>
+    <div class="tl-item">
+      <div class="date">2025.01</div>
+      <b>Hippocratic AI</b> 完成 1.41 亿美元 B 轮，估值 $5B，专注「护理 Agent」赛道。
+    </div>
+    <div class="tl-item">
+      <div class="date">2025.06</div>
+      百川智能发布 Baichuan 4 医疗版，覆盖辅助诊断、病历生成、用药审核。
+    </div>
+    <div class="tl-item">
+      <div class="date">2025.09</div>
+      Microsoft DAX Copilot 覆盖 200+ 机构，成为全球最大临床 AI 部署案例。
+    </div>
+    <div class="tl-item">
+      <div class="date">2026 Q1</div>
+      FDA 累计批准 1000+ AI 医疗设备；NMPA 三类 AI 器械超 90 款。多 Agent 协作诊疗系统进入临床试验。
+    </div>
+  </div>
+</section>
+
+<!-- ====== Pitfalls ====== -->
+<section>
+  <div class="module-head">
+    <div class="module-num" style="background:var(--red)">✗</div>
+    <div class="module-title">常见误判与关键挑战<span class="en">PITFALLS &amp; CHALLENGES</span></div>
+  </div>
+
+  <div class="pitfall-list">
+    <div class="pitfall">
+      <div class="cross">✗</div>
+      <div>
+        <span class="wrong">「AI 准确率 87% 就可以替代医生了」</span> 👉 <span class="right">MedQA 是选择题，不等于真实临床决策。临床场景需多轮对话 + 体格检查 + 不确定性管理，Agent 目前仍是「辅助」定位。</span>
+      </div>
+    </div>
+    <div class="pitfall">
+      <div class="cross">✗</div>
+      <div>
+        <span class="wrong">「大模型看过足够多病历就能安全看病」</span> 👉 <span class="right">医学幻觉 (hallucination) 在临床场景零容忍 — 错误的诊断建议可能导致生命危险。RAG + 溯源引用 + 人机协同审核是现阶段必须的防线。</span>
+      </div>
+    </div>
+    <div class="pitfall">
+      <div class="cross">✗</div>
+      <div>
+        <span class="wrong">「技术成熟后落地自然发生」</span> 👉 <span class="right">监管 (FDA/NMPA)、数据隐私 (HIPAA/PIPL)、医院信息系统集成、医生信任度、医保支付 — 每一项都是比技术更难的「非技术壁垒」。</span>
+      </div>
+    </div>
+    <div class="pitfall">
+      <div class="cross">✗</div>
+      <div>
+        <span class="wrong">「中国医疗 AI 落后于美国」</span> 👉 <span class="right">在影像 AI (肺结节/眼底/病理)、NMPA 审批速度、医院数据规模等维度，中国具备独特优势。差距主要在基础模型原创性和全球多中心临床验证。</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== Footer ====== -->
+<footer>
+  <div class="tl-dr">TL;DR · 这一页先记住</div>
+  <div class="summary-grid">
+    <div class="sum-item">
+      <div class="label">① 辅助非替代</div>
+      医学 AI Agent 当前定位是"增强医生的能力"，而非"取代医生"。诊断、手术、用药等高风险决策仍需人类审核。
+    </div>
+    <div class="sum-item">
+      <div class="label">② Agent 化是趋势</div>
+      从单一模型问答走向多 Agent 协作（分诊→专科→审核→报告），闭环自主决策的能力正在快速演进。
+    </div>
+    <div class="sum-item">
+      <div class="label">③ 中国窗口期</div>
+      百川/讯飞/医渡云/腾讯觅影等已形成产品矩阵，数据规模 + 审批速度是优势，基础模型原创性是短板。
+    </div>
+  </div>
+  <div class="oneliner">
+    一句话总结：<span class="hl">医学 AI 智能体已经通过了"考试"，正在走进"诊室"</span>——但距离真正自主独立诊疗，至少还有 5-10 年的临床验证、监管共识和公众信任建设。
+  </div>
+  <div class="credit">
+    <b style="color:#e2e8f0;font-weight:700;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+    <span style="font-size:10.5px;color:#64748b;">© 2026 DONG XINGBO · All rights reserved</span>
+  </div>
+</footer>
+
+</div><!-- /.page -->
+</body>
+</html>
