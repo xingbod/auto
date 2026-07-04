@@ -1,0 +1,982 @@
+[
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "RestoreAgent: Autonomous Image Restoration Agent via Multimodal Large Language Models",
+    "summary": "Natural images captured by mobile devices often suffer from multiple types of degradation, such as noise, blur, and low light. Traditional image restoration methods require manual selection of specific tasks, algorithms, and execution sequences, which is time-consuming and may yield suboptimal results. All-in-one models, though capable of handling multiple tasks, typically support only a limited range and often produce overly smooth, low-fidelity outcomes due to their broad data distribution fitting. To address these challenges, we first define a new pipeline for restoring images with multiple degradations, and then introduce RestoreAgent, an intelligent image restoration system leveraging multimodal large language models. RestoreAgent autonomously assesses the type and extent of degradation in input images and performs restoration through (1) determining the appropriate restoration tasks, (2) optimizing the task sequence, (3) selecting the most suitable models, and (4) executing the restoration. Experimental results demonstrate the superior performance of RestoreAgent in handling complex degradation, surpassing human experts. Furthermore, the system modular design facilitates the fast integration of new tasks and models, enhancing its flexibility and scalability for various applications.",
+    "published": "2024-07-25T13:29:37Z",
+    "updated": "2024-07-25T13:29:37Z",
+    "url": "http://arxiv.org/abs/2407.18035v1",
+    "authors": "Haoyu Chen, Wenbo Li, Jinjin Gu, Jingjing Ren, Sixiang Chen, Tian Ye, Renjing Pei, Kaiwen Zhou",
+    "categories": [
+      "cs.CV",
+      "cs.AI",
+      "cs.CL"
+    ]
+  },
+  {
+    "query": "\"RestoreAgent\"",
+    "title": "Multi-Agent Image Restoration",
+    "summary": "Image restoration (IR) is challenging due to the complexity of real-world degradations. While many specialized and all-in-one IR models have been developed, they fail to effectively handle complex, mixed degradations. Recent agentic methods RestoreAgent and AgenticIR leverage intelligent, autonomous workflows to alleviate this issue, yet they suffer from suboptimal results and inefficiency due to their resource-intensive finetunings, and ineffective searches and tool execution trials for satisfactory outputs. In this paper, we propose MAIR, a novel Multi-Agent approach for complex IR problems. We introduce a real-world degradation prior, categorizing degradations into three types: (1) scene, (2) imaging, and (3) compression, which are observed to occur sequentially in real world, and reverse them in the opposite order. Built upon this three-stage restoration framework, MAIR emulates a team of collaborative human specialists, including a \"scheduler\" for overall planning and multiple \"experts\" dedicated to specific degradations. This design minimizes search space and trial efforts, improving image quality while reducing inference costs. In addition, a registry mechanism is introduced to enable easy integration of new tools. Experiments on both synthetic and real-world datasets show that proposed MAIR achieves competitive performance and improved efficiency over the previous agentic IR system. Code and models will be made available.",
+    "published": "2025-03-12T13:53:57Z",
+    "updated": "2025-03-17T07:34:25Z",
+    "url": "http://arxiv.org/abs/2503.09403v2",
+    "authors": "Xu Jiang, Gehui Li, Bin Chen, Jian Zhang",
+    "categories": [
+      "cs.CV",
+      "cs.AI"
+    ]
+  },
+  {
+    "query": "\"An Intelligent Agentic System for Complex Image Restoration Problems\"",
+    "title": "An Intelligent Agentic System for Complex Image Restoration Problems",
+    "summary": "Real-world image restoration (IR) is inherently complex and often requires combining multiple specialized models to address diverse degradations. Inspired by human problem-solving, we propose AgenticIR, an agentic system that mimics the human approach to image processing by following five key stages: Perception, Scheduling, Execution, Reflection, and Rescheduling. AgenticIR leverages large language models (LLMs) and vision-language models (VLMs) that interact via text generation to dynamically operate a toolbox of IR models. We fine-tune VLMs for image quality analysis and employ LLMs for reasoning, guiding the system step by step. To compensate for LLMs' lack of specific IR knowledge and experience, we introduce a self-exploration method, allowing the LLM to observe and summarize restoration results into referenceable documents. Experiments demonstrate AgenticIR's potential in handling complex IR tasks, representing a promising path toward achieving general intelligence in visual processing.",
+    "published": "2024-10-23T12:11:26Z",
+    "updated": "2025-02-16T05:30:30Z",
+    "url": "http://arxiv.org/abs/2410.17809v2",
+    "authors": "Kaiwen Zhu, Jinjin Gu, Zhiyuan You, Yu Qiao, Chao Dong",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"LLMRA\" \"Restoration Assistant\"",
+    "title": "LLMRA: Multi-modal Large Language Model based Restoration Assistant",
+    "summary": "Multi-modal Large Language Models (MLLMs) have a significant impact on various tasks, due to their extensive knowledge and powerful perception and generation capabilities. However, it still remains an open research problem on applying MLLMs to low-level vision tasks. In this paper, we present a simple MLLM-based Image Restoration framework to address this gap, namely Multi-modal Large Language Model based Restoration Assistant (LLMRA). We exploit the impressive capabilities of MLLMs to obtain the degradation information for universal image restoration. By employing a pretrained multi-modal large language model and a vision language model, we generate text descriptions and encode them as context embedding with degradation information for the degraded image. Through the proposed Context Enhance Module (CEM) and Degradation Context based Transformer Network (DC-former), we integrate these context embedding into the restoration network, contributing to more accurate and adjustable image restoration. Based on the dialogue with the users, our method leverages image degradation priors from MLLMs, providing low-level attributes descriptions of the input low-quality images and the restored high-quality images simultaneously. Extensive experiments demonstrate the superior performance of our LLMRA in universal image restoration tasks.",
+    "published": "2024-01-21T04:50:19Z",
+    "updated": "2024-01-21T04:50:19Z",
+    "url": "http://arxiv.org/abs/2401.11401v1",
+    "authors": "Xiaoyu Jin, Yuan Shi, Bin Xia, Wenming Yang",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"LLMRA\" \"Restoration Assistant\"",
+    "title": "ReLoc: A Restoration-Assisted Framework for Robust Image Tampering Localization",
+    "summary": "With the spread of tampered images, locating the tampered regions in digital images has drawn increasing attention. The existing image tampering localization methods, however, suffer from severe performance degradation when the tampered images are subjected to some post-processing, as the tampering traces would be distorted by the post-processing operations. The poor robustness against post-processing has become a bottleneck for the practical applications of image tampering localization techniques. In order to address this issue, this paper proposes a novel restoration-assisted framework for image tampering localization (ReLoc). The ReLoc framework mainly consists of an image restoration module and a tampering localization module. The key idea of ReLoc is to use the restoration module to recover a high-quality counterpart of the distorted tampered image, such that the distorted tampering traces can be re-enhanced, facilitating the tampering localization module to identify the tampered regions. To achieve this, the restoration module is optimized not only with the conventional constraints on image visual quality but also with a forensics-oriented objective function. Furthermore, the restoration module and the localization module are trained alternately, which can stabilize the training process and is beneficial for improving the performance. The proposed framework is evaluated by fighting against JPEG compression, the most commonly used post-processing. Extensive experimental results show that ReLoc can significantly improve the robustness against JPEG compression. The restoration module in a well-trained ReLoc model is transferable. Namely, it is still effective when being directly deployed with another tampering localization module.",
+    "published": "2022-11-08T01:00:00Z",
+    "updated": "2022-11-08T01:00:00Z",
+    "url": "http://arxiv.org/abs/2211.03930v1",
+    "authors": "Peiyu Zhuang, Haodong Li, Rui Yang, Jiwu Huang",
+    "categories": [
+      "cs.CV",
+      "cs.MM",
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"LLMRA\" \"Restoration Assistant\"",
+    "title": "Dual-Representation Interaction Driven Image Quality Assessment with Restoration Assistance",
+    "summary": "No-Reference Image Quality Assessment for distorted images has always been a challenging problem due to image content variance and distortion diversity. Previous IQA models mostly encode explicit single-quality features of synthetic images to obtain quality-aware representations for quality score prediction. However, performance decreases when facing real-world distortion and restored images from restoration models. The reason is that they do not consider the degradation factors of the low-quality images adequately. To address this issue, we first introduce the DRI method to obtain degradation vectors and quality vectors of images, which separately model the degradation and quality information of low-quality images. After that, we add the restoration network to provide the MOS score predictor with degradation information. Then, we design the Representation-based Semantic Loss (RS Loss) to assist in enhancing effective interaction between representations. Extensive experimental results demonstrate that the proposed method performs favorably against existing state-of-the-art models on both synthetic and real-world datasets.",
+    "published": "2024-11-26T12:48:47Z",
+    "updated": "2024-11-26T12:48:47Z",
+    "url": "http://arxiv.org/abs/2411.17390v1",
+    "authors": "Jingtong Yue, Xin Lin, Zijiu Yang, Chao Ren",
+    "categories": [
+      "eess.IV",
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"LLMRA\" \"Restoration Assistant\"",
+    "title": "From Full and Partial Intraoral Scans to Crown Proposal: A Classification-Guided Restoration Assistance Pipeline",
+    "summary": "Single-unit crown restoration is among the most common procedures in clinical dentistry, with CAD/CAM workflows now designing crowns directly from intraoral scans. Partial scans are often preferred over full-arch scans for single-unit cases due to fewer stitching errors, yet most segmentation networks trained on full arches fail on partial scans, while end-to-end generative crown methods often produce over-smoothed surfaces that lose occlusal detail. We propose an end-to-end pipeline that takes a raw intraoral scan and target FDI tooth number as input and outputs an initial, patient-specific crown proposal for clinician refinement. The pipeline has three phases: (I) data preparation and pose standardization; (II) segmentation routed by scan type; and (III) crown proposal generation via context-aware retrieval and Blender-based fitting. We address partial-scan segmentation through a classify-then-align strategy: a DGCNN classifier categorizes the scan into one of five anatomical types, then coarse-to-fine RANSAC+ICP registration standardizes the jaw coordinate frame, followed by graph-cut optimization to refine tooth-gingival boundaries. Trained on 1,958 partial scans, the pipeline achieves macro-average DSC 0.9249, Recall 0.8919, and Precision 0.9615 across 17 semantic classes; a fine-tuned full-arch model reaches DSC 0.9347. The prepared tooth and its mesial and distal neighbors achieve DSC 0.9468-0.9569 with sub-millimeter Centroid Errors (0.2666-0.2774 mm). These centroids anchor a retrieval module using DGCNN embeddings and cosine similarity over neighboring and opposing teeth, followed by spline-guided alignment and Blender Python API refinement. The pipeline produces a preliminary crown shell in 2.5-3.5 minutes, offering a practical alternative to end-to-end generative approaches.",
+    "published": "2026-05-14T06:05:32Z",
+    "updated": "2026-05-14T06:05:32Z",
+    "url": "http://arxiv.org/abs/2605.15241v1",
+    "authors": "Rabin Kunwar, Dikshya Parajuli, Rujal Acharya, Romik Gosai, Prince Panta, Kundan Siwakoti, Shuvangi Adhikari, Saugat Kafley",
+    "categories": [
+      "eess.IV",
+      "cs.CV",
+      "cs.LG"
+    ]
+  },
+  {
+    "query": "\"LLMRA\" \"Restoration Assistant\"",
+    "title": "CoLR-Det: Collaborative Latent Restoration for Small Object Detection in Low-Resolution Remote Sensing Images",
+    "summary": "Low-resolution remote sensing small object detection is limited by both missing visual details and the ambiguity of how details serve detection. Existing super-resolution-assisted detectors generally follow a restoration-first paradigm to explicitly enhance inputs before detection, which implicitly assumes visual fidelity benefits recognition. Yet super-resolution favors dense texture and edge recovery, while object detection relies on sparse instance-level semantics, making restoration amplify visually plausible but semantically irrelevant background textures. To tackle this issue, we propose CoLR-Det, a Collaborative Latent-Restoration-Assisted Small Object Detection framework that treats super-resolution supervision as detection-oriented latent regularization rather than explicit image-level enhancement. Instead of reconstructing high-resolution images for inference, CoLR-Det uses a training-only restoration branch to impose auxiliary reconstruction constraints on shared multiscale representations, and the inference pathway remains purely detection-driven. We further design a saliency-guided object-preserving token routing mechanism, which prioritizes high-saliency tokens for attention-based refinement while retaining information of bypassed tokens. Besides, a detection-prioritized two-stage optimization strategy is developed: it first builds stable object-level semantics before introducing restoration supervision, and assigns a smaller learning rate to the SR decoder to keep its updates conservative and reduce perturbations in collaborative training. With this design, CoLR-Det transforms restoration from an explicit visual enhancement operator into an implicit semantic regularizer. Experiments on resolution-degraded NWPU VHR-10-Split, DOTAv1.5-Split and HRSSD-Split show that CoLR-Det outperforms state-of-the-art methods, with code available at https://github.com/qiruo-ya/CoLR-Det.",
+    "published": "2026-01-18T17:36:48Z",
+    "updated": "2026-06-27T08:39:34Z",
+    "url": "http://arxiv.org/abs/2601.12507v2",
+    "authors": "Ruo Qi, Linhui Dai, Yusong Qin, Chaolei Yang, Yanshan Li",
+    "categories": [
+      "cs.CV",
+      "cs.LG"
+    ]
+  },
+  {
+    "query": "\"InstructIR\" \"Human Instructions\"",
+    "title": "InstructIR: High-Quality Image Restoration Following Human Instructions",
+    "summary": "Image restoration is a fundamental problem that involves recovering a high-quality clean image from its degraded observation. All-In-One image restoration models can effectively restore images from various types and levels of degradation using degradation-specific information as prompts to guide the restoration model. In this work, we present the first approach that uses human-written instructions to guide the image restoration model. Given natural language prompts, our model can recover high-quality images from their degraded counterparts, considering multiple degradation types. Our method, InstructIR, achieves state-of-the-art results on several restoration tasks including image denoising, deraining, deblurring, dehazing, and (low-light) image enhancement. InstructIR improves +1dB over previous all-in-one restoration methods. Moreover, our dataset and results represent a novel benchmark for new research on text-guided image restoration and enhancement. Our code, datasets and models are available at: https://github.com/mv-lab/InstructIR",
+    "published": "2024-01-29T18:53:33Z",
+    "updated": "2024-09-25T20:29:36Z",
+    "url": "http://arxiv.org/abs/2401.16468v5",
+    "authors": "Marcos V. Conde, Gregor Geigle, Radu Timofte",
+    "categories": [
+      "cs.CV",
+      "cs.LG",
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"InstructIR\" \"Human Instructions\"",
+    "title": "Autoware.Flex: Human-Instructed Dynamically Reconfigurable Autonomous Driving Systems",
+    "summary": "Existing Autonomous Driving Systems (ADS) independently make driving decisions, but they face two significant limitations. First, in complex scenarios, ADS may misinterpret the environment and make inappropriate driving decisions. Second, these systems are unable to incorporate human driving preferences in their decision-making processes. This paper proposes Autoware$.$Flex, a novel ADS system that incorporates human input into the driving process, allowing users to guide the ADS in making more appropriate decisions and ensuring their preferences are satisfied. Achieving this needs to address two key challenges: (1) translating human instructions, expressed in natural language, into a format the ADS can understand, and (2) ensuring these instructions are executed safely and consistently within the ADS' s decision-making framework. For the first challenge, we employ a Large Language Model (LLM) assisted by an ADS-specialized knowledge base to enhance domain-specific translation. For the second challenge, we design a validation mechanism to ensure that human instructions result in safe and consistent driving behavior. Experiments conducted on both simulators and a real-world autonomous vehicle demonstrate that Autoware$.$Flex effectively interprets human instructions and executes them safely.",
+    "published": "2024-12-20T10:06:11Z",
+    "updated": "2025-02-14T09:12:12Z",
+    "url": "http://arxiv.org/abs/2412.16265v3",
+    "authors": "Ziwei Song, Mingsong Lv, Tianchi Ren, Chun Jason Xue, Jen-Ming Wu, Nan Guan",
+    "categories": [
+      "cs.AI",
+      "cs.HC",
+      "cs.RO"
+    ]
+  },
+  {
+    "query": "\"InstructIR\" \"Human Instructions\"",
+    "title": "REI-Bench: Can Embodied Agents Understand Vague Human Instructions in Task Planning?",
+    "summary": "Robot task planning decomposes human instructions into executable action sequences that enable robots to complete a series of complex tasks. Although recent large language model (LLM)-based task planners achieve amazing performance, they assume that human instructions are clear and straightforward. However, real-world users are not experts, and their instructions to robots often contain significant vagueness. Linguists suggest that such vagueness frequently arises from referring expressions (REs), whose meanings depend heavily on dialogue context and environment. This vagueness is even more prevalent among the elderly and children, who are the groups that robots should serve more. This paper studies how such vagueness in REs within human instructions affects LLM-based robot task planning and how to overcome this issue. To this end, we propose the first robot task planning benchmark that systematically models vague REs grounded in pragmatic theory (REI-Bench), where we discover that the vagueness of REs can severely degrade robot planning performance, leading to success rate drops of up to 36.9%. We also observe that most failure cases stem from missing objects in planners. To mitigate the REs issue, we propose a simple yet effective approach: task-oriented context cognition, which generates clear instructions for robots, achieving state-of-the-art performance compared to aware prompts, chains of thought, and in-context learning. By tackling the overlooked issue of vagueness, this work contributes to the research community by advancing real-world task planning and making robots more accessible to non-expert users, e.g., the elderly and children.",
+    "published": "2025-05-16T05:27:15Z",
+    "updated": "2026-05-09T00:48:01Z",
+    "url": "http://arxiv.org/abs/2505.10872v4",
+    "authors": "Chenxi Jiang, Chuhao Zhou, Jianfei Yang",
+    "categories": [
+      "cs.RO",
+      "cs.AI",
+      "cs.CL"
+    ]
+  },
+  {
+    "query": "\"InstructIR\" \"Human Instructions\"",
+    "title": "Automated Urban Planning aware Spatial Hierarchies and Human Instructions",
+    "summary": "Traditional urban planning demands urban experts to spend considerable time and effort producing an optimal urban plan under many architectural constraints. The remarkable imaginative ability of deep generative learning provides hope for renovating urban planning. While automated urban planners have been examined, they are constrained because of the following: 1) neglecting human requirements in urban planning; 2) omitting spatial hierarchies in urban planning, and 3) lacking numerous urban plan data samples. To overcome these limitations, we propose a novel, deep, human-instructed urban planner. In the preliminary work, we formulate it into an encoder-decoder paradigm. The encoder is to learn the information distribution of surrounding contexts, human instructions, and land-use configuration. The decoder is to reconstruct the land-use configuration and the associated urban functional zones. The reconstruction procedure will capture the spatial hierarchies between functional zones and spatial grids. Meanwhile, we introduce a variational Gaussian mechanism to mitigate the data sparsity issue. Even though early work has led to good results, the performance of generation is still unstable because the way spatial hierarchies are captured may lead to unclear optimization directions. In this journal version, we propose a cascading deep generative framework based on generative adversarial networks (GANs) to solve this problem, inspired by the workflow of urban experts. In particular, the purpose of the first GAN is to build urban functional zones based on information from human instructions and surrounding contexts. The second GAN will produce the land-use configuration based on the functional zones that have been constructed. Additionally, we provide a conditioning augmentation module to augment data samples. Finally, we conduct extensive experiments to validate the efficacy of our work.",
+    "published": "2022-09-26T20:37:02Z",
+    "updated": "2022-10-23T02:07:20Z",
+    "url": "http://arxiv.org/abs/2209.13002v2",
+    "authors": "Dongjie Wang, Kunpeng Liu, Yanyong Huang, Leilei Sun, Bowen Du, Yanjie Fu",
+    "categories": [
+      "cs.AI"
+    ]
+  },
+  {
+    "query": "\"InstructIR\" \"Human Instructions\"",
+    "title": "Safe Navigation with Human Instructions in Complex Scenes",
+    "summary": "In this paper, we present a robotic navigation algorithm with natural language interfaces, which enables a robot to safely walk through a changing environment with moving persons by following human instructions such as \"go to the restaurant and keep away from people\". We first classify human instructions into three types: the goal, the constraints, and uninformative phrases. Next, we provide grounding for the extracted goal and constraint items in a dynamic manner along with the navigation process, to deal with the target objects that are too far away for sensor observation and the appearance of moving obstacles like humans. In particular, for a goal phrase (e.g., \"go to the restaurant\"), we ground it to a location in a predefined semantic map and treat it as a goal for a global motion planner, which plans a collision-free path in the workspace for the robot to follow. For a constraint phrase (e.g., \"keep away from people\"), we dynamically add the corresponding constraint into a local planner by adjusting the values of a local costmap according to the results returned by the object detection module. The updated costmap is then used to compute a local collision avoidance control for the safe navigation of the robot. By combining natural language processing, motion planning, and computer vision, our developed system is demonstrated to be able to successfully follow natural language navigation instructions to achieve navigation tasks in both simulated and real-world scenarios. Videos are available at https://sites.google.com/view/snhi",
+    "published": "2018-09-12T07:09:08Z",
+    "updated": "2018-09-12T07:09:08Z",
+    "url": "http://arxiv.org/abs/1809.04280v1",
+    "authors": "Zhe Hu, Jia Pan, Tingxiang Fan, Ruigang Yang, Dinesh Manocha",
+    "categories": [
+      "cs.RO",
+      "cs.AI"
+    ]
+  },
+  {
+    "query": "\"InstructIR\" \"Human Instructions\"",
+    "title": "InstructRestore: Region-Customized Image Restoration with Human Instructions",
+    "summary": "Despite the significant progress in diffusion prior-based image restoration, most existing methods apply uniform processing to the entire image, lacking the capability to perform region-customized image restoration according to user instructions. In this work, we propose a new framework, namely InstructRestore, to perform region-adjustable image restoration following human instructions. To achieve this, we first develop a data generation engine to produce training triplets, each consisting of a high-quality image, the target region description, and the corresponding region mask. With this engine and careful data screening, we construct a comprehensive dataset comprising 536,945 triplets to support the training and evaluation of this task. We then examine how to integrate the low-quality image features under the ControlNet architecture to adjust the degree of image details enhancement. Consequently, we develop a ControlNet-like model to identify the target region and allocate different integration scales to the target and surrounding regions, enabling region-customized image restoration that aligns with user instructions. Experimental results demonstrate that our proposed InstructRestore approach enables effective human-instructed image restoration, such as images with bokeh effects and user-instructed local enhancement. Our work advances the investigation of interactive image restoration and enhancement techniques. Data, code, and models will be found at https://github.com/shuaizhengliu/InstructRestore.git.",
+    "published": "2025-03-31T17:36:05Z",
+    "updated": "2025-03-31T17:36:05Z",
+    "url": "http://arxiv.org/abs/2503.24357v1",
+    "authors": "Shuaizheng Liu, Jianqi Ma, Lingchen Sun, Xiangtao Kong, Lei Zhang",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"InstructIR\" \"Human Instructions\"",
+    "title": "Integrating Intent Understanding and Optimal Behavior Planning for Behavior Tree Generation from Human Instructions",
+    "summary": "Robots executing tasks following human instructions in domestic or industrial environments essentially require both adaptability and reliability. Behavior Tree (BT) emerges as an appropriate control architecture for these scenarios due to its modularity and reactivity. Existing BT generation methods, however, either do not involve interpreting natural language or cannot theoretically guarantee the BTs' success. This paper proposes a two-stage framework for BT generation, which first employs large language models (LLMs) to interpret goals from high-level instructions, then constructs an efficient goal-specific BT through the Optimal Behavior Tree Expansion Algorithm (OBTEA). We represent goals as well-formed formulas in first-order logic, effectively bridging intent understanding and optimal behavior planning. Experiments in the service robot validate the proficiency of LLMs in producing grammatically correct and accurately interpreted goals, demonstrate OBTEA's superiority over the baseline BT Expansion algorithm in various metrics, and finally confirm the practical deployability of our framework. The project website is https://dids-ei.github.io/Project/LLM-OBTEA/.",
+    "published": "2024-05-13T05:23:48Z",
+    "updated": "2024-06-27T13:17:58Z",
+    "url": "http://arxiv.org/abs/2405.07474v2",
+    "authors": "Xinglin Chen, Yishuai Cai, Yunxin Mao, Minglong Li, Wenjing Yang, Weixia Xu, Ji Wang",
+    "categories": [
+      "cs.AI",
+      "cs.HC",
+      "cs.RO"
+    ]
+  },
+  {
+    "query": "\"InstructIR\" \"Human Instructions\"",
+    "title": "Action-based image editing guided by human instructions",
+    "summary": "Text-based image editing is typically approached as a static task that involves operations such as inserting, deleting, or modifying elements of an input image based on human instructions. Given the static nature of this task, in this paper, we aim to make this task dynamic by incorporating actions. By doing this, we intend to modify the positions or postures of objects in the image to depict different actions while maintaining the visual properties of the objects. To implement this challenging task, we propose a new model that is sensitive to action text instructions by learning to recognize contrastive action discrepancies. The model training is done on new datasets defined by extracting frames from videos that show the visual scenes before and after an action. We show substantial improvements in image editing using action-based text instructions and high reasoning capabilities that allow our model to use the input image as a starting scene for an action while generating a new image that shows the final scene of the action.",
+    "published": "2024-12-05T19:01:41Z",
+    "updated": "2025-02-04T14:44:13Z",
+    "url": "http://arxiv.org/abs/2412.04558v2",
+    "authors": "Maria Mihaela Trusca, Mingxiao Li, Marie-Francine Moens",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"InstructIR\" \"Human Instructions\"",
+    "title": "Improving Zero-Shot Action Recognition using Human Instruction with Text Description",
+    "summary": "Zero-shot action recognition, which recognizes actions in videos without having received any training examples, is gaining wide attention considering it can save labor costs and training time. Nevertheless, the performance of zero-shot learning is still unsatisfactory, which limits its practical application. To solve this problem, this study proposes a framework to improve zero-shot action recognition using human instructions with text descriptions. The proposed framework manually describes video contents, which incurs some labor costs; in many situations, the labor costs are worth it. We manually annotate text features for each action, which can be a word, phrase, or sentence. Then by computing the matching degrees between the video and all text features, we can predict the class of the video. Furthermore, the proposed model can also be combined with other models to improve its accuracy. In addition, our model can be continuously optimized to improve the accuracy by repeating human instructions. The results with UCF101 and HMDB51 showed that our model achieved the best accuracy and improved the accuracies of other models.",
+    "published": "2023-01-21T03:41:07Z",
+    "updated": "2023-06-12T08:33:45Z",
+    "url": "http://arxiv.org/abs/2301.08874v2",
+    "authors": "Nan Wu, Hiroshi Kera, Kazuhiko Kawamoto",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"InstructIR\" \"Human Instructions\"",
+    "title": "Advancing biomolecular understanding and design following human instructions",
+    "summary": "Understanding and designing biomolecules, such as proteins and small molecules, is central to advancing drug discovery, synthetic biology and enzyme engineering. Recent breakthroughs in artificial intelligence have revolutionized biomolecular research, achieving remarkable accuracy in biomolecular prediction and design. However, a critical gap remains between artificial intelligence's computational capabilities and researchers' intuitive goals, particularly in using natural language to bridge complex tasks with human intentions. Large language models have shown potential to interpret human intentions, yet their application to biomolecular research remains nascent due to challenges including specialized knowledge requirements, multimodal data integration, and semantic alignment between natural language and biomolecules. To address these limitations, we present InstructBioMol, a large language model designed to bridge natural language and biomolecules through a comprehensive any-to-any alignment of natural language, molecules and proteins. This model can integrate multimodal biomolecules as the input, and enable researchers to articulate design goals in natural language, providing biomolecular outputs that meet precise biological needs. Experimental results demonstrate that InstructBioMol can understand and design biomolecules following human instructions. In particular, it can generate drug molecules with a 10% improvement in binding affinity and design enzymes that achieve an enzyme-substrate pair prediction score of 70.4. This highlights its potential to transform real-world biomolecular research. The code is available at https://github.com/HICAI-ZJU/InstructBioMol.",
+    "published": "2024-10-10T13:45:56Z",
+    "updated": "2025-07-25T07:16:00Z",
+    "url": "http://arxiv.org/abs/2410.07919v2",
+    "authors": "Xiang Zhuang, Keyan Ding, Tianwen Lyu, Yinuo Jiang, Xiaotong Li, Zhuoyi Xiang, Zeyuan Wang, Ming Qin",
+    "categories": [
+      "cs.CL",
+      "q-bio.BM"
+    ]
+  },
+  {
+    "query": "\"Hybrid Agents for Image Restoration\"",
+    "title": "Hybrid Agents for Image Restoration",
+    "summary": "Existing Image Restoration (IR) studies typically focus on task-specific or universal modes individually, relying on the mode selection of users and lacking the cooperation between multiple task-specific/universal restoration modes. This leads to insufficient interaction for unprofessional users and limits their restoration capability for complicated real-world applications. In this work, we present HybridAgent, intending to incorporate multiple restoration modes into a unified image restoration model and achieve intelligent and efficient user interaction through our proposed hybrid agents. Concretely, we propose the hybrid rule of fast, slow, and feedback restoration agents. Here, the slow restoration agent optimizes the powerful multimodal large language model (MLLM) with our proposed instruction-tuning dataset to identify degradations within images with ambiguous user prompts and invokes proper restoration tools accordingly. The fast restoration agent is designed based on a lightweight large language model (LLM) via in-context learning to understand the user prompts with simple and clear requirements, which can obviate the unnecessary time/resource costs of MLLM. Moreover, we introduce the mixed distortion removal mode for our HybridAgents, which is crucial but not concerned in previous agent-based works. It can effectively prevent the error propagation of step-by-step image restoration and largely improve the efficiency of the agent system. We validate the effectiveness of HybridAgent with both synthetic and real-world IR tasks.",
+    "published": "2025-03-13T07:28:33Z",
+    "updated": "2025-03-13T07:28:33Z",
+    "url": "http://arxiv.org/abs/2503.10120v1",
+    "authors": "Bingchen Li, Xin Li, Yiting Lu, Zhibo Chen",
+    "categories": [
+      "cs.CV",
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "EvoIR-Agent: Self-Evolving Image Restoration Agentic System via Experience-Driven Learning",
+    "summary": "Multimodal Large Language Model (MLLM)-driven image restoration agent demonstrates effectiveness in degradation coupling scenarios by flexibly selecting tools and determining removal orders. However, their zero-shot planning often fails without experience, necessitating severe trial-and-error overhead to achieve satisfactory outcomes. Currently, two paradigms are employed to address this issue, yet a dilemma persists: Training-based methods embed intrinsic experience into parameters, achieving high inference efficiency but lacking compatibility with new tools or degradation. In contrast, training-free methods utilize explicit experience storage for compatibility but still incur trial-and-error overhead due to naive experience. To resolve the dilemma, we propose EvoIR-Agent, which first systematically formulates the experience components of a training-free image restoration agent. Subsequently, a hierarchical experience pool is constructed, which enables coarse-to-fine guidance for diverse tools and removal orders. Furthermore, a self-evolving mechanism is introduced to update the pool from scratch using accumulated records, thereby greatly improving performance and efficiency. Extensive experiments reveal that EvoIR-Agent achieves a significant lead in the full reference metrics and yields a remarkable Pareto-optimal balance between performance and efficiency compared to the state-of-the-art methods.",
+    "published": "2026-05-21T09:14:25Z",
+    "updated": "2026-06-06T02:15:03Z",
+    "url": "http://arxiv.org/abs/2605.22208v2",
+    "authors": "Kailin Zhuang, Jiawei Wu, Zhi Jin",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "DiTTo: Scalable Order-aware All-in-One Image Restoration Agent",
+    "summary": "Real-world images rarely suffer from a single degradation, and the order in which degradations are removed substantially affects the final restoration quality, motivating agent-based image restoration (IR), where a vision-language model schedules a pool of pre-built restoration-experts. However, existing training-based agents require $\\mathcal{O}((N^{\\mathbf{D}})^{2})$ restoration-expert calls per image to construct the Optimal Restoration-action Trajectory Dataset (ORTD), where $N^{\\mathbf{D}}$ denotes the number of degradation types in the universe $\\mathbf{D}$, and couple agent training to a fixed restoration-expert pool, preventing extension to newly introduced restoration-experts without full retraining. To overcome these efficiency and extensibility bottlenecks, we propose \\textbf{DiTTo}, a novel order-aware image restoration agent framework consisting of the DiTTo Simulator and the DiTTo Agent. The DiTTo Simulator combines $\\cup$S-IR for single-step restoration-action simulation and AiO-IQA for per-action quality prediction, reducing ORTD construction to $\\mathcal{O}(N^{\\mathbf{D}})$ simulator calls per image; the DiTTo Agent is trained by SFT on the simulator-generated ORTD, followed by \\textbf{Order-aware Restoration Alignment (ORA)} that aligns degradation identification, restoration-action-ordering, and output format along independent axes. This enables \\textbf{plug-and-play scalable extensibility}: adding a new restoration-expert requires updating only the lightweight ORA stage. On the MiO-100 evaluation set with up to five concurrent degradations, our DiTTo Agent achieves state-of-the-art multi-degradation restoration quality among previous agent-based IR methods.",
+    "published": "2026-05-29T07:01:33Z",
+    "updated": "2026-06-02T09:49:52Z",
+    "url": "http://arxiv.org/abs/2605.30915v2",
+    "authors": "Seungho Choi, Jihyong Oh",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "Restore-R1: Efficient Image Restoration Agents via Reinforcement Learning with Multimodal LLM Perceptual Feedback",
+    "summary": "Complex image restoration aims to recover high-quality images from inputs affected by multiple degradations such as blur, noise, rain, and compression artifacts. Recent restoration agents, powered by vision-language models and large language models, offer promising restoration capabilities but suffer from significant efficiency bottlenecks due to reflection, rollback, and iterative tool searching. Moreover, their performance heavily depends on degradation recognition models that require extensive annotations for training, limiting their applicability in label-free environments. To address these limitations, we propose a policy optimization-based restoration framework that learns an lightweight agent to determine tool-calling sequences. The agent operates in a sequential decision process, selecting the most appropriate restoration operation at each step to maximize final image quality. To enable training within label-free environments, we introduce a novel reward mechanism driven by multimodal large language models, which act as human-aligned evaluator and provide perceptual feedback for policy improvement. Once trained, our agent executes a deterministic restoration plans without redundant tool invocations, significantly accelerating inference while maintaining high restoration quality. Extensive experiments show that despite using no supervision, our method matches SOTA performance on full-reference metrics and surpasses existing approaches on no-reference metrics across diverse degradation scenarios.",
+    "published": "2025-12-21T05:12:25Z",
+    "updated": "2026-04-06T06:59:14Z",
+    "url": "http://arxiv.org/abs/2512.18599v2",
+    "authors": "Jianglin Lu, Yuanwei Wu, Ziyi Zhao, Hongcheng Wang, Felix Jimenez, Abrar Majeedi, Yun Fu",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "Q-Agent: Quality-Driven Chain-of-Thought Image Restoration Agent through Robust Multimodal Large Language Model",
+    "summary": "Image restoration (IR) often faces various complex and unknown degradations in real-world scenarios, such as noise, blurring, compression artifacts, and low resolution, etc. Training specific models for specific degradation may lead to poor generalization. To handle multiple degradations simultaneously, All-in-One models might sacrifice performance on certain types of degradation and still struggle with unseen degradations during training. Existing IR agents rely on multimodal large language models (MLLM) and a time-consuming rolling-back selection strategy neglecting image quality. As a result, they may misinterpret degradations and have high time and computational costs to conduct unnecessary IR tasks with redundant order. To address these, we propose a Quality-Driven agent (Q-Agent) via Chain-of-Thought (CoT) restoration. Specifically, our Q-Agent consists of robust degradation perception and quality-driven greedy restoration. The former module first fine-tunes MLLM, and uses CoT to decompose multi-degradation perception into single-degradation perception tasks to enhance the perception of MLLMs. The latter employs objective image quality assessment (IQA) metrics to determine the optimal restoration sequence and execute the corresponding restoration algorithms. Experimental results demonstrate that our Q-Agent achieves superior IR performance compared to existing All-in-One models.",
+    "published": "2025-04-09T03:12:44Z",
+    "updated": "2026-04-13T07:27:05Z",
+    "url": "http://arxiv.org/abs/2504.07148v2",
+    "authors": "Yingjie Zhou, Jiezhang Cao, Farong Wen, Zicheng Zhang, Yu Zhou, Yue Shi, Xiaohong Liu, Radu Timofte",
+    "categories": [
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "PaAgent: Portrait-Aware Image Restoration Agent via Subjective-Objective Reinforcement Learning",
+    "summary": "Image Restoration (IR) agents, leveraging multimodal large language models to perceive degradation and invoke restoration tools, have shown promise in automating IR tasks. However, existing IR agents typically lack an insight summarization mechanism for past interactions, which results in an exhaustive search for the optimal IR tool. To address this limitation, we propose a portrait-aware IR agent, dubbed PaAgent, which incorporates a self-evolving portrait bank for IR tools and Retrieval-Augmented Generation (RAG) to select a suitable IR tool for input. Specifically, to construct and evolve the portrait bank, the PaAgent continuously enriches it by summarizing the characteristics of various IR tools with restored images, selected IR tools, and degraded images. In addition, the RAG is employed to select the optimal IR tool for the input image by retrieving relevant insights from the portrait bank. Furthermore, to enhance PaAgent's ability to perceive degradation in complex scenes, we propose a subjective-objective reinforcement learning strategy that considers both image quality scores and semantic insights in reward generation, which accurately provides the degradation information even under partial and non-uniform degradation. Extensive experiments across 8 IR benchmarks, covering six single-degradation and eight mixed-degradation scenarios, validate PaAgent's superiority in addressing complex IR tasks. Our project page is \\href{https://wyjgr.github.io/PaAgent.html}{PaAgent}.",
+    "published": "2026-03-17T18:41:36Z",
+    "updated": "2026-03-17T18:41:36Z",
+    "url": "http://arxiv.org/abs/2603.17055v1",
+    "authors": "Yijian Wang, Qingsen Yan, Jiantao Zhou, Duwei Dai, Wei Dong",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "TIR-Agent: Training an Explorative and Efficient Agent for Image Restoration",
+    "summary": "Vision-language agents that orchestrate specialized tools for image restoration (IR) have emerged as a promising method, yet most existing frameworks operate in a training-free manner. They rely on heuristic task scheduling and exhaustive tool traversal, resulting in sub-optimal restoration paths and prohibitive computational cost. We argue that the core bottleneck lies in the absence of a learned policy to make decision, as a vision-language model cannot efficiently handle degradation-aware task ordering and tool composition. To this end, we propose TIR-Agent, a trainable image restoration agent that performs a direct tool-calling policy through a two-stage training pipeline of supervised fine-tuning (SFT) followed by reinforcement learning (RL). Two key designs underpin effective RL training: (i) a random perturbation strategy applied to the SFT data, which broadens the policy's exploration over task schedules and tool compositions, and (ii) a multi-dimensional adaptive reward mechanism that dynamically re-weights heterogeneous image quality metrics to mitigate reward hacking. To support high-throughput, asynchronous GPU-based tool invocation during training, we further develop a globally shared model-call pool. Experiments on both in-domain and out-of-domain degradations show that TIR-Agent outperforms 12 baselines, including 6 all-in-one models, 3 training-free agents, and 3 proprietary models, and achieves over 2.5$\\times$ inference speedup by eliminating redundant tool executions.",
+    "published": "2026-03-29T15:50:36Z",
+    "updated": "2026-03-29T15:50:36Z",
+    "url": "http://arxiv.org/abs/2603.27742v1",
+    "authors": "Yisheng Zhang, Guoli Jia, Haote Hu, Shanxu Zhao, Kaikai Zhao, Long Sun, Xinwei Long, Kai Tian",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Self-Evolving Agentic Image Restoration\"",
+    "title": "Self-Evolving Agentic Image Restoration via Deliberate Planning and Intuitive Execution",
+    "summary": "Real-world image restoration (IR) remains challenging due to complex and coupled degradations. While recent agentic IR frameworks leverage Large Language Models for flexible tool planning, they face two critical limitations. First, from a search scheme perspective, excessive reliance on greedy strategies fails to balance exploration and exploitation. Second, existing agentic systems underutilize information, exhibiting episodic amnesia. To address these challenges, we propose \\textbf{Self-Evolving Agentic Image Restoration (SEAR)}, which formulates restoration as a sequential decision-making problem. Inspired by the dual-process theory, SEAR comprises an Intuitive Executor and a Deliberate Planner, respectively following the fast-thinking \\textit{System 1} and slow-thinking \\textit{System 2} principles. The Deliberate Planner employs Pruning-Aware Monte Carlo Tree Search for long-horizon reasoning, utilizing a hybrid no-reference reward and a Multimodal Large Language Model (MLLM)-based tournament to prevent metric exploitation. Complementarily, the Intuitive Executor leverages a self-evolving episodic memory indexed by degradation-aware state fingerprints. This mechanism distills expensive search trajectories into adaptive expertise, overcoming episodic amnesia while progressively amortizing cold-start exploration costs through memory reuse. Extensive experiments on synthetic and real-world benchmarks demonstrate its strong perceptual and quantitative performance.",
+    "published": "2026-06-27T15:21:47Z",
+    "updated": "2026-06-27T15:21:47Z",
+    "url": "http://arxiv.org/abs/2606.28971v1",
+    "authors": "Shuang Cui, Fan Ji, Guanglong Sun, Yufei Guo, Xiongxin Tang, Jiangmeng Li, Fanjiang Xu",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"MoA-VR\" \"Video Restoration\"",
+    "title": "VQ-Jarvis: Retrieval-Augmented Video Restoration Agent with Sharp Vision and Fast Thought",
+    "summary": "Video restoration in real-world scenarios is challenged by heterogeneous degradations, where static architectures and fixed inference pipelines often fail to generalize. Recent agent-based approaches offer dynamic decision making, yet existing video restoration agents remain limited by insufficient quality perception and inefficient search strategies. We propose VQ-Jarvis, a retrieval-augmented, all-in-one intelligent video restoration agent with sharper vision and faster thought. VQ-Jarvis is designed to accurately perceive degradations and subtle differences among paired restoration results, while efficiently discovering optimal restoration trajectories. To enable sharp vision, we construct VSR-Compare, the first large-scale video paired enhancement dataset with 20K comparison pairs covering 7 degradation types, 11 enhancement operators, and diverse content domains. Based on this dataset, we train a multiple operator judge model and a degradation perception model to guide agent decisions. To achieve fast thought, we introduce a hierarchical operator scheduling strategy that adapts to video difficulty: for easy cases, optimal restoration trajectories are retrieved in a one-step manner from a retrieval-augmented generation (RAG) library; for harder cases, a step-by-step greedy search is performed to balance efficiency and accuracy. Extensive experiments demonstrate that VQ-Jarvis consistently outperforms existing methods on complex degraded videos.",
+    "published": "2026-03-24T09:40:50Z",
+    "updated": "2026-03-24T09:40:50Z",
+    "url": "http://arxiv.org/abs/2603.22998v1",
+    "authors": "Xuanyu Zhang, Weiqi Li, Qunliang Xing, Jingfen Xie, Bin Chen, Junlin Li, Li Zhang, Jian Zhang",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"MoA-VR\" \"Video Restoration\"",
+    "title": "MoA-VR: A Mixture-of-Agents System Towards All-in-One Video Restoration",
+    "summary": "Real-world videos often suffer from complex degradations, such as noise, compression artifacts, and low-light distortions, due to diverse acquisition and transmission conditions. Existing restoration methods typically require professional manual selection of specialized models or rely on monolithic architectures that fail to generalize across varying degradations. Inspired by expert experience, we propose MoA-VR, the first \\underline{M}ixture-\\underline{o}f-\\underline{A}gents \\underline{V}ideo \\underline{R}estoration system that mimics the reasoning and processing procedures of human professionals through three coordinated agents: Degradation Identification, Routing and Restoration, and Restoration Quality Assessment. Specifically, we construct a large-scale and high-resolution video degradation recognition benchmark and build a vision-language model (VLM) driven degradation identifier. We further introduce a self-adaptive router powered by large language models (LLMs), which autonomously learns effective restoration strategies by observing tool usage patterns. To assess intermediate and final processed video quality, we construct the \\underline{Res}tored \\underline{V}ideo \\underline{Q}uality (Res-VQ) dataset and design a dedicated VLM-based video quality assessment (VQA) model tailored for restoration tasks. Extensive experiments demonstrate that MoA-VR effectively handles diverse and compound degradations, consistently outperforming existing baselines in terms of both objective metrics and perceptual quality. These results highlight the potential of integrating multimodal intelligence and modular reasoning in general-purpose video restoration systems.",
+    "published": "2025-10-09T17:42:51Z",
+    "updated": "2025-10-09T17:42:51Z",
+    "url": "http://arxiv.org/abs/2510.08508v1",
+    "authors": "Lu Liu, Chunlei Cai, Shaocheng Shen, Jianfeng Liang, Weimin Ouyang, Tianxiao Ye, Jian Mao, Huiyu Duan",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"MoA-VR\" \"Video Restoration\"",
+    "title": "EDVR: Video Restoration with Enhanced Deformable Convolutional Networks",
+    "summary": "Video restoration tasks, including super-resolution, deblurring, etc, are drawing increasing attention in the computer vision community. A challenging benchmark named REDS is released in the NTIRE19 Challenge. This new benchmark challenges existing methods from two aspects: (1) how to align multiple frames given large motions, and (2) how to effectively fuse different frames with diverse motion and blur. In this work, we propose a novel Video Restoration framework with Enhanced Deformable networks, termed EDVR, to address these challenges. First, to handle large motions, we devise a Pyramid, Cascading and Deformable (PCD) alignment module, in which frame alignment is done at the feature level using deformable convolutions in a coarse-to-fine manner. Second, we propose a Temporal and Spatial Attention (TSA) fusion module, in which attention is applied both temporally and spatially, so as to emphasize important features for subsequent restoration. Thanks to these modules, our EDVR wins the champions and outperforms the second place by a large margin in all four tracks in the NTIRE19 video restoration and enhancement challenges. EDVR also demonstrates superior performance to state-of-the-art published methods on video super-resolution and deblurring. The code is available at https://github.com/xinntao/EDVR.",
+    "published": "2019-05-07T17:58:14Z",
+    "updated": "2019-05-07T17:58:14Z",
+    "url": "http://arxiv.org/abs/1905.02716v1",
+    "authors": "Xintao Wang, Kelvin C. K. Chan, Ke Yu, Chao Dong, Chen Change Loy",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"MoA-VR\" \"Video Restoration\"",
+    "title": "Unsupervised Flow-Aligned Sequence-to-Sequence Learning for Video Restoration",
+    "summary": "How to properly model the inter-frame relation within the video sequence is an important but unsolved challenge for video restoration (VR). In this work, we propose an unsupervised flow-aligned sequence-to-sequence model (S2SVR) to address this problem. On the one hand, the sequence-to-sequence model, which has proven capable of sequence modeling in the field of natural language processing, is explored for the first time in VR. Optimized serialization modeling shows potential in capturing long-range dependencies among frames. On the other hand, we equip the sequence-to-sequence model with an unsupervised optical flow estimator to maximize its potential. The flow estimator is trained with our proposed unsupervised distillation loss, which can alleviate the data discrepancy and inaccurate degraded optical flow issues of previous flow-based methods. With reliable optical flow, we can establish accurate correspondence among multiple frames, narrowing the domain difference between 1D language and 2D misaligned frames and improving the potential of the sequence-to-sequence model. S2SVR shows superior performance in multiple VR tasks, including video deblurring, video super-resolution, and compressed video quality enhancement. Code and models are publicly available at https://github.com/linjing7/VR-Baseline",
+    "published": "2022-05-20T14:14:48Z",
+    "updated": "2022-06-16T08:12:53Z",
+    "url": "http://arxiv.org/abs/2205.10195v2",
+    "authors": "Jing Lin, Xiaowan Hu, Yuanhao Cai, Haoqian Wang, Youliang Yan, Xueyi Zou, Yulun Zhang, Luc Van Gool",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"MoA-VR\" \"Video Restoration\"",
+    "title": "Quanta Video Restoration",
+    "summary": "The proliferation of single-photon image sensors has opened the door to a plethora of high-speed and low-light imaging applications. However, data collected by these sensors are often 1-bit or few-bit, and corrupted by noise and strong motion. Conventional video restoration methods are not designed to handle this situation, while specialized quanta burst algorithms have limited performance when the number of input frames is low. In this paper, we introduce Quanta Video Restoration (QUIVER), an end-to-end trainable network built on the core ideas of classical quanta restoration methods, i.e., pre-filtering, flow estimation, fusion, and refinement. We also collect and publish I2-2000FPS, a high-speed video dataset with the highest temporal resolution of 2000 frames-per-second, for training and testing. On simulated and real data, QUIVER outperforms existing quanta restoration methods by a significant margin. Code and dataset available at https://github.com/chennuriprateek/Quanta_Video_Restoration-QUIVER-",
+    "published": "2024-10-19T05:50:12Z",
+    "updated": "2024-11-15T04:13:55Z",
+    "url": "http://arxiv.org/abs/2410.14994v2",
+    "authors": "Prateek Chennuri, Yiheng Chi, Enze Jiang, G. M. Dilshan Godaliyadda, Abhiram Gnanasambandam, Hamid R. Sheikh, Istvan Gyongy, Stanley H. Chan",
+    "categories": [
+      "eess.IV",
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"MoA-VR\" \"Video Restoration\"",
+    "title": "EVRNet: Efficient Video Restoration on Edge Devices",
+    "summary": "Video transmission applications (e.g., conferencing) are gaining momentum, especially in times of global health pandemic. Video signals are transmitted over lossy channels, resulting in low-quality received signals. To restore videos on recipient edge devices in real-time, we introduce an efficient video restoration network, EVRNet. EVRNet efficiently allocates parameters inside the network using alignment, differential, and fusion modules. With extensive experiments on video restoration tasks (deblocking, denoising, and super-resolution), we demonstrate that EVRNet delivers competitive performance to existing methods with significantly fewer parameters and MACs. For example, EVRNet has 260 times fewer parameters and 958 times fewer MACs than enhanced deformable convolution-based video restoration network (EDVR) for 4 times video super-resolution while its SSIM score is 0.018 less than EDVR. We also evaluated the performance of EVRNet under multiple distortions on unseen dataset to demonstrate its ability in modeling variable-length sequences under both camera and object motion.",
+    "published": "2020-12-03T19:42:38Z",
+    "updated": "2020-12-03T19:42:38Z",
+    "url": "http://arxiv.org/abs/2012.02228v1",
+    "authors": "Sachin Mehta, Amit Kumar, Fitsum Reda, Varun Nasery, Vikram Mulukutla, Rakesh Ranjan, Vikas Chandra",
+    "categories": [
+      "cs.CV",
+      "cs.LG",
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"MoA-VR\" \"Video Restoration\"",
+    "title": "VRT: A Video Restoration Transformer",
+    "summary": "Video restoration (e.g., video super-resolution) aims to restore high-quality frames from low-quality frames. Different from single image restoration, video restoration generally requires to utilize temporal information from multiple adjacent but usually misaligned video frames. Existing deep methods generally tackle with this by exploiting a sliding window strategy or a recurrent architecture, which either is restricted by frame-by-frame restoration or lacks long-range modelling ability. In this paper, we propose a Video Restoration Transformer (VRT) with parallel frame prediction and long-range temporal dependency modelling abilities. More specifically, VRT is composed of multiple scales, each of which consists of two kinds of modules: temporal mutual self attention (TMSA) and parallel warping. TMSA divides the video into small clips, on which mutual attention is applied for joint motion estimation, feature alignment and feature fusion, while self attention is used for feature extraction. To enable cross-clip interactions, the video sequence is shifted for every other layer. Besides, parallel warping is used to further fuse information from neighboring frames by parallel feature warping. Experimental results on five tasks, including video super-resolution, video deblurring, video denoising, video frame interpolation and space-time video super-resolution, demonstrate that VRT outperforms the state-of-the-art methods by large margins ($\\textbf{up to 2.16dB}$) on fourteen benchmark datasets.",
+    "published": "2022-01-28T17:54:43Z",
+    "updated": "2022-06-15T17:17:05Z",
+    "url": "http://arxiv.org/abs/2201.12288v2",
+    "authors": "Jingyun Liang, Jiezhang Cao, Yuchen Fan, Kai Zhang, Rakesh Ranjan, Yawei Li, Radu Timofte, Luc Van Gool",
+    "categories": [
+      "cs.CV",
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"MoA-VR\" \"Video Restoration\"",
+    "title": "Neural Compression-Based Feature Learning for Video Restoration",
+    "summary": "How to efficiently utilize the temporal features is crucial, yet challenging, for video restoration. The temporal features usually contain various noisy and uncorrelated information, and they may interfere with the restoration of the current frame. This paper proposes learning noise-robust feature representations to help video restoration. We are inspired by that the neural codec is a natural denoiser. In neural codec, the noisy and uncorrelated contents which are hard to predict but cost lots of bits are more inclined to be discarded for bitrate saving. Therefore, we design a neural compression module to filter the noise and keep the most useful information in features for video restoration. To achieve robustness to noise, our compression module adopts a spatial channel-wise quantization mechanism to adaptively determine the quantization step size for each position in the latent. Experiments show that our method can significantly boost the performance on video denoising, where we obtain 0.13 dB improvement over BasicVSR++ with only 0.23x FLOPs. Meanwhile, our method also obtains SOTA results on video deraining and dehazing.",
+    "published": "2022-03-17T09:59:26Z",
+    "updated": "2022-03-18T05:10:12Z",
+    "url": "http://arxiv.org/abs/2203.09208v2",
+    "authors": "Cong Huang, Jiahao Li, Bin Li, Dong Liu, Yan Lu",
+    "categories": [
+      "cs.CV",
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"MoA-VR\" \"Video Restoration\"",
+    "title": "Transcoded Video Restoration by Temporal Spatial Auxiliary Network",
+    "summary": "In most video platforms, such as Youtube, and TikTok, the played videos usually have undergone multiple video encodings such as hardware encoding by recording devices, software encoding by video editing apps, and single/multiple video transcoding by video application servers. Previous works in compressed video restoration typically assume the compression artifacts are caused by one-time encoding. Thus, the derived solution usually does not work very well in practice. In this paper, we propose a new method, temporal spatial auxiliary network (TSAN), for transcoded video restoration. Our method considers the unique traits between video encoding and transcoding, and we consider the initial shallow encoded videos as the intermediate labels to assist the network to conduct self-supervised attention training. In addition, we employ adjacent multi-frame information and propose the temporal deformable alignment and pyramidal spatial fusion for transcoded video restoration. The experimental results demonstrate that the performance of the proposed method is superior to that of the previous techniques. The code is available at https://github.com/icecherylXuli/TSAN.",
+    "published": "2021-12-15T08:10:23Z",
+    "updated": "2021-12-15T08:10:23Z",
+    "url": "http://arxiv.org/abs/2112.07948v1",
+    "authors": "Li Xu, Gang He, Jinjia Zhou, Jie Lei, Weiying Xie, Yunsong Li, Yu-Wing Tai",
+    "categories": [
+      "cs.CV",
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"MoA-VR\" \"Video Restoration\"",
+    "title": "A Simple Baseline for Video Restoration with Grouped Spatial-temporal Shift",
+    "summary": "Video restoration, which aims to restore clear frames from degraded videos, has numerous important applications. The key to video restoration depends on utilizing inter-frame information. However, existing deep learning methods often rely on complicated network architectures, such as optical flow estimation, deformable convolution, and cross-frame self-attention layers, resulting in high computational costs. In this study, we propose a simple yet effective framework for video restoration. Our approach is based on grouped spatial-temporal shift, which is a lightweight and straightforward technique that can implicitly capture inter-frame correspondences for multi-frame aggregation. By introducing grouped spatial shift, we attain expansive effective receptive fields. Combined with basic 2D convolution, this simple framework can effectively aggregate inter-frame information. Extensive experiments demonstrate that our framework outperforms the previous state-of-the-art method, while using less than a quarter of its computational cost, on both video deblurring and video denoising tasks. These results indicate the potential for our approach to significantly reduce computational overhead while maintaining high-quality results. Code is avaliable at https://github.com/dasongli1/Shift-Net.",
+    "published": "2022-06-22T02:16:47Z",
+    "updated": "2023-05-22T09:56:01Z",
+    "url": "http://arxiv.org/abs/2206.10810v2",
+    "authors": "Dasong Li, Xiaoyu Shi, Yi Zhang, Ka Chun Cheung, Simon See, Xiaogang Wang, Hongwei Qin, Hongsheng Li",
+    "categories": [
+      "eess.IV",
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Chain-of-Restoration\" \"Universal Image Restorers\"",
+    "title": "Chain-of-Restoration: Multi-Task Image Restoration Models are Zero-Shot Step-by-Step Universal Image Restorers",
+    "summary": "Despite previous image restoration (IR) methods have often concentrated on isolated degradations, recent research has increasingly focused on addressing composite degradations involving a complex combination of multiple isolated degradations. However, current IR methods for composite degradations require building training data that contain an exponential number of possible degradation combinations, which brings in a significant burden. To alleviate this issue, this paper proposes a new task setting, i.e. Universal Image Restoration (UIR). Specifically, UIR doesn't require training on all the degradation combinations but only on a set of degradation bases and then removing any degradation that these bases can potentially compose in a zero-shot manner. Inspired by the Chain-of-Thought that prompts large language models (LLMs) to address problems step-by-step, we propose Chain-of-Restoration (CoR) mechanism, which instructs models to remove unknown composite degradations step-by-step. By integrating a simple Degradation Discriminator into pre-trained multi-task models, CoR facilitates the process where models remove one degradation basis per step, continuing this process until the image is fully restored from the unknown composite degradation. Extensive experiments show that CoR can significantly improve model performance in removing composite degradations, achieving comparable or better results than those state-of-the-art (SoTA) methods trained on all degradations.",
+    "published": "2024-10-11T10:21:42Z",
+    "updated": "2024-12-04T04:28:41Z",
+    "url": "http://arxiv.org/abs/2410.08688v2",
+    "authors": "Jin Cao, Deyu Meng, Xiangyong Cao",
+    "categories": [
+      "cs.CV",
+      "cs.AI"
+    ]
+  },
+  {
+    "query": "\"Chain-of-Restoration\" \"Universal Image Restorers\"",
+    "title": "Prompt-In-Prompt Learning for Universal Image Restoration",
+    "summary": "Image restoration, which aims to retrieve and enhance degraded images, is fundamental across a wide range of applications. While conventional deep learning approaches have notably improved the image quality across various tasks, they still suffer from (i) the high storage cost needed for various task-specific models and (ii) the lack of interactivity and flexibility, hindering their wider application. Drawing inspiration from the pronounced success of prompts in both linguistic and visual domains, we propose novel Prompt-In-Prompt learning for universal image restoration, named PIP. First, we present two novel prompts, a degradation-aware prompt to encode high-level degradation knowledge and a basic restoration prompt to provide essential low-level information. Second, we devise a novel prompt-to-prompt interaction module to fuse these two prompts into a universal restoration prompt. Third, we introduce a selective prompt-to-feature interaction module to modulate the degradation-related feature. By doing so, the resultant PIP works as a plug-and-play module to enhance existing restoration models for universal image restoration. Extensive experimental results demonstrate the superior performance of PIP on multiple restoration tasks, including image denoising, deraining, dehazing, deblurring, and low-light enhancement. Remarkably, PIP is interpretable, flexible, efficient, and easy-to-use, showing promising potential for real-world applications. The code is available at https://github.com/longzilicart/pip_universal.",
+    "published": "2023-12-08T13:36:01Z",
+    "updated": "2023-12-08T13:36:01Z",
+    "url": "http://arxiv.org/abs/2312.05038v1",
+    "authors": "Zilong Li, Yiming Lei, Chenglong Ma, Junping Zhang, Hongming Shan",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Chain-of-Restoration\" \"Universal Image Restorers\"",
+    "title": "Universal Image Restoration Pre-training via Degradation Classification",
+    "summary": "This paper proposes the Degradation Classification Pre-Training (DCPT), which enables models to learn how to classify the degradation type of input images for universal image restoration pre-training. Unlike the existing self-supervised pre-training methods, DCPT utilizes the degradation type of the input image as an extremely weak supervision, which can be effortlessly obtained, even intrinsic in all image restoration datasets. DCPT comprises two primary stages. Initially, image features are extracted from the encoder. Subsequently, a lightweight decoder, such as ResNet18, is leveraged to classify the degradation type of the input image solely based on the features extracted in the first stage, without utilizing the input image. The encoder is pre-trained with a straightforward yet potent DCPT, which is used to address universal image restoration and achieve outstanding performance. Following DCPT, both convolutional neural networks (CNNs) and transformers demonstrate performance improvements, with gains of up to 2.55 dB in the 10D all-in-one restoration task and 6.53 dB in the mixed degradation scenarios. Moreover, previous self-supervised pretraining methods, such as masked image modeling, discard the decoder after pre-training, while our DCPT utilizes the pre-trained parameters more effectively. This superiority arises from the degradation classifier acquired during DCPT, which facilitates transfer learning between models of identical architecture trained on diverse degradation types. Source code and models are available at https://github.com/MILab-PKU/dcpt.",
+    "published": "2025-01-26T13:03:37Z",
+    "updated": "2025-01-26T13:03:37Z",
+    "url": "http://arxiv.org/abs/2501.15510v1",
+    "authors": "JiaKui Hu, Lujia Jin, Zhengjian Yao, Yanye Lu",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Chain-of-Restoration\" \"Universal Image Restorers\"",
+    "title": "Universal Image Restoration via Internalized Chain-of-Thought Reasoning",
+    "summary": "Image restoration seeks to recover high-quality images from degraded inputs but becomes highly ill-posed under complex, mixed degradations. While unified all-in-one models are common, their performance declines as degradation complexity increases. Recent works adopt Chain-of-Thought (CoT) reasoning for multi-round restoration using specialized modules. However, this approach faces two key limitations: (i) increased computational cost due to multi-step processing, and (ii) weak modeling of interactions between degradations during stepwise inference. We introduce CoTIR, a universal image restoration framework that internalizes CoT reasoning within a single model. Concretely, we view image restoration as a specialized subtask of image editing, which implies that a large-scale pre-trained editing model provides a more favorable optimization starting point. Building on this, we fine-tune the model for restoration and further encode structured CoT-style reasoning into the learning objective via a differentiable formulation inspired by Lagrangian optimization, enabling holistic restoration without chaining specialized restorers. To facilitate training and evaluation, we further present CoTIR-Bench, a large-scale benchmark comprising 5.2 million samples with CoT-style reasoning traces. Extensive experiments on CoTIR-Bench and broad real composite degradation scenes show that CoTIR achieves stronger perceptual quality and more competitive fidelity than both all-in-one models and multi-round restoration methods. The source code is available at https://github.com/gy65896/CoTIR.",
+    "published": "2026-06-16T06:01:36Z",
+    "updated": "2026-06-16T06:01:36Z",
+    "url": "http://arxiv.org/abs/2606.17557v1",
+    "authors": "Yu Guo, Zhengru Fang, Shengfeng He, Senkang Hu, Yihang Tao, Phone Lin, Yuguang Fang",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Chain-of-Restoration\" \"Universal Image Restorers\"",
+    "title": "UIR-LoRA: Achieving Universal Image Restoration through Multiple Low-Rank Adaptation",
+    "summary": "Existing unified methods typically treat multi-degradation image restoration as a multi-task learning problem. Despite performing effectively compared to single degradation restoration methods, they overlook the utilization of commonalities and specificities within multi-task restoration, thereby impeding the model's performance. Inspired by the success of deep generative models and fine-tuning techniques, we proposed a universal image restoration framework based on multiple low-rank adapters (LoRA) from multi-domain transfer learning. Our framework leverages the pre-trained generative model as the shared component for multi-degradation restoration and transfers it to specific degradation image restoration tasks using low-rank adaptation. Additionally, we introduce a LoRA composing strategy based on the degradation similarity, which adaptively combines trained LoRAs and enables our model to be applicable for mixed degradation restoration. Extensive experiments on multiple and mixed degradations demonstrate that the proposed universal image restoration method not only achieves higher fidelity and perceptual image quality but also has better generalization ability than other unified image restoration models. Our code is available at https://github.com/Justones/UIR-LoRA.",
+    "published": "2024-09-30T11:16:56Z",
+    "updated": "2024-09-30T11:16:56Z",
+    "url": "http://arxiv.org/abs/2409.20197v1",
+    "authors": "Cheng Zhang, Dong Gong, Jiumei He, Yu Zhu, Jinqiu Sun, Yanning Zhang",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Chain-of-Restoration\" \"Universal Image Restorers\"",
+    "title": "Bridging Degradation Discrimination and Generation for Universal Image Restoration",
+    "summary": "Universal image restoration is a critical task in low-level vision, requiring the model to remove various degradations from low-quality images to produce clean images with rich detail. The challenges lie in sampling the distribution of high-quality images and adjusting the outputs on the basis of the degradation. This paper presents a novel approach, Bridging Degradation discrimination and Generation (BDG), which aims to address these challenges concurrently. First, we propose the Multi-Angle and multi-Scale Gray Level Co-occurrence Matrix (MAS-GLCM) and demonstrate its effectiveness in performing fine-grained discrimination of degradation types and levels. Subsequently, we divide the diffusion training process into three distinct stages: generation, bridging, and restoration. The objective is to preserve the diffusion model's capability of restoring rich textures while simultaneously integrating the discriminative information from the MAS-GLCM into the restoration process. This enhances its proficiency in addressing multi-task and multi-degraded scenarios. Without changing the architecture, BDG achieves significant performance gains in all-in-one restoration and real-world super-resolution tasks, primarily evidenced by substantial improvements in fidelity without compromising perceptual quality. The code and pretrained models are provided in https://github.com/MILab-PKU/BDG.",
+    "published": "2026-01-31T07:46:28Z",
+    "updated": "2026-01-31T07:46:28Z",
+    "url": "http://arxiv.org/abs/2602.00579v1",
+    "authors": "JiaKui Hu, Zhengjian Yao, Lujia Jin, Yanye Lu",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Chain-of-Restoration\" \"Universal Image Restorers\"",
+    "title": "Selective Hourglass Mapping for Universal Image Restoration Based on Diffusion Model",
+    "summary": "Universal image restoration is a practical and potential computer vision task for real-world applications. The main challenge of this task is handling the different degradation distributions at once. Existing methods mainly utilize task-specific conditions (e.g., prompt) to guide the model to learn different distributions separately, named multi-partite mapping. However, it is not suitable for universal model learning as it ignores the shared information between different tasks. In this work, we propose an advanced selective hourglass mapping strategy based on diffusion model, termed DiffUIR. Two novel considerations make our DiffUIR non-trivial. Firstly, we equip the model with strong condition guidance to obtain accurate generation direction of diffusion model (selective). More importantly, DiffUIR integrates a flexible shared distribution term (SDT) into the diffusion algorithm elegantly and naturally, which gradually maps different distributions into a shared one. In the reverse process, combined with SDT and strong condition guidance, DiffUIR iteratively guides the shared distribution to the task-specific distribution with high image quality (hourglass). Without bells and whistles, by only modifying the mapping strategy, we achieve state-of-the-art performance on five image restoration tasks, 22 benchmarks in the universal setting and zero-shot generalization setting. Surprisingly, by only using a lightweight model (only 0.89M), we could achieve outstanding performance. The source code and pre-trained models are available at https://github.com/iSEE-Laboratory/DiffUIR",
+    "published": "2024-03-17T09:41:20Z",
+    "updated": "2024-03-17T09:41:20Z",
+    "url": "http://arxiv.org/abs/2403.11157v1",
+    "authors": "Dian Zheng, Xiao-Ming Wu, Shuzhou Yang, Jian Zhang, Jian-Fang Hu, Wei-Shi Zheng",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Chain-of-Restoration\" \"Universal Image Restorers\"",
+    "title": "Diff-Restorer: Unleashing Visual Prompts for Diffusion-based Universal Image Restoration",
+    "summary": "Image restoration is a classic low-level problem aimed at recovering high-quality images from low-quality images with various degradations such as blur, noise, rain, haze, etc. However, due to the inherent complexity and non-uniqueness of degradation in real-world images, it is challenging for a model trained for single tasks to handle real-world restoration problems effectively. Moreover, existing methods often suffer from over-smoothing and lack of realism in the restored results. To address these issues, we propose Diff-Restorer, a universal image restoration method based on the diffusion model, aiming to leverage the prior knowledge of Stable Diffusion to remove degradation while generating high perceptual quality restoration results. Specifically, we utilize the pre-trained visual language model to extract visual prompts from degraded images, including semantic and degradation embeddings. The semantic embeddings serve as content prompts to guide the diffusion model for generation. In contrast, the degradation embeddings modulate the Image-guided Control Module to generate spatial priors for controlling the spatial structure of the diffusion process, ensuring faithfulness to the original image. Additionally, we design a Degradation-aware Decoder to perform structural correction and convert the latent code to the pixel domain. We conducted comprehensive qualitative and quantitative analysis on restoration tasks with different degradations, demonstrating the effectiveness and superiority of our approach.",
+    "published": "2024-07-04T05:01:10Z",
+    "updated": "2024-07-04T05:01:10Z",
+    "url": "http://arxiv.org/abs/2407.03636v1",
+    "authors": "Yuhong Zhang, Hengsheng Zhang, Xinning Chai, Zhengxue Cheng, Rong Xie, Li Song, Wenjun Zhang",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Chain-of-Restoration\" \"Universal Image Restorers\"",
+    "title": "Universal Image Restoration Pre-training via Masked Degradation Classification",
+    "summary": "This study introduces a Masked Degradation Classification Pre-Training method (MaskDCPT), designed to facilitate the classification of degradation types in input images, leading to comprehensive image restoration pre-training. Unlike conventional pre-training methods, MaskDCPT uses the degradation type of the image as an extremely weak supervision, while simultaneously leveraging the image reconstruction to enhance performance and robustness. MaskDCPT includes an encoder and two decoders: the encoder extracts features from the masked low-quality input image. The classification decoder uses these features to identify the degradation type, whereas the reconstruction decoder aims to reconstruct a corresponding high-quality image. This design allows the pre-training to benefit from both masked image modeling and contrastive learning, resulting in a generalized representation suited for restoration tasks. Benefit from the straightforward yet potent MaskDCPT, the pre-trained encoder can be used to address universal image restoration and achieve outstanding performance. Implementing MaskDCPT significantly improves performance for both convolution neural networks (CNNs) and Transformers, with a minimum increase in PSNR of 3.77 dB in the 5D all-in-one restoration task and a 34.8% reduction in PIQE compared to baseline in real-world degradation scenarios. It also emergences strong generalization to previously unseen degradation types and levels. In addition, we curate and release the UIR-2.5M dataset, which includes 2.5 million paired restoration samples across 19 degradation types and over 200 degradation levels, incorporating both synthetic and real-world data. The dataset, source code, and models are available at https://github.com/MILab-PKU/MaskDCPT.",
+    "published": "2025-10-15T08:30:15Z",
+    "updated": "2025-10-15T08:30:15Z",
+    "url": "http://arxiv.org/abs/2510.13282v1",
+    "authors": "JiaKui Hu, Zhengjian Yao, Lujia Jin, Yinghao Chen, Yanye Lu",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Chain-of-Restoration\" \"Universal Image Restorers\"",
+    "title": "UniRes: Universal Image Restoration for Complex Degradations",
+    "summary": "Real-world image restoration is hampered by diverse degradations stemming from varying capture conditions, capture devices and post-processing pipelines. Existing works make improvements through simulating those degradations and leveraging image generative priors, however generalization to in-the-wild data remains an unresolved problem. In this paper, we focus on complex degradations, i.e., arbitrary mixtures of multiple types of known degradations, which is frequently seen in the wild. A simple yet flexible diffusionbased framework, named UniRes, is proposed to address such degradations in an end-to-end manner. It combines several specialized models during the diffusion sampling steps, hence transferring the knowledge from several well-isolated restoration tasks to the restoration of complex in-the-wild degradations. This only requires well-isolated training data for several degradation types. The framework is flexible as extensions can be added through a unified formulation, and the fidelity-quality trade-off can be adjusted through a new paradigm. Our proposed method is evaluated on both complex-degradation and single-degradation image restoration datasets. Extensive qualitative and quantitative experimental results show consistent performance gain especially for images with complex degradations.",
+    "published": "2025-06-05T21:25:39Z",
+    "updated": "2025-06-05T21:25:39Z",
+    "url": "http://arxiv.org/abs/2506.05599v1",
+    "authors": "Mo Zhou, Keren Ye, Mauricio Delbracio, Peyman Milanfar, Vishal M. Patel, Hossein Talebi",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"LM4LV\" \"Low-level Vision\"",
+    "title": "LM4LV: A Frozen Large Language Model for Low-level Vision Tasks",
+    "summary": "The success of large language models (LLMs) has fostered a new research trend of multi-modality large language models (MLLMs), which changes the paradigm of various fields in computer vision. Though MLLMs have shown promising results in numerous high-level vision and vision-language tasks such as VQA and text-to-image, no works have demonstrated how low-level vision tasks can benefit from MLLMs. We find that most current MLLMs are blind to low-level features due to their design of vision modules, thus are inherently incapable for solving low-level vision tasks. In this work, we purpose $\\textbf{LM4LV}$, a framework that enables a FROZEN LLM to solve a range of low-level vision tasks without any multi-modal data or prior. This showcases the LLM's strong potential in low-level vision and bridges the gap between MLLMs and low-level vision tasks. We hope this work can inspire new perspectives on LLMs and deeper understanding of their mechanisms. Code is available at https://github.com/bytetriper/LM4LV.",
+    "published": "2024-05-24T17:25:00Z",
+    "updated": "2024-06-11T15:42:29Z",
+    "url": "http://arxiv.org/abs/2405.15734v2",
+    "authors": "Boyang Zheng, Jinjin Gu, Shijun Li, Chao Dong",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"LM4LV\" \"Low-level Vision\"",
+    "title": "R3eVision: A Survey on Robust Rendering, Restoration, and Enhancement for 3D Low-Level Vision",
+    "summary": "Neural rendering methods such as Neural Radiance Fields (NeRF) and 3D Gaussian Splatting (3DGS) have achieved significant progress in photorealistic 3D scene reconstruction and novel view synthesis. However, most existing models assume clean and high-resolution (HR) multi-view inputs, which limits their robustness under real-world degradations such as noise, blur, low-resolution (LR), and weather-induced artifacts. To address these limitations, the emerging field of 3D Low-Level Vision (3D LLV) extends classical 2D Low-Level Vision tasks including super-resolution (SR), deblurring, weather degradation removal, restoration, and enhancement into the 3D spatial domain. This survey, referred to as R\\textsuperscript{3}eVision, provides a comprehensive overview of robust rendering, restoration, and enhancement for 3D LLV by formalizing the degradation-aware rendering problem and identifying key challenges related to spatio-temporal consistency and ill-posed optimization. Recent methods that integrate LLV into neural rendering frameworks are categorized to illustrate how they enable high-fidelity 3D reconstruction under adverse conditions. Application domains such as autonomous driving, AR/VR, and robotics are also discussed, where reliable 3D perception from degraded inputs is critical. By reviewing representative methods, datasets, and evaluation protocols, this work positions 3D LLV as a fundamental direction for robust 3D content generation and scene-level reconstruction in real-world environments.",
+    "published": "2025-06-19T12:25:46Z",
+    "updated": "2025-06-23T13:06:37Z",
+    "url": "http://arxiv.org/abs/2506.16262v2",
+    "authors": "Weeyoung Kwon, Jeahun Sung, Minkyu Jeon, Chanho Eom, Jihyong Oh",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"LM4LV\" \"Low-level Vision\"",
+    "title": "Interpreting Low-level Vision Models with Causal Effect Maps",
+    "summary": "Deep neural networks have significantly improved the performance of low-level vision tasks but also increased the difficulty of interpretability. A deep understanding of deep models is beneficial for both network design and practical reliability. To take up this challenge, we introduce causality theory to interpret low-level vision models and propose a model-/task-agnostic method called Causal Effect Map (CEM). With CEM, we can visualize and quantify the input-output relationships on either positive or negative effects. After analyzing various low-level vision tasks with CEM, we have reached several interesting insights, such as: (1) Using more information of input images (e.g., larger receptive field) does NOT always yield positive outcomes. (2) Attempting to incorporate mechanisms with a global receptive field (e.g., channel attention) into image denoising may prove futile. (3) Integrating multiple tasks to train a general model could encourage the network to prioritize local information over global context. Based on the causal effect theory, the proposed diagnostic tool can refresh our common knowledge and bring a deeper understanding of low-level vision models. Codes are available at https://github.com/J-FHu/CEM.",
+    "published": "2024-07-29T08:33:32Z",
+    "updated": "2025-03-31T10:04:08Z",
+    "url": "http://arxiv.org/abs/2407.19789v3",
+    "authors": "Jinfan Hu, Jinjin Gu, Shiyao Yu, Fanghua Yu, Zheyuan Li, Zhiyuan You, Chaochao Lu, Chao Dong",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"LM4LV\" \"Low-level Vision\"",
+    "title": "Learning Dual Convolutional Neural Networks for Low-Level Vision",
+    "summary": "In this paper, we propose a general dual convolutional neural network (DualCNN) for low-level vision problems, e.g., super-resolution, edge-preserving filtering, deraining and dehazing. These problems usually involve the estimation of two components of the target signals: structures and details. Motivated by this, our proposed DualCNN consists of two parallel branches, which respectively recovers the structures and details in an end-to-end manner. The recovered structures and details can generate the target signals according to the formation model for each particular application. The DualCNN is a flexible framework for low-level vision tasks and can be easily incorporated into existing CNNs. Experimental results show that the DualCNN can be effectively applied to numerous low-level vision tasks with favorable performance against the state-of-the-art methods.",
+    "published": "2018-05-14T06:24:04Z",
+    "updated": "2018-05-14T06:24:04Z",
+    "url": "http://arxiv.org/abs/1805.05020v1",
+    "authors": "Jinshan Pan, Sifei Liu, Deqing Sun, Jiawei Zhang, Yang Liu, Jimmy Ren, Zechao Li, Jinhui Tang",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"LM4LV\" \"Low-level Vision\"",
+    "title": "Exploring Scalable Unified Modeling for General Low-Level Vision",
+    "summary": "Low-level vision involves a wide spectrum of tasks, including image restoration, enhancement, stylization, and feature extraction, which differ significantly in both task formulation and output domains. To address the challenge of unified modeling across such diverse tasks, we propose a Visual task Prompt-based Image Processing (VPIP) framework that leverages input-target image pairs as visual prompts to guide the model in performing a variety of low-level vision tasks. The framework comprises an end-to-end image processing backbone, a prompt encoder, and a prompt interaction module, enabling flexible integration with various architectures and effective utilization of task-specific visual representations. Based on this design, we develop a unified low-level vision model, GenLV, and evaluate its performance across multiple representative tasks. To explore the scalability of this approach, we extend the framework along two dimensions: model capacity and task diversity. We construct a large-scale benchmark consisting of over 100 low-level vision tasks and train multiple versions of the model with varying scales. Experimental results show that the proposed method achieves considerable performance across a wide range of tasks. Notably, increasing the number of training tasks enhances generalization, particularly for tasks with limited data, indicating the model's ability to learn transferable representations through joint training. Further evaluations in zero-shot generalization, few-shot transfer, and task-specific fine-tuning scenarios demonstrate the model's strong adaptability, confirming the effectiveness, scalability, and potential of the proposed framework as a unified foundation for general low-level vision modeling.",
+    "published": "2025-07-20T03:22:52Z",
+    "updated": "2025-07-20T03:22:52Z",
+    "url": "http://arxiv.org/abs/2507.14801v1",
+    "authors": "Xiangyu Chen, Kaiwen Zhu, Yuandong Pu, Shuo Cao, Xiaohui Li, Wenlong Zhang, Yihao Liu, Yu Qiao",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"LM4LV\" \"Low-level Vision\"",
+    "title": "Revisiting Implicit Neural Representations in Low-Level Vision",
+    "summary": "Implicit Neural Representation (INR) has been emerging in computer vision in recent years. It has been shown to be effective in parameterising continuous signals such as dense 3D models from discrete image data, e.g. the neural radius field (NeRF). However, INR is under-explored in 2D image processing tasks. Considering the basic definition and the structure of INR, we are interested in its effectiveness in low-level vision problems such as image restoration. In this work, we revisit INR and investigate its application in low-level image restoration tasks including image denoising, super-resolution, inpainting, and deblurring. Extensive experimental evaluations suggest the superior performance of INR in several low-level vision tasks with limited resources, outperforming its counterparts by over 2dB. Code and models are available at https://github.com/WenTXuL/LINR",
+    "published": "2023-04-20T12:19:27Z",
+    "updated": "2023-04-20T12:19:27Z",
+    "url": "http://arxiv.org/abs/2304.10250v1",
+    "authors": "Wentian Xu, Jianbo Jiao",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"LM4LV\" \"Low-level Vision\"",
+    "title": "Lumina-OmniLV: A Unified Multimodal Framework for General Low-Level Vision",
+    "summary": "We present Lunima-OmniLV (abbreviated as OmniLV), a universal multimodal multi-task framework for low-level vision that addresses over 100 sub-tasks across four major categories: image restoration, image enhancement, weak-semantic dense prediction, and stylization. OmniLV leverages both textual and visual prompts to offer flexible and user-friendly interactions. Built on Diffusion Transformer (DiT)-based generative priors, our framework supports arbitrary resolutions -- achieving optimal performance at 1K resolution -- while preserving fine-grained details and high fidelity. Through extensive experiments, we demonstrate that separately encoding text and visual instructions, combined with co-training using shallow feature control, is essential to mitigate task ambiguity and enhance multi-task generalization. Our findings also reveal that integrating high-level generative tasks into low-level vision models can compromise detail-sensitive restoration. These insights pave the way for more robust and generalizable low-level vision systems.",
+    "published": "2025-04-07T10:22:00Z",
+    "updated": "2025-04-08T07:26:50Z",
+    "url": "http://arxiv.org/abs/2504.04903v2",
+    "authors": "Yuandong Pu, Le Zhuo, Kaiwen Zhu, Liangbin Xie, Wenlong Zhang, Xiangyu Chen, Peng Gao, Yu Qiao",
+    "categories": [
+      "cs.CV",
+      "cs.AI"
+    ]
+  },
+  {
+    "query": "\"LM4LV\" \"Low-level Vision\"",
+    "title": "LSM: Learning Subspace Minimization for Low-level Vision",
+    "summary": "We study the energy minimization problem in low-level vision tasks from a novel perspective. We replace the heuristic regularization term with a learnable subspace constraint, and preserve the data term to exploit domain knowledge derived from the first principle of a task. This learning subspace minimization (LSM) framework unifies the network structures and the parameters for many low-level vision tasks, which allows us to train a single network for multiple tasks simultaneously with completely shared parameters, and even generalizes the trained network to an unseen task as long as its data term can be formulated. We demonstrate our LSM framework on four low-level tasks including interactive image segmentation, video segmentation, stereo matching, and optical flow, and validate the network on various datasets. The experiments show that the proposed LSM generates state-of-the-art results with smaller model size, faster training convergence, and real-time inference.",
+    "published": "2020-04-20T10:49:38Z",
+    "updated": "2020-04-20T10:49:38Z",
+    "url": "http://arxiv.org/abs/2004.09197v1",
+    "authors": "Chengzhou Tang, Lu Yuan, Ping Tan",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"LM4LV\" \"Low-level Vision\"",
+    "title": "Diffusion Models in Low-Level Vision: A Survey",
+    "summary": "Deep generative models have garnered significant attention in low-level vision tasks due to their generative capabilities. Among them, diffusion model-based solutions, characterized by a forward diffusion process and a reverse denoising process, have emerged as widely acclaimed for their ability to produce samples of superior quality and diversity. This ensures the generation of visually compelling results with intricate texture information. Despite their remarkable success, a noticeable gap exists in a comprehensive survey that amalgamates these pioneering diffusion model-based works and organizes the corresponding threads. This paper proposes the comprehensive review of diffusion model-based techniques. We present three generic diffusion modeling frameworks and explore their correlations with other deep generative models, establishing the theoretical foundation. Following this, we introduce a multi-perspective categorization of diffusion models, considering both the underlying framework and the target task. Additionally, we summarize extended diffusion models applied in other tasks, including medical, remote sensing, and video scenarios. Moreover, we provide an overview of commonly used benchmarks and evaluation metrics. We conduct a thorough evaluation, encompassing both performance and efficiency, of diffusion model-based techniques in three prominent tasks. Finally, we elucidate the limitations of current diffusion models and propose seven intriguing directions for future research. This comprehensive examination aims to facilitate a profound understanding of the landscape surrounding denoising diffusion models in the context of low-level vision tasks. A curated list of diffusion model-based techniques in over 20 low-level vision tasks can be found at https://github.com/ChunmingHe/awesome-diffusion-models-in-low-level-vision.",
+    "published": "2024-06-17T01:49:27Z",
+    "updated": "2025-02-25T03:53:24Z",
+    "url": "http://arxiv.org/abs/2406.11138v2",
+    "authors": "Chunming He, Yuqi Shen, Chengyu Fang, Fengyang Xiao, Longxiang Tang, Yulun Zhang, Wangmeng Zuo, Zhenhua Guo",
+    "categories": [
+      "cs.CV",
+      "cs.AI"
+    ]
+  },
+  {
+    "query": "\"LM4LV\" \"Low-level Vision\"",
+    "title": "Learning A Low-Level Vision Generalist via Visual Task Prompt",
+    "summary": "Building a unified model for general low-level vision tasks holds significant research and practical value. Current methods encounter several critical issues. Multi-task restoration approaches can address multiple degradation-to-clean restoration tasks, while their applicability to tasks with different target domains (e.g., image stylization) is limited. Methods like PromptGIP can handle multiple input-target domains but rely on the Masked Autoencoder (MAE) paradigm. Consequently, they are tied to the ViT architecture, resulting in suboptimal image reconstruction quality. In addition, these methods are sensitive to prompt image content and often struggle with low-frequency information processing. In this paper, we propose a Visual task Prompt-based Image Processing (VPIP) framework to overcome these challenges. VPIP employs visual task prompts to manage tasks with different input-target domains and allows flexible selection of backbone network suitable for general tasks. Besides, a new prompt cross-attention is introduced to facilitate interaction between the input and prompt information. Based on the VPIP framework, we train a low-level vision generalist model, namely GenLV, on 30 diverse tasks. Experimental results show that GenLV can successfully address a variety of low-level tasks, significantly outperforming existing methods both quantitatively and qualitatively. Codes are available at https://github.com/chxy95/GenLV.",
+    "published": "2024-08-16T08:37:56Z",
+    "updated": "2024-08-16T08:37:56Z",
+    "url": "http://arxiv.org/abs/2408.08601v1",
+    "authors": "Xiangyu Chen, Yihao Liu, Yuandong Pu, Wenlong Zhang, Jiantao Zhou, Yu Qiao, Chao Dong",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Diffusion\" \"image restoration\" \"language model\"",
+    "title": "Restore-RWKV: Efficient and Effective Medical Image Restoration with RWKV",
+    "summary": "Transformers have revolutionized medical image restoration, but the quadratic complexity still poses limitations for their application to high-resolution medical images. The recent advent of the Receptance Weighted Key Value (RWKV) model in the natural language processing field has attracted much attention due to its ability to process long sequences efficiently. To leverage its advanced design, we propose Restore-RWKV, the first RWKV-based model for medical image restoration. Since the original RWKV model is designed for 1D sequences, we make two necessary modifications for modeling spatial relations in 2D medical images. First, we present a recurrent WKV (Re-WKV) attention mechanism that captures global dependencies with linear computational complexity. Re-WKV incorporates bidirectional attention as basic for a global receptive field and recurrent attention to effectively model 2D dependencies from various scan directions. Second, we develop an omnidirectional token shift (Omni-Shift) layer that enhances local dependencies by shifting tokens from all directions and across a wide context range. These adaptations make the proposed Restore-RWKV an efficient and effective model for medical image restoration. Even a lightweight variant of Restore-RWKV, with only 1.16 million parameters, achieves comparable or even superior results compared to existing state-of-the-art (SOTA) methods. Extensive experiments demonstrate that the resulting Restore-RWKV achieves SOTA performance across a range of medical image restoration tasks, including PET image synthesis, CT image denoising, MRI image super-resolution, and all-in-one medical image restoration. Code is available at: https://github.com/Yaziwel/Restore-RWKV.",
+    "published": "2024-07-14T12:22:05Z",
+    "updated": "2025-01-06T15:27:33Z",
+    "url": "http://arxiv.org/abs/2407.11087v3",
+    "authors": "Zhiwen Yang, Jiayin Li, Hui Zhang, Dan Zhao, Bingzheng Wei, Yan Xu",
+    "categories": [
+      "eess.IV",
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"PromptIR\" \"Image Restoration\"",
+    "title": "PromptIR: Prompting for All-in-One Blind Image Restoration",
+    "summary": "Image restoration involves recovering a high-quality clean image from its degraded version. Deep learning-based methods have significantly improved image restoration performance, however, they have limited generalization ability to different degradation types and levels. This restricts their real-world application since it requires training individual models for each specific degradation and knowing the input degradation type to apply the relevant model. We present a prompt-based learning approach, PromptIR, for All-In-One image restoration that can effectively restore images from various types and levels of degradation. In particular, our method uses prompts to encode degradation-specific information, which is then used to dynamically guide the restoration network. This allows our method to generalize to different degradation types and levels, while still achieving state-of-the-art results on image denoising, deraining, and dehazing. Overall, PromptIR offers a generic and efficient plugin module with few lightweight prompts that can be used to restore images of various types and levels of degradation with no prior information on the corruptions present in the image. Our code and pretrained models are available here: https://github.com/va1shn9v/PromptIR",
+    "published": "2023-06-22T17:59:52Z",
+    "updated": "2023-06-22T17:59:52Z",
+    "url": "http://arxiv.org/abs/2306.13090v1",
+    "authors": "Vaishnav Potlapalli, Syed Waqas Zamir, Salman Khan, Fahad Shahbaz Khan",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Diffusion\" \"image restoration\" \"language model\"",
+    "title": "Multi-level Encoder-Decoder Architectures for Image Restoration",
+    "summary": "Many real-world solutions for image restoration are learning-free and based on handcrafted image priors such as self-similarity. Recently, deep-learning methods that use training data have achieved state-of-the-art results in various image restoration tasks (e.g., super-resolution and inpainting). Ulyanov et al. bridge the gap between these two families of methods (CVPR 18). They have shown that learning-free methods perform close to the state-of-the-art learning-based methods (approximately 1 PSNR). Their approach benefits from the encoder-decoder network. In this paper, we propose a framework based on the multi-level extensions of the encoder-decoder network, to investigate interesting aspects of the relationship between image restoration and network construction independent of learning. Our framework allows various network structures by modifying the following network components: skip links, cascading of the network input into intermediate layers, a composition of the encoder-decoder subnetworks, and network depth. These handcrafted network structures illustrate how the construction of untrained networks influence the following image restoration tasks: denoising, super-resolution, and inpainting. We also demonstrate image reconstruction using flash and no-flash image pairs. We provide performance comparisons with the state-of-the-art methods for all the restoration tasks above.",
+    "published": "2019-05-01T14:13:51Z",
+    "updated": "2019-05-06T12:45:24Z",
+    "url": "http://arxiv.org/abs/1905.00322v3",
+    "authors": "Indra Deep Mastan, Shanmuganathan Raman",
+    "categories": [
+      "eess.IV",
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Diffusion\" \"image restoration\" \"language model\"",
+    "title": "Beware of Aliases -- Signal Preservation is Crucial for Robust Image Restoration",
+    "summary": "Image restoration networks are usually comprised of an encoder and a decoder, responsible for aggregating image content from noisy, distorted data and to restore clean, undistorted images, respectively. Data aggregation as well as high-resolution image generation both usually come at the risk of involving aliases, i.e.~standard architectures put their ability to reconstruct the model input in jeopardy to reach high PSNR values on validation data. The price to be paid is low model robustness. In this work, we show that simply providing alias-free paths in state-of-the-art reconstruction transformers supports improved model robustness at low costs on the restoration performance. We do so by proposing BOA-Restormer, a transformer-based image restoration model that executes downsampling and upsampling operations partly in the frequency domain to ensure alias-free paths along the entire model while potentially preserving all relevant high-frequency information.",
+    "published": "2024-06-11T16:42:17Z",
+    "updated": "2026-06-16T11:18:22Z",
+    "url": "http://arxiv.org/abs/2406.07435v2",
+    "authors": "Shashank Agnihotri, Julia Grabinski, Janis Keuper, Margret Keuper",
+    "categories": [
+      "cs.CV",
+      "cs.LG",
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"Diffusion\" \"image restoration\" \"language model\"",
+    "title": "NTIRE 2025 Challenge on RAW Image Restoration and Super-Resolution",
+    "summary": "This paper reviews the NTIRE 2025 RAW Image Restoration and Super-Resolution Challenge, highlighting the proposed solutions and results. New methods for RAW Restoration and Super-Resolution could be essential in modern Image Signal Processing (ISP) pipelines, however, this problem is not as explored as in the RGB domain. The goal of this challenge is two fold, (i) restore RAW images with blur and noise degradations, (ii) upscale RAW Bayer images by 2x, considering unknown noise and blur. In the challenge, a total of 230 participants registered, and 45 submitted results during thee challenge period. This report presents the current state-of-the-art in RAW Restoration.",
+    "published": "2025-06-02T19:34:21Z",
+    "updated": "2025-06-04T13:04:27Z",
+    "url": "http://arxiv.org/abs/2506.02197v2",
+    "authors": "Marcos V. Conde, Radu Timofte, Zihao Lu, Xiangyu Kong, Xiaoxia Xing, Fan Wang, Suejin Han, MinKyu Park",
+    "categories": [
+      "eess.IV",
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Diffusion\" \"image restoration\" \"language model\"",
+    "title": "Unsupervised Lesion Detection via Image Restoration with a Normative Prior",
+    "summary": "Unsupervised lesion detection is a challenging problem that requires accurately estimating normative distributions of healthy anatomy and detecting lesions as outliers without training examples. Recently, this problem has received increased attention from the research community following the advances in unsupervised learning with deep learning. Such advances allow the estimation of high-dimensional distributions, such as normative distributions, with higher accuracy than previous methods.The main approach of the recently proposed methods is to learn a latent-variable model parameterized with networks to approximate the normative distribution using example images showing healthy anatomy, perform prior-projection, i.e. reconstruct the image with lesions using the latent-variable model, and determine lesions based on the differences between the reconstructed and original images. While being promising, the prior-projection step often leads to a large number of false positives. In this work, we approach unsupervised lesion detection as an image restoration problem and propose a probabilistic model that uses a network-based prior as the normative distribution and detect lesions pixel-wise using MAP estimation. The probabilistic model punishes large deviations between restored and original images, reducing false positives in pixel-wise detections. Experiments with gliomas and stroke lesions in brain MRI using publicly available datasets show that the proposed approach outperforms the state-of-the-art unsupervised methods by a substantial margin, +0.13 (AUC), for both glioma and stroke detection. Extensive model analysis confirms the effectiveness of MAP-based image restoration.",
+    "published": "2020-04-30T18:03:18Z",
+    "updated": "2020-04-30T18:03:18Z",
+    "url": "http://arxiv.org/abs/2005.00031v1",
+    "authors": "Xiaoran Chen, Suhang You, Kerem Can Tezcan, Ender Konukoglu",
+    "categories": [
+      "eess.IV",
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Diffusion\" \"image restoration\" \"language model\"",
+    "title": "DVANet: Degradation-aware Visual-prior Alignment Network for Image Restoration",
+    "summary": "All-in-One image restoration aims to develop a unified restoration framework for handling diverse degradation types. Existing end-to-end methods usually regard the restoration process as a black-box mapping, lacking an explicit optimization interpretation. Although deep unfolding provides an interpretable iterative modeling paradigm for image restoration, existing methods mostly rely on fixed degradation assumptions or predefined degradation information, making them difficult to adapt to unified restoration requirements under complex degradations and locally damaged content. This limitation restricts their performance in degradation suppression and structural detail recovery. To address these issues, this paper proposes DVANet, a deep unfolding network inspired by the half-quadratic splitting optimization algorithm, which formulates unified image restoration under complex degradations as a collaborative unfolding process between degradation-aware observation consistency and visual-prior-guided reconstruction. Specifically, in the degradation-aware observation consistency branch, a degradation representation module is employed to extract global degradation attributes and local degradation cues, and degradation-conditioned mapping is used to enhance the model's adaptability to different degradation types. In the visual-prior-guided reconstruction branch, DINOv3 is introduced to provide structural and semantic information as hierarchical visual priors, thereby complementing the missing structural information in damaged regions and improving detail recovery. Extensive experiments demonstrate that DVANet achieves superior or competitive performance on multi-scenario degradation and cross-domain image restoration tasks, showing favorable degradation adaptability and generalization ability.",
+    "published": "2026-06-17T14:09:39Z",
+    "updated": "2026-06-17T14:09:39Z",
+    "url": "http://arxiv.org/abs/2606.19097v1",
+    "authors": "Yanjie Tu, Qingsen Yan, Axi Niu, Tao Hu, Haokui Zhang, Jiantao Zhou",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Diffusion\" \"image restoration\" \"language model\"",
+    "title": "V-Bridge: Bridging Video Generative Priors to Versatile Few-shot Image Restoration",
+    "summary": "Large-scale video generative models are trained on vast and diverse visual data, enabling them to internalize rich structural, semantic, and dynamic priors of the visual world. While these models have demonstrated impressive generative capability, their potential as general-purpose visual learners remains largely untapped. In this work, we introduce V-Bridge, a framework that bridges this latent capacity to versatile few-shot image restoration tasks. We reinterpret image restoration not as a static regression problem, but as a progressive generative process, and leverage video models to simulate the gradual refinement from degraded inputs to high-fidelity outputs. Surprisingly, with only 1,000 multi-task training samples (less than 2% of existing restoration methods), pretrained video models can be induced to perform competitive image restoration, achieving multiple tasks with a single model, rivaling specialized architectures designed explicitly for this purpose. Our findings reveal that video generative models implicitly learn powerful and transferable restoration priors that can be activated with only extremely limited data, challenging the traditional boundary between generative modeling and low-level vision, and opening a new design paradigm for foundation models in visual tasks.",
+    "published": "2026-03-13T15:39:44Z",
+    "updated": "2026-03-13T15:39:44Z",
+    "url": "http://arxiv.org/abs/2603.13089v1",
+    "authors": "Shenghe Zheng, Junpeng Jiang, Wenbo Li",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Diffusion\" \"image restoration\" \"language model\"",
+    "title": "On the unreasonable vulnerability of transformers for image restoration -- and an easy fix",
+    "summary": "Following their success in visual recognition tasks, Vision Transformers(ViTs) are being increasingly employed for image restoration. As a few recent works claim that ViTs for image classification also have better robustness properties, we investigate whether the improved adversarial robustness of ViTs extends to image restoration. We consider the recently proposed Restormer model, as well as NAFNet and the \"Baseline network\" which are both simplified versions of a Restormer. We use Projected Gradient Descent (PGD) and CosPGD, a recently proposed adversarial attack tailored to pixel-wise prediction tasks for our robustness evaluation. Our experiments are performed on real-world images from the GoPro dataset for image deblurring. Our analysis indicates that contrary to as advocated by ViTs in image classification works, these models are highly susceptible to adversarial attacks. We attempt to improve their robustness through adversarial training. While this yields a significant increase in robustness for Restormer, results on other networks are less promising. Interestingly, the design choices in NAFNet and Baselines, which were based on iid performance, and not on robust generalization, seem to be at odds with the model robustness. Thus, we investigate this further and find a fix.",
+    "published": "2023-07-25T23:09:05Z",
+    "updated": "2023-07-25T23:09:05Z",
+    "url": "http://arxiv.org/abs/2307.13856v1",
+    "authors": "Shashank Agnihotri, Kanchana Vaishnavi Gandikota, Julia Grabinski, Paramanand Chandramouli, Margret Keuper",
+    "categories": [
+      "cs.CV",
+      "cs.LG",
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"AutoDIR\" \"Image Restoration\"",
+    "title": "RFormer: Transformer-based Generative Adversarial Network for Real Fundus Image Restoration on A New Clinical Benchmark",
+    "summary": "Ophthalmologists have used fundus images to screen and diagnose eye diseases. However, different equipments and ophthalmologists pose large variations to the quality of fundus images. Low-quality (LQ) degraded fundus images easily lead to uncertainty in clinical screening and generally increase the risk of misdiagnosis. Thus, real fundus image restoration is worth studying. Unfortunately, real clinical benchmark has not been explored for this task so far. In this paper, we investigate the real clinical fundus image restoration problem. Firstly, We establish a clinical dataset, Real Fundus (RF), including 120 low- and high-quality (HQ) image pairs. Then we propose a novel Transformer-based Generative Adversarial Network (RFormer) to restore the real degradation of clinical fundus images. The key component in our network is the Window-based Self-Attention Block (WSAB) which captures non-local self-similarity and long-range dependencies. To produce more visually pleasant results, a Transformer-based discriminator is introduced. Extensive experiments on our clinical benchmark show that the proposed RFormer significantly outperforms the state-of-the-art (SOTA) methods. In addition, experiments of downstream tasks such as vessel segmentation and optic disc/cup detection demonstrate that our proposed RFormer benefits clinical fundus image analysis and applications. The dataset, code, and models are publicly available at https://github.com/dengzhuo-AI/Real-Fundus",
+    "published": "2022-01-03T03:56:58Z",
+    "updated": "2022-08-03T11:54:27Z",
+    "url": "http://arxiv.org/abs/2201.00466v2",
+    "authors": "Zhuo Deng, Yuanhao Cai, Lu Chen, Zheng Gong, Qiqi Bao, Xue Yao, Dong Fang, Shaochong Zhang",
+    "categories": [
+      "eess.IV",
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"all-in-one image restoration\" \"instruction\"",
+    "title": "AutoDIR: Automatic All-in-One Image Restoration with Latent Diffusion",
+    "summary": "We present AutoDIR, an innovative all-in-one image restoration system incorporating latent diffusion. AutoDIR excels in its ability to automatically identify and restore images suffering from a range of unknown degradations. AutoDIR offers intuitive open-vocabulary image editing, empowering users to customize and enhance images according to their preferences. Specifically, AutoDIR consists of two key stages: a Blind Image Quality Assessment (BIQA) stage based on a semantic-agnostic vision-language model which automatically detects unknown image degradations for input images, an All-in-One Image Restoration (AIR) stage utilizes structural-corrected latent diffusion which handles multiple types of image degradations. Extensive experimental evaluation demonstrates that AutoDIR outperforms state-of-the-art approaches for a wider range of image restoration tasks. The design of AutoDIR also enables flexible user control (via text prompt) and generalization to new tasks as a foundation model of image restoration. Project is available at: \\url{https://jiangyitong.github.io/AutoDIR_webpage/}.",
+    "published": "2023-10-16T07:00:32Z",
+    "updated": "2024-05-28T09:10:39Z",
+    "url": "http://arxiv.org/abs/2310.10123v5",
+    "authors": "Yitong Jiang, Zhaoyang Zhang, Tianfan Xue, Jinwei Gu",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Diffusion\" \"image restoration\" \"language model\"",
+    "title": "SSP-IR: Semantic and Structure Priors for Diffusion-based Realistic Image Restoration",
+    "summary": "Realistic image restoration is a crucial task in computer vision, and diffusion-based models for image restoration have garnered significant attention due to their ability to produce realistic results. Restoration can be seen as a controllable generation conditioning on priors. However, due to the severity of image degradation, existing diffusion-based restoration methods cannot fully exploit priors from low-quality images and still have many challenges in perceptual quality, semantic fidelity, and structure accuracy. Based on the challenges, we introduce a novel image restoration method, SSP-IR. Our approach aims to fully exploit semantic and structure priors from low-quality images to guide the diffusion model in generating semantically faithful and structurally accurate natural restoration results. Specifically, we integrate the visual comprehension capabilities of Multimodal Large Language Models (explicit) and the visual representations of the original image (implicit) to acquire accurate semantic prior. To extract degradation-independent structure prior, we introduce a Processor with RGB and FFT constraints to extract structure prior from the low-quality images, guiding the diffusion model and preventing the generation of unreasonable artifacts. Lastly, we employ a multi-level attention mechanism to integrate the acquired semantic and structure priors. The qualitative and quantitative results demonstrate that our method outperforms other state-of-the-art methods overall on both synthetic and real-world datasets. Our project page is https://zyhrainbow.github.io/projects/SSP-IR.",
+    "published": "2024-07-04T04:55:14Z",
+    "updated": "2025-02-13T10:18:34Z",
+    "url": "http://arxiv.org/abs/2407.03635v2",
+    "authors": "Yuhong Zhang, Hengsheng Zhang, Zhengxue Cheng, Rong Xie, Li Song, Wenjun Zhang",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Diffusion\" \"image restoration\" \"language model\"",
+    "title": "Refusion: Enabling Large-Size Realistic Image Restoration with Latent-Space Diffusion Models",
+    "summary": "This work aims to improve the applicability of diffusion models in realistic image restoration. Specifically, we enhance the diffusion model in several aspects such as network architecture, noise level, denoising steps, training image size, and optimizer/scheduler. We show that tuning these hyperparameters allows us to achieve better performance on both distortion and perceptual scores. We also propose a U-Net based latent diffusion model which performs diffusion in a low-resolution latent space while preserving high-resolution information from the original input for the decoding process. Compared to the previous latent-diffusion model which trains a VAE-GAN to compress the image, our proposed U-Net compression strategy is significantly more stable and can recover highly accurate images without relying on adversarial optimization. Importantly, these modifications allow us to apply diffusion models to various image restoration tasks, including real-world shadow removal, HR non-homogeneous dehazing, stereo super-resolution, and bokeh effect transformation. By simply replacing the datasets and slightly changing the noise network, our model, named Refusion, is able to deal with large-size images (e.g., 6000 x 4000 x 3 in HR dehazing) and produces good results on all the above restoration problems. Our Refusion achieves the best perceptual performance in the NTIRE 2023 Image Shadow Removal Challenge and wins 2nd place overall.",
+    "published": "2023-04-17T14:06:49Z",
+    "updated": "2023-04-17T14:06:49Z",
+    "url": "http://arxiv.org/abs/2304.08291v1",
+    "authors": "Ziwei Luo, Fredrik K. Gustafsson, Zheng Zhao, Jens Sjölund, Thomas B. Schön",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"all-in-one image restoration\" \"instruction\"",
+    "title": "Visual-Instructed Degradation Diffusion for All-in-One Image Restoration",
+    "summary": "Image restoration tasks like deblurring, denoising, and dehazing usually need distinct models for each degradation type, restricting their generalization in real-world scenarios with mixed or unknown degradations. In this work, we propose \\textbf{Defusion}, a novel all-in-one image restoration framework that utilizes visual instruction-guided degradation diffusion. Unlike existing methods that rely on task-specific models or ambiguous text-based priors, Defusion constructs explicit \\textbf{visual instructions} that align with the visual degradation patterns. These instructions are grounded by applying degradations to standardized visual elements, capturing intrinsic degradation features while agnostic to image semantics. Defusion then uses these visual instructions to guide a diffusion-based model that operates directly in the degradation space, where it reconstructs high-quality images by denoising the degradation effects with enhanced stability and generalizability. Comprehensive experiments demonstrate that Defusion outperforms state-of-the-art methods across diverse image restoration tasks, including complex and real-world degradations.",
+    "published": "2025-06-20T12:50:42Z",
+    "updated": "2025-06-20T12:50:42Z",
+    "url": "http://arxiv.org/abs/2506.16960v1",
+    "authors": "Wenyang Luo, Haina Qin, Zewen Chen, Libin Wang, Dandan Zheng, Yuming Li, Yufan Liu, Bing Li",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"all-in-one image restoration\" \"instruction\"",
+    "title": "Cat-AIR: Content and Task-Aware All-in-One Image Restoration",
+    "summary": "All-in-one image restoration seeks to recover high-quality images from various types of degradation using a single model, without prior knowledge of the corruption source. However, existing methods often struggle to effectively and efficiently handle multiple degradation types. We present Cat-AIR, a novel \\textbf{C}ontent \\textbf{A}nd \\textbf{T}ask-aware framework for \\textbf{A}ll-in-one \\textbf{I}mage \\textbf{R}estoration. Cat-AIR incorporates an alternating spatial-channel attention mechanism that adaptively balances the local and global information for different tasks. Specifically, we introduce cross-layer channel attentions and cross-feature spatial attentions that allocate computations based on content and task complexity. Furthermore, we propose a smooth learning strategy that allows for seamless adaptation to new restoration tasks while maintaining performance on existing ones. Extensive experiments demonstrate that Cat-AIR achieves state-of-the-art results across a wide range of restoration tasks, requiring fewer FLOPs than previous methods, establishing new benchmarks for efficient all-in-one image restoration.",
+    "published": "2025-03-23T03:25:52Z",
+    "updated": "2025-03-23T03:25:52Z",
+    "url": "http://arxiv.org/abs/2503.17915v1",
+    "authors": "Jiachen Jiang, Tianyu Ding, Ke Zhang, Jinxin Zhou, Tianyi Chen, Ilya Zharkov, Zhihui Zhu, Luming Liang",
+    "categories": [
+      "eess.IV",
+      "cs.AI",
+      "cs.CV",
+      "cs.LG"
+    ]
+  },
+  {
+    "query": "\"all-in-one image restoration\" \"instruction\"",
+    "title": "ConStyle v2: A Strong Prompter for All-in-One Image Restoration",
+    "summary": "This paper introduces ConStyle v2, a strong plug-and-play prompter designed to output clean visual prompts and assist U-Net Image Restoration models in handling multiple degradations. The joint training process of IRConStyle, an Image Restoration framework consisting of ConStyle and a general restoration network, is divided into two stages: first, pre-training ConStyle alone, and then freezing its weights to guide the training of the general restoration network. Three improvements are proposed in the pre-training stage to train ConStyle: unsupervised pre-training, adding a pretext task (i.e. classification), and adopting knowledge distillation. Without bells and whistles, we can get ConStyle v2, a strong prompter for all-in-one Image Restoration, in less than two GPU days and doesn't require any fine-tuning. Extensive experiments on Restormer (transformer-based), NAFNet (CNN-based), MAXIM-1S (MLP-based), and a vanilla CNN network demonstrate that ConStyle v2 can enhance any U-Net style Image Restoration models to all-in-one Image Restoration models. Furthermore, models guided by the well-trained ConStyle v2 exhibit superior performance in some specific degradation compared to ConStyle.",
+    "published": "2024-06-26T10:46:44Z",
+    "updated": "2024-06-26T10:46:44Z",
+    "url": "http://arxiv.org/abs/2406.18242v1",
+    "authors": "Dongqi Fan, Junhao Zhang, Liang Chang",
+    "categories": [
+      "cs.CV",
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"all-in-one image restoration\" \"instruction\"",
+    "title": "From Physical Degradation Models to Task-Aware All-in-One Image Restoration",
+    "summary": "All-in-one image restoration aims to adaptively handle multiple restoration tasks with a single trained model. Although existing methods achieve promising results by introducing prompt information or leveraging large models, the added learning modules increase system complexity and hinder real-time applicability. In this paper, we adopt a physical degradation modeling perspective and predict a task-aware inverse degradation operator for efficient all-in-one image restoration. The framework consists of two stages. In the first stage, the predicted inverse operator produces an initial restored image together with an uncertainty perception map that highlights regions difficult to reconstruct, ensuring restoration reliability. In the second stage, the restoration is further refined under the guidance of this uncertainty map. The same inverse operator prediction network is used in both stages, with task-aware parameters introduced after operator prediction to adapt to different degradation tasks. Moreover, by accelerating the convolution of the inverse operator, the proposed method achieves efficient all-in-one image restoration. The resulting tightly integrated architecture, termed OPIR, is extensively validated through experiments, demonstrating superior all-in-one restoration performance while remaining highly competitive on task-aligned restoration.",
+    "published": "2026-01-15T08:47:10Z",
+    "updated": "2026-01-15T08:47:10Z",
+    "url": "http://arxiv.org/abs/2601.10192v1",
+    "authors": "Hu Gao, Xiaoning Lei, Xichen Xu, Xingjian Wang, Lizhuang Ma",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"all-in-one image restoration\" \"instruction\"",
+    "title": "DPMambaIR: All-in-One Image Restoration via Degradation-Aware Prompt State Space Model",
+    "summary": "All-in-One image restoration aims to address multiple image degradation problems using a single model, offering a more practical and versatile solution compared to designing dedicated models for each degradation type. Existing approaches typically rely on Degradation-specific models or coarse-grained degradation prompts to guide image restoration. However, they lack fine-grained modeling of degradation information and face limitations in balancing multi-task conflicts. To overcome these limitations, we propose DPMambaIR, a novel All-in-One image restoration framework that introduces a fine-grained degradation extractor and a Degradation-Aware Prompt State Space Model (DP-SSM). The DP-SSM leverages the fine-grained degradation features captured by the extractor as dynamic prompts, which are then incorporated into the state space modeling process. This enhances the model's adaptability to diverse degradation types, while a complementary High-Frequency Enhancement Block (HEB) recovers local high-frequency details. Extensive experiments on a mixed dataset containing seven degradation types show that DPMambaIR achieves the best performance, with 27.69dB and 0.893 in PSNR and SSIM, respectively. These results highlight the potential and superiority of DPMambaIR as a unified solution for All-in-One image restoration.",
+    "published": "2025-04-24T16:46:32Z",
+    "updated": "2026-02-05T09:06:01Z",
+    "url": "http://arxiv.org/abs/2504.17732v3",
+    "authors": "Zhanwen Liu, Sai Zhou, Yuchao Dai, Yang Wang, Yisheng An, Xiangmo Zhao",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"all-in-one image restoration\" \"instruction\"",
+    "title": "Degradation-Aware Feature Perturbation for All-in-One Image Restoration",
+    "summary": "All-in-one image restoration aims to recover clear images from various degradation types and levels with a unified model. Nonetheless, the significant variations among degradation types present challenges for training a universal model, often resulting in task interference, where the gradient update directions of different tasks may diverge due to shared parameters. To address this issue, motivated by the routing strategy, we propose DFPIR, a novel all-in-one image restorer that introduces Degradation-aware Feature Perturbations(DFP) to adjust the feature space to align with the unified parameter space. In this paper, the feature perturbations primarily include channel-wise perturbations and attention-wise perturbations. Specifically, channel-wise perturbations are implemented by shuffling the channels in high-dimensional space guided by degradation types, while attention-wise perturbations are achieved through selective masking in the attention space. To achieve these goals, we propose a Degradation-Guided Perturbation Block (DGPB) to implement these two functions, positioned between the encoding and decoding stages of the encoder-decoder architecture. Extensive experimental results demonstrate that DFPIR achieves state-of-the-art performance on several all-in-one image restoration tasks including image denoising, image dehazing, image deraining, motion deblurring, and low-light image enhancement. Our codes are available at https://github.com/TxpHome/DFPIR.",
+    "published": "2025-05-19T02:37:11Z",
+    "updated": "2025-05-19T02:37:11Z",
+    "url": "http://arxiv.org/abs/2505.12630v1",
+    "authors": "Xiangpeng Tian, Xiangyu Liao, Xiao Liu, Meng Li, Chao Ren",
+    "categories": [
+      "cs.CV",
+      "cs.AI"
+    ]
+  },
+  {
+    "query": "\"all-in-one image restoration\" \"instruction\"",
+    "title": "HAIR: Hypernetworks-based All-in-One Image Restoration",
+    "summary": "Image restoration aims to recover a high-quality clean image from its degraded version. Recent progress in image restoration has demonstrated the effectiveness of All-in-One image restoration models in addressing various unknown degradations simultaneously. However, these existing methods typically utilize the same parameters to tackle images with different types of degradation, forcing the model to balance the performance between different tasks and limiting its performance on each task. To alleviate this issue, we propose HAIR, a Hypernetworks-based All-in-One Image Restoration plug-and-play method that generates parameters based on the input image and thus makes the model to adapt to specific degradation dynamically. Specifically, HAIR consists of two main components, i.e., Classifier and Hyper Selecting Net (HSN). The Classifier is a simple image classification network used to generate a Global Information Vector (GIV) that contains the degradation information of the input image, and the HSN is a simple fully-connected neural network that receives the GIV and outputs parameters for the corresponding modules. Extensive experiments demonstrate that HAIR can significantly improve the performance of existing image restoration models in a plug-and-play manner, both in single-task and All-in-One settings. Notably, our proposed model Res-HAIR, which integrates HAIR into the well-known Restormer, can obtain superior or comparable performance compared with current state-of-the-art methods. Moreover, we theoretically demonstrate that to achieve a given small enough error, our proposed HAIR requires fewer parameters in contrast to mainstream embedding-based All-in-One methods. The code is available at https://github.com/toummHus/HAIR.",
+    "published": "2024-08-15T11:34:33Z",
+    "updated": "2024-11-18T09:40:37Z",
+    "url": "http://arxiv.org/abs/2408.08091v4",
+    "authors": "Jin Cao, Yi Cao, Li Pang, Deyu Meng, Xiangyong Cao",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"all-in-one image restoration\" \"instruction\"",
+    "title": "Dynamic Degradation Decomposition Network for All-in-One Image Restoration",
+    "summary": "Currently, restoring clean images from a variety of degradation types using a single model is still a challenging task. Existing all-in-one image restoration approaches struggle with addressing complex and ambiguously defined degradation types. In this paper, we introduce a dynamic degradation decomposition network for all-in-one image restoration, named D$^3$Net. D$^3$Net achieves degradation-adaptive image restoration with guided prompt through cross-domain interaction and dynamic degradation decomposition. Concretely, in D$^3$Net, the proposed Cross-Domain Degradation Analyzer (CDDA) engages in deep interaction between frequency domain degradation characteristics and spatial domain image features to identify and model variations of different degradation types on the image manifold, generating degradation correction prompt and strategy prompt, which guide the following decomposition process. Furthermore, the prompt-based Dynamic Decomposition Mechanism (DDM) for progressive degradation decomposition, that encourages the network to adaptively select restoration strategies utilizing the two-level prompt generated by CDDA. Thanks to the synergistic cooperation between CDDA and DDM, D$^3$Net achieves superior flexibility and scalability in handling unknown degradation, while effectively reducing unnecessary computational overhead. Extensive experiments on multiple image restoration tasks demonstrate that D$^3$Net significantly outperforms the state-of-the-art approaches, especially improving PSNR by 5.47dB and 3.30dB on the SOTS-Outdoor and GoPro datasets, respectively.",
+    "published": "2025-02-26T11:49:58Z",
+    "updated": "2025-03-08T14:50:19Z",
+    "url": "http://arxiv.org/abs/2502.19068v2",
+    "authors": "Huiqiang Wang, Mingchen Song, Guoqiang Zhong",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"all-in-one image restoration\" \"instruction\"",
+    "title": "Learning Adaptive Dynamical Features via Multi-$τ$ Liquid-Mamba for All-in-one Image Restoration",
+    "summary": "Image restoration aims to recover high-quality images from degraded observations. Recent Mamba-based image restoration models have demonstrated strong potential in modeling long-range dependencies with linear complexity. However, most existing designs still rely on a single state-evolution timescale, which limits their adaptability to spatially heterogeneous and task-dependent degradation patterns in all-in-one image restoration. In this paper, we propose Multi-$τ$ Liquid-Mamba, an adaptive state space module that introduces input-conditioned multi-timescale liquid discretization into selective state space modeling. Instead of changing the overall selective scan pipeline, the proposed module modulates the effective discretization steps of multiple dynamical branches and adaptively fuses their responses according to degradation-aware gating weights. This design allows the model to capture both fast-varying local details and slowly evolving global structures while preserving the linear scaling property of Mamba with respect to sequence length. Importantly, Multi-$τ$ Liquid-Mamba modulates the effective transition dynamics while preserving the original selective parameterization and hardware-efficient selective scan mechanism, making it a plug-and-play module that can be seamlessly integrated into existing Mamba-based architectures. Built upon this framework, we develop a Multi-$τ$ Liquid-Mamba Image Restoration Network (MLMIR) for all-in-one image restoration. Extensive experiments on a wide range of restoration benchmarks demonstrate that MLMIR consistently achieves state-of-the-art performance in all-in-one image restoration while remaining highly competitive in task-aligned restoration settings.",
+    "published": "2026-06-22T03:20:18Z",
+    "updated": "2026-06-22T03:20:18Z",
+    "url": "http://arxiv.org/abs/2606.22801v1",
+    "authors": "Hu Gao, Changshuo Wang, Yulong Chen, Lizhuang Ma",
+    "categories": [
+      "cs.CV"
+    ]
+  }
+]

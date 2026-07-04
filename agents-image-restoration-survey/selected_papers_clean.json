@@ -1,0 +1,326 @@
+[
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "EvoIR-Agent: Self-Evolving Image Restoration Agentic System via Experience-Driven Learning",
+    "summary": "Multimodal Large Language Model (MLLM)-driven image restoration agent demonstrates effectiveness in degradation coupling scenarios by flexibly selecting tools and determining removal orders. However, their zero-shot planning often fails without experience, necessitating severe trial-and-error overhead to achieve satisfactory outcomes. Currently, two paradigms are employed to address this issue, yet a dilemma persists: Training-based methods embed intrinsic experience into parameters, achieving high inference efficiency but lacking compatibility with new tools or degradation. In contrast, training-free methods utilize explicit experience storage for compatibility but still incur trial-and-error overhead due to naive experience. To resolve the dilemma, we propose EvoIR-Agent, which first systematically formulates the experience components of a training-free image restoration agent. Subsequently, a hierarchical experience pool is constructed, which enables coarse-to-fine guidance for diverse tools and removal orders. Furthermore, a self-evolving mechanism is introduced to update the pool from scratch using accumulated records, thereby greatly improving performance and efficiency. Extensive experiments reveal that EvoIR-Agent achieves a significant lead in the full reference metrics and yields a remarkable Pareto-optimal balance between performance and efficiency compared to the state-of-the-art methods.",
+    "published": "2026-05-21T09:14:25Z",
+    "updated": "2026-06-06T02:15:03Z",
+    "url": "http://arxiv.org/abs/2605.22208v2",
+    "authors": "Kailin Zhuang, Jiawei Wu, Zhi Jin",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "DiTTo: Scalable Order-aware All-in-One Image Restoration Agent",
+    "summary": "Real-world images rarely suffer from a single degradation, and the order in which degradations are removed substantially affects the final restoration quality, motivating agent-based image restoration (IR), where a vision-language model schedules a pool of pre-built restoration-experts. However, existing training-based agents require $\\mathcal{O}((N^{\\mathbf{D}})^{2})$ restoration-expert calls per image to construct the Optimal Restoration-action Trajectory Dataset (ORTD), where $N^{\\mathbf{D}}$ denotes the number of degradation types in the universe $\\mathbf{D}$, and couple agent training to a fixed restoration-expert pool, preventing extension to newly introduced restoration-experts without full retraining. To overcome these efficiency and extensibility bottlenecks, we propose \\textbf{DiTTo}, a novel order-aware image restoration agent framework consisting of the DiTTo Simulator and the DiTTo Agent. The DiTTo Simulator combines $\\cup$S-IR for single-step restoration-action simulation and AiO-IQA for per-action quality prediction, reducing ORTD construction to $\\mathcal{O}(N^{\\mathbf{D}})$ simulator calls per image; the DiTTo Agent is trained by SFT on the simulator-generated ORTD, followed by \\textbf{Order-aware Restoration Alignment (ORA)} that aligns degradation identification, restoration-action-ordering, and output format along independent axes. This enables \\textbf{plug-and-play scalable extensibility}: adding a new restoration-expert requires updating only the lightweight ORA stage. On the MiO-100 evaluation set with up to five concurrent degradations, our DiTTo Agent achieves state-of-the-art multi-degradation restoration quality among previous agent-based IR methods.",
+    "published": "2026-05-29T07:01:33Z",
+    "updated": "2026-06-02T09:49:52Z",
+    "url": "http://arxiv.org/abs/2605.30915v2",
+    "authors": "Seungho Choi, Jihyong Oh",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "PaAgent: Portrait-Aware Image Restoration Agent via Subjective-Objective Reinforcement Learning",
+    "summary": "Image Restoration (IR) agents, leveraging multimodal large language models to perceive degradation and invoke restoration tools, have shown promise in automating IR tasks. However, existing IR agents typically lack an insight summarization mechanism for past interactions, which results in an exhaustive search for the optimal IR tool. To address this limitation, we propose a portrait-aware IR agent, dubbed PaAgent, which incorporates a self-evolving portrait bank for IR tools and Retrieval-Augmented Generation (RAG) to select a suitable IR tool for input. Specifically, to construct and evolve the portrait bank, the PaAgent continuously enriches it by summarizing the characteristics of various IR tools with restored images, selected IR tools, and degraded images. In addition, the RAG is employed to select the optimal IR tool for the input image by retrieving relevant insights from the portrait bank. Furthermore, to enhance PaAgent's ability to perceive degradation in complex scenes, we propose a subjective-objective reinforcement learning strategy that considers both image quality scores and semantic insights in reward generation, which accurately provides the degradation information even under partial and non-uniform degradation. Extensive experiments across 8 IR benchmarks, covering six single-degradation and eight mixed-degradation scenarios, validate PaAgent's superiority in addressing complex IR tasks. Our project page is \\href{https://wyjgr.github.io/PaAgent.html}{PaAgent}.",
+    "published": "2026-03-17T18:41:36Z",
+    "updated": "2026-03-17T18:41:36Z",
+    "url": "http://arxiv.org/abs/2603.17055v1",
+    "authors": "Yijian Wang, Qingsen Yan, Jiantao Zhou, Duwei Dai, Wei Dong",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "TIR-Agent: Training an Explorative and Efficient Agent for Image Restoration",
+    "summary": "Vision-language agents that orchestrate specialized tools for image restoration (IR) have emerged as a promising method, yet most existing frameworks operate in a training-free manner. They rely on heuristic task scheduling and exhaustive tool traversal, resulting in sub-optimal restoration paths and prohibitive computational cost. We argue that the core bottleneck lies in the absence of a learned policy to make decision, as a vision-language model cannot efficiently handle degradation-aware task ordering and tool composition. To this end, we propose TIR-Agent, a trainable image restoration agent that performs a direct tool-calling policy through a two-stage training pipeline of supervised fine-tuning (SFT) followed by reinforcement learning (RL). Two key designs underpin effective RL training: (i) a random perturbation strategy applied to the SFT data, which broadens the policy's exploration over task schedules and tool compositions, and (ii) a multi-dimensional adaptive reward mechanism that dynamically re-weights heterogeneous image quality metrics to mitigate reward hacking. To support high-throughput, asynchronous GPU-based tool invocation during training, we further develop a globally shared model-call pool. Experiments on both in-domain and out-of-domain degradations show that TIR-Agent outperforms 12 baselines, including 6 all-in-one models, 3 training-free agents, and 3 proprietary models, and achieves over 2.5$\\times$ inference speedup by eliminating redundant tool executions.",
+    "published": "2026-03-29T15:50:36Z",
+    "updated": "2026-03-29T15:50:36Z",
+    "url": "http://arxiv.org/abs/2603.27742v1",
+    "authors": "Yisheng Zhang, Guoli Jia, Haote Hu, Shanxu Zhao, Kaikai Zhao, Long Sun, Xinwei Long, Kai Tian",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Self-Evolving Agentic Image Restoration\"",
+    "title": "Self-Evolving Agentic Image Restoration via Deliberate Planning and Intuitive Execution",
+    "summary": "Real-world image restoration (IR) remains challenging due to complex and coupled degradations. While recent agentic IR frameworks leverage Large Language Models for flexible tool planning, they face two critical limitations. First, from a search scheme perspective, excessive reliance on greedy strategies fails to balance exploration and exploitation. Second, existing agentic systems underutilize information, exhibiting episodic amnesia. To address these challenges, we propose \\textbf{Self-Evolving Agentic Image Restoration (SEAR)}, which formulates restoration as a sequential decision-making problem. Inspired by the dual-process theory, SEAR comprises an Intuitive Executor and a Deliberate Planner, respectively following the fast-thinking \\textit{System 1} and slow-thinking \\textit{System 2} principles. The Deliberate Planner employs Pruning-Aware Monte Carlo Tree Search for long-horizon reasoning, utilizing a hybrid no-reference reward and a Multimodal Large Language Model (MLLM)-based tournament to prevent metric exploitation. Complementarily, the Intuitive Executor leverages a self-evolving episodic memory indexed by degradation-aware state fingerprints. This mechanism distills expensive search trajectories into adaptive expertise, overcoming episodic amnesia while progressively amortizing cold-start exploration costs through memory reuse. Extensive experiments on synthetic and real-world benchmarks demonstrate its strong perceptual and quantitative performance.",
+    "published": "2026-06-27T15:21:47Z",
+    "updated": "2026-06-27T15:21:47Z",
+    "url": "http://arxiv.org/abs/2606.28971v1",
+    "authors": "Shuang Cui, Fan Ji, Guanglong Sun, Yufei Guo, Xiongxin Tang, Jiangmeng Li, Fanjiang Xu",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"MoA-VR\" \"Video Restoration\"",
+    "title": "VQ-Jarvis: Retrieval-Augmented Video Restoration Agent with Sharp Vision and Fast Thought",
+    "summary": "Video restoration in real-world scenarios is challenged by heterogeneous degradations, where static architectures and fixed inference pipelines often fail to generalize. Recent agent-based approaches offer dynamic decision making, yet existing video restoration agents remain limited by insufficient quality perception and inefficient search strategies. We propose VQ-Jarvis, a retrieval-augmented, all-in-one intelligent video restoration agent with sharper vision and faster thought. VQ-Jarvis is designed to accurately perceive degradations and subtle differences among paired restoration results, while efficiently discovering optimal restoration trajectories. To enable sharp vision, we construct VSR-Compare, the first large-scale video paired enhancement dataset with 20K comparison pairs covering 7 degradation types, 11 enhancement operators, and diverse content domains. Based on this dataset, we train a multiple operator judge model and a degradation perception model to guide agent decisions. To achieve fast thought, we introduce a hierarchical operator scheduling strategy that adapts to video difficulty: for easy cases, optimal restoration trajectories are retrieved in a one-step manner from a retrieval-augmented generation (RAG) library; for harder cases, a step-by-step greedy search is performed to balance efficiency and accuracy. Extensive experiments demonstrate that VQ-Jarvis consistently outperforms existing methods on complex degraded videos.",
+    "published": "2026-03-24T09:40:50Z",
+    "updated": "2026-03-24T09:40:50Z",
+    "url": "http://arxiv.org/abs/2603.22998v1",
+    "authors": "Xuanyu Zhang, Weiqi Li, Qunliang Xing, Jingfen Xie, Bin Chen, Junlin Li, Li Zhang, Jian Zhang",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "title": "RetouchIQ: MLLM Agents for Instruction-Based Image Retouching with Generalist Reward",
+    "summary": "Recent advances in multimodal large language models (MLLMs) have shown great potential for extending vision-language reasoning to professional tool-based image editing, enabling intuitive and creative editing. A promising direction is to use reinforcement learning (RL) to enable MLLMs to reason about and execute optimal tool-use plans within professional image-editing software. However, training remains challenging due to the lack of reliable, verifiable reward signals that can reflect the inherently subjective nature of creative editing. In this work, we introduce RetouchIQ, a framework that performs instruction-based executable image editing through MLLM agents guided by a generalist reward model. RetouchIQ interprets user-specified editing intentions and generates corresponding, executable image adjustments, bridging high-level aesthetic goals with precise parameter control. To move beyond conventional, rule-based rewards that compute similarity against a fixed reference image using handcrafted metrics, we propose a generalist reward model, an RL fine-tuned MLLM that evaluates edited results through a set of generated metrics on a case-by-case basis. Then, the reward model provides scalar feedback through multimodal reasoning, enabling reinforcement learning with high-quality, instruction-consistent gradients. We curate an extended dataset with 190k instruction-reasoning pairs and establish a new benchmark for instruction-based image editing. Experiments show that RetouchIQ substantially improves both semantic consistency and perceptual quality over previous MLLM-based and diffusion-based editing systems. Our findings demonstrate the potential of generalist reward-driven MLLM agents as flexible, explainable, and executable assistants for professional image editing.",
+    "published": "2026-02-19",
+    "updated": "2026-02-19",
+    "url": "https://openalex.org/W7130762292",
+    "authors": "Qiucheng Wu, Jing Shi, Simon Jenni, Kushal Kafle, Tianyu Wang, Shiyu Chang",
+    "categories": [],
+    "venue": "arXiv (Cornell University)",
+    "cited_by": 0
+  },
+  {
+    "title": "OPERA: An Agent for Image Restoration with End-to-End Joint Planning-Execution Optimization",
+    "summary": "",
+    "published": "2026",
+    "updated": "2026",
+    "url": "10.48550/ARXIV.2605.22104",
+    "authors": "Feng Zhu, Shuyang Xie, Yihan Zeng, Ming Liu 0018, Wangmeng Zuo",
+    "categories": [],
+    "venue": "CoRR",
+    "cited_by": 0
+  },
+  {
+    "title": "Derain-Agent: A Plug-and-Play Agent Framework for Rainy Image Restoration",
+    "summary": "",
+    "published": "2026",
+    "updated": "2026",
+    "url": "10.48550/ARXIV.2603.11866",
+    "authors": "Zhaocheng Yu, Xiang Chen, Runzhe Li, Zihan Geng, Guangyu Sun 0003, Haipeng Li",
+    "categories": [],
+    "venue": "CoRR",
+    "cited_by": 0
+  },
+  {
+    "title": "IAMAgent: Toward an Interactive and Adaptive Multi-Agent System for Image Restoration",
+    "summary": "",
+    "published": "2026",
+    "updated": "2026",
+    "url": "10.1109/TIP.2026.3671594",
+    "authors": "Yanyan Wei, Yilin Zhang 0012, Huan Zheng, Jiahuan Ren, Xiaogang Xu 0002, Zenglin Shi",
+    "categories": [],
+    "venue": "IEEE Trans. Image Process.",
+    "cited_by": 0
+  },
+  {
+    "title": "RIR-Agent: An interactive framework for effective and adaptive restoration of remote sensing imagery",
+    "summary": "",
+    "published": "2026",
+    "updated": "2026",
+    "url": "10.1016/J.ESWA.2026.132495",
+    "authors": "Junyu Liu, Tianyu Li 0003, Lanyue Liang, Gang Fu 0003, Guoqing Wang 0001, Quan Rui",
+    "categories": [],
+    "venue": "Expert Syst. Appl.",
+    "cited_by": 0
+  },
+  {
+    "query": "\"RestoreAgent\"",
+    "title": "Multi-Agent Image Restoration",
+    "summary": "Image restoration (IR) is challenging due to the complexity of real-world degradations. While many specialized and all-in-one IR models have been developed, they fail to effectively handle complex, mixed degradations. Recent agentic methods RestoreAgent and AgenticIR leverage intelligent, autonomous workflows to alleviate this issue, yet they suffer from suboptimal results and inefficiency due to their resource-intensive finetunings, and ineffective searches and tool execution trials for satisfactory outputs. In this paper, we propose MAIR, a novel Multi-Agent approach for complex IR problems. We introduce a real-world degradation prior, categorizing degradations into three types: (1) scene, (2) imaging, and (3) compression, which are observed to occur sequentially in real world, and reverse them in the opposite order. Built upon this three-stage restoration framework, MAIR emulates a team of collaborative human specialists, including a \"scheduler\" for overall planning and multiple \"experts\" dedicated to specific degradations. This design minimizes search space and trial efforts, improving image quality while reducing inference costs. In addition, a registry mechanism is introduced to enable easy integration of new tools. Experiments on both synthetic and real-world datasets show that proposed MAIR achieves competitive performance and improved efficiency over the previous agentic IR system. Code and models will be made available.",
+    "published": "2025-03-12T13:53:57Z",
+    "updated": "2025-03-17T07:34:25Z",
+    "url": "http://arxiv.org/abs/2503.09403v2",
+    "authors": "Xu Jiang, Gehui Li, Bin Chen, Jian Zhang",
+    "categories": [
+      "cs.CV",
+      "cs.AI"
+    ]
+  },
+  {
+    "title": "JarvisIR: Elevating Autonomous Driving Perception with Intelligent Image Restoration",
+    "summary": "Vision-centric perception systems struggle with unpredictable and coupled weather degradations in the wild. Current solutions are often limited, as they either depend on specific degradation priors or suffer from significant domain gaps. To enable robust and autonomous operation in real-world conditions, we propose JarvisIR, a VLM-powered agent that leverages the VLM as a controller to manage multiple expert restoration models. To further enhance system robustness, reduce hallucinations, and improve generalizability in real-world adverse weather, JarvisIR employs a novel two-stage framework consisting of supervised fine-tuning and human feedback alignment. Specifically, to address the lack of paired data in real-world scenarios, the human feedback alignment enables the VLM to be fine-tuned effectively on large-scale real-world data in an unsupervised manner. To support the training and evaluation of JarvisIR, we introduce CleanBench, a comprehensive dataset consisting of high-quality and large-scale instruction-responses pairs, including 150K synthetic entries and 80K real entries. Extensive experiments demonstrate that JarvisIR exhibits superior decision-making and restoration capabilities. Compared with existing methods, it achieves a 50% improvement in the average of all perception metrics on CleanBench-Real.",
+    "published": "2025-06-10",
+    "updated": "2025-06-10",
+    "url": "https://doi.org/10.1109/cvpr52734.2025.02084",
+    "authors": "Yunlong Lin, Zixu Lin, Haoyu Chen, Panwang Pan, Chenxin Li, Sixiang Chen",
+    "categories": [],
+    "venue": "",
+    "cited_by": 13
+  },
+  {
+    "query": "\"Hybrid Agents for Image Restoration\"",
+    "title": "Hybrid Agents for Image Restoration",
+    "summary": "Existing Image Restoration (IR) studies typically focus on task-specific or universal modes individually, relying on the mode selection of users and lacking the cooperation between multiple task-specific/universal restoration modes. This leads to insufficient interaction for unprofessional users and limits their restoration capability for complicated real-world applications. In this work, we present HybridAgent, intending to incorporate multiple restoration modes into a unified image restoration model and achieve intelligent and efficient user interaction through our proposed hybrid agents. Concretely, we propose the hybrid rule of fast, slow, and feedback restoration agents. Here, the slow restoration agent optimizes the powerful multimodal large language model (MLLM) with our proposed instruction-tuning dataset to identify degradations within images with ambiguous user prompts and invokes proper restoration tools accordingly. The fast restoration agent is designed based on a lightweight large language model (LLM) via in-context learning to understand the user prompts with simple and clear requirements, which can obviate the unnecessary time/resource costs of MLLM. Moreover, we introduce the mixed distortion removal mode for our HybridAgents, which is crucial but not concerned in previous agent-based works. It can effectively prevent the error propagation of step-by-step image restoration and largely improve the efficiency of the agent system. We validate the effectiveness of HybridAgent with both synthetic and real-world IR tasks.",
+    "published": "2025-03-13T07:28:33Z",
+    "updated": "2025-03-13T07:28:33Z",
+    "url": "http://arxiv.org/abs/2503.10120v1",
+    "authors": "Bingchen Li, Xin Li, Yiting Lu, Zhibo Chen",
+    "categories": [
+      "cs.CV",
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "Restore-R1: Efficient Image Restoration Agents via Reinforcement Learning with Multimodal LLM Perceptual Feedback",
+    "summary": "Complex image restoration aims to recover high-quality images from inputs affected by multiple degradations such as blur, noise, rain, and compression artifacts. Recent restoration agents, powered by vision-language models and large language models, offer promising restoration capabilities but suffer from significant efficiency bottlenecks due to reflection, rollback, and iterative tool searching. Moreover, their performance heavily depends on degradation recognition models that require extensive annotations for training, limiting their applicability in label-free environments. To address these limitations, we propose a policy optimization-based restoration framework that learns an lightweight agent to determine tool-calling sequences. The agent operates in a sequential decision process, selecting the most appropriate restoration operation at each step to maximize final image quality. To enable training within label-free environments, we introduce a novel reward mechanism driven by multimodal large language models, which act as human-aligned evaluator and provide perceptual feedback for policy improvement. Once trained, our agent executes a deterministic restoration plans without redundant tool invocations, significantly accelerating inference while maintaining high restoration quality. Extensive experiments show that despite using no supervision, our method matches SOTA performance on full-reference metrics and surpasses existing approaches on no-reference metrics across diverse degradation scenarios.",
+    "published": "2025-12-21T05:12:25Z",
+    "updated": "2026-04-06T06:59:14Z",
+    "url": "http://arxiv.org/abs/2512.18599v2",
+    "authors": "Jianglin Lu, Yuanwei Wu, Ziyi Zhao, Hongcheng Wang, Felix Jimenez, Abrar Majeedi, Yun Fu",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "Q-Agent: Quality-Driven Chain-of-Thought Image Restoration Agent through Robust Multimodal Large Language Model",
+    "summary": "Image restoration (IR) often faces various complex and unknown degradations in real-world scenarios, such as noise, blurring, compression artifacts, and low resolution, etc. Training specific models for specific degradation may lead to poor generalization. To handle multiple degradations simultaneously, All-in-One models might sacrifice performance on certain types of degradation and still struggle with unseen degradations during training. Existing IR agents rely on multimodal large language models (MLLM) and a time-consuming rolling-back selection strategy neglecting image quality. As a result, they may misinterpret degradations and have high time and computational costs to conduct unnecessary IR tasks with redundant order. To address these, we propose a Quality-Driven agent (Q-Agent) via Chain-of-Thought (CoT) restoration. Specifically, our Q-Agent consists of robust degradation perception and quality-driven greedy restoration. The former module first fine-tunes MLLM, and uses CoT to decompose multi-degradation perception into single-degradation perception tasks to enhance the perception of MLLMs. The latter employs objective image quality assessment (IQA) metrics to determine the optimal restoration sequence and execute the corresponding restoration algorithms. Experimental results demonstrate that our Q-Agent achieves superior IR performance compared to existing All-in-One models.",
+    "published": "2025-04-09T03:12:44Z",
+    "updated": "2026-04-13T07:27:05Z",
+    "url": "http://arxiv.org/abs/2504.07148v2",
+    "authors": "Yingjie Zhou, Jiezhang Cao, Farong Wen, Zicheng Zhang, Yu Zhou, Yue Shi, Xiaohong Liu, Radu Timofte",
+    "categories": [
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"MoA-VR\" \"Video Restoration\"",
+    "title": "MoA-VR: A Mixture-of-Agents System Towards All-in-One Video Restoration",
+    "summary": "Real-world videos often suffer from complex degradations, such as noise, compression artifacts, and low-light distortions, due to diverse acquisition and transmission conditions. Existing restoration methods typically require professional manual selection of specialized models or rely on monolithic architectures that fail to generalize across varying degradations. Inspired by expert experience, we propose MoA-VR, the first \\underline{M}ixture-\\underline{o}f-\\underline{A}gents \\underline{V}ideo \\underline{R}estoration system that mimics the reasoning and processing procedures of human professionals through three coordinated agents: Degradation Identification, Routing and Restoration, and Restoration Quality Assessment. Specifically, we construct a large-scale and high-resolution video degradation recognition benchmark and build a vision-language model (VLM) driven degradation identifier. We further introduce a self-adaptive router powered by large language models (LLMs), which autonomously learns effective restoration strategies by observing tool usage patterns. To assess intermediate and final processed video quality, we construct the \\underline{Res}tored \\underline{V}ideo \\underline{Q}uality (Res-VQ) dataset and design a dedicated VLM-based video quality assessment (VQA) model tailored for restoration tasks. Extensive experiments demonstrate that MoA-VR effectively handles diverse and compound degradations, consistently outperforming existing baselines in terms of both objective metrics and perceptual quality. These results highlight the potential of integrating multimodal intelligence and modular reasoning in general-purpose video restoration systems.",
+    "published": "2025-10-09T17:42:51Z",
+    "updated": "2025-10-09T17:42:51Z",
+    "url": "http://arxiv.org/abs/2510.08508v1",
+    "authors": "Lu Liu, Chunlei Cai, Shaocheng Shen, Jianfeng Liang, Weimin Ouyang, Tianxiao Ye, Jian Mao, Huiyu Duan",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "title": "SimpleCall: A Lightweight Image Restoration Agent in Label-Free Environments with MLLM Perceptual Feedback",
+    "summary": "",
+    "published": "2025",
+    "updated": "2025",
+    "url": "10.48550/ARXIV.2512.18599",
+    "authors": "Jianglin Lu, Yuanwei Wu, Ziyi Zhao, Hongcheng Wang, Felix Jimenez 0002, Abrar Majeedi",
+    "categories": [],
+    "venue": "CoRR",
+    "cited_by": 0
+  },
+  {
+    "query": "\"InstructIR\" \"Human Instructions\"",
+    "title": "InstructRestore: Region-Customized Image Restoration with Human Instructions",
+    "summary": "Despite the significant progress in diffusion prior-based image restoration, most existing methods apply uniform processing to the entire image, lacking the capability to perform region-customized image restoration according to user instructions. In this work, we propose a new framework, namely InstructRestore, to perform region-adjustable image restoration following human instructions. To achieve this, we first develop a data generation engine to produce training triplets, each consisting of a high-quality image, the target region description, and the corresponding region mask. With this engine and careful data screening, we construct a comprehensive dataset comprising 536,945 triplets to support the training and evaluation of this task. We then examine how to integrate the low-quality image features under the ControlNet architecture to adjust the degree of image details enhancement. Consequently, we develop a ControlNet-like model to identify the target region and allocate different integration scales to the target and surrounding regions, enabling region-customized image restoration that aligns with user instructions. Experimental results demonstrate that our proposed InstructRestore approach enables effective human-instructed image restoration, such as images with bokeh effects and user-instructed local enhancement. Our work advances the investigation of interactive image restoration and enhancement techniques. Data, code, and models will be found at https://github.com/shuaizhengliu/InstructRestore.git.",
+    "published": "2025-03-31T17:36:05Z",
+    "updated": "2025-03-31T17:36:05Z",
+    "url": "http://arxiv.org/abs/2503.24357v1",
+    "authors": "Shuaizheng Liu, Jianqi Ma, Lingchen Sun, Xiangtao Kong, Lei Zhang",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"Restore-R1\" \"Image Restoration Agents\"",
+    "title": "RestoreAgent: Autonomous Image Restoration Agent via Multimodal Large Language Models",
+    "summary": "Natural images captured by mobile devices often suffer from multiple types of degradation, such as noise, blur, and low light. Traditional image restoration methods require manual selection of specific tasks, algorithms, and execution sequences, which is time-consuming and may yield suboptimal results. All-in-one models, though capable of handling multiple tasks, typically support only a limited range and often produce overly smooth, low-fidelity outcomes due to their broad data distribution fitting. To address these challenges, we first define a new pipeline for restoring images with multiple degradations, and then introduce RestoreAgent, an intelligent image restoration system leveraging multimodal large language models. RestoreAgent autonomously assesses the type and extent of degradation in input images and performs restoration through (1) determining the appropriate restoration tasks, (2) optimizing the task sequence, (3) selecting the most suitable models, and (4) executing the restoration. Experimental results demonstrate the superior performance of RestoreAgent in handling complex degradation, surpassing human experts. Furthermore, the system modular design facilitates the fast integration of new tasks and models, enhancing its flexibility and scalability for various applications.",
+    "published": "2024-07-25T13:29:37Z",
+    "updated": "2024-07-25T13:29:37Z",
+    "url": "http://arxiv.org/abs/2407.18035v1",
+    "authors": "Haoyu Chen, Wenbo Li, Jinjin Gu, Jingjing Ren, Sixiang Chen, Tian Ye, Renjing Pei, Kaiwen Zhou",
+    "categories": [
+      "cs.CV",
+      "cs.AI",
+      "cs.CL"
+    ]
+  },
+  {
+    "query": "\"An Intelligent Agentic System for Complex Image Restoration Problems\"",
+    "title": "An Intelligent Agentic System for Complex Image Restoration Problems",
+    "summary": "Real-world image restoration (IR) is inherently complex and often requires combining multiple specialized models to address diverse degradations. Inspired by human problem-solving, we propose AgenticIR, an agentic system that mimics the human approach to image processing by following five key stages: Perception, Scheduling, Execution, Reflection, and Rescheduling. AgenticIR leverages large language models (LLMs) and vision-language models (VLMs) that interact via text generation to dynamically operate a toolbox of IR models. We fine-tune VLMs for image quality analysis and employ LLMs for reasoning, guiding the system step by step. To compensate for LLMs' lack of specific IR knowledge and experience, we introduce a self-exploration method, allowing the LLM to observe and summarize restoration results into referenceable documents. Experiments demonstrate AgenticIR's potential in handling complex IR tasks, representing a promising path toward achieving general intelligence in visual processing.",
+    "published": "2024-10-23T12:11:26Z",
+    "updated": "2025-02-16T05:30:30Z",
+    "url": "http://arxiv.org/abs/2410.17809v2",
+    "authors": "Kaiwen Zhu, Jinjin Gu, Zhiyuan You, Yu Qiao, Chao Dong",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"LLMRA\" \"Restoration Assistant\"",
+    "title": "LLMRA: Multi-modal Large Language Model based Restoration Assistant",
+    "summary": "Multi-modal Large Language Models (MLLMs) have a significant impact on various tasks, due to their extensive knowledge and powerful perception and generation capabilities. However, it still remains an open research problem on applying MLLMs to low-level vision tasks. In this paper, we present a simple MLLM-based Image Restoration framework to address this gap, namely Multi-modal Large Language Model based Restoration Assistant (LLMRA). We exploit the impressive capabilities of MLLMs to obtain the degradation information for universal image restoration. By employing a pretrained multi-modal large language model and a vision language model, we generate text descriptions and encode them as context embedding with degradation information for the degraded image. Through the proposed Context Enhance Module (CEM) and Degradation Context based Transformer Network (DC-former), we integrate these context embedding into the restoration network, contributing to more accurate and adjustable image restoration. Based on the dialogue with the users, our method leverages image degradation priors from MLLMs, providing low-level attributes descriptions of the input low-quality images and the restored high-quality images simultaneously. Extensive experiments demonstrate the superior performance of our LLMRA in universal image restoration tasks.",
+    "published": "2024-01-21T04:50:19Z",
+    "updated": "2024-01-21T04:50:19Z",
+    "url": "http://arxiv.org/abs/2401.11401v1",
+    "authors": "Xiaoyu Jin, Yuan Shi, Bin Xia, Wenming Yang",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"InstructIR\" \"Human Instructions\"",
+    "title": "InstructIR: High-Quality Image Restoration Following Human Instructions",
+    "summary": "Image restoration is a fundamental problem that involves recovering a high-quality clean image from its degraded observation. All-In-One image restoration models can effectively restore images from various types and levels of degradation using degradation-specific information as prompts to guide the restoration model. In this work, we present the first approach that uses human-written instructions to guide the image restoration model. Given natural language prompts, our model can recover high-quality images from their degraded counterparts, considering multiple degradation types. Our method, InstructIR, achieves state-of-the-art results on several restoration tasks including image denoising, deraining, deblurring, dehazing, and (low-light) image enhancement. InstructIR improves +1dB over previous all-in-one restoration methods. Moreover, our dataset and results represent a novel benchmark for new research on text-guided image restoration and enhancement. Our code, datasets and models are available at: https://github.com/mv-lab/InstructIR",
+    "published": "2024-01-29T18:53:33Z",
+    "updated": "2024-09-25T20:29:36Z",
+    "url": "http://arxiv.org/abs/2401.16468v5",
+    "authors": "Marcos V. Conde, Gregor Geigle, Radu Timofte",
+    "categories": [
+      "cs.CV",
+      "cs.LG",
+      "eess.IV"
+    ]
+  },
+  {
+    "query": "\"Chain-of-Restoration\" \"Universal Image Restorers\"",
+    "title": "Chain-of-Restoration: Multi-Task Image Restoration Models are Zero-Shot Step-by-Step Universal Image Restorers",
+    "summary": "Despite previous image restoration (IR) methods have often concentrated on isolated degradations, recent research has increasingly focused on addressing composite degradations involving a complex combination of multiple isolated degradations. However, current IR methods for composite degradations require building training data that contain an exponential number of possible degradation combinations, which brings in a significant burden. To alleviate this issue, this paper proposes a new task setting, i.e. Universal Image Restoration (UIR). Specifically, UIR doesn't require training on all the degradation combinations but only on a set of degradation bases and then removing any degradation that these bases can potentially compose in a zero-shot manner. Inspired by the Chain-of-Thought that prompts large language models (LLMs) to address problems step-by-step, we propose Chain-of-Restoration (CoR) mechanism, which instructs models to remove unknown composite degradations step-by-step. By integrating a simple Degradation Discriminator into pre-trained multi-task models, CoR facilitates the process where models remove one degradation basis per step, continuing this process until the image is fully restored from the unknown composite degradation. Extensive experiments show that CoR can significantly improve model performance in removing composite degradations, achieving comparable or better results than those state-of-the-art (SoTA) methods trained on all degradations.",
+    "published": "2024-10-11T10:21:42Z",
+    "updated": "2024-12-04T04:28:41Z",
+    "url": "http://arxiv.org/abs/2410.08688v2",
+    "authors": "Jin Cao, Deyu Meng, Xiangyong Cao",
+    "categories": [
+      "cs.CV",
+      "cs.AI"
+    ]
+  },
+  {
+    "query": "\"LM4LV\" \"Low-level Vision\"",
+    "title": "LM4LV: A Frozen Large Language Model for Low-level Vision Tasks",
+    "summary": "The success of large language models (LLMs) has fostered a new research trend of multi-modality large language models (MLLMs), which changes the paradigm of various fields in computer vision. Though MLLMs have shown promising results in numerous high-level vision and vision-language tasks such as VQA and text-to-image, no works have demonstrated how low-level vision tasks can benefit from MLLMs. We find that most current MLLMs are blind to low-level features due to their design of vision modules, thus are inherently incapable for solving low-level vision tasks. In this work, we purpose $\\textbf{LM4LV}$, a framework that enables a FROZEN LLM to solve a range of low-level vision tasks without any multi-modal data or prior. This showcases the LLM's strong potential in low-level vision and bridges the gap between MLLMs and low-level vision tasks. We hope this work can inspire new perspectives on LLMs and deeper understanding of their mechanisms. Code is available at https://github.com/bytetriper/LM4LV.",
+    "published": "2024-05-24T17:25:00Z",
+    "updated": "2024-06-11T15:42:29Z",
+    "url": "http://arxiv.org/abs/2405.15734v2",
+    "authors": "Boyang Zheng, Jinjin Gu, Shijun Li, Chao Dong",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"PromptIR\" \"Image Restoration\"",
+    "title": "PromptIR: Prompting for All-in-One Blind Image Restoration",
+    "summary": "Image restoration involves recovering a high-quality clean image from its degraded version. Deep learning-based methods have significantly improved image restoration performance, however, they have limited generalization ability to different degradation types and levels. This restricts their real-world application since it requires training individual models for each specific degradation and knowing the input degradation type to apply the relevant model. We present a prompt-based learning approach, PromptIR, for All-In-One image restoration that can effectively restore images from various types and levels of degradation. In particular, our method uses prompts to encode degradation-specific information, which is then used to dynamically guide the restoration network. This allows our method to generalize to different degradation types and levels, while still achieving state-of-the-art results on image denoising, deraining, and dehazing. Overall, PromptIR offers a generic and efficient plugin module with few lightweight prompts that can be used to restore images of various types and levels of degradation with no prior information on the corruptions present in the image. Our code and pretrained models are available here: https://github.com/va1shn9v/PromptIR",
+    "published": "2023-06-22T17:59:52Z",
+    "updated": "2023-06-22T17:59:52Z",
+    "url": "http://arxiv.org/abs/2306.13090v1",
+    "authors": "Vaishnav Potlapalli, Syed Waqas Zamir, Salman Khan, Fahad Shahbaz Khan",
+    "categories": [
+      "cs.CV"
+    ]
+  },
+  {
+    "query": "\"all-in-one image restoration\" \"instruction\"",
+    "title": "AutoDIR: Automatic All-in-One Image Restoration with Latent Diffusion",
+    "summary": "We present AutoDIR, an innovative all-in-one image restoration system incorporating latent diffusion. AutoDIR excels in its ability to automatically identify and restore images suffering from a range of unknown degradations. AutoDIR offers intuitive open-vocabulary image editing, empowering users to customize and enhance images according to their preferences. Specifically, AutoDIR consists of two key stages: a Blind Image Quality Assessment (BIQA) stage based on a semantic-agnostic vision-language model which automatically detects unknown image degradations for input images, an All-in-One Image Restoration (AIR) stage utilizes structural-corrected latent diffusion which handles multiple types of image degradations. Extensive experimental evaluation demonstrates that AutoDIR outperforms state-of-the-art approaches for a wider range of image restoration tasks. The design of AutoDIR also enables flexible user control (via text prompt) and generalization to new tasks as a foundation model of image restoration. Project is available at: \\url{https://jiangyitong.github.io/AutoDIR_webpage/}.",
+    "published": "2023-10-16T07:00:32Z",
+    "updated": "2024-05-28T09:10:39Z",
+    "url": "http://arxiv.org/abs/2310.10123v5",
+    "authors": "Yitong Jiang, Zhaoyang Zhang, Tianfan Xue, Jinwei Gu",
+    "categories": [
+      "cs.CV"
+    ]
+  }
+]

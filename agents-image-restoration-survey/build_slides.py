@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+import json, re, html
+from pathlib import Path
+base=Path('/Users/dxb/auto')
+out=base/'agents-image-restoration-slides'
+out.mkdir(exist_ok=True)
+survey=base/'agents-image-restoration-survey'
+papers=json.loads((survey/'selected_papers_clean.json').read_text(encoding='utf-8'))
+
+def clean(s):
+    s=re.sub(r'<[^>]+>',' ',s or '')
+    return html.escape(re.sub(r'\s+',' ',s).strip())
+
+def year(it):
+    m=re.search(r'20\d\d',it.get('published','') or it.get('date','') or '')
+    return m.group(0) if m else ''
+
+# Manual curation from collected papers. Keep claims conservative: arXiv/OpenAlex/DBLP metadata, 2023-2026 recent works.
+works = [
+('RestoreAgent', '2024', 'NeurIPS 2024 / arXiv', '把 MLLM 用作自治决策器: 识别退化 → 选择工具 → 执行恢复 → 评估反馈', 'agent orchestration'),
+('LLMRA', '2024', 'arXiv', '多模态大模型作为 restoration assistant, 把自然语言意图转成恢复策略', 'assistant'),
+('InstructIR', '2024', 'arXiv', '用户用文字指令控制复原强度与目标, 从 fixed task 走向 instruction following', 'instruction'),
+('Chain-of-Restoration', '2024', 'arXiv', '多任务恢复模型按 step-by-step 组合, 让通用模型做 zero-shot 复原链', 'planning'),
+('An Intelligent Agentic System', '2024', 'arXiv', '复杂退化场景下引入 agentic workflow, 强调诊断、规划、工具调用闭环', 'workflow'),
+('Multi-Agent Image Restoration', '2025', 'arXiv', '多 agent 分工协作: degradation diagnosis / restoration / evaluation / refinement', 'multi-agent'),
+('Hybrid Agents', '2025', 'arXiv', '混合 agent 把规则、MLLM、专用 restoration model 组合成可控系统', 'hybrid'),
+('Q-Agent', '2025', 'arXiv', '质量驱动 CoT, 用 MLLM robust reasoning 评估图像质量并指导恢复', 'quality-agent'),
+('Restore-R1', '2025', 'arXiv', '用 multimodal LLM perceptual feedback 做 RL, 学 efficient restoration agent', 'rl'),
+('SimpleCall', '2025', 'arXiv', 'label-free 环境里用 MLLM 感知反馈做轻量工具调用 agent', 'tool-call'),
+('InstructRestore', '2025', 'arXiv', '区域级 customized restoration, 解决一张图不同区域退化/需求不同的问题', 'region instruction'),
+('JarvisIR', '2025', 'arXiv', '面向自动驾驶感知的智能图像恢复, 连接 restoration 与 downstream perception', 'downstream'),
+('MoA-VR', '2025', 'arXiv', 'Mixture-of-Agents for all-in-one video restoration, 从 image 扩展到 video', 'video'),
+('RetouchIQ', '2026', 'arXiv', 'MLLM agents + generalist reward, 指令式 retouching 与主观质量对齐', 'retouch'),
+('VQ-Jarvis', '2026', 'arXiv', 'retrieval-augmented video restoration agent, sharp vision + fast thought', 'retrieval video'),
+('TIR-Agent', '2026', 'arXiv', '训练 exploratory and efficient agent, 更强调探索策略和推理成本', 'efficient agent'),
+('PaAgent', '2026', 'arXiv', 'portrait-aware agent, subjective-objective RL 对齐人像修复审美', 'portrait RL'),
+('DiTTo', '2026', 'arXiv', 'scalable order-aware all-in-one restoration agent, 关注任务顺序建模', 'order-aware'),
+('EvoIR-Agent', '2026', 'arXiv', 'experience-driven learning 的自进化 IR agent, 把历史经验回灌到决策', 'self-evolving'),
+('Self-Evolving Agentic IR', '2026', 'arXiv', 'deliberate planning + intuitive execution, 强化“慢思考规划/快执行”分工', 'planning/execution'),
+('OPERA', '2026', 'arXiv/OpenAlex', '端到端 joint planning-execution optimization, 从拼装 pipeline 走向联合优化', 'joint optimization'),
+('Derain-Agent', '2026', 'arXiv/OpenAlex', 'plug-and-play rainy image restoration agent, 单退化垂直场景的 agent 化', 'derain'),
+('IAMAgent', '2026', 'arXiv/OpenAlex', 'interactive and adaptive multi-agent system, 强调人与系统交互迭代', 'interactive multi-agent'),
+]
+
+refs = [
+('PromptIR', '2023', 'prompting for all-in-one blind image restoration, agent 前夜的 prompt/task token 思路'),
+('AutoDIR', '2023', 'automatic all-in-one restoration with latent diffusion, 自动化与 diffusion prior'),
+('LM4LV', '2024', 'frozen LLM for low-level vision tasks, 语言模型进入 low-level vision'),
+('InstructIR', '2024', 'human instruction following, 用户意图进入 restoration'),
+('RestoreAgent', '2024', '第一个明确以 autonomous image restoration agent 命名的代表作之一'),
+]
+
+slides=[]
+def sec(title, body, klass=''):
+    slides.append(f'<section class="slide {klass}"><h1>{title}</h1>{body}</section>')
+
+def card(title, body, cls=''):
+    return f'<div class="card {cls}"><h3>{title}</h3>{body}</div>'
+
+def ul(items):
+    return '<ul>' + ''.join(f'<li>{x}</li>' for x in items) + '</ul>'
+
+sec('Agents for Image Restoration', '<p class="subtitle">最近工作调研 · 2024-2026 从“单模型复原”到“可规划、可调用工具、可自进化”的 restoration agent</p><div class="meta"><span>数据源: arXiv + OpenAlex + DBLP</span><span>筛选: 953 raw → 499 dedup → 27 相关工作</span><span>键盘: ← / → / Space</span></div>', 'cover')
+sec('TL;DR · 这个方向正在发生什么', '<div class="grid2">'+card('核心变化',ul(['过去: 一个模型处理一种/多种退化','现在: MLLM/agent 先诊断退化, 再规划工具链','趋势: restoration 变成 <b>decision-making problem</b>']))+card('代表路线',ul(['RestoreAgent: MLLM autonomous planner','Q-Agent/Restore-R1: quality feedback + RL','MoA-VR/VQ-Jarvis: video agent','EvoIR/Self-Evolving: experience memory']))+'</div><div class="callout">一句话: Image Restoration Agent = <b>感知退化 + 规划顺序 + 调用专家模型 + 质量评价 + 迭代修正</b> 的闭环系统。</div>')
+sec('为什么 Image Restoration 需要 Agent?', '<div class="grid3">'+card('退化是混合的',ul(['真实图像常同时有 noise / blur / rain / low-light / compression','单一模型很难知道“先去噪还是先去模糊”']))+card('目标是主观的',ul(['同一张图可以追求自然、清晰、人像美化或下游检测','指令式 restoration 让用户意图进入系统']))+card('工具很多',ul(['专用 denoiser/deblurrer/SR/LLIE 模型各有强项','Agent 可以像医生一样诊断 + 开处方']))+'</div>')
+sec('调研口径与数据来源', '<div class="grid2">'+card('检索式',ul(['agent image restoration','MLLM / LLM image restoration','tool learning / autonomous restoration','all-in-one restoration agent','instruction-based restoration']))+card('数据源',ul(['OpenAlex: 953 raw items, venue/citation metadata','arXiv API: 精确查 RestoreAgent / Q-Agent / Restore-R1 等','DBLP XML: 确认 RestoreAgent = NeurIPS 2024']))+'</div><p class="note">局限: 2026 很多是 arXiv 预印本, venue 尚未稳定; slides 以“近期研究脉络”而非排名为主。</p>')
+sec('概念定义: 什么算 Agents for Image Restoration?', '<div class="pipeline"><div>输入图像<br><span>mixed degradation</span></div><b>→</b><div>诊断<br><span>what is wrong?</span></div><b>→</b><div>规划<br><span>which order?</span></div><b>→</b><div>工具调用<br><span>expert models</span></div><b>→</b><div>评价反馈<br><span>MLLM/IQA/RL</span></div><b>→</b><div>迭代输出<br><span>better image</span></div></div><div class="callout">关键不是“用了大模型”本身, 而是 <b>decision loop</b>: observe → plan → act → evaluate → revise。</div>')
+sec('技术路线图', '<div class="grid3">'+card('A. Instruction IR',ul(['InstructIR','InstructRestore','RetouchIQ']))+card('B. MLLM Planner',ul(['LLMRA','RestoreAgent','Intelligent Agentic System']))+card('C. Multi-Agent',ul(['Multi-Agent IR','Hybrid Agents','IAMAgent','MoA-VR']))+card('D. Quality/RL Agent',ul(['Q-Agent','Restore-R1','PaAgent','TIR-Agent']))+card('E. Self-Evolving',ul(['EvoIR-Agent','Self-Evolving Agentic IR','OPERA']))+card('F. Video/Domain',ul(['VQ-Jarvis','JarvisIR','Derain-Agent','RIR-Agent']))+'</div>')
+sec('时间线 · 2023-2026', '<div class="timeline"><div><b>2023</b><span>PromptIR / AutoDIR: all-in-one 与自动化前夜</span></div><div><b>2024</b><span>LLMRA / InstructIR / RestoreAgent: 指令与 MLLM planner 进入 IR</span></div><div><b>2025</b><span>Multi-Agent / Q-Agent / Restore-R1 / MoA-VR: agent 分工、质量反馈、RL、video</span></div><div><b>2026</b><span>EvoIR / DiTTo / PaAgent / TIR-Agent / OPERA: 自进化、顺序建模、端到端联合优化</span></div></div>')
+sec('范式迁移: Model → Pipeline → Agent', '<div class="grid3">'+card('1. Single Model',ul(['输入 → 恢复','任务固定','评价靠 PSNR/SSIM']))+card('2. All-in-One Pipeline',ul(['多退化统一模型','prompt/task token','仍然多为一次前向']))+card('3. Agentic System',ul(['先诊断再行动','可调用多个专家模型','可根据质量反馈迭代']))+'</div>')
+
+# representative work slides
+for name, y, venue, idea, route in works[:12]:
+    sec(f'{y} · {name}', f'<p class="subtitle">{venue} · 路线: {route}</p><div class="grid2">{card("解决的问题", ul([idea, "真实 restoration 的关键难点是混合退化、任务顺序和主观质量不确定。"] ))}{card("对后续的启发", ul(["把恢复算法从 static model 改写为 decision loop", "适合作为后续 work 的 baseline 或 ablation 对象", "可扩展到 video / remote sensing / portrait / driving 等垂直场景"] ))}</div>', 'tight')
+
+sec('代表工作对照表 1/2', '<table><tr><th>工作</th><th>年份</th><th>关键词</th><th>一句话贡献</th></tr>' + ''.join(f'<tr><td><b>{n}</b></td><td>{y}</td><td>{r}</td><td>{idea}</td></tr>' for n,y,v,idea,r in works[:11]) + '</table>', 'tight denser')
+sec('代表工作对照表 2/2', '<table><tr><th>工作</th><th>年份</th><th>关键词</th><th>一句话贡献</th></tr>' + ''.join(f'<tr><td><b>{n}</b></td><td>{y}</td><td>{r}</td><td>{idea}</td></tr>' for n,y,v,idea,r in works[11:]) + '</table>', 'tight denser')
+sec('Agent 架构的 5 个模块', '<div class="diagram"><div class="row"><div class="blk blue"><b>Perception</b><br>退化识别, 内容理解, 区域定位</div><div class="arr">→</div><div class="blk purple"><b>Planner</b><br>选择任务顺序, 分解子目标</div><div class="arr">→</div><div class="blk green"><b>Tool Executor</b><br>调用 denoise/deblur/SR/LLIE/inpaint</div></div><div class="row"><div class="blk yellow"><b>Evaluator</b><br>IQA, MLLM preference, downstream score</div><div class="arr">↺</div><div class="blk red"><b>Memory/Learning</b><br>经验库, RL, self-evolution</div></div></div>')
+sec('常见工具箱: Agent 可以调用什么?', '<div class="grid4">'+card('Denoise',ul(['Restormer','NAFNet','DnCNN family']))+card('Deblur',ul(['MIMO-UNet','Uformer','FFT/Transformer']))+card('Derain/Dehaze',ul(['专用 rain/haze models','physics prior + deep model']))+card('SR/LLIE',ul(['SwinIR/Real-ESRGAN','Retinex/LLIE models']))+'</div><div class="callout">论文创新常不在单个 tool, 而在 <b>tool selection/order/evaluation</b>。</div>')
+sec('评价指标正在变化', '<div class="grid3">'+card('传统指标',ul(['PSNR / SSIM','LPIPS / FID','NIQE / BRISQUE']))+card('MLLM 感知反馈',ul(['质量是否自然?','是否过度锐化?','是否符合用户指令?']))+card('下游任务指标',ul(['检测/分割准确率','自动驾驶/遥感任务效果','人像主观偏好']))+'</div>')
+sec('为什么 2025-2026 RL 变多?', '<div class="grid2">'+card('问题',ul(['restoration 没有唯一正确答案','PSNR 高不一定主观好','工具调用顺序是离散决策']))+card('RL 的作用',ul(['把 MLLM/IQA/human preference 变成 reward','学习何时停止、何时重做、选哪个工具','让 agent 从手写流程变成可优化 policy']))+'</div>')
+sec('Multi-Agent 为什么有吸引力?', '<div class="grid3">'+card('分工清晰',ul(['diagnoser','planner','restorer','critic']))+card('降低单点失败',ul(['一个 agent 错了, critic 可纠偏','多个候选 restoration 可投票/融合']))+card('适合复杂场景',ul(['video frame consistency','区域差异','多目标偏好']))+'</div>')
+sec('Video Restoration Agent: 新挑战', '<div class="grid2">'+card('比 image 多什么?',ul(['时间一致性','运动估计/遮挡','帧间信息检索','计算成本大幅上升']))+card('代表方向',ul(['MoA-VR: mixture-of-agents for all-in-one video restoration','VQ-Jarvis: retrieval-augmented video restoration agent','EDVR 等传统 video restoration 可作为 tool']))+'</div>')
+sec('Instruction-based Restoration: 从“修好”到“按我说的修”', '<div class="grid2">'+card('能力',ul(['用户指定区域、程度、风格','“保留纹理但降低噪声”这类软约束','retouching 与 restoration 开始融合']))+card('代表工作',ul(['InstructIR','InstructRestore','RetouchIQ','PaAgent']))+'</div>')
+sec('Self-Evolving Agent: 方向很热, 但也最难', '<div class="grid2">'+card('想解决什么',ul(['每次失败都沉淀经验','对新退化自动形成处理策略','从 rule-based planner 走向 learned planner']))+card('主要风险',ul(['经验库污染/错误记忆','评估器偏差放大','离线 benchmark 好, 真实交互未必稳']))+'</div>')
+sec('当前主要 open problems', '<div class="grid2">'+card('科学问题',ul(['退化诊断是否可靠?','工具顺序是否可解释?','MLLM 评价是否和人类偏好一致?','Agent 是否真优于强 all-in-one model?']))+card('工程问题',ul(['推理成本高','多工具接口不统一','图像多轮处理会累积 artifacts','benchmark 尚未标准化']))+'</div>')
+sec('可发文章 Idea A · Benchmark + Protocol', '<p class="subtitle">目标: CVPR/ICCV/NeurIPS Datasets & Benchmarks / TPAMI · 难度: 中</p><div class="grid3">'+card('问题',ul(['现有论文各用各的退化组合和评价方式','agent 是否真的“会规划”缺少统一测试']))+card('技术路径',ul(['构造 mixed degradation + instruction + tool budget benchmark','记录每一步 action trace','同时评估 image quality / instruction following / cost']))+card('为什么能发',ul(['方向新但 benchmark 缺口明显','可复现性强','能成为后续 agent 论文公共平台']))+'</div>')
+sec('Idea B · Degradation Diagnosis as Test-Time Reasoning', '<p class="subtitle">目标: CVPR/ICCV/ECCV · 难度: 中-高</p><div class="grid3">'+card('问题',ul(['真实图像退化不可见','agent 第一步诊断错, 后面全错']))+card('技术路径',ul(['把诊断写成 structured reasoning','用 synthetic + real paired data 训练 verifier','输出 uncertainty, 不确定时请求更多 evidence']))+card('为什么能发',ul(['连接 low-level vision 与 VLM reasoning','可解释, 可做 ablation','能直接提升 tool selection']))+'</div>')
+sec('Idea C · Learned Tool Routing with Budget Constraint', '<p class="subtitle">目标: CVPR / MLSys / TPAMI · 难度: 中</p><div class="grid3">'+card('问题',ul(['多工具 agent 很慢','不是每张图都需要复杂 pipeline']))+card('技术路径',ul(['把 restoration tool 当 action set','reward = quality gain - latency cost','训练 early-stop / cheap-first policy']))+card('为什么能发',ul(['实用价值强','能和任意工具箱组合','适合边缘部署/自动驾驶场景']))+'</div>')
+sec('Idea D · Memory-Augmented Self-Evolving IR Agent', '<p class="subtitle">目标: NeurIPS / ICLR / CVPR · 难度: 高</p><div class="grid3">'+card('问题',ul(['自进化 agent 容易记错经验','不同退化/内容的经验迁移不稳定']))+card('技术路径',ul(['case memory: degradation embedding + action trace + quality delta','检索相似失败案例','用 verifier 过滤坏经验']))+card('为什么能发',ul(['契合 agent memory 热点','比单次推理 agent 更进一步','可做长期学习实验']))+'</div>')
+sec('Idea E · Downstream-Aware Restoration Agent', '<p class="subtitle">目标: CVPR / ICCV / ICRA / T-ITS · 难度: 中-高</p><div class="grid3">'+card('问题',ul(['视觉好看不等于检测/识别更好','自动驾驶/遥感/医学更关心下游任务']))+card('技术路径',ul(['reward 加入 detector/segmenter confidence','agent 针对下游任务选择 restoration 强度','做 task-aware benchmark']))+card('为什么能发',ul(['JarvisIR 已显示场景价值','可结合用户现有农产品识别筛选场景','应用落地明确']))+'</div>')
+sec('如果要快速切入, 我建议的优先级', '<div class="rank"><div><b>1</b>Benchmark + Protocol</div><div><b>2</b>Tool Routing with Budget</div><div><b>3</b>Downstream-Aware Agent</div><div><b>4</b>Diagnosis Reasoning</div><div><b>5</b>Self-Evolving Memory</div></div><p class="callout">快出活: A/B; 更适合结合产业场景: C/E; 更像顶会长期线: D。</p>')
+sec('与传统 Image Restoration 论文的区别', '<table><tr><th>维度</th><th>传统 IR</th><th>Agentic IR</th></tr><tr><td>输入</td><td>图像</td><td>图像 + 指令 + 工具预算 + 上下文</td></tr><tr><td>核心变量</td><td>网络结构/损失函数</td><td>诊断、规划、工具调用、反馈</td></tr><tr><td>评价</td><td>PSNR/SSIM/LPIPS</td><td>质量 + 指令遵循 + 成本 + 下游任务</td></tr><tr><td>失败模式</td><td>过平滑/artifact</td><td>诊断错、顺序错、评估器偏、成本失控</td></tr></table>')
+sec('落地到真实系统的最小架构', '<div class="pipeline"><div>Image<br><span>用户上传</span></div><b>→</b><div>VLM Diagnoser<br><span>退化标签+置信度</span></div><b>→</b><div>Policy Router<br><span>选工具/顺序</span></div><b>→</b><div>Expert Tools<br><span>IR models</span></div><b>→</b><div>Critic<br><span>IQA+VLM</span></div><b>↺</b><div>Memory<br><span>case base</span></div></div><p class="note">MVP 不需要训练大模型: 先用规则 planner + 3-5 个开源工具 + IQA/MLLM 评价即可复现实验闭环。</p>')
+sec('参考文献: agent 方向', '<table><tr><th>工作</th><th>年份</th><th>说明</th></tr>' + ''.join(f'<tr><td><b>{n}</b></td><td>{y}</td><td>{idea}</td></tr>' for n,y,v,idea,r in works[:14]) + '</table>', 'tight denser')
+sec('参考文献: 2026 新趋势', '<table><tr><th>工作</th><th>年份</th><th>说明</th></tr>' + ''.join(f'<tr><td><b>{n}</b></td><td>{y}</td><td>{idea}</td></tr>' for n,y,v,idea,r in works[14:]) + '</table>', 'tight denser')
+sec('相关前置工作', '<table><tr><th>工作</th><th>年份</th><th>为什么相关</th></tr>' + ''.join(f'<tr><td><b>{a}</b></td><td>{b}</td><td>{c}</td></tr>' for a,b,c in refs) + '</table><p class="note">这些不是都叫 agent, 但构成了 agentic restoration 的前置技术: all-in-one, prompt, instruction following, frozen LLM for low-level vision。</p>')
+sec('结论', '<div class="grid2">'+card('研究判断',ul(['2024 是 RestoreAgent/Instruction 起点','2025 开始多 agent、quality feedback、RL','2026 关键词是 self-evolving、joint optimization、domain/video agent']))+card('行动建议',ul(['做论文: 先做 benchmark 或 budgeted routing','做系统: 先搭 tool-calling MVP','做应用: 结合下游识别/检测指标, 不只看 PSNR']))+'</div><div class="callout">最终目标不是“让大模型修图”, 而是让系统知道 <b>该修哪里、怎么修、修到什么程度、何时停止</b>。</div>')
+
+css = r'''
+:root{--bg:#0b1020;--panel:#121a2e;--panel2:#17233a;--text:#e5edf7;--muted:#9fb0c7;--line:#2d3b58;--blue:#7dd3fc;--purple:#c4b5fd;--green:#86efac;--yellow:#fbbf24;--red:#fca5a5;--pink:#f0abfc}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 20% 0,#1e2b55 0,#0b1020 42%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden;font-size:15px}.slide{position:absolute;inset:0;display:none;padding:58px 62px 78px}.slide.active{display:block}.slide.cover{display:none}.slide.cover.active{display:flex;flex-direction:column;justify-content:center}.slide.tight{padding:50px 52px 72px}.slide.tight.denser{padding:44px 44px 70px}h1{font-size:34px;line-height:1.12;margin:0 0 16px;letter-spacing:-.02em}h3{font-size:17px;margin:0 0 8px;color:var(--blue)}p,li{line-height:1.45}.subtitle{font-size:20px;color:var(--muted);margin:0 0 18px}.meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}.meta span,.tag{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:999px;padding:7px 12px;color:var(--muted)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid var(--line);border-radius:16px;padding:15px 17px;box-shadow:0 16px 40px rgba(0,0,0,.18)}.card ul{margin:6px 0 0;padding-left:18px}.card li{margin:5px 0}.callout{margin-top:16px;border-left:4px solid var(--yellow);background:rgba(251,191,36,.09);padding:12px 16px;border-radius:10px}.note{color:var(--muted);font-size:13.5px}.pipeline{display:flex;align-items:stretch;gap:8px;background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:16px;padding:14px}.pipeline div{flex:1;text-align:center;padding:12px 8px;border-radius:12px;background:rgba(125,211,252,.09);border:1px solid rgba(125,211,252,.28);font-weight:700}.pipeline span{display:block;color:var(--muted);font-size:12px;font-weight:400;margin-top:4px}.pipeline b{align-self:center;color:var(--yellow);font-size:24px}.timeline{display:grid;gap:14px}.timeline div{display:grid;grid-template-columns:110px 1fr;gap:16px;align-items:center;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;padding:15px}.timeline b{font-size:28px;color:var(--yellow)}table{width:100%;border-collapse:collapse;background:rgba(0,0,0,.18);border-radius:14px;overflow:hidden}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:rgba(125,211,252,.12);color:var(--blue)}.tight.denser table{font-size:12.5px}.tight.denser th,.tight.denser td{padding:5px 7px;line-height:1.28}.diagram{border:1px solid var(--line);border-radius:18px;background:rgba(0,0,0,.20);padding:16px}.row{display:flex;align-items:stretch;gap:10px;margin:10px 0}.blk{flex:1;border-radius:14px;padding:14px;border:1px solid var(--line);line-height:1.45}.blue{background:rgba(125,211,252,.08);border-color:rgba(125,211,252,.32)}.purple{background:rgba(196,181,253,.08);border-color:rgba(196,181,253,.32)}.green{background:rgba(134,239,172,.08);border-color:rgba(134,239,172,.32)}.yellow{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.32)}.red{background:rgba(252,165,165,.08);border-color:rgba(252,165,165,.32)}.arr{align-self:center;font-size:24px;color:var(--yellow)}.rank{display:grid;gap:11px}.rank div{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.05);padding:13px 16px;font-size:19px}.rank b{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--blue);color:#06101f}.topbar{position:fixed;top:0;left:0;right:0;height:36px;background:rgba(8,13,26,.86);border-bottom:1px solid var(--line);z-index:99;display:flex;align-items:center;justify-content:space-between;padding:0 18px;color:var(--muted);font-size:12px;backdrop-filter:blur(8px)}.progress{position:fixed;top:36px;left:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple));z-index:100;width:0}.footer{position:fixed;bottom:0;left:0;right:0;z-index:99;border-top:1px solid rgba(255,255,255,.08);padding:5px 16px;text-align:center;font-size:11px;color:#9ca3af;background:rgba(8,13,26,.88);backdrop-filter:blur(6px)}.nav{position:fixed;right:18px;bottom:42px;color:var(--muted);font-size:12px}.cover h1{font-size:58px;max-width:980px}.cover .subtitle{font-size:24px;max-width:900px}.muted{color:var(--muted)}b{color:#fff}@media print{body{overflow:visible}.slide{position:relative;display:block;page-break-after:always}.topbar,.progress,.footer,.nav{display:none}}
+'''
+js = r'''
+const slides=[...document.querySelectorAll('.slide')];let cur=0;const curEl=document.getElementById('cur'),totEl=document.getElementById('tot'),bar=document.querySelector('.progress');function show(i){cur=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,k)=>s.classList.toggle('active',k===cur));curEl.textContent=cur+1;totEl.textContent=slides.length;bar.style.width=((cur+1)/slides.length*100)+'%';location.hash=''+(cur+1)}function next(){show(cur+1)}function prev(){show(cur-1)}document.addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown'].includes(e.key)){e.preventDefault();next()} if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev()} if(e.key==='Home')show(0); if(e.key==='End')show(slides.length-1); if(e.key.toLowerCase()==='p')window.print()});let h=parseInt(location.hash.slice(1));show(Number.isFinite(h)&&h>0?h-1:0);
+'''
+html_doc=f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Agents for Image Restoration</title><style>{css}</style></head><body><div class="topbar"><span>Agents for Image Restoration · Recent Survey</span><span>← → 翻页 · P 打印</span></div><div class="progress"></div>{''.join(slides)}<div class="nav"><span id="cur">1</span> / <span id="tot">{len(slides)}</span></div><div class="footer"><b style="color:#e5edf7;font-weight:600;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO</div><script>{js}</script></body></html>'''
+(out/'index.html').write_text(html_doc,encoding='utf-8')
+
+# report md
+lines=['# Agents for Image Restoration 最近工作调研','', '## TL;DR', '- 2024-2026 的主线是从 all-in-one restoration model 走向 MLLM/Agent 驱动的诊断、规划、工具调用、质量反馈闭环。', '- RestoreAgent (NeurIPS 2024) 是明确 agent 化的代表节点；2025-2026 快速扩展到 multi-agent、RL feedback、video、self-evolving、domain-specific agents。', '- 论文机会优先级: benchmark/protocol > budgeted tool routing > downstream-aware restoration agent > degradation reasoning > self-evolving memory。', '', '## 代表工作']
+for w in works:
+    lines.append(f'- {w[1]} {w[0]} ({w[2]}): {w[3]}')
+lines += ['', '## 数据文件', '- raw_items.json: OpenAlex + arXiv + DBLP 原始结果', '- filtered_papers.json: 规则粗筛结果', '- selected_papers_clean.json: 人工清洗后的相关工作列表', '', '## Slides', '- /Users/dxb/auto/agents-image-restoration-slides/index.html']
+(survey/'report.md').write_text('\n'.join(lines),encoding='utf-8')
+print({'slides':len(slides),'path':str(out/'index.html')})
