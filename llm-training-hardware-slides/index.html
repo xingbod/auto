@@ -1,0 +1,306 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>大模型训练的硬件细节</title><style>
+:root{--bg:#0b1020;--panel:#121a2e;--panel2:#18233b;--ink:#eef5ff;--muted:#9fb0c7;--line:#2b3a55;--blue:#60a5fa;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--red:#fb7185;--purple:#a78bfa}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 15% 10%,rgba(96,165,250,.22),transparent 32%),radial-gradient(circle at 85% 18%,rgba(167,139,250,.18),transparent 30%),linear-gradient(135deg,#080d18,#111827 55%,#0b1020);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:36px 36px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.8),rgba(0,0,0,.05));pointer-events:none}.topbar{position:fixed;top:0;left:0;right:0;height:38px;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:rgba(8,13,24,.78);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:12px}.progress{position:fixed;top:38px;left:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));z-index:31;width:0}.slide{position:absolute;inset:0;display:none;padding:64px 60px 72px;overflow:hidden}.slide.active{display:flex;flex-direction:column}.slide.cover{align-items:center;justify-content:center;text-align:center}.slide.tight{padding:52px 50px 68px}.slide.tight.denser{padding:48px 44px 66px}h1{font-size:34px;line-height:1.12;margin:0 0 16px;letter-spacing:-.03em}h2{font-size:24px;margin:0 0 14px;color:var(--cyan)}h3{font-size:17px;margin:0 0 8px;color:#dbeafe}.cover h1{font-size:54px;max-width:980px}.subtitle{font-size:22px;color:var(--muted);max-width:980px;margin:0 auto 26px}.hint,.small{color:var(--muted);font-size:13px}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:0 10px 30px rgba(0,0,0,.18)}.card.warn{border-color:rgba(251,113,133,.55);background:rgba(251,113,133,.08)}.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1040px}.metric{padding:18px;border:1px solid rgba(96,165,250,.35);background:rgba(96,165,250,.08);border-radius:18px;text-align:left}.metric b{display:block;color:var(--cyan);font-size:18px;margin-bottom:7px}.metric span{color:#d6e3f3}.callout{margin-top:14px;padding:14px 18px;border-left:4px solid var(--amber);background:rgba(251,191,36,.08);border-radius:10px;color:#fef3c7}.formula,.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#070b14;border:1px solid #243044;border-radius:12px;padding:14px 16px;margin:14px 0;color:#dbeafe;white-space:pre-wrap}.pipeline{display:flex;align-items:stretch;gap:8px;margin:10px 0 16px}.step{flex:1;text-align:center;border:1px solid rgba(96,165,250,.45);background:rgba(96,165,250,.11);border-radius:12px;padding:12px 8px;font-weight:700}.step small{display:block;color:var(--muted);font-weight:400}.arrow{display:flex;align-items:center;color:var(--cyan);font-size:22px}.diagram{background:rgba(0,0,0,.18);border:1px solid var(--line);border-radius:18px;padding:14px;margin:4px 0 10px}.diag-row{display:flex;gap:10px;margin:6px 0}.grp{flex:1;border:1px solid rgba(96,165,250,.28);background:rgba(96,165,250,.07);border-radius:13px;padding:12px}.grp.gpu{border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.07)}.grp.net{border-color:rgba(34,211,238,.35);background:rgba(34,211,238,.07)}.grp.store{border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.07)}.grp.power,.grp.cpu{border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07)}.gl{display:block;color:var(--cyan);font-weight:800;text-transform:uppercase;font-size:12px;letter-spacing:.08em;margin-bottom:6px}.gn{display:inline-block;margin:3px 4px 3px 0;padding:5px 8px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:rgba(255,255,255,.07);font-size:13px}.flow{text-align:center;color:var(--muted);font-size:13px}.num-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:8px 0 16px}.num-grid div{background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.32);border-radius:16px;padding:16px;text-align:center}.num-grid b{display:block;font-size:30px;color:var(--cyan);font-family:ui-monospace,monospace}.num-grid span{color:var(--muted);font-size:12px}table{width:100%;border-collapse:collapse;background:rgba(0,0,0,.16);border-radius:14px;overflow:hidden;border:1px solid var(--line);font-size:14px}th,td{padding:9px 11px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top}th{background:rgba(96,165,250,.16);color:#dbeafe;text-align:left}.tight table{font-size:13px}.denser table{font-size:12.5px}.denser th,.denser td{padding:6px 8px}ul,ol{margin:6px 0 0 20px;padding:0}li{margin:4px 0}.biglist{font-size:20px;line-height:1.55}.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:20px 0}.timeline div{border:1px solid var(--line);border-radius:14px;padding:14px;background:rgba(255,255,255,.05)}.timeline b{display:block;color:var(--green);font-size:19px}.timeline span{color:var(--muted);font-size:13px}.refs p{margin:7px 0;color:#d7e6f9}.qa{font-size:24px;max-width:980px;text-align:left}.qa p{padding:18px 22px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.06)}.footer{position:fixed;bottom:0;left:0;right:0;z-index:35;border-top:1px solid rgba(255,255,255,.08);padding:5px 16px;text-align:center;font-size:11px;color:#9ca3af;background:rgba(8,13,24,.88);backdrop-filter:blur(6px)}@media(max-width:760px){body{overflow:auto}.slide{position:relative;min-height:100vh;overflow:auto;padding:58px 18px 72px}.grid2,.grid3,.hero-grid,.num-grid,.timeline{grid-template-columns:1fr}.pipeline{flex-direction:column}.arrow{justify-content:center;transform:rotate(90deg)}.cover h1{font-size:36px}h1{font-size:28px}}
+</style></head><body><div class="topbar"><span>LLM Training Hardware Details</span><span><span id="cur">1</span>/<span id="tot">45</span></span></div><div class="progress" id="bar"></div><!-- SLIDE 1: 大模型训练的硬件细节 -->
+<section class="slide cover" id="s1">
+<h1>大模型训练的硬件细节</h1>
+<p class="subtitle">从单颗 GPU 到万卡集群: compute / memory / interconnect / storage / power / cooling / reliability 的系统工程</p>
+<div class="hero-grid">
+  <div class="metric"><b>核心问题</b><span>为什么训练 LLM 不是“买几张 GPU”这么简单?</span></div>
+  <div class="metric"><b>主线</b><span>算力墙 → 显存墙 → 通信墙 → 供电散热墙 → 可靠性墙</span></div>
+  <div class="metric"><b>适用对象</b><span>科研平台规划 / AI 工厂建设 / 训练工程入门</span></div>
+</div>
+<p class="hint">键盘: ←/→ 或 Space 翻页 · Home/End 跳转 · P 打印</p>
+</section><!-- SLIDE 2: 本课的 7 个学习目标 -->
+<section class="slide" id="s2">
+<h1>本课的 7 个学习目标</h1>
+<div class="grid2">
+<div class="card"><h3>1. 看懂硬件指标</h3><p>TFLOPS、HBM 容量/带宽、NVLink、IB、TDP、tokens/s 到底影响哪里。</p></div>
+<div class="card"><h3>2. 理解训练瓶颈</h3><p>参数、激活、优化器状态、梯度、通信分别吃什么资源。</p></div>
+<div class="card"><h3>3. 读懂节点拓扑</h3><p>8-GPU HGX、NVL72、Pod、InfiniBand Fat-tree/Dragonfly 的差异。</p></div>
+<div class="card"><h3>4. 设计集群配套</h3><p>CPU、内存、PCIe、网卡、存储、供电、液冷、机柜密度如何一起算。</p></div>
+<div class="card"><h3>5. 解释训练并行</h3><p>DP/TP/PP/ZeRO/sequence parallel 为什么对应不同硬件压力。</p></div>
+<div class="card"><h3>6. 识别故障与成本</h3><p>checkpoint、弹性恢复、网络抖动、掉卡、ECC、利用率与 TCO。</p></div>
+</div>
+</section><!-- SLIDE 3: 一张图: LLM 训练硬件栈 -->
+<section class="slide" id="s3">
+<h1>一张图: LLM 训练硬件栈</h1>
+<div class="diagram">
+<div class="diag-row"><div class="grp"><span class="gl">软件入口</span><span class="gn">PyTorch/JAX</span><span class="gn">Megatron/DeepSpeed/FSDP</span><span class="gn">NCCL/RCCL/XLA</span></div></div>
+<div class="flow">↓ kernel / collective / runtime</div>
+<div class="diag-row"><div class="grp gpu"><span class="gl">Accelerator</span><span class="gn">Tensor Core / Matrix Core</span><span class="gn">HBM</span><span class="gn">NVLink/Infinity Fabric/ICI</span></div><div class="grp net"><span class="gl">Network</span><span class="gn">InfiniBand / RoCE</span><span class="gn">NIC / DPU</span><span class="gn">Switch fabric</span></div></div>
+<div class="flow">↓ feed data + synchronize gradients</div>
+<div class="diag-row"><div class="grp store"><span class="gl">Storage</span><span class="gn">NVMe cache</span><span class="gn">parallel FS / object store</span><span class="gn">checkpoint tier</span></div><div class="grp power"><span class="gl">Facilities</span><span class="gn">power</span><span class="gn">cooling</span><span class="gn">rack / cabling</span></div></div>
+</div><p class="callout">真正的训练系统是 <b>计算、内存、通信、数据、设施</b> 的协同优化。</p>
+</section><!-- SLIDE 4: 训练一个 Transformer 到底在做什么? -->
+<section class="slide" id="s4">
+<h1>训练一个 Transformer 到底在做什么?</h1>
+<div class="pipeline"><div class="step">Data<br><small>token batch</small></div><div class="arrow">→</div><div class="step">Forward<br><small>matmul + attention</small></div><div class="arrow">→</div><div class="step">Loss<br><small>cross entropy</small></div><div class="arrow">→</div><div class="step">Backward<br><small>activation grad</small></div><div class="arrow">→</div><div class="step">AllReduce<br><small>gradient sync</small></div><div class="arrow">→</div><div class="step">Optimizer<br><small>Adam update</small></div></div>
+<table><tr><th>阶段</th><th>主要硬件压力</th><th>典型瓶颈</th></tr><tr><td>Forward/Backward</td><td>Tensor Core + HBM</td><td>矩阵乘效率、激活读写</td></tr><tr><td>Attention</td><td>HBM + SRAM/cache</td><td>KV/activation 带宽</td></tr><tr><td>Gradient sync</td><td>NVLink + IB/RoCE</td><td>跨 GPU/跨节点通信</td></tr><tr><td>Data loader</td><td>CPU + storage + network</td><td>数据供给不稳导致 GPU 空转</td></tr></table>
+</section><!-- SLIDE 5: 为什么“硬件细节”决定训练成败? -->
+<section class="slide" id="s5">
+<h1>为什么“硬件细节”决定训练成败?</h1>
+<div class="grid2">
+<div class="card warn"><h3>显存不够</h3><p>模型参数 + 梯度 + Adam 状态 + 激活 + buffer 超出 HBM, 只能切分或降精度。</p></div>
+<div class="card warn"><h3>通信太慢</h3><p>万卡训练时, 一步里可能有多轮 AllReduce / ReduceScatter / AllGather。</p></div>
+<div class="card warn"><h3>存储太慢</h3><p>预训练数据和 checkpoint 规模 TB-PB 级, I/O 抖动会让昂贵 GPU 等数据。</p></div>
+<div class="card warn"><h3>设施跟不上</h3><p>单机柜几十到上百 kW, 风冷、供电、布线、消防、运维都成为约束。</p></div>
+</div><p class="callout">LLM 训练的目标不是峰值 TFLOPS, 而是 <b>持续数周保持高 MFU + 低故障恢复成本</b>。</p>
+</section><!-- SLIDE 6: 指标速查: 看 GPU 规格表先看这 8 项 -->
+<section class="slide tight" id="s6">
+<h1>指标速查: 看 GPU 规格表先看这 8 项</h1>
+<table><tr><th>指标</th><th>含义</th><th>训练影响</th></tr>
+<tr><td>FP8/BF16 TFLOPS</td><td>低精度矩阵乘峰值</td><td>决定大 matmul 上限</td></tr>
+<tr><td>HBM capacity</td><td>显存容量</td><td>决定模型/激活/优化器状态能否放下</td></tr>
+<tr><td>HBM bandwidth</td><td>显存带宽</td><td>决定 attention、optimizer、通信 buffer 读写速度</td></tr>
+<tr><td>NVLink / ICI</td><td>节点内 GPU 互联</td><td>TP、ZeRO、MoE 路由的节点内通信</td></tr>
+<tr><td>PCIe / C2C</td><td>CPU↔GPU 通道</td><td>数据搬运、host staging、DPU/NIC 访问</td></tr>
+<tr><td>NIC bandwidth</td><td>跨节点网络</td><td>DP 同步、PP 气泡、checkpoint 传输</td></tr>
+<tr><td>TDP/TBP</td><td>单卡功耗</td><td>决定机柜功率、冷却和电费</td></tr>
+<tr><td>RAS/ECC</td><td>可靠性能力</td><td>决定长时间训练掉卡、silent error 风险</td></tr></table>
+</section><!-- SLIDE 7: 硬件代际: A100 → H100/H200 → B200/GB200 -->
+<section class="slide" id="s7">
+<h1>硬件代际: A100 → H100/H200 → B200/GB200</h1>
+<div class="grid3">
+<div class="card"><h3>A100 时代</h3><ul><li>HBM2e, 40/80GB</li><li>TF32/BF16 成熟</li><li>NVLink 3</li><li>训练 100B 级模型开始普及</li></ul></div>
+<div class="card"><h3>H100/H200 时代</h3><ul><li>Transformer Engine + FP8</li><li>H100: NVLink 约 900GB/s</li><li>H200: HBM3E, 141GB, 4.8TB/s</li><li>主流 2024-2025 训练集群</li></ul></div>
+<div class="card"><h3>B200/GB200 时代</h3><ul><li>Blackwell, FP4/FP8</li><li>NVLink 5, 每 GPU 约 1.8TB/s</li><li>NVL72 机柜级 NVLink 域</li><li>面向 trillion-parameter / reasoning</li></ul></div>
+</div><p class="small">注: 具体数值随 SXM/PCIe/OAM/云厂商配置不同而变化, 规划时以 datasheet 与供应商 BOM 为准。</p>
+</section><!-- SLIDE 8: 代表硬件参数对比 -->
+<section class="slide tight denser" id="s8">
+<h1>代表硬件参数对比</h1>
+<table><tr><th>硬件</th><th>显存</th><th>HBM 带宽</th><th>低精度峰值</th><th>互联重点</th></tr>
+<tr><td>NVIDIA H100 SXM</td><td>80GB HBM3</td><td>约 3TB/s</td><td>FP8 Transformer Engine</td><td>NVLink 4, 约 900GB/s/GPU</td></tr>
+<tr><td>NVIDIA H200 SXM</td><td>141GB HBM3E</td><td>4.8TB/s</td><td>FP8 约 4PFLOPS</td><td>Hopper + 更大显存</td></tr>
+<tr><td>NVIDIA GB200 NVL72</td><td>72 Blackwell GPUs</td><td>机柜级资源池</td><td>FP8 训练 / FP4 推理</td><td>72-GPU NVLink domain, 130TB/s 级域带宽</td></tr>
+<tr><td>AMD MI300X</td><td>192GB HBM3</td><td>5.3TB/s</td><td>FP8 约 2.61PFLOPS</td><td>Infinity Fabric, OAM</td></tr>
+<tr><td>Google TPU v6e</td><td>32GB/chip</td><td>1638GB/s/chip</td><td>BF16 918TFLOPS/chip</td><td>ICI 800GB/s/chip, 2D torus</td></tr>
+<tr><td>AWS Trainium2 Trn2</td><td>1.5TB HBM3 / 16 chips</td><td>46TB/s / instance</td><td>20.8 FP8 PFLOPS / instance</td><td>NeuronLink + EFA</td></tr></table><p class="small">公开资料口径: NVIDIA H200/GB200 页面, AMD MI300X 页面, Google TPU v6e 文档, AWS Trn2 页面。</p>
+</section><!-- SLIDE 9: GPU 内部: 为什么 Tensor Core 重要? -->
+<section class="slide" id="s9">
+<h1>GPU 内部: 为什么 Tensor Core 重要?</h1>
+<div class="grid2"><div class="card"><h3>普通 CUDA Core</h3><p>适合通用标量/向量计算, 灵活但矩阵乘吞吐有限。</p></div><div class="card"><h3>Tensor Core / Matrix Core</h3><p>为矩阵乘累加设计, 支持 FP16/BF16/TF32/FP8/FP4 等低精度格式, 是 Transformer 训练主力。</p></div></div>
+<div class="code">Transformer 大头 ≈ GEMM: [tokens × hidden] · [hidden × 4hidden]
+硬件目标: 让矩阵维度、batch、并行切分都“喂饱”Tensor Core。</div>
+<p class="callout">训练性能常用 <b>MFU(Model FLOPs Utilization)</b> 衡量: 实际模型 FLOPs / 理论峰值 FLOPs。</p>
+</section><!-- SLIDE 10: HBM: 大模型训练的第一道墙 -->
+<section class="slide" id="s10">
+<h1>HBM: 大模型训练的第一道墙</h1>
+<div class="grid3"><div class="card"><h3>容量</h3><p>能不能放下参数、梯度、优化器状态、激活。H200/MI300X 的大显存显著降低切分压力。</p></div><div class="card"><h3>带宽</h3><p>Attention、LayerNorm、optimizer update、通信 buffer copy 经常是 memory-bound。</p></div><div class="card"><h3>位置</h3><p>HBM 在加速器封装附近, 带宽远高于 DDR, 但容量昂贵且不可像普通内存随意扩展。</p></div></div>
+<div class="formula">显存压力 ≈ 参数 + 梯度 + 优化器状态 + 激活 + 通信/临时 buffer</div>
+</section><!-- SLIDE 11: 显存账本: 以 BF16 + Adam 为例 -->
+<section class="slide" id="s11">
+<h1>显存账本: 以 BF16 + Adam 为例</h1>
+<table><tr><th>项目</th><th>每参数字节数</th><th>说明</th></tr>
+<tr><td>参数 BF16</td><td>2B</td><td>模型权重</td></tr><tr><td>梯度 BF16/FP32</td><td>2-4B</td><td>反向传播产生</td></tr><tr><td>Adam m/v</td><td>8B</td><td>两个 FP32 动量状态</td></tr><tr><td>Master weight</td><td>4B</td><td>混合精度训练常保留 FP32 主权重</td></tr><tr><td>合计</td><td>约 12-18B/param</td><td>未计激活和碎片</td></tr></table>
+<p class="callout">70B 参数 × 16B ≈ 1.12TB, 单靠一台 8×80GB 节点放不下完整训练状态, 必须 ZeRO/FSDP/TP/PP。</p>
+</section><!-- SLIDE 12: 激活内存: batch、seq length 的隐藏杀手 -->
+<section class="slide" id="s12">
+<h1>激活内存: batch、seq length 的隐藏杀手</h1>
+<div class="grid2"><div class="card"><h3>为什么激活大?</h3><p>反向传播需要中间结果: hidden states、attention scores、MLP 中间层。序列越长、micro-batch 越大, 激活越大。</p></div><div class="card"><h3>硬件影响</h3><p>长上下文训练往往不是参数先爆, 而是激活和 attention buffer 先爆 HBM。</p></div></div>
+<div class="pipeline"><div class="step">activation checkpointing</div><div class="arrow">→</div><div class="step">重算 forward</div><div class="arrow">→</div><div class="step">省显存</div><div class="arrow">→</div><div class="step">多耗算力</div></div>
+<p class="small">硬件决策: 如果 HBM 贵且算力相对充裕, checkpointing 很划算; 如果通信/算力已满, 重算会拖慢 step time。</p>
+</section><!-- SLIDE 13: 低精度训练: BF16、FP8、FP4 分工 -->
+<section class="slide tight" id="s13">
+<h1>低精度训练: BF16、FP8、FP4 分工</h1>
+<table><tr><th>格式</th><th>典型用途</th><th>硬件含义</th><th>风险</th></tr>
+<tr><td>FP32</td><td>累加、优化器状态、关键统计</td><td>稳定但慢/占内存</td><td>成本高</td></tr>
+<tr><td>BF16</td><td>主流训练权重/激活</td><td>指数范围接近 FP32, 易用</td><td>吞吐不如 FP8/FP4</td></tr>
+<tr><td>FP8</td><td>Hopper/Blackwell 训练加速</td><td>Transformer Engine 自动缩放</td><td>需要 calibration / scale 管理</td></tr>
+<tr><td>FP4/NVFP4</td><td>Blackwell 推理/部分训练探索</td><td>更高吞吐与更低带宽</td><td>精度与稳定性要求更高</td></tr></table>
+</section><!-- SLIDE 14: GPU 节点结构: 8×GPU 服务器里有什么? -->
+<section class="slide" id="s14">
+<h1>GPU 节点结构: 8×GPU 服务器里有什么?</h1>
+<div class="diagram">
+<div class="diag-row"><div class="grp cpu"><span class="gl">CPU sockets</span><span class="gn">data loader</span><span class="gn">runtime</span><span class="gn">host memory</span></div><div class="grp store"><span class="gl">local NVMe</span><span class="gn">dataset cache</span><span class="gn">checkpoint staging</span></div></div>
+<div class="flow">PCIe / C2C / NUMA</div>
+<div class="diag-row"><div class="grp gpu"><span class="gl">GPU complex</span><span class="gn">8× H100/H200/B200</span><span class="gn">NVSwitch all-to-all</span><span class="gn">HBM pool by sharding</span></div><div class="grp net"><span class="gl">NIC/DPU</span><span class="gn">400/800G IB/RoCE</span><span class="gn">GPUDirect RDMA</span></div></div>
+</div><p class="small">节点设计关键: GPU↔GPU、GPU↔NIC、CPU↔GPU 的拓扑亲和性, 会直接影响 collective 性能。</p>
+</section><!-- SLIDE 15: NVLink / NVSwitch: 节点内通信为什么快? -->
+<section class="slide" id="s15">
+<h1>NVLink / NVSwitch: 节点内通信为什么快?</h1>
+<div class="grid2"><div class="card"><h3>NVLink</h3><p>GPU-to-GPU 高带宽低延迟互联。H100 代每 GPU 约 900GB/s, Blackwell 代约 1.8TB/s。</p></div><div class="card"><h3>NVSwitch</h3><p>把多颗 GPU 组成近似全互联域, 让任意 GPU 间通信不用绕 CPU/PCIe。</p></div></div>
+<div class="code">Tensor Parallel: 每层矩阵被切到多 GPU
+→ forward/backward 中频繁 AllReduce / AllGather
+→ 节点内 NVLink 带宽决定 TP 可扩展性</div>
+</section><!-- SLIDE 16: GB200 NVL72: 从“服务器”走向“机柜级 GPU” -->
+<section class="slide" id="s16">
+<h1>GB200 NVL72: 从“服务器”走向“机柜级 GPU”</h1>
+<div class="num-grid"><div><b>72</b><span>Blackwell GPUs</span></div><div><b>36</b><span>Grace CPUs</span></div><div><b>130TB/s</b><span>NVLink domain bandwidth</span></div><div><b>1.8TB/s</b><span>GPU-to-GPU interconnect / GPU</span></div></div>
+<p>GB200 NVL72 把 72 个 GPU 放进一个液冷 rack-scale NVLink domain, 目标是让 trillion-parameter 模型在更大的“近似单机”域中训练/推理。</p>
+<div class="callout">趋势: 大模型硬件不再只卖“单卡”, 而是卖 <b>rack-scale system + networking + software stack</b>。</div>
+</section><!-- SLIDE 17: 跨节点网络: InfiniBand / RoCE 是第二道墙 -->
+<section class="slide" id="s17">
+<h1>跨节点网络: InfiniBand / RoCE 是第二道墙</h1>
+<table><tr><th>层次</th><th>典型技术</th><th>负责什么</th></tr>
+<tr><td>NIC</td><td>ConnectX / BlueField / EFA</td><td>GPU 节点接入高速网络</td></tr>
+<tr><td>协议</td><td>InfiniBand, RoCEv2, EFA</td><td>低延迟、高吞吐、RDMA</td></tr>
+<tr><td>交换</td><td>Quantum / Spectrum / 自研 fabric</td><td>多机柜、多 pod 互联</td></tr>
+<tr><td>软件</td><td>NCCL/RCCL collectives</td><td>AllReduce、AllGather、ReduceScatter</td></tr></table>
+<p class="callout">训练集群不是“网口带宽相加”, 而是看 <b>bisection bandwidth、拥塞控制、拓扑感知调度</b>。</p>
+</section><!-- SLIDE 18: Collective 通信: 训练里最常见的网络动作 -->
+<section class="slide" id="s18">
+<h1>Collective 通信: 训练里最常见的网络动作</h1>
+<div class="grid2"><div class="card"><h3>AllReduce</h3><p>所有 GPU 的梯度求和再广播。数据并行最经典, 通信量随参数量增长。</p></div><div class="card"><h3>ReduceScatter</h3><p>先 reduce 再把结果切片分发。ZeRO/FSDP 常用, 减少每卡状态。</p></div><div class="card"><h3>AllGather</h3><p>每卡收集其他卡的 shard。FSDP forward 前常见。</p></div><div class="card"><h3>All-to-All</h3><p>MoE token dispatch 常见, 对网络抖动极敏感。</p></div></div>
+<p class="small">硬件含义: DP 更吃跨节点网络; TP 更吃节点内 NVLink; MoE 更吃 all-to-all 和负载均衡。</p>
+</section><!-- SLIDE 19: 并行策略与硬件瓶颈映射 -->
+<section class="slide tight" id="s19">
+<h1>并行策略与硬件瓶颈映射</h1>
+<table><tr><th>并行</th><th>解决什么</th><th>主要硬件压力</th><th>适合场景</th></tr>
+<tr><td>Data Parallel</td><td>扩大 batch</td><td>跨节点 AllReduce</td><td>模型单卡/单节点能放下</td></tr>
+<tr><td>Tensor Parallel</td><td>切分层内矩阵</td><td>节点内 NVLink</td><td>大 hidden / 大 MLP / 注意力层</td></tr>
+<tr><td>Pipeline Parallel</td><td>按层切模型</td><td>stage 间点对点通信</td><td>模型深, 节点数多</td></tr>
+<tr><td>ZeRO/FSDP</td><td>切优化器/梯度/参数</td><td>AllGather + ReduceScatter</td><td>显存瓶颈明显</td></tr>
+<tr><td>Sequence Parallel</td><td>切长序列激活</td><td>attention/activation 通信</td><td>长上下文训练</td></tr></table>
+</section><!-- SLIDE 20: Roofline 视角: 算力瓶颈 vs 带宽瓶颈 -->
+<section class="slide" id="s20">
+<h1>Roofline 视角: 算力瓶颈 vs 带宽瓶颈</h1>
+<div class="grid2"><div class="card"><h3>Compute-bound</h3><p>大 GEMM, arithmetic intensity 高。目标是喂满 Tensor Core, 关注 tile、batch、kernel fusion。</p></div><div class="card"><h3>Memory-bound</h3><p>LayerNorm、softmax、optimizer、small op。目标是减少 HBM 读写, 关注 fusion、FlashAttention。</p></div></div>
+<div class="formula">Arithmetic intensity = FLOPs / bytes moved</div>
+<p class="callout">LLM 训练性能优化不是只“堆 FLOPS”, 还要让每次 HBM 读取产生更多计算。</p>
+</section><!-- SLIDE 21: FlashAttention 的硬件意义 -->
+<section class="slide" id="s21">
+<h1>FlashAttention 的硬件意义</h1>
+<div class="grid2"><div class="card"><h3>传统 attention</h3><p>显式生成 N×N attention matrix, 长序列时 HBM 读写和显存占用巨大。</p></div><div class="card"><h3>FlashAttention</h3><p>分块在 SRAM/register 里计算 softmax attention, 减少 HBM traffic, 让 attention 更接近 compute-bound。</p></div></div>
+<div class="pipeline"><div class="step">tiling</div><div class="arrow">→</div><div class="step">on-chip SRAM</div><div class="arrow">→</div><div class="step">less HBM I/O</div><div class="arrow">→</div><div class="step">longer context</div></div>
+</section><!-- SLIDE 22: CPU 和主内存: 不直接训练, 但会拖后腿 -->
+<section class="slide" id="s22">
+<h1>CPU 和主内存: 不直接训练, 但会拖后腿</h1>
+<div class="grid2"><div class="card"><h3>CPU 负责</h3><ul><li>数据解码/tokenize</li><li>dataloader worker</li><li>调度 runtime</li><li>部分 checkpoint 压缩/校验</li></ul></div><div class="card"><h3>常见问题</h3><ul><li>CPU NUMA 绑错</li><li>host memory 不够</li><li>PCIe 拓扑绕路</li><li>小文件数据集拖慢 I/O</li></ul></div></div>
+<p class="callout">高端 GPU 节点常见经验: CPU、DDR、NVMe、NIC 配置要为 GPU“供料”, 不是越省越好。</p>
+</section><!-- SLIDE 23: 存储系统: 数据和 checkpoint 的吞吐账 -->
+<section class="slide tight" id="s23">
+<h1>存储系统: 数据和 checkpoint 的吞吐账</h1>
+<table><tr><th>对象</th><th>规模</th><th>硬件要求</th><th>优化</th></tr>
+<tr><td>预训练语料</td><td>TB-PB</td><td>对象存储/并行文件系统</td><td>预切 shard, 顺序读, 本地缓存</td></tr>
+<tr><td>tokenized dataset</td><td>数 TB+</td><td>高吞吐读</td><td>mmap / WebDataset / packed sequence</td></tr>
+<tr><td>checkpoint</td><td>每次 TB 级</td><td>写吞吐 + 元数据能力</td><td>异步 checkpoint, 分层存储</td></tr>
+<tr><td>日志指标</td><td>持续写</td><td>低延迟可查询</td><td>Prometheus/Grafana/W&B</td></tr></table>
+</section><!-- SLIDE 24: Checkpoint: 为什么训练不能只靠“保存模型”? -->
+<section class="slide" id="s24">
+<h1>Checkpoint: 为什么训练不能只靠“保存模型”?</h1>
+<div class="grid2"><div class="card"><h3>必须保存</h3><ul><li>模型参数 shard</li><li>optimizer state</li><li>LR scheduler</li><li>RNG state</li><li>dataloader offset</li></ul></div><div class="card"><h3>硬件挑战</h3><ul><li>写入时不能长时间阻塞 GPU</li><li>数千进程同时写会打爆元数据服务</li><li>恢复时要按拓扑重映射 shard</li></ul></div></div>
+<p class="callout">万卡训练的 checkpoint 设计是一套分布式存储系统, 不是一个 `torch.save()`。</p>
+</section><!-- SLIDE 25: 供电与散热: AI 工厂的物理约束 -->
+<section class="slide" id="s25">
+<h1>供电与散热: AI 工厂的物理约束</h1>
+<div class="num-grid"><div><b>700W+</b><span>高端训练卡常见级别</span></div><div><b>10kW+</b><span>8-GPU 节点级别</span></div><div><b>50-120kW</b><span>高密 AI 机柜级别</span></div><div><b>PUE</b><span>影响长期 TCO</span></div></div>
+<div class="grid2"><div class="card"><h3>风冷</h3><p>部署成熟, 但高密度机柜越来越吃力。</p></div><div class="card"><h3>液冷</h3><p>GB200 NVL72 等 rack-scale 系统普遍走液冷路线, 需要机房设施配套。</p></div></div>
+</section><!-- SLIDE 26: 网络拓扑: 不同拓扑决定扩展上限 -->
+<section class="slide" id="s26">
+<h1>网络拓扑: 不同拓扑决定扩展上限</h1>
+<div class="grid3"><div class="card"><h3>Fat-tree / Clos</h3><p>常见于 InfiniBand/RoCE 集群, 目标是高 bisection bandwidth。</p></div><div class="card"><h3>Dragonfly / torus</h3><p>用更少长链路连接分组, TPU Pod 等有专用拓扑。</p></div><div class="card"><h3>Rail-optimized</h3><p>多 NIC 多 rail, collective 库需要知道 GPU↔NIC 亲和性。</p></div></div>
+<div class="code">坏拓扑表现: 小规模 benchmark 很快, 一到 512/1024 GPU 后 step time 抖动、tail latency 放大。</div>
+</section><!-- SLIDE 27: GPUDirect RDMA: 为什么 GPU 能直接走网卡? -->
+<section class="slide" id="s27">
+<h1>GPUDirect RDMA: 为什么 GPU 能直接走网卡?</h1>
+<div class="diagram"><div class="diag-row"><div class="grp gpu"><span class="gl">without GPUDirect</span><span class="gn">GPU HBM</span><span class="gn">→ CPU memory staging</span><span class="gn">→ NIC</span></div><div class="grp net"><span class="gl">with GPUDirect RDMA</span><span class="gn">GPU HBM</span><span class="gn">→ NIC DMA</span><span class="gn">less copy / lower latency</span></div></div></div>
+<p class="callout">跨节点 collective 的关键是减少 host staging, 让 NIC 更直接地读写 GPU memory。</p>
+</section><!-- SLIDE 28: 可靠性: 万卡训练必然遇到故障 -->
+<section class="slide" id="s28">
+<h1>可靠性: 万卡训练必然遇到故障</h1>
+<div class="grid2"><div class="card warn"><h3>硬件故障</h3><ul><li>GPU Xid / 掉卡</li><li>HBM ECC error</li><li>NIC link flap</li><li>SSD wear</li></ul></div><div class="card warn"><h3>系统故障</h3><ul><li>NCCL timeout</li><li>进程 hang</li><li>节点温度降频</li><li>作业调度抢占</li></ul></div></div>
+<p class="callout">规模越大, MTBF 越短。训练平台要默认“每天都有节点坏”, 依靠 checkpoint + elastic restart。</p>
+</section><!-- SLIDE 29: Silent Data Corruption: 最难发现的硬件风险 -->
+<section class="slide tight" id="s29">
+<h1>Silent Data Corruption: 最难发现的硬件风险</h1>
+<div class="grid2"><div class="card"><h3>显性错误</h3><p>进程崩溃、ECC 报错、NCCL timeout, 虽然痛苦但容易定位。</p></div><div class="card warn"><h3>静默错误</h3><p>硬件/网络/内存返回错误结果但作业继续跑, 可能数天后才发现 loss 异常。</p></div></div>
+<table><tr><th>防护</th><th>做法</th></tr><tr><td>硬件</td><td>ECC, RAS, burn-in, 温度/电源监控</td></tr><tr><td>软件</td><td>loss anomaly detector, checksum, gradient norm 监控</td></tr><tr><td>流程</td><td>小规模 sanity run → 扩容 → 定期 eval checkpoint</td></tr></table>
+</section><!-- SLIDE 30: 可观测性: AI 集群要监控什么? -->
+<section class="slide tight" id="s30">
+<h1>可观测性: AI 集群要监控什么?</h1>
+<table><tr><th>层</th><th>关键指标</th><th>异常信号</th></tr>
+<tr><td>GPU</td><td>utilization, HBM used, memory BW, temperature, power</td><td>GPU util 低但功耗高 / 温度降频</td></tr>
+<tr><td>网络</td><td>NIC throughput, retransmit, congestion, latency</td><td>某 rail 拥塞导致 step time tail</td></tr>
+<tr><td>存储</td><td>read/write BW, IOPS, metadata ops</td><td>checkpoint 时全局卡顿</td></tr>
+<tr><td>训练</td><td>tokens/s, MFU, loss, grad norm, step time</td><td>loss spike / step time 抖动</td></tr></table>
+</section><!-- SLIDE 31: 性能指标: 不只看 tokens/s -->
+<section class="slide" id="s31">
+<h1>性能指标: 不只看 tokens/s</h1>
+<div class="grid2"><div class="card"><h3>Throughput</h3><p>tokens/s、samples/s, 衡量吞吐。</p></div><div class="card"><h3>MFU</h3><p>模型 FLOPs 利用率, 衡量算力是否被有效使用。</p></div><div class="card"><h3>Scaling efficiency</h3><p>N 卡吞吐 / 单卡吞吐 / N, 衡量扩展损耗。</p></div><div class="card"><h3>Time-to-train</h3><p>达到目标 loss/eval 的总时间, 包含故障恢复和排队。</p></div></div>
+<div class="formula">有效成本 = GPU 小时成本 / 有效 token 吞吐 × 重跑与空转系数</div>
+</section><!-- SLIDE 32: 从单机到万卡: 扩展过程中的“墙” -->
+<section class="slide" id="s32">
+<h1>从单机到万卡: 扩展过程中的“墙”</h1>
+<div class="timeline"><div><b>1-8 GPU</b><span>显存与 kernel 效率</span></div><div><b>8-64 GPU</b><span>节点内/少量节点 collective</span></div><div><b>64-1024 GPU</b><span>网络拓扑、存储、调度</span></div><div><b>1024+ GPU</b><span>故障率、运维、功耗、弹性恢复</span></div><div><b>万卡级</b><span>AI factory: 硬件/软件/设施一体化</span></div></div>
+<p class="callout">越往后, “工程确定性”比单点峰值更重要。</p>
+</section><!-- SLIDE 33: 硬件选型: GPU、TPU、Trainium、AMD 怎么看? -->
+<section class="slide tight" id="s33">
+<h1>硬件选型: GPU、TPU、Trainium、AMD 怎么看?</h1>
+<table><tr><th>路线</th><th>优势</th><th>注意事项</th></tr>
+<tr><td>NVIDIA GPU</td><td>生态最成熟, CUDA/NCCL/Megatron/DeepSpeed 适配广</td><td>成本高, 供应与功耗压力大</td></tr>
+<tr><td>AMD MI300X</td><td>大显存, ROCm 生态快速成熟, 性价比潜力</td><td>软件兼容和算子覆盖需实测</td></tr>
+<tr><td>Google TPU</td><td>JAX/XLA/TPU Pod 一体化, 大规模稳定</td><td>生态更云绑定, PyTorch 迁移需评估</td></tr>
+<tr><td>AWS Trainium</td><td>云上成本/供应优势, Neuron stack</td><td>模型/算子/框架适配和调试成本</td></tr></table>
+</section><!-- SLIDE 34: 采购规划: 不能只问“买多少卡” -->
+<section class="slide" id="s34">
+<h1>采购规划: 不能只问“买多少卡”</h1>
+<div class="grid2"><div class="card"><h3>训练目标</h3><ul><li>模型参数量</li><li>tokens 数</li><li>上下文长度</li><li>目标训练周期</li></ul></div><div class="card"><h3>硬件 BOM</h3><ul><li>GPU/TPU/ASIC 数量</li><li>CPU/内存/NVMe</li><li>NIC + switch</li><li>电力/冷却/机柜</li></ul></div><div class="card"><h3>软件栈</h3><ul><li>CUDA/ROCm/XLA/Neuron</li><li>并行框架</li><li>checkpoint 系统</li><li>监控与调度</li></ul></div><div class="card"><h3>运维</h3><ul><li>备件比例</li><li>burn-in</li><li>故障演练</li><li>容量排期</li></ul></div></div>
+</section><!-- SLIDE 35: 一个粗略容量估算流程 -->
+<section class="slide" id="s35">
+<h1>一个粗略容量估算流程</h1>
+<div class="pipeline"><div class="step">模型规模<br><small>P params</small></div><div class="arrow">→</div><div class="step">显存账本<br><small>12-18B/param</small></div><div class="arrow">→</div><div class="step">并行切分<br><small>TP/PP/FSDP</small></div><div class="arrow">→</div><div class="step">吞吐估算<br><small>tokens/s</small></div><div class="arrow">→</div><div class="step">训练周期<br><small>total tokens</small></div></div>
+<div class="code">例: 若目标 1T tokens, 集群有效吞吐 2M tokens/s
+纯训练时间 ≈ 1e12 / 2e6 = 500,000s ≈ 5.8 天
+实际还要乘以: eval + checkpoint + 故障恢复 + 调参重跑</div>
+<p class="small">注意: 这是吞吐估算, 不是质量保证。模型质量还取决于数据、配方、架构和训练稳定性。</p>
+</section><!-- SLIDE 36: 成本结构: CapEx / OpEx / Opportunity cost -->
+<section class="slide" id="s36">
+<h1>成本结构: CapEx / OpEx / Opportunity cost</h1>
+<div class="grid3"><div class="card"><h3>CapEx</h3><p>加速器、服务器、交换机、存储、机柜、液冷、机房改造。</p></div><div class="card"><h3>OpEx</h3><p>电费、冷却、带宽、运维、备件、云租赁、软件支持。</p></div><div class="card"><h3>Opportunity cost</h3><p>排队等待、低利用率、作业失败重跑、调试迁移带来的隐性成本。</p></div></div>
+<p class="callout">便宜硬件如果导致软件适配慢、利用率低、重跑多, 总成本可能更高。</p>
+</section><!-- SLIDE 37: 常见误区 1: TFLOPS 越高训练越快? -->
+<section class="slide" id="s37">
+<h1>常见误区 1: TFLOPS 越高训练越快?</h1>
+<div class="grid2"><div class="card warn"><h3>错误理解</h3><p>只看单卡峰值 TFLOPS, 认为训练速度线性提升。</p></div><div class="card"><h3>正确理解</h3><p>实际速度 = kernel 效率 × HBM × 通信 × 数据供给 × 故障恢复。峰值只是上限。</p></div></div>
+<div class="code">如果 step time 里 35% 在通信, 单卡 FLOPS 翻倍最多也只能改善计算部分。</div>
+</section><!-- SLIDE 38: 常见误区 2: 显存越大就不需要并行? -->
+<section class="slide" id="s38">
+<h1>常见误区 2: 显存越大就不需要并行?</h1>
+<div class="grid2"><div class="card warn"><h3>显存大能缓解</h3><p>更大的 HBM 可以减少 ZeRO/TP 压力, 支持更长上下文和更大 batch。</p></div><div class="card"><h3>但不能替代并行</h3><p>训练时间要求决定必须用多卡; 多卡就必然涉及通信、调度、checkpoint 和故障恢复。</p></div></div>
+<p class="callout">大显存让“能跑起来”更容易, 但“跑得快、跑得稳”仍靠系统工程。</p>
+</section><!-- SLIDE 39: 常见误区 3: 网络买满带宽就行? -->
+<section class="slide" id="s39">
+<h1>常见误区 3: 网络买满带宽就行?</h1>
+<div class="grid2"><div class="card warn"><h3>带宽只是一个维度</h3><p>延迟、拥塞、拓扑、rail 绑定、collective 算法都会影响训练。</p></div><div class="card"><h3>需要端到端验证</h3><p>用 NCCL tests、真实模型 step time、故障注入一起测, 不要只看 iperf。</p></div></div>
+<div class="pipeline"><div class="step">micro benchmark</div><div class="arrow">→</div><div class="step">collective benchmark</div><div class="arrow">→</div><div class="step">model benchmark</div><div class="arrow">→</div><div class="step">long run stability</div></div>
+</section><!-- SLIDE 40: 实验室/小团队怎么落地? -->
+<section class="slide" id="s40">
+<h1>实验室/小团队怎么落地?</h1>
+<div class="grid2"><div class="card"><h3>阶段 1: 单机 8 卡</h3><p>先掌握 dataloader、混合精度、FSDP/DeepSpeed、监控和 checkpoint。</p></div><div class="card"><h3>阶段 2: 2-8 节点</h3><p>重点打通网络、NCCL、共享存储、Slurm/K8s 调度。</p></div><div class="card"><h3>阶段 3: 64+ GPU</h3><p>引入 topology-aware scheduling、异步 checkpoint、故障恢复演练。</p></div><div class="card"><h3>阶段 4: 云/混合</h3><p>对比云上 GPU/TPU/Trainium 的迁移成本和可获得性。</p></div></div>
+<p class="small">建议先把 7B/13B 小规模持续预训练跑稳定, 再扩展到更大模型。</p>
+</section><!-- SLIDE 41: 训练硬件验收清单 -->
+<section class="slide tight" id="s41">
+<h1>训练硬件验收清单</h1>
+<table><tr><th>类别</th><th>验收项</th></tr>
+<tr><td>单卡</td><td>burn-in, ECC, 温度, 功耗, HBM 带宽, matmul benchmark</td></tr>
+<tr><td>节点内</td><td>NVLink/NVSwitch 拓扑, p2p bandwidth, GPU↔NIC 亲和性</td></tr>
+<tr><td>跨节点</td><td>NCCL all_reduce_perf, all_gather_perf, 多 rail 均衡, 拥塞监控</td></tr>
+<tr><td>存储</td><td>并发读写、checkpoint 写入、恢复速度、元数据压力</td></tr>
+<tr><td>长稳</td><td>24-72h 真实训练, loss 曲线, step time p50/p99, 故障恢复</td></tr></table>
+</section><!-- SLIDE 42: 未来趋势: AI 训练硬件会怎么变? -->
+<section class="slide" id="s42">
+<h1>未来趋势: AI 训练硬件会怎么变?</h1>
+<div class="grid2"><div class="card"><h3>1. Rack-scale</h3><p>NVL72/Pod 化, “一个机柜就是一个训练单元”。</p></div><div class="card"><h3>2. 更低精度</h3><p>FP8 成熟, FP4/混合量化进入训练/推理边界。</p></div><div class="card"><h3>3. Memory-centric</h3><p>HBM 容量、带宽、CXL/host memory、KV/activation 管理更重要。</p></div><div class="card"><h3>4. Network-centric</h3><p>all-to-all、MoE、长上下文让网络成为核心差异化。</p></div><div class="card"><h3>5. Power-centric</h3><p>每 MW token 产出成为 AI 工厂指标。</p></div><div class="card"><h3>6. Software-hardware co-design</h3><p>算子、编译器、并行策略与硬件拓扑一起设计。</p></div></div>
+</section><!-- SLIDE 43: 总结: 大模型训练硬件的 6 条主线 -->
+<section class="slide" id="s43">
+<h1>总结: 大模型训练硬件的 6 条主线</h1>
+<ol class="biglist"><li><b>算力</b>: Tensor Core/Matrix Core 决定 GEMM 上限。</li><li><b>显存</b>: HBM 容量/带宽决定能不能放下、能不能喂饱。</li><li><b>互联</b>: NVLink/ICI 解决节点内, IB/RoCE/EFA 解决跨节点。</li><li><b>数据</b>: 存储与 dataloader 决定 GPU 是否空转。</li><li><b>设施</b>: 供电、散热、机柜密度决定能部署多大规模。</li><li><b>可靠性</b>: checkpoint、监控、弹性恢复决定长跑是否成功。</li></ol>
+<p class="callout">一句话: LLM 训练是把 <b>模型并行策略</b> 映射到 <b>硬件拓扑</b> 的工程。</p>
+</section><!-- SLIDE 44: 参考资料与数据来源 -->
+<section class="slide tight" id="s44">
+<h1>参考资料与数据来源</h1>
+<div class="refs"><p>[1] NVIDIA H100 / H200 product pages and datasheets: Transformer Engine, HBM, NVLink, FP8.</p><p>[2] NVIDIA Blackwell Architecture / GB200 NVL72 pages: NVLink 5, NVL72, FP4, rack-scale system.</p><p>[3] AMD Instinct MI300X product page: 192GB HBM3, 5.3TB/s, FP8 performance.</p><p>[4] Google Cloud TPU v6e documentation: BF16 TFLOPS, HBM, ICI bandwidth, 2D torus.</p><p>[5] AWS EC2 Trn2 instance page: Trainium2, HBM3, FP8 PFLOPS, EFA/NeuronLink.</p><p>[6] Megatron-LM, DeepSpeed ZeRO, PyTorch FSDP, NCCL docs: parallelism and collective communication.</p><p>[7] FlashAttention papers and docs: IO-aware attention kernel design.</p></div><p class="small">本 deck 以公开资料 + 训练系统工程常识整理, 不替代采购 datasheet/BOM/现场 PoC。</p>
+</section><!-- SLIDE 45: Q&amp;A -->
+<section class="slide cover" id="s45">
+<h1>Q&A</h1>
+<div class="qa"><p>讨论题 1: 如果预算只能升级一个环节, 你会优先买更大 HBM、更多 GPU、还是更强网络?</p><p>讨论题 2: 一个 64×H100 集群训练效率低, 你会按什么顺序排查?</p><p>讨论题 3: 对科研团队而言, 自建集群和云上训练的边界在哪里?</p></div>
+</section><div class="footer"><b style="color:#e5e7eb;font-weight:600;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO</div><script>
+const slides=Array.from(document.querySelectorAll('.slide'));let idx=0;const cur=document.getElementById('cur'),tot=document.getElementById('tot'),bar=document.getElementById('bar');tot.textContent=slides.length;
+function show(i){idx=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,n)=>s.classList.toggle('active',n===idx));cur.textContent=idx+1;bar.style.width=((idx+1)/slides.length*100)+'%';history.replaceState(null,'','#'+(idx+1));}
+function next(){show(idx+1)} function prev(){show(idx-1)}
+document.addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()} if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()} if(e.key==='Home')show(0); if(e.key==='End')show(slides.length-1); if(e.key.toLowerCase()==='p')window.print();});
+let tx=0,ty=0,tt=0,moved=false;document.addEventListener('touchstart',e=>{if(!e.touches.length)return;tx=e.touches[0].clientX;ty=e.touches[0].clientY;tt=Date.now();moved=false},{passive:true});document.addEventListener('touchmove',e=>{if(!e.touches.length)return;const dx=e.touches[0].clientX-tx,dy=e.touches[0].clientY-ty;if(Math.abs(dx)>10||Math.abs(dy)>10)moved=true},{passive:true});document.addEventListener('touchend',e=>{if(!e.changedTouches.length)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty,dt=Date.now()-tt;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.25){dx<0?next():prev();return} if(!moved&&dt<450){e.changedTouches[0].clientX<window.innerWidth*.28?prev():next()}},{passive:true});document.addEventListener('click',e=>{if(e.target.closest('a,button,kbd'))return;e.clientX<window.innerWidth*.28?prev():next()});
+const n=parseInt(location.hash.replace('#',''),10);show(Number.isFinite(n)?n-1:0);
+</script></body></html>
