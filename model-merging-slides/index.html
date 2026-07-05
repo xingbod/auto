@@ -1,0 +1,304 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>模型合并 Model Merging 调研 slides</title><style>
+:root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--ink:#e6edf3;--muted:#8b949e;--blue:#58a6ff;--green:#3fb950;--orange:#f97316;--purple:#a78bfa;--red:#f87171;--yellow:#fbbf24}*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:radial-gradient(circle at 15% 10%,rgba(88,166,255,.18),transparent 30%),radial-gradient(circle at 85% 25%,rgba(167,139,250,.14),transparent 32%),var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif}.top{position:fixed;top:0;left:0;right:0;height:38px;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(13,17,23,.86);backdrop-filter:blur(8px);font-size:12px;color:var(--muted)}.progress{position:fixed;top:38px;left:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple));z-index:11;width:0}.slide{position:absolute;inset:0;display:none;padding:74px 60px 74px;overflow:hidden}.slide.active{display:block}.slide.cover{display:none}.slide.cover.active{display:flex;flex-direction:column;justify-content:center}.slide.tight{padding:58px 50px 68px}.slide.tight.denser{padding:48px 42px 64px}h1{font-size:34px;line-height:1.15;margin:0 0 18px;letter-spacing:-.02em}h1 span{color:var(--blue)}h3{font-size:17px;margin:0 0 8px;color:#fff}p,li{font-size:15px;line-height:1.45;color:#c9d1d9}.lead{font-size:21px;color:#dbeafe}.meta{font-size:13px;color:var(--muted);margin-top:18px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:28px 0}.hero-grid div,.card{background:rgba(22,27,34,.82);border:1px solid var(--line);border-radius:14px;padding:15px 17px;box-shadow:0 12px 30px rgba(0,0,0,.22)}.card.blue{border-color:rgba(88,166,255,.45)}.card.green{border-color:rgba(63,185,80,.45)}.card.purple{border-color:rgba(167,139,250,.45)}.card.orange{border-color:rgba(249,115,22,.45)}.card.red{border-color:rgba(248,113,113,.45)}.card.yellow{border-color:rgba(251,191,36,.45)}.big-eq{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:30px;text-align:center;margin:18px 0;padding:18px;border:1px solid rgba(88,166,255,.35);background:rgba(88,166,255,.08);border-radius:14px}.big-eq.small{font-size:22px}.pipeline{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;margin:18px 0;padding:14px;background:rgba(0,0,0,.18);border:1px solid var(--line);border-radius:14px}.pipeline span{padding:9px 13px;border:1px solid rgba(88,166,255,.45);border-radius:9px;background:rgba(88,166,255,.11);font-weight:700;font-size:14px}.pipeline b{color:var(--orange)}.timeline{display:grid;gap:12px}.timeline div{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center;background:rgba(22,27,34,.82);border:1px solid var(--line);border-radius:12px;padding:13px}.timeline b{color:var(--yellow)}.timeline span{color:#d1d5db}.callout{border-left:4px solid var(--orange);background:rgba(249,115,22,.1);padding:13px 16px;border-radius:10px;color:#fed7aa}.code,.tree{white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#05070a;border:1px solid var(--line);border-radius:12px;padding:14px 16px;color:#dbeafe;font-size:13px;line-height:1.42}.tree{font-size:16px;line-height:1.5}table{width:100%;border-collapse:collapse;background:rgba(22,27,34,.75);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}th,td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}th{color:#fff;background:rgba(88,166,255,.12)}td{color:#c9d1d9}.slide.tight.denser table{font-size:12.5px}.slide.tight.denser th,.slide.tight.denser td{padding:6px 7px;line-height:1.28}.takeaway{font-size:22px;line-height:1.45;background:rgba(22,27,34,.86);border:1px solid var(--line);border-radius:16px;padding:18px 22px;margin:15px 0}.takeaway b{color:var(--green)}.refs li{font-size:13.5px;margin:6px 0}.qa{font-size:30px;line-height:1.4;text-align:center;max-width:900px;margin:auto}.foot{position:fixed;bottom:0;left:0;right:0;z-index:20;border-top:1px solid rgba(255,255,255,.08);padding:5px 16px;text-align:center;font-size:11px;color:#8b949e;background:rgba(13,17,23,.92);backdrop-filter:blur(6px)}.nav{position:fixed;right:18px;bottom:36px;color:var(--muted);font-size:12px;z-index:21}@media(max-width:760px){html,body{overflow:auto}.slide{position:relative;min-height:100vh;overflow:auto;padding:66px 22px 78px}.grid2,.grid3,.hero-grid{grid-template-columns:1fr}h1{font-size:27px}.top{font-size:10px}.big-eq{font-size:20px}.tree{font-size:12px}}
+</style></head><body><div class="top"><div>模型合并 Model Merging</div><div>←/→ 翻页 · Space 下一页 · P 打印</div></div><div class="progress" id="prog"></div><section class="slide cover">
+<h1>模型合并 Model Merging：<br><span>不用重新训练,能不能把多个模型能力拼起来?</span></h1>
+
+<p class="lead">从 Model Soups 到 Task Arithmetic,从 TIES/DARE 到 mergekit 与进化搜索。</p>
+<div class="hero-grid">
+  <div><b>核心问题</b><br>多个 fine-tuned models / LoRA / checkpoints 能否在参数空间直接组合?</div>
+  <div><b>工程价值</b><br>省训练、省数据、省显存,把已有模型资产复用成新能力。</div>
+  <div><b>主要风险</b><br>能力冲突、灾难性遗忘、安全与版权边界不清。</div>
+</div>
+<p class="meta">调研数据: OpenAlex + arXiv,10 组关键词,筛得 100 条相关候选；本 deck 选取 15 条代表路线讲解。</p>
+
+</section><section class="slide ">
+<h1>学习目标</h1>
+
+<div class="grid2">
+<div class="card"><h3>1. 看懂直觉</h3><p>为什么两个模型的参数可以平均? 什么时候平均会失败?</p></div>
+<div class="card"><h3>2. 掌握路线</h3><p>checkpoint averaging, task vector, importance-aware, sign conflict, LoRA/adapters。</p></div>
+<div class="card"><h3>3. 会选方法</h3><p>给定“同基座/不同任务/无数据/多 LoRA”场景,知道用哪类 merge。</p></div>
+<div class="card"><h3>4. 看到机会</h3><p>理解自动配方搜索、多模态 merge、安全评估等研究机会。</p></div>
+</div>
+</section><section class="slide ">
+<h1>一句话定义</h1>
+
+<div class="big-eq">θ<sub>merged</sub> = Merge(θ<sub>base</sub>, θ<sub>1</sub>, θ<sub>2</sub>, ..., recipe)</div>
+<div class="grid3">
+<div class="card"><h3>输入</h3><p>同一基座微调出的多个模型,或多个 checkpoint / LoRA / adapter。</p></div>
+<div class="card"><h3>操作</h3><p>在参数、delta、神经元、特征或 adapter 空间做组合。</p></div>
+<div class="card"><h3>输出</h3><p>一个尽量保留多模型能力、无需全量重训的新模型。</p></div>
+</div>
+<p class="callout">关键前提: 多数有效方法默认模型来自同一 base,且参数语义大体对齐。</p>
+</section><section class="slide ">
+<h1>为什么突然重要?</h1>
+
+<div class="pipeline"><span>Foundation Model</span><b>→</b><span>SFT / RLHF</span><b>→</b><span>领域模型</span><b>→</b><span>模型资产池</span><b>→</b><span>合并复用</span></div>
+<div class="grid2">
+<div class="card"><h3>训练成本高</h3><p>大模型全量重训昂贵,但微调模型/LoRA 越来越多。</p></div>
+<div class="card"><h3>数据不可共享</h3><p>公司/实验室可能只有模型权重,没有原训练数据。</p></div>
+<div class="card"><h3>能力碎片化</h3><p>代码、数学、医疗、中文、工具调用分别强,希望拼成一个。</p></div>
+<div class="card"><h3>社区可复现</h3><p>mergekit 等工具让模型合并成为低门槛实验范式。</p></div>
+</div>
+</section><section class="slide ">
+<h1>发展脉络：从平均 checkpoint 到自动配方搜索</h1>
+
+<div class="timeline">
+<div><b>2017-2018</b><span>FedAvg / SWA: 参数平均与训练轨迹平均</span></div>
+<div><b>2021-2022</b><span>Fisher / Model Soups: 重要性加权与同 basin 平均</span></div>
+<div><b>2022-2023</b><span>Task Arithmetic / RegMean: task vector 与闭式层合并</span></div>
+<div><b>2023-2024</b><span>TIES / AdaMerging / DARE: 冲突消解、自适应权重、稀疏 delta</span></div>
+<div><b>2024-2026</b><span>mergekit / evolutionary recipes / LoRA fusion: 工程化与自动化</span></div>
+</div>
+</section><section class="slide ">
+<h1>方法地图：模型合并不是一种算法,而是一组操作空间</h1>
+
+<div class="grid3">
+<div class="card blue"><h3>参数空间</h3><p>linear averaging, greedy soup, SLERP, Fisher weighting。</p></div>
+<div class="card green"><h3>Delta 空间</h3><p>task vector, TIES, DARE, breadcrumbs, sign election。</p></div>
+<div class="card purple"><h3>结构/特征空间</h3><p>neuron matching, feature alignment, ZipIt, layer-wise merge。</p></div>
+<div class="card orange"><h3>Adapter 空间</h3><p>LoRA / adapter composition, K-LoRA, weighted adapter merge。</p></div>
+<div class="card red"><h3>优化空间</h3><p>AdaMerging, entropy minimization, validation-free weighting。</p></div>
+<div class="card yellow"><h3>搜索空间</h3><p>mergekit recipes, evolutionary search, model stock。</p></div>
+</div>
+</section><section class="slide ">
+<h1>前提条件：什么时候“能合并”?</h1>
+
+<table><tr><th>条件</th><th>为什么重要</th><th>失败表现</th></tr>
+<tr><td>同一 base model</td><td>参数位置语义一致</td><td>不同架构直接平均通常崩溃</td></tr>
+<tr><td>线性模式连接</td><td>两个解之间存在低 loss 路径</td><td>平均点 loss 高,能力同时下降</td></tr>
+<tr><td>任务冲突有限</td><td>delta 方向不要大面积相反</td><td>A 能力增强同时 B 能力遗忘</td></tr>
+<tr><td>尺度/归一化一致</td><td>权重范数、LayerNorm 统计要兼容</td><td>输出分布漂移,生成质量下降</td></tr>
+</table>
+</section><section class="slide ">
+<h1>基线 1：Linear Averaging / Checkpoint Averaging</h1>
+
+<div class="big-eq">θ = α θ<sub>A</sub> + (1-α) θ<sub>B</sub></div>
+<div class="grid2">
+<div class="card"><h3>优点</h3><ul><li>最简单,无需数据</li><li>对同一训练轨迹/同一任务很稳</li><li>可作为所有 merge 的 sanity check</li></ul></div>
+<div class="card"><h3>局限</h3><ul><li>多任务冲突时容易互相抵消</li><li>不同 fine-tune recipe 可能不在同一 basin</li><li>无法解释哪些参数该保留</li></ul></div>
+</div>
+</section><section class="slide ">
+<h1>代表作：Model Soups (ICML 2022)</h1>
+
+<div class="grid2">
+<div class="card"><h3>核心做法</h3><p>把同一预训练模型上不同超参数微调出的多个模型做权重平均。Uniform soup 直接平均；Greedy soup 按验证集表现逐个加入。</p></div>
+<div class="card"><h3>关键启发</h3><p>大模型 fine-tuning 的多个好解常位于同一个低损失盆地,平均后泛化可能更好。</p></div>
+</div>
+<div class="pipeline"><span>base</span><b>→</b><span>fine-tune variants</span><b>→</b><span>filter good models</span><b>→</b><span>average weights</span><b>→</b><span>better generalization</span></div>
+</section><section class="slide ">
+<h1>代表作：Task Arithmetic (ICLR 2023)</h1>
+
+<div class="big-eq">τ<sub>task</sub> = θ<sub>task</sub> - θ<sub>base</sub></div>
+<div class="big-eq small">θ<sub>new</sub> = θ<sub>base</sub> + ατ<sub>A</sub> + βτ<sub>B</sub> - γτ<sub>bad</sub></div>
+<div class="grid2"><div class="card"><h3>为什么重要</h3><p>把“任务能力”表达成参数差值向量,可以做加法、减法、组合。</p></div><div class="card"><h3>直觉</h3><p>fine-tuning 不只是得到新模型,还留下了一条从 base 指向任务能力的向量。</p></div></div>
+</section><section class="slide ">
+<h1>Task Vector 的问题：冲突与冗余</h1>
+
+<div class="grid2">
+<div class="card red"><h3>符号冲突</h3><p>同一个参数上,任务 A 希望增加,任务 B 希望减少。简单相加会抵消或破坏两边。</p></div>
+<div class="card orange"><h3>幅度冲突</h3><p>少数大 delta 可能主导合并,小任务被淹没。</p></div>
+<div class="card purple"><h3>冗余参数</h3><p>很多 delta 对能力贡献很小,全量合并反而引入噪声。</p></div>
+<div class="card blue"><h3>任务相关性</h3><p>相近任务可叠加,相斥任务需要路由或分专家。</p></div>
+</div>
+</section><section class="slide ">
+<h1>代表作：TIES-Merging (NeurIPS 2023)</h1>
+
+<div class="pipeline"><span>Trim</span><b>→</b><span>Elect Sign</span><b>→</b><span>Disjoint Merge</span></div>
+<table><tr><th>步骤</th><th>含义</th><th>解决的问题</th></tr>
+<tr><td>Trim</td><td>只保留 magnitude 较大的 delta</td><td>去掉冗余噪声</td></tr>
+<tr><td>Elect Sign</td><td>为每个参数选多数/强势方向</td><td>减少符号冲突</td></tr>
+<tr><td>Merge</td><td>只合并同方向 task vector</td><td>保留多任务能力</td></tr>
+</table>
+</section><section class="slide ">
+<h1>代表作：DARE (2024)</h1>
+
+<div class="big-eq">Drop + Rescale task vectors</div>
+<div class="grid2">
+<div class="card"><h3>做法</h3><p>随机丢弃 task vector 中大量参数,再按保留比例重标定,然后执行合并。</p></div>
+<div class="card"><h3>发现</h3><p>很多微调 delta 高度冗余;保留少量关键变化也能维持任务能力。</p></div>
+</div>
+<p class="callout">工程上常见组合: <b>DARE + TIES</b>,先稀疏化再做符号冲突消解。</p>
+</section><section class="slide ">
+<h1>代表作：AdaMerging (ICLR 2024)</h1>
+
+<div class="grid2">
+<div class="card"><h3>问题</h3><p>如果没有训练数据/验证集,怎么给不同任务模型分配合并权重?</p></div>
+<div class="card"><h3>方法</h3><p>使用测试时熵最小化等无监督目标,学习 task-wise / layer-wise merge coefficients。</p></div>
+</div>
+<div class="pipeline"><span>多个 task vectors</span><b>→</b><span>可学习权重</span><b>→</b><span>无监督目标</span><b>→</b><span>adaptive merged model</span></div>
+</section><section class="slide ">
+<h1>代表作：RegMean / Fisher / Importance-aware Merge</h1>
+
+<table><tr><th>方法</th><th>核心信号</th><th>适用场景</th></tr>
+<tr><td>Fisher merging</td><td>Fisher information 表示参数重要性</td><td>有少量数据/可估计重要性时</td></tr>
+<tr><td>RegMean</td><td>线性层输入协方差,闭式求解合并权重</td><td>多任务模型,层级输出对齐</td></tr>
+<tr><td>Layer-wise weights</td><td>不同层分配不同 α</td><td>低层共享、高层任务特异明显时</td></tr>
+</table>
+<p class="callout">直觉: 不是每个参数都同等重要,合并要“少动关键参数,多动可塑参数”。</p>
+</section><section class="slide ">
+<h1>代表作：ZipIt! 与结构对齐</h1>
+
+<div class="grid2">
+<div class="card"><h3>为什么需要对齐?</h3><p>两个网络即使功能相似,通道/神经元排列也可能不同。直接平均会把不对应的特征混在一起。</p></div>
+<div class="card"><h3>ZipIt! 思路</h3><p>先根据 feature similarity 对齐/匹配内部表示,再压缩或融合网络。</p></div>
+</div>
+<p class="callout">这条路线提醒我们: 参数位置不是天然语义坐标,尤其在不同训练轨迹或结构变化下。</p>
+</section><section class="slide ">
+<h1>LLM 工程路线：mergekit 把方法变成 recipe</h1>
+
+<div class="grid2">
+<div class="card"><h3>支持算子</h3><p>linear, SLERP, task arithmetic, TIES, DARE, passthrough, layer slicing 等。</p></div>
+<div class="card"><h3>核心价值</h3><p>用 YAML 明确写出 base、sources、权重、层范围、dtype,让合并可复现。</p></div>
+</div>
+<pre class="code">models:
+  - model: base-or-instruct-A
+    parameters: {weight: 0.55}
+  - model: math-or-code-B
+    parameters: {weight: 0.45}
+merge_method: ties
+dtype: bfloat16</pre>
+</section><section class="slide ">
+<h1>SLERP：为什么社区喜欢球面插值?</h1>
+
+<div class="big-eq small">SLERP(θA, θB, t) = spherical interpolation</div>
+<div class="grid2"><div class="card"><h3>线性插值的问题</h3><p>高维权重向量范数可能变化,中间点分布不稳定。</p></div><div class="card"><h3>SLERP 的直觉</h3><p>沿球面保持方向/范数更平滑地从 A 走向 B,常用于两个 LLM 的温和融合。</p></div></div>
+</section><section class="slide ">
+<h1>LoRA / Adapter 合并：轻量模型资产的复用</h1>
+
+<div class="pipeline"><span>base model</span><b>+</b><span>LoRA A</span><b>+</b><span>LoRA B</span><b>→</b><span>merged adapter / fused model</span></div>
+<div class="grid3">
+<div class="card"><h3>优势</h3><p>文件小,组合快,不用保存多份全量模型。</p></div>
+<div class="card"><h3>难点</h3><p>rank、scale、目标模块不同,多 LoRA 风格/能力会冲突。</p></div>
+<div class="card"><h3>代表方向</h3><p>K-LoRA 等训练自由 subject/style 融合; weighted adapter merge。</p></div>
+</div>
+</section><section class="slide ">
+<h1>自动化路线：Evolutionary Model Merge</h1>
+
+<div class="grid2">
+<div class="card"><h3>人工 recipe 的问题</h3><p>模型组合、层范围、权重、方法选择形成巨大搜索空间,手调成本很高。</p></div>
+<div class="card"><h3>进化搜索</h3><p>把 recipe 当作个体,用基准测试得分做 fitness,通过 mutation/crossover 找更优合并配方。</p></div>
+</div>
+<div class="pipeline"><span>model pool</span><b>→</b><span>recipe population</span><b>→</b><span>evaluate</span><b>→</b><span>mutate</span><b>→</b><span>best merge</span></div>
+</section><section class="slide ">
+<h1>场景决策树：该用哪种合并?</h1>
+
+<pre class="tree">你的模型是什么关系?
+│
+├── 同一任务 / 同一训练轨迹
+│   └── checkpoint averaging / SWA / Model Soup
+│
+├── 同一 base, 不同任务 full fine-tune
+│   ├── 有验证集 → greedy soup / learned weights
+│   └── 无数据   → task arithmetic + TIES / DARE
+│
+├── 多个 LoRA / adapter
+│   └── weighted adapter merge / LoRA fusion / K-LoRA
+│
+└── 不同架构或不同 tokenizer
+    └── 不建议直接 merge;考虑蒸馏、MoE 或路由</pre>
+</section><section class="slide ">
+<h1>评估指标：不能只看一个 leaderboard 分数</h1>
+
+<table><tr><th>维度</th><th>要测什么</th><th>例子</th></tr>
+<tr><td>保留能力</td><td>各源模型擅长任务是否还在</td><td>Math, Code, Chinese, Domain QA</td></tr>
+<tr><td>通用能力</td><td>是否牺牲基础语言/视觉能力</td><td>MMLU, GSM8K, HumanEval, MT-Bench</td></tr>
+<tr><td>冲突能力</td><td>两个能力同时触发时是否混乱</td><td>中文数学代码题,多约束生成</td></tr>
+<tr><td>安全性</td><td>拒答、幻觉、越狱、隐私泄露</td><td>SafetyBench, AdvBench, red-team prompts</td></tr>
+</table>
+</section><section class="slide ">
+<h1>常见误区 1：合并 ≠ 免费变强</h1>
+
+<div class="grid2">
+<div class="card red"><h3>错误说法</h3><p>“把几个强模型一平均,就会得到全能模型。”</p></div>
+<div class="card green"><h3>更准确</h3><p>合并只是在已有能力之间做低成本重组,成功依赖同基座、低冲突和正确配方。</p></div>
+<div class="card red"><h3>错误做法</h3><p>只报告 merged model 的最高榜单,不测每个源能力是否遗忘。</p></div>
+<div class="card green"><h3>更准确</h3><p>必须报告 per-task retention、平均性能、最差任务和安全回归。</p></div>
+</div>
+</section><section class="slide ">
+<h1>常见误区 2：不同模型都能合</h1>
+
+<div class="grid2">
+<div class="card"><h3>不能直接合</h3><ul><li>不同架构</li><li>不同 tokenizer / vocab</li><li>不同 hidden size</li><li>不同参数命名或模块语义</li></ul></div>
+<div class="card"><h3>替代方案</h3><ul><li>知识蒸馏</li><li>Mixture-of-Experts 路由</li><li>Adapter composition</li><li>输出级 ensemble</li></ul></div>
+</div>
+</section><section class="slide tight denser">
+<h1>代表工作总览 1/2</h1>
+
+<table><tr><th>年份</th><th>工作</th><th>关键词</th><th>意义</th></tr>
+<tr><td>2017</td><td>Federated Averaging</td><td>分布式/联邦场景的参数平均基础范式</td><td>不是今天 LLM merge 的直接起点,但提供了 weight averaging 的统计直觉</td></tr><tr><td>2018</td><td>SWA: Stochastic Weight Averaging</td><td>单任务训练轨迹中的权重平均</td><td>解释为什么“平均参数”有时比单点模型泛化更好</td></tr><tr><td>2021</td><td>Fisher-weighted averaging</td><td>用 Fisher 信息估计参数重要性</td><td>从 naive averaging 走向 importance-aware merge</td></tr><tr><td>2022</td><td>Model Soups</td><td>把同一预训练模型微调出的多个模型做权重平均</td><td>证明大模型微调结果常处在可连接低损失区域</td></tr><tr><td>2022</td><td>Editing Models with Task Arithmetic</td><td>把微调差值看成 task vector</td><td>让“加技能/减偏见/组合任务”变成向量运算</td></tr><tr><td>2023</td><td>RegMean</td><td>从线性层输入协方差角度做闭式合并</td><td>比简单平均更适合多任务模型融合</td></tr><tr><td>2023</td><td>TIES-Merging</td><td>解决 task vector 的符号冲突和冗余参数</td><td>成为 LLM 多能力合并的经典强 baseline</td></tr><tr><td>2023</td><td>AdaMerging</td><td>不访问训练数据,只用测试时熵最小化学习合并权重</td><td>把 merge 从固定配方推进到 data-free adaptive weighting</td></tr></table>
+</section><section class="slide tight denser">
+<h1>代表工作总览 2/2</h1>
+
+<table><tr><th>年份</th><th>工作</th><th>关键词</th><th>意义</th></tr>
+<tr><td>2023</td><td>ZipIt!</td><td>把神经网络内部特征/通道进行 zip 式匹配融合</td><td>在 CV 模型合并中强调“对齐再合并”</td></tr><tr><td>2024</td><td>DARE</td><td>Drop And REscale task vectors</td><td>意外发现 task vector 高度冗余,常与 TIES 组合</td></tr><tr><td>2024</td><td>Model Stock</td><td>基于几何/线性模式连接理解模型池</td><td>说明 merge 也可以是模型资产管理问题</td></tr><tr><td>2024</td><td>Evolutionary optimization of model merging recipes</td><td>用进化搜索自动发现 merge recipe</td><td>把人工调参 mergekit 推向 AutoML 化</td></tr><tr><td>2024</td><td>MergeKit ecosystem</td><td>YAML 配置实现 linear, SLERP, TIES, DARE 等</td><td>目前开源 LLM 社区模型合并的事实标准工具之一</td></tr><tr><td>2024</td><td>K-LoRA</td><td>训练自由融合 subject/style LoRA</td><td>面向图像生成与个性化模型资产复用</td></tr></table>
+</section><section class="slide tight">
+<h1>模型合并与 MoE / Ensemble / Distillation 的区别</h1>
+
+<table><tr><th>方法</th><th>推理成本</th><th>是否产生单模型</th><th>是否需要数据</th><th>典型用途</th></tr>
+<tr><td>Model merging</td><td>≈ 单模型</td><td>是</td><td>可无数据</td><td>低成本组合能力</td></tr>
+<tr><td>Ensemble</td><td>N 倍</td><td>否</td><td>不需要训练数据</td><td>提高稳定性/准确率</td></tr>
+<tr><td>Distillation</td><td>≈ 单模型</td><td>是</td><td>需要生成/训练数据</td><td>压缩多个 teacher 能力</td></tr>
+<tr><td>MoE / Router</td><td>取决于激活专家</td><td>是</td><td>通常需要训练</td><td>任务冲突大时分专家处理</td></tr>
+</table>
+</section><section class="slide ">
+<h1>研究机会 A：安全可控的模型合并</h1>
+
+<div class="grid3"><div class="card"><h3>问题</h3><p>合并可能削弱拒答、安全对齐或引入源模型后门。</p></div><div class="card"><h3>技术路线</h3><p>安全 task vector 分离;合并前后 red-team;对拒答能力加约束。</p></div><div class="card"><h3>可发点</h3><p>现有 merge 论文多看能力榜单,系统安全评估仍不足。</p></div></div>
+</section><section class="slide ">
+<h1>研究机会 B：多模态模型合并</h1>
+
+<div class="grid3"><div class="card"><h3>问题</h3><p>Vision encoder、LLM backbone、projector 三部分变化不同步。</p></div><div class="card"><h3>技术路线</h3><p>分模块 merge; projector 对齐;视觉/语言任务分别保持。</p></div><div class="card"><h3>可发点</h3><p>VLM/agent 模型越来越多,但 merge 仍主要集中在 LLM 文本能力。</p></div></div>
+</section><section class="slide ">
+<h1>研究机会 C：面向小团队的模型资产管理</h1>
+
+<div class="grid3"><div class="card"><h3>问题</h3><p>团队会积累大量 LoRA、领域 SFT、checkpoint,缺少“怎么组合”的方法。</p></div><div class="card"><h3>技术路线</h3><p>model card + eval matrix + recipe search + rollback。</p></div><div class="card"><h3>工程产物</h3><p>把 mergekit、评测脚本、模型注册表做成可复现流水线。</p></div></div>
+</section><section class="slide ">
+<h1>最小可跑实验设计</h1>
+
+<pre class="code"># 1. 选择同一 base 的 2-3 个模型
+base = "mistral/llama/qwen base"
+models = ["code-finetune", "math-finetune", "chinese-finetune"]
+
+# 2. 先做 baseline
+linear → slerp → ties → dare_ties
+
+# 3. 每个 merged model 测 4 类任务
+source tasks + general tasks + conflict tasks + safety tasks
+
+# 4. 记录 recipe, seed, dtype, commit hash</pre>
+<p class="callout">原则: 先小模型/小评测闭环,再扩大到 7B/14B/多 LoRA。</p>
+</section><section class="slide ">
+<h1>实践 Checklist</h1>
+
+<div class="grid2">
+<div class="card"><h3>合并前</h3><ul><li>确认同 base / tokenizer / architecture</li><li>收集源模型能力矩阵</li><li>决定是 full-weight 还是 LoRA merge</li></ul></div>
+<div class="card"><h3>合并中</h3><ul><li>从 linear / SLERP baseline 开始</li><li>再尝试 TIES / DARE / layer-wise weights</li><li>保存 recipe 与随机种子</li></ul></div>
+<div class="card"><h3>合并后</h3><ul><li>测每个源任务 retention</li><li>测通用能力和安全回归</li><li>记录失败 recipe,避免重复踩坑</li></ul></div>
+<div class="card"><h3>上线前</h3><ul><li>灰度测试</li><li>人工抽样</li><li>回滚源模型</li></ul></div>
+</div>
+</section><section class="slide ">
+<h1>结论：模型合并的三句话</h1>
+
+<div class="takeaway"><b>第一句:</b> 模型合并的本质是“参数空间里的能力重组”,不是魔法增强。</div>
+<div class="takeaway"><b>第二句:</b> 成功的关键是同基座、低冲突、好配方、完整评估。</div>
+<div class="takeaway"><b>第三句:</b> 未来最有价值的方向不是再发明一个平均公式,而是自动配方搜索、安全约束、多模态与模型资产管理。</div>
+</section><section class="slide tight">
+<h1>参考文献与数据来源</h1>
+
+<ul class="refs">
+<li>Wortsman et al., Model soups: averaging weights of multiple fine-tuned models improves accuracy without increasing inference time, ICML 2022.</li>
+<li>Ilharco et al., Editing Models with Task Arithmetic, ICLR 2023.</li>
+<li>Yadav et al., TIES-Merging: Resolving Interference When Merging Models, NeurIPS 2023.</li>
+<li>Yang et al., AdaMerging: Adaptive Model Merging for Multi-Task Learning, ICLR 2024.</li>
+<li>Yu et al., DARE: Drop And REscale task vectors for model merging, 2024.</li>
+<li>Stoica et al., ZipIt! Merging Models from Different Tasks without Training, CVPR 2023.</li>
+<li>Akiba et al., Evolutionary Optimization of Model Merging Recipes, 2024.</li>
+<li>调研抓取: OpenAlex + arXiv,关键词包括 model merging / model soups / TIES / DARE / LoRA merging / mergekit。</li>
+</ul>
+</section><section class="slide cover">
+<h1>Q&A</h1>
+<div class="qa">模型合并真正难的不是“怎么平均”,而是如何知道<b>哪些能力该保留、哪些冲突该牺牲、哪些风险必须回归测试</b>。</div>
+</section><div class="nav"><span id="page">1</span>/<span id="tot">35</span></div><div class="foot"><b style="color:#e6edf3;font-weight:600;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO</div><script>
+const slides=[...document.querySelectorAll('.slide')];let cur=0;const prog=document.getElementById('prog'),page=document.getElementById('page'),tot=document.getElementById('tot');tot.textContent=slides.length;function show(i){cur=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,k)=>s.classList.toggle('active',k===cur));page.textContent=cur+1;prog.style.width=((cur+1)/slides.length*100)+'%';location.hash='s'+(cur+1)}function next(){show(cur+1)}function prev(){show(cur-1)}document.addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown'].includes(e.key))next();if(['ArrowLeft','PageUp'].includes(e.key))prev();if(e.key==='Home')show(0);if(e.key==='End')show(slides.length-1);if(e.key.toLowerCase()==='p')window.print()});let tx=0,ty=0,tt=0,moved=false;document.addEventListener('touchstart',e=>{if(!e.touches.length)return;tx=e.touches[0].clientX;ty=e.touches[0].clientY;tt=Date.now();moved=false},{passive:true});document.addEventListener('touchmove',e=>{if(!e.touches.length)return;const dx=e.touches[0].clientX-tx,dy=e.touches[0].clientY-ty;if(Math.abs(dx)>10||Math.abs(dy)>10)moved=true},{passive:true});document.addEventListener('touchend',e=>{if(!e.changedTouches.length)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty,dt=Date.now()-tt;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.25){dx<0?next():prev();return}if(!moved&&dt<450){e.changedTouches[0].clientX<window.innerWidth*.28?prev():next()}},{passive:true});document.addEventListener('click',e=>{if(e.target.closest('a,button,kbd'))return;e.clientX<window.innerWidth*.28?prev():next()});const m=(location.hash||'').match(/s(\d+)/);show(m?parseInt(m[1])-1:0);
+</script></body></html>
