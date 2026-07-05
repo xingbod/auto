@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>昇腾芯片 · CANN · MindSpore 算子开发</title>
+  <style>
+    :root{--bg:#0d1117;--panel:#161b22;--panel2:#0f172a;--line:#30363d;--ink:#e6edf3;--muted:#8b949e;--blue:#58a6ff;--cyan:#7dd3fc;--green:#3fb950;--yellow:#f2cc60;--orange:#f97316;--red:#ff7b72;--purple:#a78bfa;--pink:#f0abfc}
+    *{box-sizing:border-box} html,body{margin:0;height:100%;background:radial-gradient(circle at 15% 10%,rgba(88,166,255,.18),transparent 28%),radial-gradient(circle at 85% 20%,rgba(167,139,250,.16),transparent 26%),linear-gradient(135deg,#0d1117,#111827 55%,#0b1120);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden;font-size:15px}
+    body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:32px 32px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.75),transparent 85%);pointer-events:none}.topbar{position:fixed;top:0;left:0;right:0;height:38px;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(13,17,23,.82);border-bottom:1px solid var(--line);backdrop-filter:blur(10px);font-size:12px;color:var(--muted)}.progress{position:fixed;top:38px;left:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple),var(--orange));z-index:1001;width:0}.slide{position:absolute;inset:0;display:none;padding:72px 60px 78px;overflow:hidden}.slide.active{display:flex;flex-direction:column}.slide.tight{padding:52px 48px 68px}.slide.cover,.slide.end{display:none}.slide.cover.active,.slide.end.active{display:flex;justify-content:center}.kicker{font-size:13px;color:var(--cyan);font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}h1{font-size:40px;line-height:1.08;margin:0 0 16px;letter-spacing:-.03em}h2{font-size:31px;line-height:1.15;margin:0 0 14px;letter-spacing:-.02em}h3{font-size:18px;margin:10px 0 6px;color:#fff}p{line-height:1.55;margin:6px 0;color:#c9d1d9}ul,ol{margin:6px 0 0 1.1em;padding:0}li{margin:5px 0;line-height:1.45;color:#c9d1d9}.muted{color:var(--muted)}.small{font-size:12px}.big{font-size:22px}.hl{color:var(--yellow);font-weight:800}.blue{color:var(--blue)}.green{color:var(--green)}.orange{color:var(--orange)}.purple{color:var(--purple)}.red{color:var(--red)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:rgba(22,27,34,.84);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 18px 45px rgba(0,0,0,.18)}.card h3{margin-top:0}.card.compact{padding:12px}.tag{display:inline-block;padding:4px 9px;border:1px solid rgba(125,211,252,.35);border-radius:999px;background:rgba(125,211,252,.08);color:var(--cyan);font-size:12px;font-weight:700;margin:2px}.tag.green{border-color:rgba(63,185,80,.35);background:rgba(63,185,80,.08);color:var(--green)}.tag.orange{border-color:rgba(249,115,22,.35);background:rgba(249,115,22,.08);color:var(--orange)}.tag.purple{border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.08);color:var(--purple)}.tag.red{border-color:rgba(255,123,114,.35);background:rgba(255,123,114,.08);color:var(--red)}
+    .pipeline{display:flex;align-items:stretch;gap:8px;margin:12px 0}.step{flex:1;text-align:center;padding:11px 8px;border-radius:12px;background:rgba(88,166,255,.10);border:1px solid rgba(88,166,255,.36);font-weight:800}.step .s{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:4px}.arrow{align-self:center;color:var(--muted);font-weight:900}.diagram{background:rgba(0,0,0,.20);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:6px 0}.diag-row{display:flex;align-items:stretch;gap:8px;margin:6px 0}.grp{flex:1;padding:10px;background:rgba(125,211,252,.06);border:1px solid rgba(125,211,252,.25);border-radius:10px}.grp .gl{display:block;font-size:11px;color:var(--cyan);font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}.gn{display:inline-block;padding:4px 7px;border-radius:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);font-size:12px;margin:2px}.grp.mem{background:rgba(63,185,80,.06);border-color:rgba(63,185,80,.28)}.grp.mem .gl{color:var(--green)}.grp.off{background:rgba(242,204,96,.06);border-color:rgba(242,204,96,.28)}.grp.off .gl{color:var(--yellow)}.grp.adapt{background:rgba(167,139,250,.06);border-color:rgba(167,139,250,.28)}.grp.adapt .gl{color:var(--purple)}.flow{text-align:center;color:var(--muted);font-size:12px;margin:1px 0}.code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;background:#0b1020;border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:#d1e7ff;white-space:pre-wrap;line-height:1.42;font-size:12.5px}.tree{font-family:ui-monospace,"SF Mono",Menlo,monospace;white-space:pre;background:#0b1020;border:1px solid var(--line);border-radius:12px;padding:10px 13px;line-height:1.35;font-size:12px;color:#d1e7ff}.compare{width:100%;border-collapse:collapse;font-size:13px;background:rgba(22,27,34,.72);border-radius:12px;overflow:hidden}.compare th,.compare td{border:1px solid var(--line);padding:8px 9px;vertical-align:top}.compare th{color:#fff;background:rgba(88,166,255,.12)}.nav{position:fixed;bottom:34px;right:18px;display:flex;gap:8px;z-index:1000}.nav button{background:rgba(22,27,34,.9);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:8px 11px;cursor:pointer}.page{position:fixed;bottom:42px;left:18px;color:var(--muted);font-size:12px;z-index:1000}.copyright{position:fixed;bottom:0;left:0;right:0;z-index:9999;border-top:1px solid rgba(255,255,255,.08);padding:5px 16px;text-align:center;font-size:11px;color:#8b949e;background:rgba(13,17,23,.92);line-height:1.4;backdrop-filter:blur(6px)}
+    @media(max-width:760px){body{overflow:auto}.slide{position:relative;min-height:100vh;overflow:auto;padding:58px 18px 86px}.grid2,.grid3,.grid4{grid-template-columns:1fr}.pipeline,.diag-row{flex-direction:column}.arrow{display:none}h1{font-size:31px}h2{font-size:25px}.topbar{font-size:10px}}
+  </style>
+</head>
+<body>
+  <div class="topbar"><b>Ascend · CANN · MindSpore Operator Development</b><span>←/→ 翻页 · Space 下一页 · P 打印</span></div><div class="progress" id="prog"></div>
+
+  <section class="slide cover active">
+    <div class="kicker">国产 AI 芯片软件栈入门课</div>
+    <h1>昇腾芯片的 <span class="blue">CANN</span>、<span class="purple">MindSpore</span> 与算子开发</h1>
+    <p class="big">从“模型里一个 op”到“AI Core 上真正跑起来的 kernel”：理解软件栈、编程模型、开发流程与调优抓手。</p>
+    <p class="muted">适合：需要把 PyTorch/MindSpore 模型迁移到昇腾、需要补自定义算子、或想理解 NPU 性能瓶颈的同学。</p>
+    <div><span class="tag">Ascend AI Processor</span><span class="tag purple">CANN</span><span class="tag green">MindSpore</span><span class="tag orange">Ascend C</span></div>
+  </section>
+
+  <section class="slide"><div class="kicker">01 / 一句话主线</div><h2>先把三层关系讲清楚</h2>
+    <div class="diagram">
+      <div class="diag-row"><div class="grp adapt"><span class="gl">框架层</span><span class="gn">MindSpore</span><span class="gn">计算图</span><span class="gn">Primitive / Custom</span></div></div>
+      <div class="flow">⬇ 图编译、算子选择、shape/dtype 推导</div>
+      <div class="diag-row"><div class="grp off"><span class="gl">平台层</span><span class="gn">CANN</span><span class="gn">ACL / GE</span><span class="gn">算子库</span><span class="gn">编译器</span><span class="gn">运行时</span></div></div>
+      <div class="flow">⬇ kernel 编译、launch、stream、memory</div>
+      <div class="diag-row"><div class="grp mem"><span class="gl">硬件层</span><span class="gn">AI Core</span><span class="gn">Cube</span><span class="gn">Vector</span><span class="gn">Scalar</span><span class="gn">GM/UB/L1/L0</span></div></div>
+    </div>
+    <p class="hl">MindSpore 负责“图和训练语义”，CANN 负责“把算子落到昇腾硬件”，Ascend C/TBE 负责“写或生成具体 kernel”。</p>
+  </section>
+
+  <section class="slide"><div class="kicker">02 / 为什么要关心算子</div><h2>深度学习模型最终会被拆成很多算子</h2>
+    <div class="grid3"><div class="card"><h3>模型视角</h3><p>Conv、MatMul、Softmax、LayerNorm、Gather、Reshape、通信 op 共同构成网络。</p></div><div class="card"><h3>编译视角</h3><p>图优化会做融合、常量折叠、layout 转换、算子选择与 kernel 调度。</p></div><div class="card"><h3>硬件视角</h3><p>性能取决于数据搬运、并行切分、内存层级、Cube/Vector 利用率。</p></div></div>
+    <p>一个模型“能不能跑、跑得准不准、跑得快不快”，常常卡在少数关键算子：不支持、shape 动态、dtype 不匹配、融合失败、内存搬运过多。</p>
+  </section>
+
+  <section class="slide"><div class="kicker">03 / 昇腾硬件抽象</div><h2>AI Core：不只是“GPU 的国产替代”</h2>
+    <div class="grid2"><div class="card"><h3><span class="blue">Cube</span> 计算单元</h3><p>面向矩阵乘 / 卷积等高吞吐张量计算，是大模型 GEMM、Conv 的核心。</p><p class="small muted">典型瓶颈：tiling、layout、L0/L1 数据复用。</p></div><div class="card"><h3><span class="green">Vector</span> 计算单元</h3><p>面向 elementwise、激活、归一化、数据变换等向量操作。</p><p class="small muted">典型瓶颈：UB 容量、访存连续性、流水并行。</p></div><div class="card"><h3><span class="yellow">Scalar</span> 控制</h3><p>负责标量计算、地址计算、循环控制与 kernel 调度逻辑。</p></div><div class="card"><h3><span class="purple">存储层级</span></h3><p>Global Memory 到 Local/Unified Buffer 再到计算单元，算子优化本质上是在减少慢速搬运。</p></div></div>
+  </section>
+
+  <section class="slide"><div class="kicker">04 / CANN 是什么</div><h2>CANN：昇腾 AI 处理器的软件基础设施</h2>
+    <div class="pipeline"><div class="step">模型/图<span class="s">MindSpore / ONNX / ATC</span></div><div class="arrow">→</div><div class="step">图引擎<span class="s">GE, graph optimization</span></div><div class="arrow">→</div><div class="step">算子与编译<span class="s">op library, TBE, Ascend C</span></div><div class="arrow">→</div><div class="step">运行时<span class="s">ACL, stream, memory</span></div><div class="arrow">→</div><div class="step">AI Core<span class="s">execute kernels</span></div></div>
+    <ul><li><b>开发者入口</b>：ACL 应用开发、ATC 模型转换、Ascend C/TBE 自定义算子、Profiler 调优。</li><li><b>框架入口</b>：MindSpore 后端通过 CANN 调用算子库、编译器和运行时。</li><li><b>核心价值</b>：屏蔽硬件细节，同时保留高性能 kernel 开发通道。</li></ul>
+  </section>
+
+  <section class="slide"><div class="kicker">05 / MindSpore 在哪里</div><h2>MindSpore：用计算图组织训练/推理，再交给 CANN</h2>
+    <div class="grid2"><div class="card"><h3>前端表达</h3><p>Cell / Tensor / ops / grad，把网络、损失和优化器组织成动态图或静态图。</p></div><div class="card"><h3>图模式编译</h3><p>Graph Mode 下做图优化、自动微分、并行策略、算子级并行、内存复用。</p></div><div class="card"><h3>算子接口</h3><p>内置 ops 覆盖常用深度学习算子；不足时可用 <b>Custom</b> 或 <b>CustomOpBuilder</b> 接入。</p></div><div class="card"><h3>昇腾后端</h3><p>把图中算子映射到 CANN 算子库或用户自定义 kernel，最终在 Ascend NPU 上执行。</p></div></div>
+  </section>
+
+  <section class="slide"><div class="kicker">06 / 算子从哪来</div><h2>三类算子：能用库就别手写，必须手写再下沉</h2>
+    <table class="compare"><tr><th>类别</th><th>适合场景</th><th>优点</th><th>风险</th></tr><tr><td>内置算子</td><td>Conv/MatMul/LayerNorm/Softmax 等常见 op</td><td>稳定、性能好、被框架图优化识别</td><td>新模型结构可能缺少特殊变体</td></tr><tr><td>组合算子</td><td>用多个已有 ops 拼出功能</td><td>开发快、可维护</td><td>可能产生多次访存，融合失败会慢</td></tr><tr><td>自定义算子</td><td>新算法、特殊 shape、融合 kernel、性能热点</td><td>控制力强，可极致优化</td><td>开发/调试/适配成本高</td></tr></table>
+    <p class="hl">判断顺序：内置可用 → 组合可接受 → 图融合能解决 → 最后才写自定义算子。</p>
+  </section>
+
+  <section class="slide tight"><div class="kicker">07 / MindSpore 自定义算子入口</div><h2>MindSpore 官方主要给两条路</h2>
+    <div class="grid2"><div class="card"><h3>Custom Primitive</h3><ul><li>统一 Custom 原语，在算子执行阶段调用用户接口。</li><li>支持 Graph Mode 与 PyNative Mode。</li><li>AOT 类型可接入预编译 so；Ascend 平台可接入自定义算子。</li><li>调度流程更接近内置算子，性能路径更完整。</li></ul></div><div class="card"><h3>CustomOpBuilder</h3><ul><li>在线编译和加载自定义算子模块。</li><li>更偏 C++ tensor 编程，执行流程直观。</li><li>主要用于 PyNative Mode，适合快速接入与验证。</li><li>也可通过 Runner 接入 ATB / ACLNN 等算子。</li></ul></div></div>
+    <p class="small muted">来源：MindSpore master 教程“自定义算子”与 API 文档 Custom；接口等级和平台支持以安装版本文档为准。</p>
+  </section>
+
+  <section class="slide"><div class="kicker">08 / Ascend C 是什么</div><h2>Ascend C：面向昇腾算子开发的 C/C++ 编程语言</h2>
+    <div class="grid4"><div class="card compact"><h3>C/C++ 风格</h3><p>接近开发者既有习惯，入口函数用设备侧 kernel 表达。</p></div><div class="card compact"><h3>结构化核函数</h3><p>把搬运、计算、写回组织成清晰流程。</p></div><div class="card compact"><h3>自动并行调度</h3><p>通过 block、tiling、pipeline 让数据在 AI Core 上并行。</p></div><div class="card compact"><h3>CPU/NPU 调试</h3><p>可先在 CPU 仿真环境验证，再上 NPU 加速计算。</p></div></div>
+    <p>官方描述：Ascend C 是 CANN 面向算子开发推出的编程语言，原生支持 C/C++ 标准规范，算子经编译器编译和运行时调度后运行在昇腾 AI 处理器上。</p>
+  </section>
+
+  <section class="slide"><div class="kicker">09 / 一个 Add 算子的内核逻辑</div><h2>写 kernel 前先做“算子分析”</h2>
+    <div class="pipeline"><div class="step">数学表达式<span class="s">z = x + y</span></div><div class="arrow">→</div><div class="step">输入输出<span class="s">x, y → z</span></div><div class="arrow">→</div><div class="step">dtype / shape<span class="s">float16, shape range</span></div><div class="arrow">→</div><div class="step">数据流<span class="s">GM → UB → compute → GM</span></div></div>
+    <div class="tree">Global Memory: x, y
+      │ copy in
+      ▼
+Local / Unified Buffer: x_tile, y_tile
+      │ vector add
+      ▼
+Local / Unified Buffer: z_tile
+      │ copy out
+      ▼
+Global Memory: z</div>
+  </section>
+
+  <section class="slide tight"><div class="kicker">10 / Ascend C 代码长什么样</div><h2>HelloWorld 级别的 kernel 入口</h2>
+    <div class="code">#include "kernel_operator.h"
+
+extern "C" __global__ __aicore__ void hello_world() {
+  AscendC::printf("Hello World!!!\n");
+}
+
+void hello_world_do(uint32_t blockDim, void *stream) {
+  hello_world&lt;&lt;&lt;blockDim, nullptr, stream&gt;&gt;&gt;();
+}</div>
+    <ul><li><code>__global__ __aicore__</code>：声明运行在 AI Core 上的设备侧入口。</li><li><code>&lt;&lt;&lt;blockDim, ..., stream&gt;&gt;&gt;</code>：类似 CUDA kernel launch，但面向昇腾运行时。</li><li>真实算子会包含 tiling、队列、copy in / compute / copy out 等结构。</li></ul>
+  </section>
+
+  <section class="slide"><div class="kicker">11 / 两种工程形态</div><h2>Kernel 直调 vs 框架接入</h2>
+    <div class="grid2"><div class="card"><h3>Kernel 直调工程</h3><p>先把 kernel 当成一个独立程序跑通：编译、CPU 模式验证、NPU 模式验证、性能 profiling。</p><p class="hl">适合学习、调试、微基准测试。</p></div><div class="card"><h3>自定义算子工程</h3><p>补齐 op 原型、shape/dtype 推导、注册信息、kernel binary，让框架图编译时可以识别和调度。</p><p class="hl">适合接入 MindSpore/模型生产流程。</p></div></div>
+    <p>不要一上来就接框架。先用 kernel 直调把数学正确性和性能基本盘跑通，再处理 MindSpore 注册与图编译问题。</p>
+  </section>
+
+  <section class="slide"><div class="kicker">12 / 端到端开发流程</div><h2>一条从需求到上线的算子开发流水线</h2>
+    <div class="pipeline"><div class="step">需求定位<span class="s">缺 op / 慢 op</span></div><div class="arrow">→</div><div class="step">算子分析<span class="s">公式、shape、dtype</span></div><div class="arrow">→</div><div class="step">kernel 开发<span class="s">Ascend C / TBE</span></div><div class="arrow">→</div><div class="step">直调验证<span class="s">CPU + NPU</span></div><div class="arrow">→</div><div class="step">框架接入<span class="s">MindSpore Custom</span></div><div class="arrow">→</div><div class="step">调优上线<span class="s">Profiler, CI</span></div></div>
+    <div class="grid3"><div class="card compact"><h3>正确性</h3><p>与 NumPy/PyTorch golden 输出对齐，覆盖边界 shape。</p></div><div class="card compact"><h3>性能</h3><p>和内置算子/组合实现比较吞吐、时延、访存。</p></div><div class="card compact"><h3>稳定性</h3><p>多版本 CANN、不同 Atlas 产品、异常输入与动态 shape。</p></div></div>
+  </section>
+
+  <section class="slide"><div class="kicker">13 / 算子性能的核心：tiling</div><h2>tiling：把大张量切成硬件吃得下的小块</h2>
+    <div class="grid2"><div class="card"><h3>为什么要切</h3><p>Global Memory 容量大但慢；本地 buffer 快但小。算子要把数据分块搬进本地，再尽量复用。</p></div><div class="card"><h3>切什么</h3><p>矩阵维度、batch、channel、sequence length、head、blockDim、每次搬运的 tile size。</p></div><div class="card"><h3>切错会怎样</h3><p>UB 放不下、访存不连续、计算单元等数据、并行粒度过小或过大。</p></div><div class="card"><h3>调优目标</h3><p>让搬运与计算重叠，让 Cube/Vector 尽量满，让中间结果少回 GM。</p></div></div>
+  </section>
+
+  <section class="slide tight"><div class="kicker">14 / 数据搬运比代码更重要</div><h2>很多 NPU 算子慢，不是“算得慢”，而是“搬得慢”</h2>
+    <div class="diagram"><div class="diag-row"><div class="grp off"><span class="gl">低效模式</span><span class="gn">GM 读 x</span> → <span class="gn">算一点</span> → <span class="gn">GM 写 tmp</span> → <span class="gn">再读 tmp</span> → <span class="gn">再写 y</span></div></div><div class="flow">⬇ 优化</div><div class="diag-row"><div class="grp mem"><span class="gl">高效模式</span><span class="gn">GM 读 tile</span> → <span class="gn">UB 内多步计算</span> → <span class="gn">只写最终 y</span></div></div></div>
+    <ul><li><b>融合</b>：把 elementwise + reduce + activation 合到一个 kernel，减少中间张量落 GM。</li><li><b>双缓冲/流水</b>：copy in、compute、copy out 并行推进。</li><li><b>layout</b>：让访存连续，让硬件向量化/矩阵计算单元更容易吃满。</li></ul>
+  </section>
+
+  <section class="slide"><div class="kicker">15 / 图编译与算子融合</div><h2>框架层优化决定“你写的算子是否真的被用上”</h2>
+    <div class="grid3"><div class="card"><h3>Pattern Fusion</h3><p>Conv+BN+ReLU、MatMul+Bias+Activation、LayerNorm 子图融合。</p></div><div class="card"><h3>Op Selection</h3><p>同一个算子可能有多个实现，根据 dtype、shape、format 选择 kernel。</p></div><div class="card"><h3>Format Transform</h3><p>NCHW/NHWC/NC1HWC0 等 layout 转换会成为隐藏成本。</p></div></div>
+    <p>做自定义算子时要问：它是替代单个 op，还是替代一个子图？是否破坏原本可以发生的融合？shape/dtype 推导是否足够让图编译器识别？</p>
+  </section>
+
+  <section class="slide"><div class="kicker">16 / 常见接入坑</div><h2>自定义算子最容易卡在这些地方</h2>
+    <div class="grid2"><div class="card"><h3>1. shape/dtype 不完整</h3><p>只测固定 shape，一到动态 batch 或边界长度就编译失败。</p></div><div class="card"><h3>2. 精度对齐不严</h3><p>float16/bfloat16/float32 累加策略不同，误差阈值要按算子性质设置。</p></div><div class="card"><h3>3. 注册信息缺失</h3><p>框架不知道输入输出、format、target、kernel 名称，图编译无法选择。</p></div><div class="card"><h3>4. 性能只看单 kernel</h3><p>单算子快了，但前后 layout 转换增加，端到端反而慢。</p></div></div>
+  </section>
+
+  <section class="slide"><div class="kicker">17 / 调试工具链</div><h2>先证明“算对”，再证明“跑快”</h2>
+    <div class="grid3"><div class="card"><h3>CPU 仿真</h3><p>非昇腾设备也可先安装 CANN，用 CPU 仿真环境开发与测试 kernel 逻辑。</p></div><div class="card"><h3>Dump / 日志</h3><p>定位图编译、shape 推导、精度差异和中间张量异常。</p></div><div class="card"><h3>Profiler</h3><p>看 kernel 时间、AI Core 利用率、stream 并行、内存搬运、通信等待。</p></div></div>
+    <p class="hl">调试顺序：最小 shape → 多 shape → 随机输入 golden → 极值输入 → 端到端模型 → profiler。</p>
+  </section>
+
+  <section class="slide"><div class="kicker">18 / 与 PyTorch/Triton 的类比</div><h2>迁移思维：概念相似，但生态接口不同</h2>
+    <table class="compare"><tr><th>CUDA/PyTorch 生态</th><th>昇腾/CANN/MindSpore 生态</th><th>迁移提醒</th></tr><tr><td>CUDA kernel</td><td>Ascend C kernel / TBE</td><td>内存层级、launch 方式、算子注册不同</td></tr><tr><td>torch.ops / C++ extension</td><td>MindSpore Custom / CustomOpBuilder</td><td>Graph Mode 下 shape/dtype 推导更关键</td></tr><tr><td>Triton 写融合 kernel</td><td>Ascend C 写融合 kernel</td><td>都要围绕 tile、访存、并行度调优</td></tr><tr><td>Nsight / torch profiler</td><td>Ascend Profiler / MindSpore Profiler</td><td>指标名不同，但都看算子时延和利用率</td></tr></table>
+  </section>
+
+  <section class="slide tight"><div class="kicker">19 / 大模型里的高频算子</div><h2>LLM 在昇腾上优化，常围绕这几类热点</h2>
+    <div class="grid4"><div class="card compact"><h3>GEMM / MatMul</h3><p>QKV、MLP、投影层；Cube 利用率是关键。</p></div><div class="card compact"><h3>Attention</h3><p>Softmax、mask、KV cache、FlashAttention 类融合。</p></div><div class="card compact"><h3>Norm / Activation</h3><p>LayerNorm/RMSNorm/SwiGLU；常见融合目标。</p></div><div class="card compact"><h3>通信与并行</h3><p>AllReduce、AllGather、ReduceScatter 与计算重叠。</p></div></div>
+    <p>真实性能优化不是“写一个更快的 op”这么简单，而是算子、图融合、并行策略、通信和内存共同优化。</p>
+  </section>
+
+  <section class="slide"><div class="kicker">20 / 什么时候该写自定义算子</div><h2>一个实用决策树</h2>
+    <div class="tree">模型在昇腾上有问题？
+│
+├── 直接不支持 / 编译失败
+│   ├── 能用等价内置 op 改写？ → 先改模型图
+│   └── 不能 → 自定义算子 / 等待官方支持
+│
+├── 能跑但很慢
+│   ├── profiler 显示单个 op 热点？ → 评估融合或手写 kernel
+│   ├── layout transform 很多？ → 优先改 format / 图融合
+│   └── 通信等待多？ → 优先并行策略与通信重叠
+│
+└── 精度不一致
+    ├── dtype / cast / 累加策略问题？ → 调整数值路径
+    └── kernel bug？ → golden + dump 定位</div>
+  </section>
+
+  <section class="slide"><div class="kicker">21 / 课堂案例：自定义 Add</div><h2>最小闭环：从 Add 开始练手</h2>
+    <div class="grid3"><div class="card"><h3>输入</h3><p>两个 shape 相同的 float16 Tensor：x, y。</p></div><div class="card"><h3>计算</h3><p>分块搬入 UB，调用向量加法接口，得到 z_tile。</p></div><div class="card"><h3>输出</h3><p>把 z_tile 搬回 Global Memory，和 NumPy/PyTorch 结果对齐。</p></div></div>
+    <div class="code">golden = x.astype(np.float32) + y.astype(np.float32)
+# 允许 fp16 输出误差，例如 atol / rtol 按业务设定
+np.testing.assert_allclose(output, golden.astype(np.float16), rtol=1e-3, atol=1e-3)</div>
+  </section>
+
+  <section class="slide"><div class="kicker">22 / 工程 checklist</div><h2>上线前检查清单</h2>
+    <div class="grid2"><div class="card"><h3>功能正确</h3><ul><li>覆盖 dtype、shape、动态 batch、极端输入。</li><li>有 golden test 和误差阈值说明。</li><li>CPU 仿真和 NPU 实测都通过。</li></ul></div><div class="card"><h3>性能可信</h3><ul><li>有与内置/组合实现的端到端对比。</li><li>Profiler 解释瓶颈，不只报单个数字。</li><li>确认没有引入额外 layout transform。</li></ul></div><div class="card"><h3>框架接入</h3><ul><li>注册信息、shape/dtype 推导、target 支持完整。</li><li>Graph/PyNative 支持范围清楚。</li></ul></div><div class="card"><h3>可维护</h3><ul><li>写明 CANN/MindSpore/驱动版本。</li><li>CI 覆盖编译、单测、模型 smoke test。</li></ul></div></div>
+  </section>
+
+  <section class="slide"><div class="kicker">23 / 学习路线</div><h2>推荐学习顺序：先跑通，再深入</h2>
+    <div class="pipeline"><div class="step">1 跑 MindSpore 模型<span class="s">理解图与 ops</span></div><div class="arrow">→</div><div class="step">2 用 Profiler 找热点<span class="s">知道慢在哪里</span></div><div class="arrow">→</div><div class="step">3 跑 Ascend C HelloWorld/Add<span class="s">理解 kernel</span></div><div class="arrow">→</div><div class="step">4 接入 Custom<span class="s">进框架</span></div><div class="arrow">→</div><div class="step">5 做融合和 tiling<span class="s">追性能</span></div></div>
+    <p>不要从复杂 Attention kernel 开始。先用 Add / ReLU / LayerNorm 这类能快速验证的算子建立完整闭环。</p>
+  </section>
+
+  <section class="slide"><div class="kicker">24 / 总结</div><h2>把“算子开发”放回整条 AI 软件栈里理解</h2>
+    <div class="grid3"><div class="card"><h3>MindSpore</h3><p>负责模型表达、自动微分、图优化、并行与自定义算子接口。</p></div><div class="card"><h3>CANN</h3><p>负责图引擎、算子库、编译器、ACL 运行时、Profiler 与昇腾硬件连接。</p></div><div class="card"><h3>Ascend C</h3><p>负责把关键计算写成高性能 AI Core kernel，处理搬运、tiling 与并行。</p></div></div>
+    <p class="big hl">核心判断：先用框架和内置算子解决 80%，再针对瓶颈算子用 Ascend C 做 20% 的深度优化。</p>
+  </section>
+
+  <section class="slide tight"><div class="kicker">25 / 参考资料</div><h2>资料来源与延伸阅读</h2>
+    <ul><li>MindSpore master 文档：API 文档、ops.Custom、自定义算子教程。</li><li>昇腾社区 CANN 商用版 8.0.0 开发文档：Ascend C 简介、环境准备、HelloWorld、Kernel 直调工程、硬件架构。</li><li>MindSpore 教程：图模式、并行、调试调优、Ascend 性能调优、Dump/DryRun。</li><li>实际工程建议：以本地安装版本文档为准，不同 CANN / MindSpore / Atlas 产品的接口与支持范围可能变化。</li></ul>
+    <p class="muted">这份 slides 侧重“概念地图 + 工程路径”，不是完整 API 手册；写真实算子时请对照目标版本官方样例与编译脚本。</p>
+  </section>
+
+  <section class="slide end"><div class="kicker">Q&A</div><h1>问题讨论</h1><p class="big">你当前更关心哪一类问题：模型迁移、缺失算子、性能调优，还是自定义算子从零开发？</p><div><span class="tag">Migration</span><span class="tag green">Custom Op</span><span class="tag orange">Profiler</span><span class="tag purple">Ascend C</span></div></section>
+
+  <div class="page"><span id="cur">1</span> / <span id="tot">27</span></div><div class="nav"><button onclick="prev()">←</button><button onclick="next()">→</button></div>
+  <div class="copyright"><b style="color:#e6edf3;font-weight:600;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO</div>
+<script>
+const slides=[...document.querySelectorAll('.slide')];let idx=0;const cur=document.getElementById('cur'),tot=document.getElementById('tot'),prog=document.getElementById('prog');tot.textContent=slides.length;
+function show(i){idx=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,j)=>s.classList.toggle('active',j===idx));cur.textContent=idx+1;prog.style.width=((idx+1)/slides.length*100)+'%';location.hash='#'+(idx+1)}
+function next(){show(idx+1)}function prev(){show(idx-1)}
+document.addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown'].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev()}else if(e.key==='Home'){show(0)}else if(e.key==='End'){show(slides.length-1)}else if(e.key.toLowerCase()==='p'){window.print()}});
+let tx=0,ty=0,tt=0,moved=false;document.addEventListener('touchstart',e=>{if(!e.touches.length)return;tx=e.touches[0].clientX;ty=e.touches[0].clientY;tt=Date.now();moved=false},{passive:true});document.addEventListener('touchmove',e=>{if(!e.touches.length)return;const dx=e.touches[0].clientX-tx,dy=e.touches[0].clientY-ty;if(Math.abs(dx)>10||Math.abs(dy)>10)moved=true},{passive:true});document.addEventListener('touchend',e=>{if(!e.changedTouches.length)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty,dt=Date.now()-tt;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.25){dx<0?next():prev();return}if(!moved&&dt<450){e.changedTouches[0].clientX<window.innerWidth*.28?prev():next()}},{passive:true});document.addEventListener('click',e=>{if(e.target.closest('a,button,kbd'))return;e.clientX<window.innerWidth*.28?prev():next()});
+if(location.hash){const n=parseInt(location.hash.slice(1),10);if(n)idx=n-1}show(idx);
+</script>
+</body>
+</html>
