@@ -1,0 +1,109 @@
+{
+  "total": 227,
+  "by_year": {
+    "2020": 37,
+    "2022": 33,
+    "2024": 40,
+    "2023": 38,
+    "2021": 28,
+    "2025": 35,
+    "2026": 16
+  },
+  "by_source": {
+    "OpenAlex": 188,
+    "arXiv": 39
+  },
+  "by_topic": {
+    "Drug discovery / senolytics": 81,
+    "Imaging / histology / morphology": 71,
+    "Clinical longevity / frailty": 156,
+    "Review / perspective": 68,
+    "Multi-omics / biomarkers": 117,
+    "Mechanism modeling / causal": 106,
+    "Single-cell / spatial aging": 25,
+    "Aging clocks / biological age": 82,
+    "Other": 5
+  },
+  "top_venues": [
+    [
+      "arXiv",
+      39
+    ],
+    [
+      "Nature Communications",
+      10
+    ],
+    [
+      "Scientific Reports",
+      10
+    ],
+    [
+      "Nature Aging",
+      8
+    ],
+    [
+      "Nature",
+      6
+    ],
+    [
+      "eLife",
+      6
+    ],
+    [
+      "Aging Cell",
+      6
+    ],
+    [
+      "Frontiers in Immunology",
+      6
+    ],
+    [
+      "GeroScience",
+      5
+    ],
+    [
+      "Nature Medicine",
+      4
+    ],
+    [
+      "The Journals of Gerontology Series A",
+      4
+    ],
+    [
+      "Aging",
+      4
+    ],
+    [
+      "Alzheimer s & Dementia",
+      3
+    ],
+    [
+      "BMC Bioinformatics",
+      3
+    ],
+    [
+      "International Journal of Molecular Sciences",
+      3
+    ],
+    [
+      "The Lancet",
+      2
+    ],
+    [
+      "Science",
+      2
+    ],
+    [
+      "IEEE Access",
+      2
+    ],
+    [
+      "Frontiers in Public Health",
+      2
+    ],
+    [
+      "Sensors",
+      2
+    ]
+  ]
+}
