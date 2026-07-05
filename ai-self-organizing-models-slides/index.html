@@ -1,0 +1,271 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI 自组装 / 自组织模型调研</title><style>
+
+:root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--ink:#e6edf3;--muted:#8b949e;--blue:#58a6ff;--green:#3fb950;--orange:#f97316;--purple:#a78bfa;--red:#f87171;--yellow:#fbbf24}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 15%,rgba(88,166,255,.18),transparent 30%),radial-gradient(circle at 85% 25%,rgba(167,139,250,.13),transparent 32%),var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}.topbar{position:fixed;top:0;left:0;right:0;height:38px;z-index:10;background:rgba(13,17,23,.86);border-bottom:1px solid var(--line);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:12px;color:var(--muted)}.progress{position:fixed;top:38px;left:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple));z-index:11;width:0}.slide{position:absolute;inset:0;display:none;padding:62px 58px 76px;overflow:hidden}.slide.active{display:flex;flex-direction:column}.slide.cover{display:none}.slide.cover.active{display:flex;justify-content:center}.kicker{color:var(--blue);font-size:13px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:8px}h1{font-size:38px;line-height:1.08;margin:0 0 10px;letter-spacing:-.03em}h2{font-size:30px;line-height:1.15;margin:0 0 12px;letter-spacing:-.02em}h3{font-size:18px;margin:12px 0 7px;color:var(--blue)}p{font-size:18px;line-height:1.45;margin:0 0 12px;color:#c9d1d9}.sub{font-size:20px;color:var(--muted)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:rgba(22,27,34,.84);border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:0 20px 60px rgba(0,0,0,.18)}.card ul{margin:8px 0 0;padding-left:20px}.card li,li{font-size:16px;line-height:1.42;margin:5px 0;color:#d1d5db}.pill{display:inline-block;border:1px solid rgba(88,166,255,.45);background:rgba(88,166,255,.10);color:#bfdbfe;border-radius:999px;padding:5px 10px;margin:3px;font-size:13px}.flow{display:flex;align-items:center;gap:9px;margin:14px 0}.node{flex:1;text-align:center;background:rgba(88,166,255,.10);border:1px solid rgba(88,166,255,.36);border-radius:12px;padding:12px 8px;font-weight:700}.arrow{color:var(--muted);font-size:22px}.quote{border-left:4px solid var(--purple);padding:10px 16px;background:rgba(167,139,250,.08);border-radius:0 12px 12px 0;color:#ddd6fe;font-size:20px}.tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th,.tbl td{border:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}.tbl th{color:var(--blue);background:rgba(88,166,255,.08)}.small{font-size:13px;color:var(--muted)}.accent{color:var(--orange)}.green{color:var(--green)}.purple{color:var(--purple)}.foot{position:fixed;bottom:26px;right:18px;color:var(--muted);font-size:12px}.copyright{position:fixed;bottom:0;left:0;right:0;z-index:9999;border-top:1px solid rgba(255,255,255,.08);padding:5px 16px;text-align:center;font-size:11px;color:#9ca3af;background:rgba(13,17,23,.92);line-height:1.4}.tight{padding:54px 50px 72px}.tight h2{font-size:28px}.tight .card{padding:12px 14px}.tight li{font-size:14.5px;line-height:1.34;margin:3px 0}@media(max-width:760px){body{overflow:auto}.slide{position:relative;min-height:100vh;overflow:auto;padding:54px 20px 70px}.grid2,.grid3{grid-template-columns:1fr}h1{font-size:30px}h2{font-size:25px}.topbar{font-size:10px}}
+
+</style></head><body><div class="topbar"><b>AI Self-Organizing Models</b><span>←/→ Space 翻页 · P 打印</span></div><div class="progress" id="prog"></div>
+<section class="slide cover"><div class="kicker">封面 · 01/33</div><h1>AI 自组装 / 自组织模型</h1><p class="sub">从固定架构到模块、细胞、专家与 Agent 的动态组合</p>
+<div class="card"><ul>
+<li>关键词: modular self-organization, neural cellular automata, model assembly, self-growing architectures, multi-agent self-organization</li>
+<li>操作: ←/→ 或 Space 翻页, P 打印</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">一句话结论 · 02/33</div><h1>它不是一个统一学派, 而是一组正在汇合的路线</h1><p class="sub">真正的研究问题是: 模型结构、计算路径、模块分工能否由局部规则和任务反馈自动形成。</p>
+<div class="card"><ul>
+<li>最成熟: Mixture-of-Experts / conditional computation</li>
+<li>最像“自组装”: Neural Cellular Automata / neural developmental programs</li>
+<li>最接近可发新方向: LLM/Agent 的动态模块组合 + 自组织协作</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">主题地图 · 03/33</div><h1>四条主线</h1><p class="sub">把“自组装模型”拆成可检索、可投稿的 4 个英文方向。</p>
+<div class="grid2"><div class="card"><h3>A. Neural Cellular Automata</h3><p>局部规则长出全局形态</p></div><div class="card"><h3>B. Self-growing / developmental networks</h3><p>网络结构随任务生长</p></div><div class="card"><h3>C. Modular assembly / routing</h3><p>模块、专家、工具按需组合</p></div><div class="card"><h3>D. Multi-agent self-organization</h3><p>多 Agent 局部互动形成协作结构</p></div></div>
+</section>
+<section class="slide"><div class="kicker">路线 A · 04/33</div><h1>Neural Cellular Automata</h1><p class="sub">每个 cell 只看邻域, 用共享小网络更新状态, 多步迭代后形成目标图像、纹理或动力学。</p>
+<div class="card"><ul>
+<li>代表作: Growing Neural Cellular Automata, Distill 2020, Mordvintsev et al., 184引(OpenAlex)</li>
+<li>核心机制: local perception → stochastic update → repeated growth</li>
+<li>为什么像自组装: 没有全局控制器, 结构从局部交互涌现</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">NCA 机制图 · 05/33</div><h1>局部规则如何长成整体</h1><p class="sub">同一个小模型复制到每个位置, 像细胞一样并行更新。</p>
+<div class="flow"><div class="node">输入/状态</div><div class="arrow">→</div><div class="node">局部规则/路由</div><div class="arrow">→</div><div class="node">动态结构</div><div class="arrow">→</div><div class="node">全局反馈</div></div><div class="card"><ul>
+<li>Cell state: hidden channels + visible RGB/feature</li>
+<li>Perception: Sobel/Laplacian/neighbor readout</li>
+<li>Update rule: small MLP/CNN</li>
+<li>Training signal: final morphology loss + damage recovery loss</li>
+</ul></div>
+</section>
+<section class="slide tight"><div class="kicker">NCA 后续 · 06/33</div><h1>从图像生长到物理/硬件/科学建模</h1><p class="sub">2022-2024 后 NCA 开始扩展到各类时空系统。</p>
+<div class="card"><ul>
+<li>Growing Isotropic Neural Cellular Automata, ALIFE 2022</li>
+<li>Hierarchical Neural Cellular Automata, ALIFE 2023</li>
+<li>Neural cellular automata for solidification microstructure modelling, CMAME 2023</li>
+<li>Deep learning with photonic neural cellular automata, Light: Science & Applications 2024</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">路线 B · 07/33</div><h1>Neural developmental programs</h1><p class="sub">把神经网络本身看成一个“发育体”: 从少量种子节点/模块出发, 通过规则生成完整网络。</p>
+<div class="card"><ul>
+<li>代表作: Towards Self-Assembling Artificial Neural Networks through Neural Developmental Programs, ALIFE 2023</li>
+<li>核心: genotype/program → developmental steps → phenotype/network</li>
+<li>优势: 压缩架构描述, 具备重用、生长、形态搜索潜力</li>
+<li>难点: 可训练性、稳定性、规模化到 Transformer 仍未成熟</li>
+</ul></div>
+</section>
+<section class="slide tight"><div class="kicker">路线 B2 · 08/33</div><h1>Self-growing / continual networks</h1><p class="sub">不是一次性设计固定网络, 而是在新任务到来时扩展结构。</p>
+<div class="card"><ul>
+<li>Progressive Neural Networks: 旧列冻结, 新任务加新列, 横向连接迁移知识</li>
+<li>Dynamically Expandable Networks: 新任务触发新单元, 兼顾灾难遗忘</li>
+<li>Lifelong learning with deep neural network self-organization, Neural Networks 2017, 134引</li>
+<li>核心评价: 新任务性能、旧任务保持、参数增长率</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">路线 C · 09/33</div><h1>Modular neural networks</h1><p class="sub">把模型拆成可复用模块, 再由任务或输入决定组合方式。</p>
+<div class="card"><ul>
+<li>Neural Module Networks: 语言/问题解析成模块组合</li>
+<li>End-to-End Module Networks for VQA, ICCV 2017, 498引</li>
+<li>Learning to Assemble Neural Module Tree Networks for Visual Grounding, ICCV 2019, 295引</li>
+<li>关键词: compositionality, module routing, structure induction</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">模块组装的核心 · 10/33</div><h1>Assembly = 选择 + 连接 + 执行</h1><p class="sub">自组装感来自“结构不是人工固定, 而是被动态生成”。</p>
+<div class="flow"><div class="node">输入/状态</div><div class="arrow">→</div><div class="node">局部规则/路由</div><div class="arrow">→</div><div class="node">动态结构</div><div class="arrow">→</div><div class="node">全局反馈</div></div><div class="card"><ul>
+<li>选择: 从 module library 中选出需要的模块</li>
+<li>连接: 生成 tree/graph/DAG 计算结构</li>
+<li>执行: 按结构调用模块并反传训练</li>
+<li>反馈: 任务 loss / reward 更新模块和路由器</li>
+</ul></div>
+</section>
+<section class="slide tight"><div class="kicker">路线 C2 · 11/33</div><h1>Mixture-of-Experts</h1><p class="sub">MoE 是当前工业界最成熟的“动态模块自组织”形态。</p>
+<div class="card"><ul>
+<li>Outrageously Large Neural Networks: Sparsely-Gated MoE, 2017, 268引</li>
+<li>GShard, ICLR 2021, 49引</li>
+<li>Switch Transformer, 2021/2022 体系, 大规模 sparse activation</li>
+<li>DeepSeekMoE, ACL 2024, 191引(OpenAlex)</li>
+<li>关键: router 学会把 token 分配给专家</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">MoE 为什么重要 · 12/33</div><h1>它把自组装推进到大模型工程</h1><p class="sub">MoE 不一定叫 self-assembly, 但它是“计算路径自动组装”的主流实现。</p>
+<div class="flow"><div class="node">输入/状态</div><div class="arrow">→</div><div class="node">局部规则/路由</div><div class="arrow">→</div><div class="node">动态结构</div><div class="arrow">→</div><div class="node">全局反馈</div></div><div class="card"><ul>
+<li>局部输入 token → router → expert subset → output merge</li>
+<li>稀疏激活: 参数很多, 每次只用少数专家</li>
+<li>研究问题: expert specialization, load balance, routing collapse, inference serving</li>
+<li>可延伸: 专家自动生成/合并/淘汰, 而不只是固定专家池</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">路线 D · 13/33</div><h1>Multi-agent self-organization</h1><p class="sub">多个 Agent 根据局部观测、通信和奖励形成分工。</p>
+<div class="card"><ul>
+<li>相关基础: Multi-agent deep reinforcement learning survey, Artificial Intelligence Review 2021, 830引</li>
+<li>典型机制: decentralized execution, communication learning, role assignment</li>
+<li>Agent 系统新变化: LLM agents + tools + memory + debate + planner</li>
+<li>研究问题: 自动分工、通信协议涌现、团队结构自适应</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">多 Agent 图 · 14/33</div><h1>从中心编排到自组织协作</h1><p class="sub">传统 pipeline 是人工写死; 自组织系统让角色、调用顺序和通信拓扑随任务变化。</p>
+<div class="flow"><div class="node">输入/状态</div><div class="arrow">→</div><div class="node">局部规则/路由</div><div class="arrow">→</div><div class="node">动态结构</div><div class="arrow">→</div><div class="node">全局反馈</div></div><div class="card"><ul>
+<li>Centralized: planner → worker1/worker2 → judge</li>
+<li>Self-organizing: agents bid/route/negotiate form temporary team</li>
+<li>关键指标: task success, communication cost, robustness, role diversity</li>
+<li>风险: 回音室、无效通信、责任不可追踪</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">统一视角 · 15/33</div><h1>自组装 AI = 局部规则 + 动态结构 + 全局目标</h1><p class="sub">四条路线可以用同一个抽象框架描述。</p>
+<div class="flow"><div class="node">输入/状态</div><div class="arrow">→</div><div class="node">局部规则/路由</div><div class="arrow">→</div><div class="node">动态结构</div><div class="arrow">→</div><div class="node">全局反馈</div></div><div class="card"><ul>
+<li>State: cell/module/expert/agent 的内部状态</li>
+<li>Local rule: 更新、路由、通信、扩展规则</li>
+<li>Environment/task: 输入分布与反馈信号</li>
+<li>Selection pressure: loss/reward/latency/cost</li>
+<li>Emergent structure: 形态、架构、专家分工、协作网络</li>
+</ul></div>
+</section>
+<section class="slide tight"><div class="kicker">时间线 · 16/33</div><h1>2016-2026 的发展脉络</h1><p class="sub">从模块化推理到大规模专家, 再到 Agent 自组织。</p>
+<div class="card"><ul>
+<li>2016: Learning to Compose Neural Networks for QA</li>
+<li>2017: End-to-End Module Networks; Sparsely-Gated MoE; Progressive Networks</li>
+<li>2020: Growing Neural Cellular Automata</li>
+<li>2021: GShard / Switch Transformer / MADRL survey</li>
+<li>2023: Neural Developmental Programs; Hierarchical NCA</li>
+<li>2024-2026: DeepSeekMoE, LLM agent teams, dynamic tool/model composition</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">代表工作 1 · 17/33</div><h1>Growing Neural Cellular Automata</h1><p class="sub">Mordvintsev, Randazzo, Niklasson, Levin · Distill 2020</p>
+<div class="card"><ul>
+<li>贡献: 用可微局部更新规则让图像从 seed 生长并可损伤恢复</li>
+<li>启发: 模型可被看作“发育过程”而不是静态函数</li>
+<li>局限: 主要是小尺度形态/纹理, 距离语言/推理任务较远</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">代表工作 2 · 18/33</div><h1>Neural Developmental Programs</h1><p class="sub">Najarro, Sudhakaran, Risi · ALIFE 2023</p>
+<div class="card"><ul>
+<li>贡献: 探索人工神经网络的自组装发育程序</li>
+<li>启发: 用程序生成网络, 可能比直接搜索权重/拓扑更可泛化</li>
+<li>局限: 还偏 ALife/探索性, ML 主流 benchmark 覆盖不足</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">代表工作 3 · 19/33</div><h1>End-to-End Module Networks</h1><p class="sub">Hu, Andreas, Rohrbach, Darrell, Saenko · ICCV 2017</p>
+<div class="card"><ul>
+<li>贡献: 将视觉问答拆成可组合神经模块, 端到端训练</li>
+<li>启发: 结构化计算图可由输入语义生成</li>
+<li>局限: 模块库设计仍需人工先验, 泛化依赖解析质量</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">代表工作 4 · 20/33</div><h1>Sparsely-Gated MoE / Switch / GShard</h1><p class="sub">Shazeer 2017 → Google MoE 系列</p>
+<div class="card"><ul>
+<li>贡献: 让模型按 token 动态选择专家, 扩展到超大参数规模</li>
+<li>启发: 自组织分工可在大模型中自然发生</li>
+<li>局限: 路由稳定性、负载均衡、部署成本是硬问题</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">代表工作 5 · 21/33</div><h1>DeepSeekMoE</h1><p class="sub">Dai et al. · ACL 2024</p>
+<div class="card"><ul>
+<li>贡献: 强调 ultimate expert specialization, 对 MoE 专家粒度和共享专家做改进</li>
+<li>启发: 专家不是均质层, 而应形成细粒度专业化</li>
+<li>可延伸: 专家出生/合并/淘汰, 形成真正生命周期</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">研究空白 · 22/33</div><h1>为什么还没形成统一的“自组装模型”学派</h1><p class="sub">因为现有路线各自解决了一部分。</p>
+<div class="quote">可发文章 idea</div><div class="card"><ul>
+<li>NCA: 自组装很纯, 但任务规模小</li>
+<li>Growing networks: 会生长, 但规则常是人工阈值</li>
+<li>Module networks: 可组合, 但模块库和结构先验强</li>
+<li>MoE: 工程成熟, 但专家池通常固定</li>
+<li>Multi-agent: 很像自组织, 但缺少可复现标准与稳定训练</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">可发方向 A · 23/33</div><h1>Self-growing MoE: 专家生命周期</h1><p class="sub">把固定专家池变成可出生、分裂、合并、死亡的生态系统。</p>
+<div class="quote">可发文章 idea</div><div class="card"><ul>
+<li>目标: NeurIPS / ICML / ICLR / ACL Findings</li>
+<li>方法: routing entropy + specialization score + load/cost 触发 expert split/merge</li>
+<li>实验: language modeling + multi-domain adaptation + continual learning</li>
+<li>卖点: 从 sparse activation 走向 adaptive sparse architecture</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">可发方向 B · 24/33</div><h1>NCA for representation learning</h1><p class="sub">让特征图像/latent token 通过局部规则自组织, 而不是只生长 RGB 图案。</p>
+<div class="quote">可发文章 idea</div><div class="card"><ul>
+<li>目标: ICLR / CVPR / ALIFE</li>
+<li>方法: NCA update on latent grid / token grid, 与 ViT/UNet 结合</li>
+<li>实验: few-shot segmentation, image restoration, diffusion latent refinement</li>
+<li>卖点: 局部规则 + 可损伤恢复 + 空间泛化</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">可发方向 C · 25/33</div><h1>Agent team self-assembly</h1><p class="sub">给任务后, 系统自动形成临时团队、通信拓扑和职责分配。</p>
+<div class="quote">可发文章 idea</div><div class="card"><ul>
+<li>目标: ACL / EMNLP / ICLR Agent workshop / AAMAS</li>
+<li>方法: role proposal → bidding → dynamic graph communication → judge</li>
+<li>实验: software engineering, literature review, data analysis, tool-use benchmark</li>
+<li>卖点: 比固定 planner-worker 更鲁棒、更低通信成本</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">可发方向 D · 26/33</div><h1>Model assembly compiler</h1><p class="sub">把“模型自动组合”做成编译器: 任务规范 → 模块图 → 执行计划。</p>
+<div class="quote">可发文章 idea</div><div class="card"><ul>
+<li>目标: MLSys / NeurIPS Datasets & Benchmarks / ACL System</li>
+<li>模块: LLM, retriever, vision model, tool, verifier, memory</li>
+<li>优化目标: accuracy, latency, cost, privacy</li>
+<li>卖点: 面向真实应用的可解释自动组装</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">实验设计 · 27/33</div><h1>最小可跑 baseline</h1><p class="sub">如果要开题, 建议先做一个小而完整的系统。</p>
+<div class="card"><ul>
+<li>任务: 多领域分类/问答/图像修复三选一</li>
+<li>模块库: 4-8 个专家/工具/子模型</li>
+<li>路由器: learned router + rule router + random router 对照</li>
+<li>自组织机制: split/merge 或 dynamic team formation</li>
+<li>指标: performance, cost, specialization, robustness</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">评价指标 · 28/33</div><h1>不要只看 accuracy</h1><p class="sub">自组织模型必须证明“结构真的变好了”。</p>
+<div class="card"><ul>
+<li>Performance: 任务成功率/准确率</li>
+<li>Efficiency: FLOPs, latency, token cost, active modules</li>
+<li>Specialization: expert entropy, mutual information, domain purity</li>
+<li>Adaptivity: 新任务迁移速度, 参数增长率</li>
+<li>Robustness: 模块失效/噪声/分布漂移下的退化</li>
+</ul></div>
+</section>
+<section class="slide tight"><div class="kicker">推荐命名 · 29/33</div><h1>论文标题怎么包装更容易被接受</h1><p class="sub">少用中文直译 self-assembly model, 多用主流关键词。</p>
+<div class="card"><ul>
+<li>Adaptive Modular Self-Organization for ...</li>
+<li>Self-Growing Mixture-of-Experts for Continual ...</li>
+<li>Dynamic Model Assembly for Tool-Augmented ...</li>
+<li>Neural Developmental Programs for ...</li>
+<li>Self-Assembling Agent Teams for ...</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">投稿地图 · 30/33</div><h1>不同路线对应不同 venue</h1><p class="sub">选 venue 取决于你强调理论、模型、系统还是应用。</p>
+<div class="card"><ul>
+<li>ICLR/NeurIPS/ICML: 新模型机制 + benchmark</li>
+<li>ACL/EMNLP: LLM agents, tool/model composition, routing</li>
+<li>CVPR/ICCV/ECCV: NCA for vision, restoration, segmentation</li>
+<li>AAMAS: 多 Agent 自组织和协作</li>
+<li>ALIFE/Natural Computing: 发育式 AI、形态计算、NCA 理论</li>
+</ul></div>
+</section>
+<section class="slide tight"><div class="kicker">风险清单 · 31/33</div><h1>这方向容易踩的坑</h1><p class="sub">最大风险不是没有方向, 而是概念太大、实验太散。</p>
+<div class="card"><ul>
+<li>概念风险: self-assembly 听起来新, 但 reviewer 会问和 MoE/NAS/agents 有何区别</li>
+<li>实验风险: 动态结构带来的收益可能来自参数更多</li>
+<li>工程风险: split/merge 会破坏训练稳定性</li>
+<li>叙事风险: 生物类比太多, 技术贡献不足</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">结论 · 32/33</div><h1>值得做, 但要选一个窄切口</h1><p class="sub">最推荐的 3 个切口。</p>
+<div class="card"><ul>
+<li>快出活: Self-growing MoE / expert lifecycle</li>
+<li>有新意: NCA + latent representation / restoration</li>
+<li>贴近大模型应用: Self-assembling agent teams / model assembly compiler</li>
+<li>一句话: 不要做泛泛的“自组装模型”, 要做可评测的“动态模块自组织机制”。</li>
+</ul></div>
+</section>
+<section class="slide"><div class="kicker">参考文献 · 33/33</div><h1>核心论文与检索来源</h1><p class="sub">OpenAlex 粗检 + 领域代表作整理。</p>
+<div class="card"><ul>
+<li>Mordvintsev et al., Growing Neural Cellular Automata, Distill 2020</li>
+<li>Najarro et al., Towards Self-Assembling Artificial Neural Networks through Neural Developmental Programs, ALIFE 2023</li>
+<li>Hu et al., Learning to Reason: End-to-End Module Networks for VQA, ICCV 2017</li>
+<li>Liu et al., Learning to Assemble Neural Module Tree Networks for Visual Grounding, ICCV 2019</li>
+<li>Shazeer et al., Outrageously Large Neural Networks: Sparsely-Gated MoE, 2017</li>
+<li>Lepikhin et al., GShard, ICLR 2021; Dai et al., DeepSeekMoE, ACL 2024</li>
+</ul></div>
+</section>
+<div class="foot" id="pg">1 / 33</div><div class="copyright"><b style="color:#e5e7eb;font-weight:600;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO</div>
+<script>
+const slides=[...document.querySelectorAll('.slide')];let cur=0;const prog=document.getElementById('prog');function show(i){cur=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,j)=>s.classList.toggle('active',j===cur));prog.style.width=((cur+1)/slides.length*100)+'%';document.getElementById('pg').textContent=(cur+1)+' / '+slides.length;location.hash='s'+(cur+1)}function next(){show(cur+1)}function prev(){show(cur-1)}document.addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown'].includes(e.key)){e.preventDefault();next()}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev()}if(e.key==='Home')show(0);if(e.key==='End')show(slides.length-1);if(e.key.toLowerCase()==='p')window.print()});let tx=0,ty=0,tt=0,moved=false;document.addEventListener('touchstart',e=>{if(!e.touches.length)return;tx=e.touches[0].clientX;ty=e.touches[0].clientY;tt=Date.now();moved=false},{passive:true});document.addEventListener('touchmove',e=>{if(!e.touches.length)return;const dx=e.touches[0].clientX-tx,dy=e.touches[0].clientY-ty;if(Math.abs(dx)>10||Math.abs(dy)>10)moved=true},{passive:true});document.addEventListener('touchend',e=>{if(!e.changedTouches.length)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty,dt=Date.now()-tt;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.25){dx<0?next():prev();return}if(!moved&&dt<450){e.changedTouches[0].clientX<window.innerWidth*.28?prev():next()}},{passive:true});document.addEventListener('click',e=>{if(e.target.closest('a,button,kbd'))return;e.clientX<window.innerWidth*.28?prev():next()});const m=location.hash.match(/s(\d+)/);show(m?parseInt(m[1])-1:0);
+</script>
+</body></html>
