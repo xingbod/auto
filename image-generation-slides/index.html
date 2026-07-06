@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>图像生成模型：从GAN到扩散模型的十年演进</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --line: #30363d;
+  --ink: #e6edf3;
+  --ink-2: #c9d1d9;
+  --ink-3: #8b949e;
+  --muted: #6e7681;
+  --accent: #58a6ff;
+  --accent2: #d2991d;
+  --green: #3fb950;
+  --purple: #a371f7;
+  --pink: #f778ba;
+  --red: #f85149;
+  --teal: #39d353;
+  --orange: #d2991d;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.55;
+  overflow: hidden;
+}
+
+/* Navigation Bar */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 20px;
+  background: rgba(13,17,23,0.94);
+  border-bottom: 1px solid var(--line);
+  font-size: 12px; color: var(--ink-3);
+  height: 38px;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.topbar .brand { font-weight: 700; color: var(--accent); font-size: 13px; letter-spacing: 0.03em; }
+.topbar .hotkeys { font-size: 11px; color: var(--muted); }
+.topbar .hotkeys kbd {
+  display: inline-block; padding: 1px 5px; border-radius: 3px;
+  background: rgba(255,255,255,0.08); border: 1px solid var(--line);
+  font-family: inherit; font-size: 10px; margin: 0 1px;
+}
+.progress-bar {
+  position: fixed; top: 38px; left: 0; height: 3px; z-index: 10001;
+  background: var(--accent); transition: width 0.25s ease;
+}
+
+/* Slides */
+.slide {
+  position: absolute; inset: 0;
+  display: none; flex-direction: column; justify-content: center;
+  padding: 70px 64px 90px;
+  opacity: 0; transition: opacity 0.2s;
+}
+.slide.active { display: flex; opacity: 1; }
+.slide.tight { padding: 56px 52px 76px; }
+.slide.tight h3 { margin: 8px 0 4px; font-size: 16px; }
+.slide.tight p, .slide.tight li { font-size: 14px; line-height: 1.4; margin: 2px 0; }
+
+h1 { font-size: 30px; font-weight: 700; color: var(--ink); margin-bottom: 12px; letter-spacing: -0.02em; }
+h2 { font-size: 24px; font-weight: 700; color: var(--accent); margin-bottom: 10px; }
+h3 { font-size: 18px; font-weight: 600; color: var(--ink-2); margin: 12px 0 6px; }
+
+p, li { color: var(--ink-2); margin: 4px 0; }
+.small { font-size: 12px; color: var(--ink-3); }
+.gray { color: var(--muted); }
+.accent { color: var(--accent); }
+.purple { color: var(--purple); }
+.green { color: var(--green); }
+.pink { color: var(--pink); }
+.orange { color: var(--orange); }
+.teal { color: var(--teal); }
+.red { color: var(--red); }
+
+ul, ol { margin: 6px 0 6px 20px; }
+li { margin: 3px 0; }
+
+.code {
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 6px; padding: 10px 14px; font-size: 13px;
+  line-height: 1.5; margin: 6px 0; overflow-x: auto;
+  color: var(--ink-2);
+}
+
+table {
+  width: 100%; border-collapse: collapse; margin: 8px 0;
+  font-size: 12.5px;
+}
+th, td {
+  padding: 6px 10px; text-align: left; border: 1px solid var(--line);
+}
+th { background: var(--card); color: var(--accent); font-weight: 600; font-size: 12px; }
+td { color: var(--ink-2); }
+
+/* Architecture boxes */
+.arch { display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+        gap: 4px; margin: 10px 0; }
+.layer { display: inline-block; padding: 6px 14px; border-radius: 6px;
+         font-size: 14px; font-weight: 600; font-family: ui-monospace, monospace; }
+.layer.conv { background: rgba(88,166,255,0.12); color: var(--accent); border: 1px solid rgba(88,166,255,0.35); }
+.layer.pool { background: rgba(167,113,247,0.12); color: var(--purple); border: 1px solid rgba(167,113,247,0.35); }
+.layer.fc { background: rgba(63,185,80,0.12); color: var(--green); border: 1px solid rgba(63,185,80,0.35); }
+.layer.skip { background: rgba(210,153,29,0.12); color: var(--orange); border: 1px solid rgba(210,153,29,0.35); }
+.layer.gen { background: rgba(247,119,186,0.12); color: var(--pink); border: 1px solid rgba(247,119,186,0.35); }
+.layer.disc { background: rgba(248,81,73,0.12); color: var(--red); border: 1px solid rgba(248,81,73,0.35); }
+.layer.diff { background: rgba(57,211,83,0.12); color: var(--teal); border: 1px solid rgba(57,211,83,0.35); }
+.layer.attn { background: rgba(210,153,29,0.12); color: var(--orange); border: 1px solid rgba(210,153,29,0.35); }
+.layer.cross { background: rgba(167,113,247,0.12); color: var(--purple); border: 1px solid rgba(167,113,247,0.35); }
+.arrow { font-size: 16px; color: var(--muted); margin: 0 1px; font-weight: 300; }
+
+/* Info boxes */
+.box { display: inline-block; padding: 4px 10px; border-radius: 5px;
+       font-weight: 600; font-size: 12px; margin: 2px 3px; border: 1px solid; }
+.box.gan { background: rgba(248,81,73,0.12); color: var(--red); border-color: var(--red); }
+.box.diff { background: rgba(57,211,83,0.12); color: var(--teal); border-color: var(--teal); }
+.box.flow { background: rgba(88,166,255,0.12); color: var(--accent); border-color: var(--accent); }
+.box.ar { background: rgba(210,153,29,0.12); color: var(--orange); border-color: var(--orange); }
+.box.open { background: rgba(63,185,80,0.12); color: var(--green); border-color: var(--green); }
+.box.closed { background: rgba(248,81,73,0.12); color: var(--red); border-color: var(--red); }
+.box.year { background: rgba(139,148,158,0.1); color: var(--ink-3); border-color: var(--line); }
+
+/* Grid layouts */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 6px 0; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 6px 0; }
+.grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin: 6px 0; }
+.card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 8px; padding: 12px 14px;
+}
+.card h4 { font-size: 14px; color: var(--accent); margin-bottom: 4px; }
+.card p { font-size: 12.5px; color: var(--ink-3); margin: 2px 0; line-height: 1.4; }
+.card .chip { display: inline-block; padding: 2px 7px; border-radius: 3px;
+              font-size: 11px; margin: 2px 1px; font-weight: 500; }
+
+/* Timeline */
+.timeline { position: relative; margin: 10px 0; padding-left: 24px; border-left: 2px solid var(--line); }
+.timeline-item { position: relative; margin: 10px 0; padding-left: 12px; }
+.timeline-item::before {
+  content: ""; position: absolute; left: -30px; top: 5px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--accent); border: 2px solid var(--bg);
+}
+.timeline-item .year { font-weight: 700; color: var(--accent); font-size: 14px; }
+.timeline-item .desc { color: var(--ink-2); font-size: 13px; }
+
+/* Pipeline */
+.pipeline { display: flex; align-items: center; justify-content: space-between;
+            margin: 10px 0; padding: 10px 8px; background: var(--card);
+            border-radius: 8px; border: 1px solid var(--line); gap: 4px; }
+.pipeline .step { flex: 1; text-align: center; padding: 8px 4px; border-radius: 5px;
+                  font-size: 13px; font-weight: 600; }
+.pipeline .step.enc { background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.3); color: var(--accent); }
+.pipeline .step.diff { background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--teal); }
+.pipeline .step.dec { background: rgba(167,113,247,0.1); border: 1px solid rgba(167,113,247,0.3); color: var(--purple); }
+.pipeline .step.txt { background: rgba(210,153,29,0.1); border: 1px solid rgba(210,153,29,0.3); color: var(--orange); }
+
+/* Comparison */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0; }
+.compare .side { padding: 10px; border-radius: 6px; border: 1px solid var(--line); }
+.compare .side.bad { background: rgba(248,81,73,0.06); border-color: rgba(248,81,73,0.25); }
+.compare .side.good { background: rgba(63,185,80,0.06); border-color: rgba(63,185,80,0.25); }
+.compare .side h4 { font-size: 14px; margin-bottom: 4px; }
+
+/* Q&A */
+.qa { background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+      padding: 12px 16px; margin: 6px 0; }
+.qa .q { font-weight: 600; color: var(--accent); font-size: 15px; margin-bottom: 4px; }
+.qa .a { color: var(--ink-3); font-size: 13px; }
+
+/* Page indicator */
+.page-indicator {
+  position: fixed; bottom: 8px; right: 20px; z-index: 9999;
+  font-size: 11px; color: var(--muted); font-family: ui-monospace, monospace;
+}
+
+/* Copyright */
+.copyright {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 5px 16px; text-align: center; font-size: 11px;
+  color: var(--muted);
+  background: rgba(13,17,23,0.92);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  line-height: 1.4;
+}
+.copyright b { color: var(--ink-3); font-weight: 600; }
+
+/* Section number */
+.section-num { color: var(--accent); font-size: 14px; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 6px; }
+
+/* Bold in text */
+b, strong { color: var(--ink); }
+
+/* Model comparison */
+.model-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+  padding: 8px 12px; margin: 4px 0;
+}
+.model-card .mname { font-weight: 700; color: var(--accent); font-size: 13px; }
+.model-card .mmeta { font-size: 11px; color: var(--muted); }
+.model-card .mdesc { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+  <span class="brand">图像生成模型 · 十年演进</span>
+  <span class="hotkeys">
+    <kbd>←</kbd><kbd>→</kbd> 翻页 &nbsp;
+    <kbd>Home</kbd>/<kbd>End</kbd> 首尾 &nbsp;
+    <kbd>P</kbd> 打印
+  </span>
+</div>
+<div class="progress-bar" id="progress"></div>
+<div class="page-indicator" id="pageInd"></div>
+
+<!-- Copyright bar -->
+<div class="copyright">
+  <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO
+</div>
+
+<!-- ===== SLIDE 1: Cover ===== -->
+<section class="slide active">
+  <div style="text-align: center;">
+    <div class="section-num">安徽大学 · 人工智能学院</div>
+    <h1 style="font-size: 40px; margin-bottom: 16px;">图像生成模型</h1>
+    <h2 style="font-size: 22px; color: var(--ink-2); font-weight: 400;">从 GAN 到扩散模型的十年演进</h2>
+    <div style="margin: 24px 0;">
+      <span class="box gan">GAN</span>
+      <span style="color: var(--muted); margin: 0 8px;">→</span>
+      <span class="box diff">Diffusion</span>
+      <span style="color: var(--muted); margin: 0 8px;">→</span>
+      <span class="box ar">Autoregressive</span>
+      <span style="color: var(--muted); margin: 0 8px;">→</span>
+      <span class="box flow">Flow Matching</span>
+    </div>
+    <p class="small" style="margin-top: 20px;">涵盖 2014–2026 关键里程碑 · 架构原理 · 技术对比 · 前沿趋势</p>
+    <p class="small gray" style="margin-top: 8px;">操作：← → 翻页 &nbsp;|&nbsp; Home/End 首尾 &nbsp;|&nbsp; P 打印</p>
+  </div>
+</section>
+
+<!-- ===== SLIDE 2: 学习目标 ===== -->
+<section class="slide">
+  <h2>学习目标</h2>
+  <div class="grid2">
+    <div class="card">
+      <h4>🎯 理解发展脉络</h4>
+      <p>掌握图像生成从 GAN 到 Flow Matching 的完整技术演进路线，理解每一代技术"解决什么问题、留下什么局限"</p>
+    </div>
+    <div class="card">
+      <h4>🔬 掌握核心原理</h4>
+      <p>理解 Diffusion Model、Latent Diffusion、Flow Matching 的数学直觉与架构设计</p>
+    </div>
+    <div class="card">
+      <h4>📊 对比主流模型</h4>
+      <p>SD、DALL-E、Midjourney、Flux 等代表性模型的定位、优势与适用场景</p>
+    </div>
+    <div class="card">
+      <h4>🔮 把握前沿趋势</h4>
+      <p>可控生成、个性化、视频生成、3D 生成等 2025-2026 年最新方向</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SLIDE 3: 时间线总览 ===== -->
+<section class="slide">
+  <h2>图像生成发展时间线</h2>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+    <div class="timeline" style="height: 100%;">
+      <div class="timeline-item"><span class="year">2014</span> <span class="desc">Ian Goodfellow 提出 <b>GAN</b></span></div>
+      <div class="timeline-item"><span class="year">2018</span> <span class="desc">NVIDIA <b>StyleGAN</b> · Google <b>BigGAN</b></span></div>
+      <div class="timeline-item"><span class="year">2020</span> <span class="desc">Ho et al. <b>DDPM</b> 扩散模型复兴</span></div>
+      <div class="timeline-item"><span class="year">2021</span> <span class="desc">OpenAI <b>DALL-E</b> · <b>CLIP</b> 文本引导</span></div>
+      <div class="timeline-item"><span class="year">2022</span> <span class="desc"><b>Stable Diffusion</b> · <b>Midjourney</b> · <b>DALL-E 2</b></span></div>
+      <div class="timeline-item"><span class="year">2023</span> <span class="desc"><b>SDXL</b> · <b>ControlNet</b> · <b>LCM</b> · <b>DALL-E 3</b></span></div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item"><span class="year">2024.02</span> <span class="desc">Stability AI <b>SD3</b> (MMDiT + Flow)</span></div>
+      <div class="timeline-item"><span class="year">2024.08</span> <span class="desc">Black Forest Labs <b>Flux</b> 发布</span></div>
+      <div class="timeline-item"><span class="year">2024.10</span> <span class="desc">Stability <b>SD 3.5</b> · xAI <b>Aurora</b></span></div>
+      <div class="timeline-item"><span class="year">2025</span> <span class="desc"><b>GPT Image 1</b> · <b>Imagen 4</b> · <b>Ideogram 3</b></span></div>
+      <div class="timeline-item"><span class="year">2025</span> <span class="desc"><b>Recraft V3</b> · <b>HiDream</b> · <b>Halfmoon</b></span></div>
+      <div class="timeline-item"><span class="year">2026</span> <span class="desc"><b>GPT Image 2</b> · <b>Ideogram 4.0</b> (Apache开源)</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SLIDE 4: 三大范式 ===== -->
+<section class="slide">
+  <h2>图像生成三大技术范式</h2>
+  <div class="grid3">
+    <div class="card">
+      <h4><span class="box gan">GAN</span> 生成对抗网络</h4>
+      <p><b>核心：</b>生成器 vs 判别器的博弈</p>
+      <p class="small">2014 Goodfellow · 隐式密度估计<br>优点：推理快、图像清晰<br>局限：训练不稳定、模式坍塌、多样性不足</p>
+      <div class="arch" style="font-size: 11px;">
+        <span class="layer gen">噪声z</span><span class="arrow">→</span><span class="layer gen">生成器G</span><span class="arrow">→</span><span class="layer disc">判别器D</span>
+      </div>
+    </div>
+    <div class="card">
+      <h4><span class="box diff">Diffusion</span> 扩散模型</h4>
+      <p><b>核心：</b>逐步去噪还原图像</p>
+      <p class="small">2020 DDPM · 似然模型<br>优点：生成质量高、训练稳定<br>局限：推理慢（多步采样）</p>
+      <div class="arch" style="font-size: 11px;">
+        <span class="layer">x₀</span><span class="arrow">→</span><span class="layer diff">+噪声</span><span class="arrow">→</span><span class="layer diff">x<sub>T</sub></span><span class="arrow">→</span><span class="layer diff">去噪</span><span class="arrow">→</span><span class="layer">x̂₀</span>
+      </div>
+    </div>
+    <div class="card">
+      <h4><span class="box flow">Flow Matching</span> 流匹配</h4>
+      <p><b>核心：</b>学习速度场，直线路径</p>
+      <p class="small">2023-24 · 连续归一化流<br>优点：路径更直、采样更快<br>代表：SD3、Flux</p>
+      <div class="arch" style="font-size: 11px;">
+        <span class="layer">噪声</span><span class="arrow">→</span><span class="layer flow">v<sub>θ</sub>(x,t)</span><span class="arrow">→</span><span class="layer">数据</span>
+      </div>
+    </div>
+  </div>
+  <p class="small gray" style="margin-top: 8px;">此外还有 <span class="box ar">Autoregressive</span> 自回归模型（DALL-E 1, Parti），将图像 token 化后逐 token 预测</p>
+</section>
+
+<!-- ===== SLIDE 5: GAN 时代 ===== -->
+<section class="slide">
+  <h2>GAN 时代 (2014–2019)</h2>
+  <div class="grid2">
+    <div class="card">
+      <h4>GAN (2014)</h4>
+      <p>Ian Goodfellow · U Montréal<br><b>核心：</b>minimax 博弈，生成器 vs 判别器<br><b>贡献：</b>开创对抗训练范式</p>
+    </div>
+    <div class="card">
+      <h4>DCGAN (2015)</h4>
+      <p>Alec Radford · indico / OpenAI<br><b>核心：</b>CNN 替代全连接<br><b>贡献：</b>训练稳定化，可解释的潜在空间</p>
+    </div>
+    <div class="card">
+      <h4>StyleGAN / StyleGAN2 (2018–19)</h4>
+      <p>NVIDIA · Tero Karras 等<br>CVPR 2019 / CVPR 2020<br><b>核心：</b>风格调制 + 渐进式生成<br><b>贡献：</b>高分辨率人脸，解耦潜在空间</p>
+    </div>
+    <div class="card">
+      <h4>BigGAN (2018)</h4>
+      <p>DeepMind · Brock et al.<br>ICLR 2019<br><b>核心：</b>大规模训练 + 类条件<br><b>贡献：</b>ImageNet 128×128 高保真</p>
+    </div>
+  </div>
+  <p class="small gray" style="margin-top: 10px;">GAN 的核心局限：<b>训练不稳定</b>（模式坍塌）、<b>多样性不足</b>、难以条件化到复杂文本提示</p>
+</section>
+
+<!-- ===== SLIDE 6: GAN 架构示意 ===== -->
+<section class="slide">
+  <h2>GAN 架构原理</h2>
+  <p style="text-align: center; margin-bottom: 8px;">生成对抗网络：两个网络博弈——生成器伪造、判别器鉴别</p>
+  <div class="arch">
+    <span class="layer gen" style="font-size: 16px; padding: 10px 20px;">随机噪声<br><b>z ~ N(0,I)</b></span>
+    <span class="arrow" style="font-size: 20px;">→</span>
+    <span class="layer gen" style="font-size: 16px; padding: 10px 20px;">生成器<br><b>G(z)</b></span>
+    <span class="arrow" style="font-size: 20px;">→</span>
+    <span class="layer skip" style="font-size: 16px; padding: 10px 20px;">假样本<br><b>G(z)</b></span>
+    <span class="arrow" style="font-size: 20px;">↘</span>
+  </div>
+  <div class="arch" style="margin-top: 8px;">
+    <span class="layer fc" style="font-size: 16px; padding: 10px 20px;">真实样本<br><b>x ~ p<sub>data</sub></b></span>
+    <span class="arrow" style="font-size: 20px;">→</span>
+    <span class="layer disc" style="font-size: 16px; padding: 10px 20px;">判别器<br><b>D(x)</b></span>
+    <span class="arrow" style="font-size: 20px;">→</span>
+    <span class="layer fc" style="font-size: 16px; padding: 10px 20px;">真/假<br><b>[0,1]</b></span>
+  </div>
+  <div class="code" style="text-align: center; margin-top: 16px;">
+    min<sub>G</sub> max<sub>D</sub> E<sub>x</sub>[log D(x)] + E<sub>z</sub>[log(1 − D(G(z)))]
+  </div>
+  <p class="small gray" style="margin-top: 10px; text-align: center;">训练困境：当 D 太强 → G 梯度消失；D 太弱 → G 不进步。需要精心平衡</p>
+</section>
+
+<!-- ===== SLIDE 7: DDPM ===== -->
+<section class="slide">
+  <h2>DDPM：扩散模型复兴 (2020)</h2>
+  <p><b>Jonathan Ho, Ajay Jain, Pieter Abbeel</b> · UC Berkeley · NeurIPS 2020</p>
+  
+  <h3>核心思想：两阶段过程</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4>① 前向扩散（加噪）</h4>
+      <div class="code" style="font-size: 11px;">
+        x<sub>t</sub> = √(ᾱ<sub>t</sub>)·x<sub>0</sub> + √(1−ᾱ<sub>t</sub>)·ε<br>
+        t=1,...,T / T=1000 / 固定马尔可夫链
+      </div>
+      <p class="small">从清晰图像逐步添加高斯噪声<br>最终 x<sub>T</sub> ≈ N(0,I)</p>
+    </div>
+    <div class="card">
+      <h4>② 逆向去噪（生成）</h4>
+      <div class="code" style="font-size: 11px;">
+        ε<sub>θ</sub>(x<sub>t</sub>, t) → 预测噪声<br>
+        x<sub>t−1</sub> = 从 x<sub>t</sub> 去除预测噪声
+      </div>
+      <p class="small">U-Net 学习预测每一步添加的噪声<br>逐步去噪还原 x<sub>0</sub></p>
+    </div>
+  </div>
+
+  <h3>训练目标</h3>
+  <div class="code" style="text-align: center;">
+    L<sub>simple</sub> = E<sub>t, x₀, ε</sub>[ ||ε − ε<sub>θ</sub>(x<sub>t</sub>, t)||² ]
+  </div>
+  <p class="small gray">简单而优雅：让网络预测 <b>噪声</b> 而非直接预测图像。训练稳定、生成多样。</p>
+  <p class="small gray">局限：像素空间扩散 → 计算量大（1024×1024 需大量 GPU 内存）</p>
+</section>
+
+<!-- ===== SLIDE 8: Latent Diffusion ===== -->
+<section class="slide">
+  <h2>Latent Diffusion / Stable Diffusion (2022)</h2>
+  <p><b>Robin Rombach, Andreas Blattmann 等</b> · LMU Munich / Runway · CVPR 2022</p>
+
+  <h3>关键创新：扩散在压缩潜空间进行</h3>
+  <div class="pipeline">
+    <div class="step txt">文本<br><span style="font-size:10px;color:#8b949e">prompt</span></div>
+    <span style="color:var(--muted)">→</span>
+    <div class="step txt">CLIP/文本编码器<br><span style="font-size:10px;color:#8b949e">τ<sub>θ</sub></span></div>
+    <span style="color:var(--muted)">→</span>
+    <div class="step enc">潜空间扩散<br><span style="font-size:10px;color:#8b949e">U-Net + cross-attn</span></div>
+    <span style="color:var(--muted)">→</span>
+    <div class="step dec">VAE解码器<br><span style="font-size:10px;color:#8b949e">z → x</span></div>
+    <span style="color:var(--muted)">→</span>
+    <div class="step enc">输出图像<br><span style="font-size:10px;color:#8b949e">512×512</span></div>
+  </div>
+
+  <h3>为什么是里程碑？</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4>📦 潜空间压缩</h4>
+      <p>VAE 将 512×512×3 → 64×64×4，<br>压缩比 48×，大幅降低计算成本</p>
+    </div>
+    <div class="card">
+      <h4>🌐 Cross-Attention</h4>
+      <p>文本嵌入通过交叉注意力注入 U-Net，<br>实现灵活的多模态条件生成</p>
+    </div>
+    <div class="card">
+      <h4>🔓 开源生态</h4>
+      <p>Stability AI 开源模型权重，<br>催生 LoRA、ControlNet 等繁荣生态</p>
+    </div>
+    <div class="card">
+      <h4>💻 消费级可用</h4>
+      <p>在 RTX 3060 (12GB) 上运行，<br>大幅降低图像生成门槛</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SLIDE 9: DALL-E 系列 ===== -->
+<section class="slide">
+  <h2>DALL-E 系列 (2021–2026)</h2>
+  <p>OpenAI · 从自回归到扩散，从封闭到 GPT 原生化</p>
+
+  <table>
+    <tr><th>模型</th><th>时间</th><th>架构</th><th>关键创新</th></tr>
+    <tr>
+      <td><b>DALL-E</b></td>
+      <td>2021.01</td>
+      <td>dVAE + Autoregressive Transformer (12B)</td>
+      <td>首次大规模文本→图像；VQ-VAE 离散化 + GPT</td>
+    </tr>
+    <tr>
+      <td><b>DALL-E 2</b></td>
+      <td>2022.04</td>
+      <td>CLIP + Diffusion (unCLIP)</td>
+      <td>CLIP 潜在空间扩散；图像编辑/变体</td>
+    </tr>
+    <tr>
+      <td><b>DALL-E 3</b></td>
+      <td>2023.09</td>
+      <td>Diffusion + 图像描述器</td>
+      <td>原生集成 ChatGPT；自动 prompt 改写；文字渲染大幅提升</td>
+    </tr>
+    <tr>
+      <td><b>GPT Image 1/1.5</b></td>
+      <td>2025</td>
+      <td>GPT 原生图像生成</td>
+      <td>文本+图像统一生成；多轮对话式创作</td>
+    </tr>
+    <tr>
+      <td><b>GPT Image 2</b></td>
+      <td>2026.04</td>
+      <td>GPT 原生升级</td>
+      <td>更强的一致性、文字渲染、多图生成</td>
+    </tr>
+  </table>
+
+  <p class="small gray" style="margin-top: 6px;">演化趋势：<b>离散 token → 连续潜空间扩散 → GPT 统一多模态 → 对话式交互</b></p>
+</section>
+
+<!-- ===== SLIDE 10: Midjourney ===== -->
+<section class="slide">
+  <h2>Midjourney (2022–)</h2>
+  <p><b>Midjourney, Inc.</b> · David Holz (Leap Motion 创始人)</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>🎨 产品定位</h4>
+      <p>艺术导向，<b>美学优先</b><br>Discord → Web 界面<br>社区驱动的迭代优化<br>人类反馈强化学习</p>
+    </div>
+    <div class="card">
+      <h4>📈 版本演进</h4>
+      <p><b>V1-V4</b> (2022): 扩散模型 + 美学调优<br><b>V5</b> (2023.03): 照片级真实感<br><b>V5.2</b>: 美学系统升级<br><b>V6</b> (2023.12): 文字渲染能力<br><b>V6.1</b> (2024.07): 画质/一致性大幅提升<br><b>V7</b> (2025-): 个性化模型+多模态</p>
+    </div>
+  </div>
+  <h3 style="margin-top: 10px;">Midjourney 的核心竞争力</h3>
+  <ul>
+    <li><b>美学调优：</b>人类偏好驱动的 RLHF / DPO，使生成结果"好看"而非仅仅"准确"</li>
+    <li><b>社区反馈闭环：</b>数百万用户日常使用产生海量偏好信号</li>
+    <li><b>闭源优势：</b>不受开源模型参数限制，可使用更大模型 + 专有数据</li>
+    <li><b>参数控制：</b>--stylize, --chaos, --weird 等精细调控</li>
+  </ul>
+</section>
+
+<!-- ===== SLIDE 11: Imagen 系列 ===== -->
+<section class="slide">
+  <h2>Google Imagen 系列 (2022–2025)</h2>
+  <p>Google DeepMind · 从研究到产品化</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>Imagen (2022)</h4>
+      <p><b>架构：</b>级联扩散模型<br>64×64 → 256×256 → 1024×1024<br><b>文本编码：</b>冻结的 <b>T5-XXL</b> (11B)<br><b>发现：</b>大语言模型编码器 > 多模态编码器</p>
+      <p class="small gray">"Scaling the text encoder is more effective than scaling the diffusion model"</p>
+    </div>
+    <div class="card">
+      <h4>Imagen 3 (2024)</h4>
+      <p>Google 最高质量图像生成<br>显著提升的文字渲染<br>细节更丰富、光感更自然</p>
+    </div>
+    <div class="card">
+      <h4>Imagen 4 (2025.05)</h4>
+      <p>最新最强版本<br>一致性大幅提升<br>集成到 Gemini 生态<br>支持多轮指令式编辑</p>
+    </div>
+    <div class="card">
+      <h4>技术启示</h4>
+      <p>大语言模型 (T5) 的文本理解<br>对图像生成质量至关重要<br>→ 启发了 SD3/Flux 使用 T5</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SLIDE 12: SDXL & 高效采样 ===== -->
+<section class="slide tight">
+  <h2>SDXL 与高效采样 (2023)</h2>
+
+  <h3>SDXL (2023.07, Stability AI)</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4>架构升级</h4>
+      <p>✓ U-Net 参数量 3× 增长 (2.6B)<br>✓ 双文本编码器 (CLIP + OpenCLIP)<br>✓ 原生 1024×1024 分辨率<br>✓ Refiner 模型 (细节增强)</p>
+    </div>
+    <div class="card">
+      <h4>关键创新</h4>
+      <p>✓ 尺寸条件化 (size-conditioning)<br>✓ 裁剪条件化 (crop-conditioning)<br>✓ 多宽高比训练<br>✓ 美学评分微调</p>
+    </div>
+  </div>
+
+  <h3>高效采样技术</h3>
+  <div class="grid3">
+    <div class="card">
+      <h4>DDIM (2021)</h4>
+      <p>Song et al. · 非马尔可夫采样<br><b>20-50 步</b> 即可高质量生成</p>
+    </div>
+    <div class="card">
+      <h4>DPM-Solver (2022)</h4>
+      <p>Lu et al. · ODE 数值求解<br><b>10-20 步</b> 高质量</p>
+    </div>
+    <div class="card">
+      <h4>LCM / SD Turbo (2023)</h4>
+      <p>一致性模型 + 蒸馏<br><b>1-4 步</b> 实时生成！</p>
+    </div>
+  </div>
+
+  <h3>Classifier-Free Guidance (CFG)</h3>
+  <div class="code" style="text-align: center; font-size: 12px;">
+    ε̂<sub>θ</sub>(x<sub>t</sub>, c) = ε<sub>θ</sub>(x<sub>t</sub>, ∅) + w · [ε<sub>θ</sub>(x<sub>t</sub>, c) − ε<sub>θ</sub>(x<sub>t</sub>, ∅)]
+  </div>
+  <p class="small gray">w > 1 增强文本对齐，但过高会产生过饱和伪影。典型值：7.0–9.0</p>
+</section>
+
+<!-- ===== SLIDE 13: Flow Matching ===== -->
+<section class="slide">
+  <h2>Flow Matching / Rectified Flow (2023–2024)</h2>
+  <p>下一代生成范式——更简单、更直的生成路径</p>
+
+  <h3>从扩散到流匹配</h3>
+  <div class="compare">
+    <div class="side bad">
+      <h4>传统 Diffusion (DDPM)</h4>
+      <p>• 噪声 → 数据的随机路径（弯曲）<br>• 需要 50-1000 步采样<br>• 训练目标：预测噪声 ε</p>
+    </div>
+    <div class="side good">
+      <h4>Rectified Flow / FM</h4>
+      <p>• 噪声 → 数据的直线路径<br>• 仅需 4-20 步即可高质量生成<br>• 训练目标：预测速度场 v<sub>θ</sub></p>
+    </div>
+  </div>
+
+  <h3>核心公式</h3>
+  <div class="code" style="text-align: center;">
+    x<sub>t</sub> = (1−t)·x<sub>0</sub> + t·ε &emsp; 直线插值路径<br>
+    L<sub>FM</sub> = E<sub>t,x₀,ε</sub>[ ||v<sub>θ</sub>(x<sub>t</sub>, t) − (ε − x<sub>0</sub>)||² ]
+  </div>
+  <p class="small gray">关键直觉：不预测噪声，而是预测从噪声指向数据的<b>速度方向</b>。路径越直，采样越快</p>
+</section>
+
+<!-- ===== SLIDE 14: Flux ===== -->
+<section class="slide">
+  <h2>Flux：Stable Diffusion 原班人马 (2024.08)</h2>
+  <p><b>Black Forest Labs</b> · 核心团队来自 Stability AI (Robin Rombach 等)<br>
+  <span class="box open">Apache 2.0</span> <span class="box flow">Flow Matching</span> <span class="box year">12B params</span></p>
+
+  <h3>Flux 模型家族</h3>
+  <table>
+    <tr><th>变体</th><th>定位</th><th>特点</th></tr>
+    <tr><td><b>Flux.1 [pro]</b></td><td>旗舰闭源 API</td><td>最高质量，商业 API</td></tr>
+    <tr><td><b>Flux.1 [dev]</b></td><td>开源（非商用）</td><td>接近 pro 质量，蒸馏版</td></tr>
+    <tr><td><b>Flux.1 [schnell]</b></td><td>开源快版</td><td>Apache 2.0，1-4 步生成</td></tr>
+  </table>
+
+  <h3>核心创新</h3>
+  <ul>
+    <li><b>MMDiT + 双流块：</b>文本和图像 token 在 Transformer 中联合建模</li>
+    <li><b>Rectified Flow：</b>直线插值路径 + 速度预测范式</li>
+    <li><b>T5-XXL 编码器：</b>强大的文本理解能力（继承 Imagen 经验）</li>
+    <li><b>旋转位置编码 (RoPE)：</b>增强对图像空间位置的理解</li>
+    <li><b>原生多分辨率训练：</b>支持 0.1–2.0 MP 多种分辨率</li>
+  </ul>
+  <p class="small gray">被认为是 <b>2024 年最强开源图像生成模型</b>，文字渲染、人手生成、构图理解均为 SOTA</p>
+</section>
+
+<!-- ===== SLIDE 15: SD3 / MMDiT ===== -->
+<section class="slide">
+  <h2>Stable Diffusion 3 / 3.5 (2024)</h2>
+  <p>Stability AI · 从 U-Net 到 Transformer 的范式转型</p>
+
+  <h3>MMDiT 架构 (Multimodal Diffusion Transformer)</h3>
+  <div class="pipeline">
+    <div class="step txt">文本<br>Prompt</div>
+    <span style="color:var(--muted)">→</span>
+    <div class="step txt">T5 + CLIP<br>双编码器</div>
+    <span style="color:var(--muted)">→</span>
+    <div class="step diff">MMDiT<br>联合注意力</div>
+    <span style="color:var(--muted)">←</span>
+    <div class="step enc">图像<br>VAE编码</div>
+    <span style="color:var(--muted)">→</span>
+    <div class="step dec">VAE<br>解码</div>
+    <span style="color:var(--muted)">→</span>
+    <div class="step enc">输出</div>
+  </div>
+
+  <div class="grid2" style="margin-top: 10px;">
+    <div class="card">
+      <h4>核心设计</h4>
+      <p>文本和图像 token 分别通过独立的注意力权重处理，再融合<br>→ 保留模态各自特性<br>→ 同时学习跨模态关联</p>
+    </div>
+    <div class="card">
+      <h4>SD 3.5 改进 (2024.10)</h4>
+      <p>✓ 更大的模型 (8.1B)<br>✓ 更好的文字渲染<br>✓ 更强的 prompt 遵循<br>✓ 多样性优化<br>✓ 社区反馈改进</p>
+    </div>
+  </div>
+  <p class="small gray">U-Net → DiT → MMDiT：从卷积骨干到全 Transformer 架构的演进</p>
+</section>
+
+<!-- ===== SLIDE 16: 其他代表性模型 ===== -->
+<section class="slide tight">
+  <h2>其他代表性模型 (2023–2026)</h2>
+
+  <div class="grid2">
+    <div>
+      <div class="model-card">
+        <div class="mname">Ideogram 系列 <span class="box open">3.0+</span></div>
+        <div class="mmeta">2023.08–2026.06 · Ideogram Inc. (前 Google Brain)</div>
+        <div class="mdesc"><b>专长：文字渲染</b> —— 业界最强的图像内文字生成。4.0 版本以 Apache 2.0 开源</div>
+      </div>
+      <div class="model-card">
+        <div class="mname">Adobe Firefly</div>
+        <div class="mmeta">2023.03 · Adobe</div>
+        <div class="mdesc"><b>专长：商用安全</b> —— Adobe Stock 授权数据训练，Photoshop 深度集成。生成式填充</div>
+      </div>
+      <div class="model-card">
+        <div class="mname">Recraft V3</div>
+        <div class="mmeta">2024–2025 · Recraft, Inc.</div>
+        <div class="mdesc"><b>专长：设计/矢量</b> —— 品牌一致性，矢量图形生成，设计工作流导向</div>
+      </div>
+    </div>
+    <div>
+      <div class="model-card">
+        <div class="mname">xAI Aurora</div>
+        <div class="mmeta">2024.12 · xAI (Elon Musk)</div>
+        <div class="mdesc"><b>专长：照片级真实感</b> —— 集成到 Grok，支持多模态对话</div>
+      </div>
+      <div class="model-card">
+        <div class="mname">HiDream <span class="box open">MIT</span></div>
+        <div class="mmeta">2025.04 · HiDream-AI</div>
+        <div class="mdesc"><b>专长：开源质量</b> —— MIT 开源，多分辨率，旨在成为社区首选开源方案</div>
+      </div>
+      <div class="model-card">
+        <div class="mname">Halfmoon</div>
+        <div class="mmeta">2025.03 · Reve AI</div>
+        <div class="mdesc"><b>新兴力量</b> —— 在美学和一致性上对标 Midjourney</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SLIDE 17: 可控生成 ===== -->
+<section class="slide">
+  <h2>可控生成：ControlNet & IP-Adapter</h2>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>ControlNet (2023.02)</h4>
+      <p><b>Lvmin Zhang, Maneesh Agrawala</b> · Stanford</p>
+      <p><b>原理：</b>复制预训练 SD 编码器 → 可训练副本 → 接受条件输入 → 零卷积融合到原网络</p>
+      <p>支持 <b>Canny边缘、深度图、姿态、语义分割</b> 等 10+ 种条件</p>
+      <p class="small gray">零卷积保证训练初期不破坏原模型</p>
+    </div>
+    <div class="card">
+      <h4>IP-Adapter (2023.08)</h4>
+      <p><b>Tencent ARC Lab</b></p>
+      <p><b>原理：</b>图像 prompt → CLIP 编码 → 解耦交叉注意力注入 U-Net</p>
+      <p>只需 <b>22M 参数</b>，即插即用</p>
+      <p>支持：风格迁移、人脸保持、多图融合</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 8px;">其他可控生成技术</h3>
+  <div class="grid3">
+    <div class="card"><h4>T2I-Adapter</h4><p>Tencent · 轻量适配器<br>与 ControlNet 类似思路</p></div>
+    <div class="card"><h4>InstructPix2Pix</h4><p>Berkeley · 指令式编辑<br>"让天空更蓝""添加太阳镜"</p></div>
+    <div class="card"><h4>Inpainting</h4><p>掩码区域补全<br>SD 原生支持，ComfyUI 节点丰富</p></div>
+  </div>
+</section>
+
+<!-- ===== SLIDE 18: 个性化生成 ===== -->
+<section class="slide">
+  <h2>个性化生成：DreamBooth & LoRA</h2>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>DreamBooth (2022.08)</h4>
+      <p><b>Nataniel Ruiz et al.</b> · Google / BU<br>CVPR 2023 Best Student Paper</p>
+      <p><b>方法：</b>用 3-5 张主体照片 + 稀有 token<br>(如 "sks") 微调整个模型 → 新场景中生成该主体</p>
+      <p><b>技术：</b>先验保持损失，防止过拟合和语言漂移</p>
+      <p class="small gray">优势：保真度极高<br>代价：需全模型微调，文件大 (2-5GB)</p>
+    </div>
+    <div class="card">
+      <h4>LoRA (Low-Rank Adaptation)</h4>
+      <p><b>Hu et al.</b> · Microsoft (2021)<br>Simo Ryu 等引入 SD 社区 (2023)</p>
+      <p><b>方法：</b>只训练低秩矩阵 ΔW = BA<br>附加到注意力层权重上</p>
+      <p><b>优势：</b></p>
+      <p>• 文件极小：10-200MB<br>• 可叠加：lora1 + lora2<br>• 训练快：消费级 GPU 几分钟</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 8px;">Textual Inversion (2022)</h3>
+  <p class="small">Gal et al. · Tel Aviv / NVIDIA · 在文本嵌入空间学习一个伪词（token embedding），无需修改模型权重</p>
+  <table>
+    <tr><th>方法</th><th>训练参数</th><th>文件大小</th><th>保真度</th><th>灵活性</th></tr>
+    <tr><td>Textual Inversion</td><td>仅 token embedding</td><td>几 KB</td><td>★☆☆</td><td>★★☆</td></tr>
+    <tr><td>LoRA</td><td>低秩矩阵</td><td>10-200 MB</td><td>★★★</td><td>★★★</td></tr>
+    <tr><td>DreamBooth</td><td>全模型</td><td>2-5 GB</td><td>★★★</td><td>★★☆</td></tr>
+  </table>
+</section>
+
+<!-- ===== SLIDE 19: 视频生成 ===== -->
+<section class="slide tight">
+  <h2>从图像到视频：AI 视频生成 (2024-)</h2>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>OpenAI Sora (2024.02)</h4>
+      <p><b>架构：</b>DiT + 时空 patch<br>视频 → 时空 Patches → Transformer<br><b>能力：</b>最长 1 分钟，1080p<br>3D一致性、物体持久性</p>
+      <p class="small gray">"世界模拟器"——学习物理规律和运动</p>
+    </div>
+    <div class="card">
+      <h4>Runway Gen-4 (2025.03)</h4>
+      <p>Runway AI · 专业视频生成<br><b>特点：</b></p>
+      <p>• 角色/场景一致性<br>• 精确相机控制<br>• 多镜头叙事</p>
+      <p>Gen-2 (2023) → Gen-3 Alpha (2024) → Gen-4 (2025)</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 6px;">更多视频生成模型</h3>
+  <table>
+    <tr><th>模型</th><th>机构</th><th>时间</th><th>特点</th></tr>
+    <tr><td>Pika 2.0</td><td>Pika Labs</td><td>2024</td><td>场景元素替换、画质提升</td></tr>
+    <tr><td>Kling 1.5+</td><td>快手</td><td>2024</td><td>1080p、最长 2 分钟、运动笔刷</td></tr>
+    <tr><td>Hailuo / MiniMax</td><td>MiniMax</td><td>2024</td><td>快速生成、电影级画质</td></tr>
+    <tr><td>Veo 2</td><td>Google DeepMind</td><td>2024.12</td><td>4K 分辨率、物理模拟逼真</td></tr>
+    <tr><td>Wan 2.1</td><td>阿里巴巴</td><td>2025</td><td>开源、消费级显卡可运行</td></tr>
+  </table>
+</section>
+
+<!-- ===== SLIDE 20: 模型对比总表 ===== -->
+<section class="slide tight">
+  <h2>主流图像生成模型对比</h2>
+  <table style="font-size: 11px;">
+    <tr><th>模型</th><th>机构</th><th>时间</th><th>架构</th><th>规模</th><th>许可</th></tr>
+    <tr><td>GAN</td><td>U Montréal</td><td>2014</td><td>CNN 对抗</td><td>~M</td><td>-</td></tr>
+    <tr><td>StyleGAN2</td><td>NVIDIA</td><td>2019</td><td>Style-based GAN</td><td>30M</td><td>CC BY-NC</td></tr>
+    <tr><td>DDPM</td><td>UC Berkeley</td><td>2020</td><td>U-Net 扩散</td><td>~100M</td><td>-</td></tr>
+    <tr><td>DALL-E</td><td>OpenAI</td><td>2021</td><td>dVAE + GPT-3</td><td>12B</td><td>闭源</td></tr>
+    <tr><td>Stable Diffusion 1.5</td><td>Stability AI</td><td>2022.10</td><td>Latent Diffusion U-Net</td><td>860M</td><td>CreativeML</td></tr>
+    <tr><td>DALL-E 2</td><td>OpenAI</td><td>2022.04</td><td>CLIP + Diffusion</td><td>3.5B</td><td>闭源</td></tr>
+    <tr><td>Midjourney V6</td><td>Midjourney</td><td>2023.12</td><td>Diffusion + RLHF</td><td>~B</td><td>闭源</td></tr>
+    <tr><td>SDXL</td><td>Stability AI</td><td>2023.07</td><td>Latent Diffusion U-Net (2.6B)</td><td>2.6B</td><td>CreativeML</td></tr>
+    <tr><td>DALL-E 3</td><td>OpenAI</td><td>2023.09</td><td>Diffusion + Captioner</td><td>~B</td><td>闭源</td></tr>
+    <tr><td>Imagen 3</td><td>Google</td><td>2024.05</td><td>Cascaded Diffusion</td><td>~B</td><td>闭源</td></tr>
+    <tr><td>Stable Diffusion 3</td><td>Stability AI</td><td>2024.02</td><td>MMDiT + Flow</td><td>800M-8B</td><td>非商开源</td></tr>
+    <tr><td><b>Flux.1 [dev]</b></td><td>Black Forest Labs</td><td>2024.08</td><td>MMDiT + Flow</td><td>12B</td><td>非商开源</td></tr>
+    <tr><td>Stable Diffusion 3.5</td><td>Stability AI</td><td>2024.10</td><td>MMDiT + Flow</td><td>8.1B</td><td>Community</td></tr>
+    <tr><td>GPT Image 2</td><td>OpenAI</td><td>2026.04</td><td>GPT 原生</td><td>-</td><td>闭源</td></tr>
+    <tr><td><b>Ideogram 4.0</b></td><td>Ideogram</td><td>2026.06</td><td>Diffusion+文字</td><td>-</td><td>Apache 2.0</td></tr>
+  </table>
+</section>
+
+<!-- ===== SLIDE 21: 关键技术创新 ===== -->
+<section class="slide tight">
+  <h2>关键技术创新总结</h2>
+
+  <div class="grid2" style="gap: 8px;">
+    <div>
+      <div class="card" style="padding: 8px 12px; margin-bottom: 6px;">
+        <h4 style="font-size: 13px;">1. 潜空间扩散 (2022)</h4>
+        <p style="font-size: 11.5px;">VAE 压缩 48× → 消费级 GPU 运行扩散</p>
+      </div>
+      <div class="card" style="padding: 8px 12px; margin-bottom: 6px;">
+        <h4 style="font-size: 13px;">2. Cross-Attention 条件化 (2022)</h4>
+        <p style="font-size: 11.5px;">文本嵌入通过交叉注意力注入生成过程</p>
+      </div>
+      <div class="card" style="padding: 8px 12px; margin-bottom: 6px;">
+        <h4 style="font-size: 13px;">3. CFG (2022)</h4>
+        <p style="font-size: 11.5px;">无需额外分类器即可控制文本对齐强度</p>
+      </div>
+      <div class="card" style="padding: 8px 12px; margin-bottom: 6px;">
+        <h4 style="font-size: 13px;">4. ControlNet (2023)</h4>
+        <p style="font-size: 11.5px;">零卷积实现即插即用的空间条件控制</p>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="padding: 8px 12px; margin-bottom: 6px;">
+        <h4 style="font-size: 13px;">5. LoRA / DreamBooth (2022-23)</h4>
+        <p style="font-size: 11.5px;">轻量个性化微调，10-200MB 级适配器</p>
+      </div>
+      <div class="card" style="padding: 8px 12px; margin-bottom: 6px;">
+        <h4 style="font-size: 13px;">6. LCM / 蒸馏 (2023)</h4>
+        <p style="font-size: 11.5px;">1-4 步实时生成，速度提升 50×+</p>
+      </div>
+      <div class="card" style="padding: 8px 12px; margin-bottom: 6px;">
+        <h4 style="font-size: 13px;">7. MMDiT + Flow Matching (2024)</h4>
+        <p style="font-size: 11.5px;">Transformer 替代 U-Net，直线路径采样</p>
+      </div>
+      <div class="card" style="padding: 8px 12px; margin-bottom: 6px;">
+        <h4 style="font-size: 13px;">8. GPT 原生图像生成 (2025-26)</h4>
+        <p style="font-size: 11.5px;">统一多模态模型，对话式图像创作</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SLIDE 22: 发展脉络 ===== -->
+<section class="slide">
+  <h2>发展脉络总结</h2>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+    <div class="card">
+      <h4>🔄 架构演进主线</h4>
+      <p><b>GAN</b> (对抗博弈) → <b>Diffusion</b> (逐步去噪) → <b>Latent Diffusion</b> (潜空间) → <b>Flow Matching</b> (直线路径) → <b>GPT Native</b> (统一多模态)</p>
+      <p class="small gray">从隐式→显式、像素→潜空间、弯曲→直线、专用→统一</p>
+    </div>
+    <div class="card">
+      <h4>🔧 骨干网络演进</h4>
+      <p><b>CNN</b> (DCGAN) → <b>U-Net</b> (DDPM/SD) → <b>DiT</b> (Sora) → <b>MMDiT</b> (SD3/Flux)</p>
+      <p class="small gray">从卷积归纳偏置 → 全注意力通用架构</p>
+    </div>
+    <div class="card">
+      <h4>⚡ 采样效率之路</h4>
+      <p><b>1000 步</b> (DDPM) → <b>50 步</b> (DDIM) → <b>20 步</b> (DPM) → <b>4 步</b> (LCM) → <b>1-2 步</b> (蒸馏/SD Turbo)</p>
+      <p class="small gray">从分钟级到毫秒级</p>
+    </div>
+    <div class="card">
+      <h4>🌐 生态与开放性</h4>
+      <p><b>全闭源</b> (DALL-E/Imagen) → <b>社区许可</b> (SD1.5/SDXL) → <b>Apache 2.0</b> (Flux schnell, Ideogram 4.0, HiDream)</p>
+      <p class="small gray">开源社区推动可控生成、个性化、部署等下层创新</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SLIDE 23: 前沿趋势 1 ===== -->
+<section class="slide">
+  <h2>前沿趋势 (2025–2026) · 上篇</h2>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>🧠 统一多模态（Any-to-Any）</h4>
+      <p>GPT-4o / Gemini 2.0 将图像生成纳入统一多模态框架<br>
+      文本 ↔ 图像 ↔ 视频 自由转换<br>
+      一次对话完成多轮迭代创作</p>
+      <p class="small gray">代表：GPT Image 2, Gemini 2.0 Flash</p>
+    </div>
+    <div class="card">
+      <h4>🎬 视频生成爆发</h4>
+      <p>Sora, Veo 2, Kling, Runway Gen-4<br>
+      数秒到 2 分钟、4K 分辨率<br>
+      物理一致性、角色一致性是核心挑战</p>
+      <p class="small gray">"世界模型"派 vs "生成工具"派</p>
+    </div>
+    <div class="card">
+      <h4>🏗️ 3D / 4D 生成</h4>
+      <p>单图或文本 → 3D mesh / NeRF / 3D Gaussian Splatting<br>
+      DreamFusion, MVDream, TripoSR, Rodin<br>
+      → 游戏/影视/AR/VR 工作流</p>
+    </div>
+    <div class="card">
+      <h4>⚡ 实时/端侧生成</h4>
+      <p>Stable Diffusion Turbo / SD3-Turbo / LCM<br>
+      移动端部署 (CoreML, TensorFlow Lite)<br>
+      Qualcomm/NPU 推理 → 边缘设备秒级生成</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SLIDE 24: 前沿趋势 2 ===== -->
+<section class="slide">
+  <h2>前沿趋势 (2025–2026) · 下篇</h2>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>🎯 可控编辑与交互</h4>
+      <p>• 拖拽式编辑 (DragGAN/DragDiffusion)<br>• 指令式编辑 (InstructPix2Pix)<br>• 图层/对象分离编辑<br>• 多轮对话式迭代修改</p>
+    </div>
+    <div class="card">
+      <h4>🏷️ 品牌/一致性与 IP 保护</h4>
+      <p>• 角色一致性生成 (StoryDiffusion)<br>• 品牌视觉系统内置<br>• 水印/溯源技术 (C2PA)<br>• 版权与训练数据合规</p>
+    </div>
+    <div class="card">
+      <h4>🔬 科学/医学应用</h4>
+      <p>• 医学图像合成 (数据增强)<br>• 药物分子结构生成<br>• 卫星/遥感图像生成<br>• 蛋白质结构预测可视化</p>
+    </div>
+    <div class="card">
+      <h4>🧪 评估体系成熟化</h4>
+      <p>• FID → CLIP Score → PickScore → ImageReward<br>• 人类偏好对齐 (HPSv2)<br>• GenEval / DPG-Bench<br>• 多维度自动评估 (美学、一致性、文本对齐)</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SLIDE 25: 评估指标 ===== -->
+<section class="slide tight">
+  <h2>图像生成质量评估</h2>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>📐 自动评估指标</h4>
+      <table style="font-size: 11px;">
+        <tr><th>指标</th><th>测量什么</th><th>局限</th></tr>
+        <tr><td>FID</td><td>分布距离</td><td>对模式坍塌不敏感</td></tr>
+        <tr><td>CLIP Score</td><td>图文对齐</td><td>依赖 CLIP 训练数据</td></tr>
+        <tr><td>PickScore</td><td>人类偏好</td><td>偏好校准漂移</td></tr>
+        <tr><td>ImageReward</td><td>综合质量</td><td>依赖标注群体</td></tr>
+        <tr><td>Aesthetic Score</td><td>美学质量</td><td>主观性强</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h4>📋 基准数据集</h4>
+      <table style="font-size: 11px;">
+        <tr><th>基准</th><th>侧重点</th></tr>
+        <tr><td>MS-COCO</td><td>通用图文生成</td></tr>
+        <tr><td>DrawBench</td><td>组合性理解</td></tr>
+        <tr><td>PartiPrompts</td><td>复杂语言理解</td></tr>
+        <tr><td>GenEval</td><td>多维度分解评估</td></tr>
+        <tr><td>DPG-Bench</td><td>密集prompt遵循</td></tr>
+        <tr><td>T2I-CompBench</td><td>属性绑定能力</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 4px;">评估困境</h3>
+  <p class="small gray">没有单一指标能完全反映图像质量。工业界常用 <b>人类偏好 A/B 测试</b> + <b>多指标综合</b>。<br>趋势：<b>LLM-as-Judge</b>（用 GPT-4V 评分）正在成为新范式</p>
+</section>
+
+<!-- ===== SLIDE 26: 课堂讨论 ===== -->
+<section class="slide">
+  <h2>课堂讨论题</h2>
+
+  <div class="qa">
+    <div class="q">Q1: 为什么 Latent Diffusion 比 Pixel Diffusion 更实用？</div>
+    <div class="a">潜空间压缩 48× 大幅降低计算和内存。但 VAE 的信息损失也限制了细节生成——这是否有上限？</div>
+  </div>
+  <div class="qa">
+    <div class="q">Q2: Flow Matching 为什么能比 DDPM 采样更快？</div>
+    <div class="a">直线路径 vs 弯曲路径，意味着 ODE 求解器可以用更少的步骤。但这是否以生成多样性为代价？</div>
+  </div>
+  <div class="qa">
+    <div class="q">Q3: 开源 vs 闭源——谁在推动图像生成技术进步？</div>
+    <div class="a">开源生态催生了 ControlNet、LoRA 等创新；闭源模型在质量和安全性上领先。未来会趋向两极分化还是融合？</div>
+  </div>
+  <div class="qa">
+    <div class="q">Q4: GPT 原生图像生成是否代表终局？</div>
+    <div class="a">统一多模态消除了文本↔图像的转换损耗，但在专业性（如设计工具、精准控制）上仍有欠缺。专用模型还有空间吗？</div>
+  </div>
+  <div class="qa">
+    <div class="q">Q5: 图像生成模型对底层视觉研究的启示？</div>
+    <div class="a">扩散先验用于图像复原、超分辨率；ControlNet 的空间感知可用于弱监督分割；生成-判别联合训练等</div>
+  </div>
+</section>
+
+<!-- ===== SLIDE 27: 参考文献 ===== -->
+<section class="slide tight">
+  <h2>参考文献</h2>
+
+  <div class="grid2" style="font-size: 11px; gap: 6px;">
+    <div>
+      <p style="font-size:11px; margin:2px 0;">[1] Goodfellow et al. <b>Generative Adversarial Nets</b>. NeurIPS 2014.</p>
+      <p style="font-size:11px; margin:2px 0;">[2] Karras et al. <b>A Style-Based Generator Architecture for GANs</b>. CVPR 2019.</p>
+      <p style="font-size:11px; margin:2px 0;">[3] Ho et al. <b>Denoising Diffusion Probabilistic Models</b>. NeurIPS 2020.</p>
+      <p style="font-size:11px; margin:2px 0;">[4] Song et al. <b>Denoising Diffusion Implicit Models</b>. ICLR 2021.</p>
+      <p style="font-size:11px; margin:2px 0;">[5] Ramesh et al. <b>Zero-Shot Text-to-Image Generation (DALL-E)</b>. ICML 2021.</p>
+      <p style="font-size:11px; margin:2px 0;">[6] Radford et al. <b>Learning Transferable Visual Models (CLIP)</b>. ICML 2021.</p>
+      <p style="font-size:11px; margin:2px 0;">[7] Rombach et al. <b>High-Resolution Image Synthesis with Latent Diffusion Models</b>. CVPR 2022.</p>
+      <p style="font-size:11px; margin:2px 0;">[8] Ramesh et al. <b>Hierarchical Text-Conditional Image Generation (DALL-E 2)</b>. 2022.</p>
+      <p style="font-size:11px; margin:2px 0;">[9] Saharia et al. <b>Photorealistic Text-to-Image Diffusion Models (Imagen)</b>. NeurIPS 2022.</p>
+    </div>
+    <div>
+      <p style="font-size:11px; margin:2px 0;">[10] Podell et al. <b>SDXL: Improving Latent Diffusion Models</b>. 2023.</p>
+      <p style="font-size:11px; margin:2px 0;">[11] Zhang et al. <b>Adding Conditional Control to T2I Diffusion Models (ControlNet)</b>. ICCV 2023.</p>
+      <p style="font-size:11px; margin:2px 0;">[12] Ruiz et al. <b>DreamBooth: Fine Tuning T2I Diffusion Models</b>. CVPR 2023.</p>
+      <p style="font-size:11px; margin:2px 0;">[13] Luo et al. <b>Latent Consistency Models (LCM)</b>. 2023.</p>
+      <p style="font-size:11px; margin:2px 0;">[14] Esser et al. <b>Scaling Rectified Flow Transformers (SD3)</b>. 2024.</p>
+      <p style="font-size:11px; margin:2px 0;">[15] Black Forest Labs. <b>Flux.1</b>. 2024.</p>
+      <p style="font-size:11px; margin:2px 0;">[16] Liu et al. <b>Flow Matching for Generative Modeling</b>. ICLR 2023.</p>
+      <p style="font-size:11px; margin:2px 0;">[17] Peebles & Xie. <b>Scalable Diffusion Models with Transformers (DiT)</b>. ICCV 2023.</p>
+      <p style="font-size:11px; margin:2px 0;">[18] Brooks et al. <b>Video Generation Models as World Simulators (Sora)</b>. 2024.</p>
+    </div>
+  </div>
+  <p class="small gray" style="margin-top: 6px;">数据来源：论文原文、Wikipedia "Text-to-image model"、各模型官方文档、Hugging Face 社区 (截至 2026.07)</p>
+</section>
+
+<!-- ===== SLIDE 28: End ===== -->
+<section class="slide">
+  <div style="text-align: center;">
+    <h1 style="font-size: 36px;">感谢聆听</h1>
+    <p style="font-size: 18px; color: var(--ink-2); margin: 16px 0;">图像生成模型的十年演进</p>
+    <p style="color: var(--muted);">从 GAN 到 Flow Matching，从像素到潜空间，从专用到统一</p>
+    <div style="margin-top: 30px;">
+      <span class="box gan">GAN</span>
+      <span style="margin: 0 6px; color: var(--muted);">·</span>
+      <span class="box diff">Diffusion</span>
+      <span style="margin: 0 6px; color: var(--muted);">·</span>
+      <span class="box ar">Autoregressive</span>
+      <span style="margin: 0 6px; color: var(--muted);">·</span>
+      <span class="box flow">Flow Matching</span>
+      <span style="margin: 0 6px; color: var(--muted);">·</span>
+      <span class="box open">GPT Native</span>
+    </div>
+    <p class="small gray" style="margin-top: 24px;">安徽大学 · 人工智能学院 · 董兴波</p>
+  </div>
+</section>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let cur = 0;
+
+  function show(i) {
+    slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+    if (i >= 0 && i < total) {
+      slides[i].classList.add('active');
+      slides[i].style.display = 'flex';
+      cur = i;
+      document.getElementById('progress').style.width = ((cur + 1) / total * 100) + '%';
+      document.getElementById('pageInd').textContent = (cur + 1) + ' / ' + total;
+    }
+  }
+
+  show(0);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault();
+      if (cur < total - 1) show(cur + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault();
+      if (cur > 0) show(cur - 1);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      show(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      show(total - 1);
+    } else if (e.key === 'p' || e.key === 'P') {
+      e.preventDefault();
+      window.print();
+    }
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', function(e) { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', function(e) {
+    const diff = e.changedTouches[0].clientX - touchStartX;
+    if (diff < -50 && cur < total - 1) show(cur + 1);
+    if (diff > 50 && cur > 0) show(cur - 1);
+  });
+
+  // Hash-based deep linking
+  if (window.location.hash) {
+    const n = parseInt(window.location.hash.substring(1));
+    if (n >= 1 && n <= total) show(n - 1);
+  }
+})();
+</script>
+
+</body>
+</html>
