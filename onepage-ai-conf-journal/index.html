@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 学术会议与期刊一页通 · CV / NLP / ML 顶会顶刊速查</title>
+<style>
+:root {
+  --m1-deep: #1e40af;   /* blue-800: 主色 (学术蓝) */
+  --m1-soft: #dbeafe;   /* blue-100 */
+  --m2-deep: #b45309;   /* amber-700 */
+  --m2-soft: #ffedd5;   /* orange-100 */
+  --m3-deep: #0d9488;   /* teal-600 */
+  --m3-soft: #ccfbf1;   /* teal-100 */
+  --m4-deep: #6d28d9;   /* violet-700 */
+  --m4-soft: #ede9fe;   /* violet-100 */
+  --ink: #111827;
+  --ink-2: #374151;
+  --ink-3: #6b7280;
+  --line: #f3f4f6;
+  --bg: #ffffff;
+  --warn: #ef4444;
+  --warn-soft: #fef2f2;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #f5f5f4; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--ink);
+  line-height: 1.6;
+  padding: 24px 12px;
+}
+.poster {
+  max-width: 780px;
+  margin: 0 auto;
+  background: var(--bg);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 22px rgba(0,0,0,0.08);
+}
+section { padding: 26px 36px; border-bottom: 1px solid var(--line); }
+section:last-child { border-bottom: none; }
+
+/* ===== ① Header ===== */
+header {
+  position: relative;
+  background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+  color: #fff;
+  padding: 34px 38px 28px;
+}
+header .eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.18);
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+header h1 {
+  font-size: 26px;
+  line-height: 1.42;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: -0.005em;
+}
+header h1 .q { color: #fde047; }
+header .subtitle {
+  font-size: 14.5px;
+  color: rgba(255,255,255,0.94);
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+header .meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: rgba(255,255,255,0.85);
+}
+header .meta span {
+  background: rgba(255,255,255,0.12);
+  padding: 3px 9px;
+  border-radius: 4px;
+}
+header .deco {
+  position: absolute;
+  top: 24px; right: 28px;
+  font-size: 28px;
+  opacity: 0.85;
+  letter-spacing: 4px;
+}
+
+/* ===== ② Overview ===== */
+.overview h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--m1-deep);
+}
+.overview h2 .en {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+.overview .lead {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin: 4px 0 14px;
+  line-height: 1.7;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.card {
+  border-radius: 8px;
+  padding: 12px 13px;
+  border: 1px solid;
+  position: relative;
+}
+.card .icn { font-size: 20px; display: block; margin-bottom: 4px; }
+.card .name {
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: var(--ink);
+}
+.card .en {
+  font-size: 10.5px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.card.c1 { background: var(--m1-soft); border-color: #93c5fd; }
+.card.c2 { background: var(--m2-soft); border-color: #fed7aa; }
+.card.c3 { background: var(--m3-soft); border-color: #99f6e4; }
+.card.c4 { background: var(--m4-soft); border-color: #c4b5fd; }
+.card.c5 { background: #fef3c7; border-color: #fde68a; }
+.card.c6 { background: #fce7f3; border-color: #f9a8d4; }
+
+/* ===== ③ 编号主模块 ===== */
+.module { position: relative; }
+.module-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.num {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.m1 .num { background: var(--m1-deep); }
+.m2 .num { background: var(--m2-deep); }
+.m3 .num { background: var(--m3-deep); }
+.m4 .num { background: var(--m4-deep); }
+.module-head h3 {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.35;
+}
+.module-head h3 .en {
+  display: block;
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.module p {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--ink-2);
+  margin-bottom: 10px;
+}
+.module ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 10px;
+}
+.module li {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  padding-left: 18px;
+  position: relative;
+  margin-bottom: 4px;
+}
+.module li::before {
+  content: "\25B8";
+  position: absolute;
+  left: 4px;
+  color: var(--m1-deep);
+  font-weight: 700;
+}
+.m2 li::before { color: var(--m2-deep); }
+.m3 li::before { color: var(--m3-deep); }
+.m4 li::before { color: var(--m4-deep); }
+
+.callout {
+  background: var(--m1-soft);
+  border-left: 4px solid var(--m1-deep);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  margin: 10px 0;
+}
+.m2 .callout { background: var(--m2-soft); border-left-color: var(--m2-deep); }
+.m3 .callout { background: var(--m3-soft); border-left-color: var(--m3-deep); }
+.m4 .callout { background: var(--m4-soft); border-left-color: var(--m4-deep); }
+.callout b { color: var(--m1-deep); }
+.m2 .callout b { color: var(--m2-deep); }
+.m3 .callout b { color: var(--m3-deep); }
+.m4 .callout b { color: var(--m4-deep); }
+
+/* table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  margin: 10px 0;
+  background: #fafafa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+th, td {
+  padding: 7px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 11.5px;
+}
+td { color: var(--ink-2); }
+tr:last-child td { border-bottom: none; }
+.hl td { background: #fef3c7; font-weight: 600; }
+.tier-a { color: #b91c1c; font-weight: 700; }
+.tier-b { color: #b45309; font-weight: 600; }
+
+/* ===== ④ 误区 ===== */
+.pitfall h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--warn);
+  margin-bottom: 4px;
+}
+.pitfall h2 .en {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+.pitfall .lead {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin: 4px 0 14px;
+  line-height: 1.7;
+}
+.pit-list { list-style: none; padding: 0; margin: 0; }
+.pit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 14px;
+  background: var(--warn-soft);
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.pit-icon {
+  width: 24px; height: 24px;
+  background: var(--warn);
+  color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.pit-body { flex: 1; }
+.pit-wrong {
+  font-size: 13.5px;
+  color: #991b1b;
+  text-decoration: line-through;
+  text-decoration-color: #ef4444;
+  text-decoration-thickness: 1.5px;
+  margin-bottom: 3px;
+  font-weight: 600;
+}
+.pit-right {
+  font-size: 13.5px;
+  color: #166534;
+  font-weight: 600;
+  line-height: 1.65;
+}
+.pit-right::before { content: "\1F449 "; }
+
+/* ===== ⑤ TL;DR ===== */
+.summary h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--m1-deep);
+  margin-bottom: 4px;
+}
+.summary h2 .en {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+.tldr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 14px 0 18px;
+}
+.tldr {
+  padding: 12px 14px;
+  background: #fafafa;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.tldr .tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--m1-deep);
+  margin-bottom: 4px;
+}
+.tldr.t2 .tag { color: var(--m2-deep); }
+.tldr.t3 .tag { color: var(--m3-deep); }
+.tldr p {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.65;
+}
+.oneliner {
+  background: linear-gradient(135deg, #1e1b4b 0%, #1e40af 100%);
+  color: #fff;
+  border-radius: 10px;
+  padding: 18px 22px;
+  font-size: 15px;
+  line-height: 1.7;
+  font-weight: 500;
+}
+.oneliner b { color: #fde047; font-weight: 700; }
+.refs {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  text-align: right;
+  line-height: 1.7;
+}
+.refs b { color: var(--ink-2); }
+
+/* responsive */
+@media (max-width: 640px) {
+  section { padding: 22px 18px; }
+  header { padding: 24px 22px 20px; }
+  header h1 { font-size: 21px; }
+  .cards { grid-template-columns: repeat(2, 1fr); }
+  .tldr-grid { grid-template-columns: 1fr; }
+  .num { width: 32px; height: 32px; font-size: 14px; }
+  .module-head h3 { font-size: 17px; }
+  table { font-size: 11px; }
+  th, td { padding: 5px 7px; }
+}
+</style>
+</head>
+<body>
+<div class="poster">
+
+<!-- ============================== ① 标题区 ============================== -->
+<header>
+  <div class="eyebrow">AI Research · Venue Guide</div>
+  <h1>AI 论文该投哪里？<span class="q">CV / NLP / ML</span><br>顶会顶刊一页速查</h1>
+  <p class="subtitle">
+    覆盖 CCF-A / CCF-B 两大梯队的 <b>15 个顶会 + 10 本顶刊</b>，含录取率、投稿周期与选会策略。<br>
+    一篇讲清 <b>什么时候投会、什么时候投刊、被拒了怎么办</b>。
+  </p>
+  <div class="deco">📄 🎯 🏆</div>
+  <div class="meta">
+    <span>📚 适合: 硕博生 / 年轻教师 / 首次投稿</span>
+    <span>🎯 覆盖: CV · NLP · ML · DM</span>
+    <span>📖 阅读: 1 页</span>
+  </div>
+</header>
+
+<!-- ============================== ② 导览 ============================== -->
+<section class="overview">
+  <h2>一页图导航 <span class="en">Overview</span></h2>
+  <p class="lead">6 张卡片快速定位:从顶会到顶刊、从 CV 到 NLP、从 CCF-A 到备选方案。</p>
+  <div class="cards">
+    <div class="card c1">
+      <span class="icn">👁️</span>
+      <div class="name">CV 顶会</div>
+      <div class="en">CVPR / ICCV / ECCV</div>
+    </div>
+    <div class="card c2">
+      <span class="icn">🧠</span>
+      <div class="name">ML 顶会</div>
+      <div class="en">NeurIPS / ICML / ICLR</div>
+    </div>
+    <div class="card c3">
+      <span class="icn">💬</span>
+      <div class="name">NLP 顶会</div>
+      <div class="en">ACL / EMNLP / NAACL</div>
+    </div>
+    <div class="card c4">
+      <span class="icn">📖</span>
+      <div class="name">CCF-A 顶刊</div>
+      <div class="en">TPAMI / IJCV / JMLR</div>
+    </div>
+    <div class="card c5">
+      <span class="icn">⏰</span>
+      <div class="name">投稿节奏</div>
+      <div class="en">Annual Cycles</div>
+    </div>
+    <div class="card c6">
+      <span class="icn">📉</span>
+      <div class="name">录取率</div>
+      <div class="en">15-25% Avg</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== ③ 编号主模块 ============================== -->
+
+<!-- 模块 01: CCF-A 顶级会议 -->
+<section class="module m1">
+  <div class="module-head">
+    <div class="num">01</div>
+    <h3>CCF-A 顶级会议<span class="en">Tier-1 Conferences · 10 个必知</span></h3>
+  </div>
+  <p>CCF-A 是中国计算机学会认定的最高级别会议。AI 方向共 <b>7 个 A 类会议</b>（CVPR/ICCV/NeurIPS/ICML/IJCAI/AAAI/ACL），加上实际影响力相当的 ICLR、EMNLP、SIGKDD，以下 10 个是 AI 研究者必知。</p>
+
+  <table>
+    <thead>
+      <tr><th>会议</th><th>全称</th><th>方向</th><th>CCF</th><th>录取率</th><th>投稿月</th></tr>
+    </thead>
+    <tbody>
+      <tr class="hl">
+        <td><b>CVPR</b></td><td>Computer Vision &amp; Pattern Recognition</td><td>CV</td>
+        <td class="tier-a">A</td><td>~22%</td><td>11 月</td>
+      </tr>
+      <tr>
+        <td><b>ICCV</b></td><td>International Conf. on Computer Vision</td><td>CV</td>
+        <td class="tier-a">A</td><td>~22%</td><td>3 月 (奇数年)</td>
+      </tr>
+      <tr>
+        <td><b>ECCV</b></td><td>European Conf. on Computer Vision</td><td>CV</td>
+        <td class="tier-b">B</td><td>~25%</td><td>3 月 (偶数年)</td>
+      </tr>
+      <tr class="hl">
+        <td><b>NeurIPS</b></td><td>Neural Information Processing Systems</td><td>ML</td>
+        <td class="tier-a">A</td><td>~22%</td><td>5 月</td>
+      </tr>
+      <tr>
+        <td><b>ICML</b></td><td>Int'l Conf. on Machine Learning</td><td>ML</td>
+        <td class="tier-a">A</td><td>~22%</td><td>1 月</td>
+      </tr>
+      <tr>
+        <td><b>ICLR</b></td><td>Int'l Conf. on Learning Representations</td><td>ML</td>
+        <td>—</td><td>~25%</td><td>9 月</td>
+      </tr>
+      <tr class="hl">
+        <td><b>ACL</b></td><td>Association for Computational Linguistics</td><td>NLP</td>
+        <td class="tier-a">A</td><td>~20%</td><td>12 月</td>
+      </tr>
+      <tr>
+        <td><b>EMNLP</b></td><td>Empirical Methods in NLP</td><td>NLP</td>
+        <td class="tier-b">B</td><td>~22%</td><td>6 月</td>
+      </tr>
+      <tr>
+        <td><b>AAAI</b></td><td>AAAI Conf. on Artificial Intelligence</td><td>AI</td>
+        <td class="tier-a">A</td><td>~20%</td><td>8 月</td>
+      </tr>
+      <tr>
+        <td><b>IJCAI</b></td><td>Int'l Joint Conf. on AI</td><td>AI</td>
+        <td class="tier-a">A</td><td>~15%</td><td>1 月</td>
+      </tr>
+      <tr>
+        <td><b>SIGKDD</b></td><td>Knowledge Discovery &amp; Data Mining</td><td>DM</td>
+        <td class="tier-a">A</td><td>~18%</td><td>2 月</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <b>CVPR + NeurIPS + ICML + ACL</b> = AI 领域「四大」。CV/NLP 交叉方向（如视觉-语言、多模态）通常会同时投 CV 和 NLP 顶会，哪个 deadline 先到先投哪个。
+  </div>
+
+  <p><b>CCF 分级说明</b>：ECCV 虽为 CCF-B，但在 CV 圈实际地位接近 CVPR/ICCV，被称为"CV 三大顶会"之一。ICLR 未被 CCF 收录但影响力已超过 AAAI/IJCAI。EMNLP 是 NLP 圈事实上的第二会议。</p>
+</section>
+
+<!-- 模块 02: CCF-A 顶级期刊 -->
+<section class="module m2">
+  <div class="module-head">
+    <div class="num">02</div>
+    <h3>CCF-A 顶级期刊<span class="en">Tier-1 Journals · 投稿周期长但分量重</span></h3>
+  </div>
+  <p>期刊审稿周期长（6-18 个月）、修改轮次多（2-4 轮），但发表后<b>引用寿命远超会议论文</b>。以下 8 本是 AI/CV/NLP 方向的顶级期刊。</p>
+
+  <table>
+    <thead>
+      <tr><th>期刊</th><th>全称 / 方向</th><th>CCF</th><th>IF 区间</th><th>审稿周期</th></tr>
+    </thead>
+    <tbody>
+      <tr class="hl">
+        <td><b>TPAMI</b></td><td>IEEE Trans. PAMI · CV/ML/PR</td>
+        <td class="tier-a">A</td><td>20-24</td><td>6-14 月</td>
+      </tr>
+      <tr>
+        <td><b>IJCV</b></td><td>Int'l Journal of Computer Vision · CV</td>
+        <td class="tier-a">A</td><td>16-20</td><td>6-12 月</td>
+      </tr>
+      <tr>
+        <td><b>JMLR</b></td><td>Journal of Machine Learning Research · ML</td>
+        <td class="tier-a">A</td><td>8-12</td><td>6-18 月</td>
+      </tr>
+      <tr>
+        <td><b>AIJ</b></td><td>Artificial Intelligence Journal · AI</td>
+        <td class="tier-a">A</td><td>8-10</td><td>8-16 月</td>
+      </tr>
+      <tr class="hl">
+        <td><b>TIP</b></td><td>IEEE Trans. Image Processing · 图像</td>
+        <td class="tier-a">A</td><td>10-12</td><td>4-10 月</td>
+      </tr>
+      <tr>
+        <td><b>TKDE</b></td><td>IEEE Trans. KDE · 数据/挖掘</td>
+        <td class="tier-a">A</td><td>8-10</td><td>6-12 月</td>
+      </tr>
+      <tr>
+        <td><b>TIFS</b></td><td>IEEE Trans. IFS · 安全/AI安全</td>
+        <td class="tier-a">A</td><td>6-8</td><td>4-10 月</td>
+      </tr>
+      <tr>
+        <td><b>TNNLS</b></td><td>IEEE Trans. NNLS · 神经网络</td>
+        <td class="tier-b">B</td><td>10-14</td><td>6-12 月</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <b>期刊 vs 会议策略</b>:博士期间建议主攻顶会（出活快、deadline 驱动），博士后期 / 博后阶段再攻顶刊（分量重、适合"代表作"）。TPAMI 接受直接从 CVPR/ICCV/ECCV 扩展的投稿（需 ≥30% 新内容）。
+  </div>
+
+  <p><b>CCF-B 值得投的期刊</b>：Pattern Recognition (PR) · CVIU · IVC · Machine Learning · Neural Networks · JAIR · TACL · CL。这些期刊审稿相对快（3-8 月），适合作为第一/第二篇期刊论文的起步选择。</p>
+</section>
+
+<!-- 模块 03: 投稿节奏 -->
+<section class="module m3">
+  <div class="module-head">
+    <div class="num">03</div>
+    <h3>全年投稿节奏<span class="en">Annual Submission Calendar</span></h3>
+  </div>
+  <p>AI 顶会的 deadline 一年一轮，错开排列。掌握节奏 = <b>一篇工作可以改投 2-3 个会</b>，而不是死磕一个。</p>
+
+  <table>
+    <thead><tr><th>月份</th><th>顶会 deadline</th><th>策略</th></tr></thead>
+    <tbody>
+      <tr><td><b>1 月</b></td><td>ICML, IJCAI</td><td>年初双保险，ML 理论 + AI 综合</td></tr>
+      <tr><td><b>2 月</b></td><td>SIGKDD</td><td>数据挖掘 / 推荐系统首选</td></tr>
+      <tr><td><b>3 月</b></td><td>ICCV (奇数年) / ECCV (偶数年)</td><td>CV 双年会的首个截止点</td></tr>
+      <tr class="hl"><td><b>5 月</b></td><td><b>NeurIPS</b></td><td>ML 全年最大投稿窗口，量最大</td></tr>
+      <tr><td><b>6 月</b></td><td>EMNLP</td><td>NLP 第二会议，ACL 被拒的改投首选</td></tr>
+      <tr><td><b>8 月</b></td><td>AAAI</td><td>暑期截稿，被 NeurIPS 拒后的第一个接盘</td></tr>
+      <tr><td><b>9 月</b></td><td>ICLR</td><td>深度学习新范式、开放审稿 (OpenReview)</td></tr>
+      <tr class="hl"><td><b>11 月</b></td><td><b>CVPR</b></td><td>CV 全年最大投稿窗口，最受关注</td></tr>
+      <tr><td><b>12 月</b></td><td>ACL</td><td>NLP 顶会，年末最后一波</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <b>被拒后黄金链路</b>: NeurIPS(5月)→AAAI(8月)→ICLR(9月) 或 CVPR(11月)→ICML(1月)→IJCAI(1月)。
+    一套实验做扎实，改写法 + 补实验，投 2-3 个会完全可行。关键是 <b>根据审稿意见改透再投</b>，不要原封不动换会名。
+  </div>
+
+  <p><b>CCF-B 会议插空</b>：ACCV (9 月，CV) · BMVC (5 月，CV) · WACV (7 月，CV 应用) · NAACL (3 月，NLP) · COLING (5 月，NLP) · AISTATS (10 月，ML 理论) · UAI (3 月，ML 不确定性)。这些会议适合起步阶段练手，被 A 会拒后转投 B 会也常见。</p>
+</section>
+
+<!-- 模块 04: 选会策略 -->
+<section class="module m4">
+  <div class="module-head">
+    <div class="num">04</div>
+    <h3>选会选刊策略<span class="en">Venue Strategy &amp; Real Talk</span></h3>
+  </div>
+  <p>选对 venue = 节省 3-6 个月。以下是研究员常用的<b>4 条决策准则</b>。</p>
+
+  <ul>
+    <li><b>匹配度优先于等级</b> —— 一篇纯 CV 检测论文投 ACL 会被 desk reject（方向不匹配），即使 ACL 是 CCF-A。先看自己工作的 <b>核心贡献属于哪个 community</b>。</li>
+    <li><b>看审稿制度选会</b> —— ICLR 用 OpenReview 公开审稿，透明但审稿人更挑剔。CVPR/ICCV/ECCV 盲审 + rebuttal，流程成熟。NeurIPS 审稿量大，随机性更高（"抽奖"）。</li>
+    <li><b>新兴方向看 workshop</b> —— 大模型、生成式 AI、具身智能等新方向，先在 CVPR/NeurIPS workshop 发，积攒引用 + 社区反馈，再投主会。</li>
+    <li><b>读博前两年别碰 TPAMI</b> —— TPAMI 审 6-14 个月，被拒重投又是 6 个月。硕士/博一攒够 2-3 篇顶会再冲期刊，保证毕业不卡在"审稿中"。</li>
+  </ul>
+
+  <div class="callout">
+    <b>小方向会议同样高质量</b>: 3DV / BMVC (3D 视觉) · CoNLL / EACL (NLP 细分) · COLT / AISTATS (ML 理论) · WACV (视觉应用)。
+    这些会规模小、review 质量有时反而更高，且竞争压力小于顶会。选会的关键不是"名字大不大"，而是 <b>你的 target audience 看不看这个会</b>。
+  </div>
+
+  <p><b>CCF 推荐目录之外的顶会</b>：ICLR (OpenReview，ML 三大之一) · MICCAI (医学图像) · ICRA / IROS (机器人) · INTERSPEECH (语音) · SIGGRAPH / SIGGRAPH Asia (图形学)。这些会虽不在 CCF-A 列表，但在各自领域是绝对顶会。</p>
+</section>
+
+<!-- ============================== ④ 误区 ============================== -->
+<section class="pitfall">
+  <h2>选会 4 大常见误区 <span class="en">Pitfalls</span></h2>
+  <p class="lead">这 4 个坑是年轻研究者最容易踩的。中任何一个，都可能白费 3-6 个月。</p>
+
+  <ul class="pit-list">
+    <li class="pit-item">
+      <div class="pit-icon">✗</div>
+      <div class="pit-body">
+        <div class="pit-wrong">只看 CCF 等级不看领域匹配，一篇统计 ML 论文硬投 CVPR</div>
+        <div class="pit-right">先看自己引用了哪些会议/期刊的论文 —— 那就是你的 target venue</div>
+      </div>
+    </li>
+    <li class="pit-item">
+      <div class="pit-icon">✗</div>
+      <div class="pit-body">
+        <div class="pit-wrong">被拒后原封不动改个格式就投下一个会，还期待不同结果</div>
+        <div class="pit-right">根据审稿意见补实验 / 改写作 / 重新定位贡献，至少花 2-4 周改透再投</div>
+      </div>
+    </li>
+    <li class="pit-item">
+      <div class="pit-icon">✗</div>
+      <div class="pit-body">
+        <div class="pit-wrong">博一就开始投 TPAMI / JMLR，2 年后还没出结果</div>
+        <div class="pit-right">硕博阶段先冲顶会 (3-4 个月出结果)，攒够篇数再考虑期刊</div>
+      </div>
+    </li>
+    <li class="pit-item">
+      <div class="pit-icon">✗</div>
+      <div class="pit-body">
+        <div class="pit-wrong">过度关注"CCF 几篇 A"，忽视文章质量和引用</div>
+        <div class="pit-right">1 篇引用 500+ 的 CCF-B 好过 3 篇无人引用的 CCF-A。质量 > 数量</div>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- ============================== ⑤ TL;DR ============================== -->
+<section class="summary">
+  <h2>这一页先记住 <span class="en">TL;DR</span></h2>
+
+  <div class="tldr-grid">
+    <div class="tldr">
+      <div class="tag">CV 首选</div>
+      <p>CVPR(11月) &gt; ICCV(3月/奇数年) &gt; ECCV(3月/偶数年)。CV 三大顶会，一年至少有一个 deadline。</p>
+    </div>
+    <div class="tldr t2">
+      <div class="tag">ML 首选</div>
+      <p>NeurIPS(5月) &gt; ICML(1月) &gt; ICLR(9月)。被拒可链式改投，节奏紧凑。</p>
+    </div>
+    <div class="tldr t3">
+      <div class="tag">NLP 首选</div>
+      <p>ACL(12月) &gt; EMNLP(6月) &gt; NAACL(3月)。一年两轮，节奏稳定。</p>
+    </div>
+  </div>
+
+  <div class="oneliner">
+    选会的<b>唯一正确逻辑</b>:<br>
+    你的读者在哪个会 / 刊发论文？那就是你的 target。<br>
+    先做匹配，再看等级。先冲顶会，再补期刊。先读完审稿意见，再改投下一个。
+  </div>
+
+  <div class="refs">
+    <b>参考来源</b><br>
+    · CCF 推荐国际学术会议和期刊目录 (2022 版)<br>
+    · csrankings.org · 各会议官方网站<br>
+    · 历年录取率汇总 (CVPR/ICCV/NeurIPS/ICML/ACL)<br>
+    · 数据截至 2026-07，具体 deadline 请以各会议官网为准
+  </div>
+</section>
+
+<!-- ============================== 版权 footer ============================== -->
+<div class="credit" style="margin-top: 14px; padding-top: 12px;
+  border-top: 1px solid var(--line); font-size: 11.5px; color: var(--ink-3);
+  text-align: center; line-height: 1.6;">
+  <b style="color: var(--ink); font-weight: 700;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+  <span style="font-size: 10.5px; color: var(--ink-3);">© 2026 DONG XINGBO · All rights reserved</span>
+</div>
+
+</div><!-- /.poster -->
+</body>
+</html>
