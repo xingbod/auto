@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 友好型论文写作 · 如何让你的论文在 AI 审稿中脱颖而出</title>
+<style>
+  :root {
+    --bg: #fafafa; --card: #ffffff;
+    --ink: #1f2937; --ink-2: #4b5563; --ink-3: #9ca3af; --line: #e5e7eb;
+
+    --c1: #0d9488; --c1s: #f0fdfa; /* 青 - 核心原则 */
+    --c2: #1e40af; --c2s: #eff6ff; /* 蓝 - 策略 */
+    --c3: #7c3aed; --c3s: #f5f3ff; /* 紫 - 结构化 */
+    --c4: #b45309; --c4s: #fffbeb; /* 琥珀 - 写作技巧 */
+    --c5: #dc2626; --c5s: #fef2f2; /* 红 - 避坑 */
+    --c6: #16a34a; --c6s: #dcfce7; /* 绿 - checklist */
+
+    --card-shadow: 0 0 0 1px var(--line);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink); background: var(--bg);
+    line-height: 1.6; font-size: 14.5px; -webkit-font-smoothing: antialiased;
+  }
+
+  .page { max-width: 800px; margin: 0 auto 40px; background: var(--card); box-shadow: var(--card-shadow); }
+
+  header {
+    padding: 40px 48px 30px; border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 700px 180px at top right, #dcfce7 0%, transparent 70%),
+      radial-gradient(ellipse 400px 160px at bottom left, #f0fdfa 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block; font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--c6); background: var(--c6s);
+    padding: 4px 10px; border-radius: 999px; font-weight: 700; margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 27px; line-height: 1.32; font-weight: 800;
+    color: var(--ink); letter-spacing: -0.01em; margin-bottom: 10px;
+  }
+  header h1 .accent { color: var(--c6); }
+  header .sub { font-size: 14px; color: var(--ink-2); line-height: 1.55; }
+
+  section { padding: 28px 48px; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: none; }
+
+  .s-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--ink);
+  }
+  .s-title .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 7px; font-size: 13px; font-weight: 800;
+  }
+  .s-title .num.c1  { background: var(--c1s); color: var(--c1); }
+  .s-title .num.c2  { background: var(--c2s); color: var(--c2); }
+  .s-title .num.c3  { background: var(--c3s); color: var(--c3); }
+  .s-title .num.c4  { background: var(--c4s); color: var(--c4); }
+  .s-title .num.c5  { background: var(--c5s); color: var(--c5); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  .card {
+    padding: 16px 18px; border-radius: 10px; border: 1px solid var(--line);
+  }
+  .card .icon { font-size: 18px; margin-bottom: 6px; }
+  .card .t { font-weight: 700; font-size: 13.5px; margin-bottom: 4px; color: var(--ink); }
+  .card .d { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+
+  .card.c1 { border-color: #99f6e4; background: var(--c1s); }
+  .card.c2 { border-color: #bfdbfe; background: var(--c2s); }
+  .card.c3 { border-color: #ddd6fe; background: var(--c3s); }
+  .card.c4 { border-color: #fde68a; background: var(--c4s); }
+  .card.c5 { border-color: #fecaca; background: var(--c5s); }
+  .card.c6 { border-color: #bbf7d0; background: var(--c6s); }
+
+  /* Code blocks */
+  .code-block {
+    padding: 14px 18px; margin: 10px 0;
+    background: #1e293b; color: #e2e8f0; border-radius: 8px;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 12px; line-height: 1.6; overflow-x: auto;
+  }
+  .code-block .cm { color: #94a3ab; }
+  .code-block .hl { color: #fbbf24; }
+  .code-block .kw { color: #f472b6; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+  th {
+    font-weight: 700; font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-3); background: #fafafa;
+  }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-weight: 600; }
+
+  /* Ol */
+  ol.steps { padding-left: 24px; }
+  ol.steps li { margin-bottom: 10px; line-height: 1.55; }
+  ol.steps li b { color: var(--c2); }
+
+  /* Quote */
+  .quote {
+    padding: 14px 20px; margin: 12px 0 0;
+    background: #f8fafc; border-left: 3px solid var(--c2);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px; color: var(--ink-2); line-height: 1.55;
+  }
+  .quote.info { border-left-color: var(--c6); background: var(--c6s); }
+  .quote.warn { border-left-color: #f59e0b; background: #fffbeb; }
+
+  /* Badge */
+  .b { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; margin-right: 6px; }
+  .b.g { background: #dcfce7; color: #166534; }
+  .b.r { background: #fee2e2; color: #991b1b; }
+
+  /* Do/don't */
+  .dodont { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .do, .dont { padding: 16px 18px; border-radius: 10px; }
+  .do { border: 1px solid #bbf7d0; background: #f0fdf4; }
+  .dont { border: 1px solid #fecaca; background: #fef2f2; }
+  .do .h, .dont .h { font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+  .do .h { color: var(--c6); }
+  .dont .h { color: var(--c5); }
+  .do p, .dont p { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; margin-top: 6px; }
+
+  /* Checklist */
+  .cl { padding: 0; list-style: none; }
+  .cl li {
+    padding: 8px 0; border-bottom: 1px solid #f3f4f6;
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px; color: var(--ink-2);
+  }
+  .cl li:last-child { border-bottom: none; }
+  .cl .cb { flex-shrink: 0; width: 18px; height: 18px; border: 2px solid #d1d5db; border-radius: 4px; margin-top: 1px; }
+
+  footer {
+    padding: 18px 48px 28px;
+    font-size: 11.5px; color: var(--ink-3);
+    border-top: 1px solid var(--line);
+  }
+  footer a { color: var(--c2); text-decoration: none; }
+
+  @media (max-width: 640px) {
+    .grid2, .grid3, .dodont { grid-template-columns: 1fr; }
+    section { padding: 24px 22px; }
+    header { padding: 28px 22px 22px; }
+    footer { padding: 14px 22px 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ========== Header ========== -->
+<header>
+  <div class="tag">AI-Friendly Research Design</div>
+  <h1><span class="accent">AI 友好型论文</span>写作与设计</h1>
+  <p class="sub">当你的审稿人可能是 GPT 时，如何从研究设计阶段就确保 AI 会给出正面评价？这一页讲透核心策略。</p>
+</header>
+
+<!-- ========== ① 核心洞察 ========== -->
+<section>
+  <div class="s-title"><span class="num c1">①</span> 核心洞察：AI 审稿人的"心理"</div>
+  <div class="grid2">
+    <div class="card c1">
+      <div class="icon">🧠</div>
+      <div class="t">AI 的评分逻辑</div>
+      <div class="d">AI 审稿的核心模式是<strong>模式匹配 + 缺失检测</strong>。它不会"理解"你的 idea，而是在检查：claim 是否有证据？实验是否覆盖了标准品类？比较是否公平？</div>
+    </div>
+    <div class="card c1">
+      <div class="icon">🔍</div>
+      <div class="t">AI 最容易扣分的地方</div>
+      <div class="d">模糊的 novelty claim、缺少消融实验、不公平的 baseline、未讨论局限性、SOTA 对比不全面、方法论描述不完整。这些是 AI 的"自动触发器"。</div>
+    </div>
+  </div>
+  <div class="quote info">
+    <strong>核心原则</strong>：<em>AI 不会欣赏 subtlety（微妙之处）。对它而言，你没写 = 你没做。所有的贡献、证据、对比都必须显式地、结构化地呈现在文本中。</em>
+  </div>
+</section>
+
+<!-- ========== ② 六大设计策略 ========== -->
+<section>
+  <div class="s-title"><span class="num c2">②</span> 从研究设计阶段植入的六大策略</div>
+  <table>
+    <tr>
+      <th style="width:5%;">#</th>
+      <th style="width:25%;">策略</th>
+      <th style="width:50%;">具体操作</th>
+      <th style="width:20%;">AI 会怎么打分</th>
+    </tr>
+    <tr>
+      <td style="color:var(--c2);font-size:16px;">❶</td>
+      <td><b>显式 Novelty 声明</b></td>
+      <td>在 Introduction 末尾用编号列表列出 3-4 条 contribution："(1) We propose X which differs from Y in Z way. (2) We are the first to…"。每个 claim 后紧跟可验证的支撑点。</td>
+      <td>AI 直接提取编号列表逐条核实 → 清晰可量化</td>
+    </tr>
+    <tr>
+      <td style="color:var(--c2);font-size:16px;">❷</td>
+      <td><b>消融实验全覆盖</b></td>
+      <td>每个设计选择都做消融：模块存在/不存在、参数变化曲线、不同初始化、不同训练策略。至少 3-5 项消融。表格格式统一，指标带 ± 标准差。</td>
+      <td>AI 检查"消融实验是否充分"→ 表格越多越充分</td>
+    </tr>
+    <tr>
+      <td style="color:var(--c2);font-size:16px;">❸</td>
+      <td><b>公平 Baseline 矩阵</b></td>
+      <td>建一张"公平性声明表"：列出每个 baseline 是否用原论文代码/官方实现/自己复现、是否在同一训练数据上 retrain、参数量/FLOPs 是否可比。</td>
+      <td>AI 检测"baseline 公不公平"→ 有这张表直接高分</td>
+    </tr>
+    <tr>
+      <td style="color:var(--c2);font-size:16px;">❹</td>
+      <td><b>强制性 Limitation 段落</b></td>
+      <td>在结论前专设 "Limitations and Future Work" 小节，至少列出 3 条坦诚的局限（非敷衍）。这会让 AI 觉得论文诚实严谨。</td>
+      <td>AI 默认会扣"无 limitation"→ 主动写满反而加分</td>
+    </tr>
+    <tr>
+      <td style="color:var(--c2);font-size:16px;">❺</td>
+      <td><b>多数据集 + 多指标</b></td>
+      <td>在 3+ 个标准 benchmark 上测试，报告 4+ 个指标（含 efficiency 指标如参数量/FLOPs/推理时间）。不要只在单一数据集上刷一个指标。</td>
+      <td>AI 检测"泛化性"→ 数据集越多越可信</td>
+    </tr>
+    <tr>
+      <td style="color:var(--c2);font-size:16px;">❻</td>
+      <td><b>可复现性清单</b></td>
+      <td>列出完整超参数、随机种子、硬件配置、训练时间。附上代码链接（可匿名）。AI 审稿人在"reproducibility"维度会给满分。</td>
+      <td>AI 检测"可复现"→ 超参数完整 = 自动高分</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ========== ③ 结构化写作 ========== -->
+<section>
+  <div class="s-title"><span class="num c3">③</span> AI 友好型论文结构</div>
+  <ol class="steps">
+    <li><b>Abstract</b> —— 按固定公式写：Problem → Gap → Our Method (one sentence) → 3 key results (带数字) → Impact。AI 能精确提取这 4 个字段。</li>
+    <li><b>Introduction 末尾</b> —— 必须有编号贡献列表 (numbered contributions)。不要埋在一段文字里。每一条都是 AI 后续逐一核验的 checklist。</li>
+    <li><b>Method</b> —— 每个公式都配一句自然语言解释。用标准化的符号命名。图+文字双通道表达：AI 从文字中提取逻辑，从图中提取结构。</li>
+    <li><b>Experiments</b> —— 每个实验前用一句 <b>hypothesis</b> 开头：「We hypothesize that X improves Y because Z」。然后展示验证。这让 AI 能理解实验的目的。</li>
+    <li><b>Related Work</b> —— 每段以「与我们的区别是……」收尾。不要只罗列谁做了什么，要显式对比。这是 AI 判断 novelty 的关键位置。</li>
+    <li><b>Limitations &amp; Future Work</b> —— 独立成章，不少于 3 条。AI 如果没有找到这个章节，一定会在审稿意见里要求补充。</li>
+  </ol>
+</section>
+
+<!-- ========== ④ 写作技巧 ========== -->
+<section>
+  <div class="s-title"><span class="num c4">④</span> AI 友好型写作 Do / Don't</div>
+  <div class="dodont">
+    <div class="do">
+      <div class="h">✅ 这样做</div>
+      <p>"Our method achieves 38.2 PSNR (+2.1 dB over SOTA) on Dataset-A, with 40% fewer parameters (12M vs 20M)."</p>
+      <p>"As shown in Table 3, removing the attention module causes a 4.7 dB drop, confirming its necessity."</p>
+      <p>"Unlike [12] which requires paired training data, our method works in a fully unsupervised setting."</p>
+    </div>
+    <div class="dont">
+      <div class="h">❌ 别这样写</div>
+      <p>"Our method achieves significant improvements over existing approaches."</p>
+      <p>"The proposed module is crucial for performance."</p>
+      <p>"Our approach is novel and effective."</p>
+    </div>
+  </div>
+  <div class="dodont" style="margin-top:14px;">
+    <div class="do">
+      <div class="h">✅ AI 能"读懂"的写法</div>
+      <p>每个 claim 配数字 / 每个声明引表格 / 每个对比给差值 / 每个设计给消融 / 每个局限坦诚列 / 每个超参数公开</p>
+    </div>
+    <div class="dont">
+      <div class="h">❌ AI 会"扣分"的写法</div>
+      <p>用形容词代替数字 / claim 不引用表格 / "outperforms" 不说 outperforms 多少 / 没有消融 / 没有 limitation / 超参数不透明</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ⑤ 高风险雷区 ========== -->
+<section>
+  <div class="s-title"><span class="num c5">⑤</span> 最容易触发 AI 负面评价的雷区</div>
+  <div class="grid2">
+    <div class="card c5">
+      <div class="t">💣 只说"我们更好"不说"好多少"</div>
+      <div class="d">AI 的 evaluation 模块会直接标记为"lacks quantitative evidence"。每个性能声明必须跟数字。</div>
+    </div>
+    <div class="card c5">
+      <div class="t">💣 SOTA 对比只跟旧方法比</div>
+      <div class="d">如果 2024+ 的新方法被遗漏，AI 会标记"incomplete comparison"。投稿前用 AI 工具扫描近 2 年遗漏的论文。</div>
+    </div>
+    <div class="card c5">
+      <div class="t">💣 只报一个指标/一个数据集</div>
+      <div class="d">这会触发"overfitting concern"。至少 3 个数据集 + 4 个指标（含效率指标），这是 AI 审稿的最低安全感阈值。</div>
+    </div>
+    <div class="card c5">
+      <div class="t">💣 公式多但无直觉解释</div>
+      <div class="d">AI 从文字中理解语义，不是从公式中。每个公式后面必须跟一句自然语言解释："Intuitively, this term encourages..."</div>
+    </div>
+    <div class="card c5">
+      <div class="t">💣 Claim 与实验之间的断层</div>
+      <div class="d">Introduction 里声称"高效"，但实验表中没有参数量/FLOPs。AI 会标记"claim-experiment misalignment"。</div>
+    </div>
+    <div class="card c5">
+      <div class="t">💣 忽略统计显著性</div>
+      <div class="d">不报告标准差/置信区间/多次运行的结果，AI 会质疑结论的可靠性。3 次 run 的 mean±std 是底线。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ⑥ 投稿前自检 ========== -->
+<section>
+  <div class="s-title" style="margin-bottom:18px;">🗹 投稿前 AI 审稿模拟自检清单</div>
+  <ul class="cl">
+    <li><span class="cb"></span> Introduction 末尾是否有 3-5 条编号的 Contribution？每条是否包含具体的技术描述而非泛泛声称？</li>
+    <li><span class="cb"></span> Abstract 是否按 Problem → Gap → Method → 3 results (带数字) → Impact 结构写？</li>
+    <li><span class="cb"></span> 每个核心模块/设计选择是否都有对应的消融实验？（至少 3 项）</li>
+    <li><span class="cb"></span> Baseline 对比表是否说明了每个 baseline 的实现来源和公平性保证？</li>
+    <li><span class="cb"></span> 是否在 3+ 个数据集上报告了 4+ 个指标（含参数量/速度）？</li>
+    <li><span class="cb"></span> 每个性能声明是否都配有具体数字和表格引用？（绝对不要只说 "outperforms"）</li>
+    <li><span class="cb"></span> Related Work 每段末尾是否有 "与本文的区别在于……" 的显式对比？</li>
+    <li><span class="cb"></span> 是否有独立的 Limitations &amp; Future Work 段落，列出至少 3 条坦诚局限？</li>
+    <li><span class="cb"></span> 是否报告了标准差/置信区间/多次运行统计？</li>
+    <li><span class="cb"></span> 超参数、随机种子、硬件、训练时间是否完整可查？代码链接是否提供？</li>
+  </ul>
+</section>
+
+<!-- ========== ⑦ 投稿前终极测试 ========== -->
+<section>
+  <div class="s-title" style="margin-bottom:16px;">🔬 投稿前终极测试：用 AI 审一遍自己的论文</div>
+  <div class="code-block">
+<span class="cm"># 把你的论文给 GPT/Claude，用这个 prompt 模拟审稿：</span>
+
+<span class="kw">你是一位</span> [目标会议名称] 的资深审稿人。
+请严格按以下维度审稿，逐条给出具体评价证据：
+
+1. <span class="hl">Novelty</span>：论文的核心贡献是什么？与 SOTA 的本质区别？
+2. <span class="hl">Experimental Soundness</span>：消融实验是否完整？baseline 是否公平？
+3. <span class="hl">Clarity</span>：Introduction claim 与实验结论是否一致？
+4. <span class="hl">Reproducibility</span>：方法描述是否详尽？超参数是否完整？
+5. <span class="hl">Limitations</span>：论文讨论了哪些局限？是否有遗漏？
+
+每条评价 <span class="hl">必须引用论文中的具体位置</span>。
+最后给出 Accept / Borderline / Reject 建议及核心理由。
+  </div>
+  <div class="quote info">
+    <strong>如果 AI 审稿人标记了 3 个以上的 major weakness</strong>，不要投稿 —— 其他审稿人的 AI 助手也会找到同样的问题。先修复到 AI 审稿意见只剩 minor comments 再投。
+  </div>
+</section>
+
+<footer>
+  <strong>一句话总结</strong>：<em>AI 审稿人是你的第一道质量关卡。从实验设计的第一天就用"AI 会怎么评价"的视角审视你的工作。</em> 投稿前先用 AI 审一遍，把 AI 能挑出的毛病全部修掉——这才是真正的 AI 友好型论文。&nbsp;|&nbsp; <a href="../index.html">← 返回 Auto 导航</a>
+</footer>
+
+</div>
+</body>
+</html>
