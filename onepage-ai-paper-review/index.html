@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 辅助论文审稿 · 让 GPT 给出高质量审稿意见的核心策略</title>
+<style>
+  :root {
+    --bg: #fafafa; --card: #ffffff;
+    --ink: #1f2937; --ink-2: #4b5563; --ink-3: #9ca3af; --line: #e5e7eb;
+
+    --c1: #1e40af; --c1s: #eff6ff; /* 蓝 - 核心理念 */
+    --c2: #b45309; --c2s: #fffbeb; /* 琥珀 - 策略框架 */
+    --c3: #0d9488; --c3s: #f0fdfa; /* 青 - prompt 模板 */
+    --c4: #7c3aed; --c4s: #f5f3ff; /* 紫 - 进阶技巧 */
+    --c5: #dc2626; --c5s: #fef2f2; /* 红 - 陷阱 */
+
+    --card-shadow: 0 0 0 1px var(--line);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink); background: var(--bg);
+    line-height: 1.6; font-size: 14.5px; -webkit-font-smoothing: antialiased;
+  }
+
+  .page { max-width: 800px; margin: 0 auto 40px; background: var(--card); box-shadow: var(--card-shadow); }
+
+  /* Header */
+  header {
+    padding: 40px 48px 30px; border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 700px 180px at top right, #eff6ff 0%, transparent 70%),
+      radial-gradient(ellipse 400px 160px at bottom left, #f0fdfa 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block; font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--c1); background: var(--c1s);
+    padding: 4px 10px; border-radius: 999px; font-weight: 700; margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 27px; line-height: 1.32; font-weight: 800;
+    color: var(--ink); letter-spacing: -0.01em; margin-bottom: 10px;
+  }
+  header h1 .accent { color: var(--c1); }
+  header .sub { font-size: 14px; color: var(--ink-2); line-height: 1.55; }
+
+  /* Section */
+  section { padding: 28px 48px; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: none; }
+
+  .s-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--ink);
+  }
+  .s-title .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 7px; font-size: 13px; font-weight: 800;
+  }
+  .s-title .num.c1 { background: var(--c1s); color: var(--c1); }
+  .s-title .num.c2 { background: var(--c2s); color: var(--c2); }
+  .s-title .num.c3 { background: var(--c3s); color: var(--c3); }
+  .s-title .num.c4 { background: var(--c4s); color: var(--c4); }
+  .s-title .num.c5 { background: var(--c5s); color: var(--c5); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  .card {
+    padding: 16px 18px; border-radius: 10px; border: 1px solid var(--line);
+  }
+  .card .icon { font-size: 18px; margin-bottom: 6px; }
+  .card .t { font-weight: 700; font-size: 13.5px; margin-bottom: 4px; color: var(--ink); }
+  .card .d { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+
+  .card.c1 { border-color: #bfdbfe; background: var(--c1s); }
+  .card.c2 { border-color: #fde68a; background: var(--c2s); }
+  .card.c3 { border-color: #99f6e4; background: var(--c3s); }
+  .card.c4 { border-color: #ddd6fe; background: var(--c4s); }
+  .card.c5 { border-color: #fecaca; background: var(--c5s); }
+
+  /* Code blocks */
+  .code-block {
+    padding: 14px 18px; margin: 10px 0;
+    background: #1e293b; color: #e2e8f0; border-radius: 8px;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 12px; line-height: 1.6; overflow-x: auto;
+  }
+  .code-block .kw { color: #f472b6; }
+  .code-block .cm { color: #94a3ab; }
+  .code-block .hl { color: #fbbf24; }
+  .code-block .at { color: #67e8f9; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+  th {
+    font-weight: 700; font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-3); background: #fafafa;
+  }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-weight: 600; }
+
+  /* Ol */
+  ol.steps { padding-left: 24px; counter-reset: step; }
+  ol.steps li { margin-bottom: 12px; line-height: 1.55; }
+  ol.steps li b { color: var(--c1); }
+
+  /* Quote */
+  .quote {
+    padding: 14px 20px; margin: 12px 0 0;
+    background: #f8fafc; border-left: 3px solid var(--c2);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px; color: var(--ink-2); line-height: 1.55;
+  }
+  .quote.warn { border-left-color: #f59e0b; background: #fffbeb; }
+  .quote.info { border-left-color: var(--c1); background: var(--c1s); }
+
+  /* Badge */
+  .b { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; margin-right: 6px; }
+  .b.g { background: #dcfce7; color: #166534; }
+  .b.y { background: #fef9c3; color: #854d0e; }
+  .b.r { background: #fee2e2; color: #991b1b; }
+
+  /* Checklist */
+  .cl { padding: 0; list-style: none; }
+  .cl li {
+    padding: 8px 0; border-bottom: 1px solid #f3f4f6;
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px; color: var(--ink-2);
+  }
+  .cl li:last-child { border-bottom: none; }
+  .cl .cb { flex-shrink: 0; width: 18px; height: 18px; border: 2px solid #d1d5db; border-radius: 4px; margin-top: 1px; }
+
+  /* Footer */
+  footer {
+    padding: 18px 48px 28px;
+    font-size: 11.5px; color: var(--ink-3);
+    border-top: 1px solid var(--line);
+  }
+  footer a { color: var(--c1); text-decoration: none; }
+
+  @media (max-width: 640px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    section { padding: 24px 22px; }
+    header { padding: 28px 22px 22px; }
+    footer { padding: 14px 22px 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ========== Header ========== -->
+<header>
+  <div class="tag">AI-Assisted Peer Review</div>
+  <h1><span class="accent">AI 辅助论文审稿</span> · 核心策略</h1>
+  <p class="sub">学术界使用 GPT/Claude 等工具辅助审稿已成不争事实。如何让 AI 给出高质量、建设性的正面审稿意见？这一页讲透核心技巧。</p>
+</header>
+
+<!-- ========== ① 现状与核心认知 ========== -->
+<section>
+  <div class="s-title"><span class="num c1">①</span> 现实 + 核心认知</div>
+  <div class="grid3">
+    <div class="card c1">
+      <div class="icon">📊</div>
+      <div class="t">学术界已在用</div>
+      <div class="d">ICLR 2025 调查：~17% 审稿人承认使用 LLM 辅助审稿。NeurIPS/ACL/CVPR 等顶会的审稿中 AI 生成内容已普遍存在。</div>
+    </div>
+    <div class="card c1">
+      <div class="icon">⚠️</div>
+      <div class="t">AI 审稿的天然缺陷</div>
+      <div class="d">AI 默认给出的是「安全、模糊、泛泛」的评价——满篇 "interesting" "well-written" 但缺乏具体证据和尖锐批评。</div>
+    </div>
+    <div class="card c1">
+      <div class="icon">🔑</div>
+      <div class="t">核心认知</div>
+      <div class="d">AI 审稿的质量完全取决于你的 prompt。把 AI 当工具而非替你思考的替代品。人是决策者，AI 是分析引擎。</div>
+    </div>
+  </div>
+  <div class="quote warn">
+    <strong>警惕</strong>：直接把论文 PDF 扔给 ChatGPT 说「帮我审这篇论文」——这是最糟糕的用法，产出的一定是低质量泛泛之谈。
+  </div>
+</section>
+
+<!-- ========== ② 五大核心策略 ========== -->
+<section>
+  <div class="s-title"><span class="num c2">②</span> 五大核心策略框架</div>
+  <table>
+    <tr>
+      <th style="width:10%;">#</th>
+      <th style="width:28%;">策略</th>
+      <th style="width:37%;">核心手法</th>
+      <th style="width:25%;">效果</th>
+    </tr>
+    <tr>
+      <td style="color:var(--c1);font-size:18px;">❶</td>
+      <td><b>结构化 Rubric</b></td>
+      <td>提供评分维度 + 每个维度的具体评分标准。不靠 AI 自己判断，靠你定义的框架。</td>
+      <td><span class="b g">★★★★★</span></td>
+    </tr>
+    <tr>
+      <td style="color:var(--c1);font-size:18px;">❷</td>
+      <td><b>角色扮演 + 领域锚定</b></td>
+      <td>设定具体角色身份 + 领域上下文（"你是 CVPR 资深审稿人，研究方向多模态大模型"），给出该领域的标准。</td>
+      <td><span class="b g">★★★★★</span></td>
+    </tr>
+    <tr>
+      <td style="color:var(--c1);font-size:18px;">❸</td>
+      <td><b>强制证据链</b></td>
+      <td>要求每条评价必须引用论文中的具体段落、公式编号、表格数据。禁止"interesting"这类无证据空洞词。</td>
+      <td><span class="b g">★★★★★</span></td>
+    </tr>
+    <tr>
+      <td style="color:var(--c1);font-size:18px;">❹</td>
+      <td><b>对抗性思维注入</b></td>
+      <td>要求 AI 扮演"最严厉的审稿人"或"竞争对手"，刻意质疑论文的每一个假设。然后再平衡回建设性建议。</td>
+      <td><span class="b g">★★★★</span></td>
+    </tr>
+    <tr>
+      <td style="color:var(--c1);font-size:18px;">❺</td>
+      <td><b>多轮递进式审稿</b></td>
+      <td>第一轮→结构理解。第二轮→逐段深挖。第三轮→交叉验证。每轮聚焦不同维度，而非一次性全审。</td>
+      <td><span class="b g">★★★★</span></td>
+    </tr>
+  </table>
+</section>
+
+<!-- ========== ③ Prompt 工程实战 ========== -->
+<section>
+  <div class="s-title"><span class="num c3">③</span> Prompt 工程实战模板</div>
+  <div class="code-block">
+<span class="cm">## 角色设定（策略❷）</span>
+<span class="kw">你是</span> CVPR/NeurIPS 的资深审稿人，研究方向为图像复原与底层视觉。
+你以<span class="hl">犀利但建设性</span>著称，每条 criticism 都附带具体改进建议。
+
+<span class="cm">## 评分维度（策略❶）</span>
+请按以下维度逐项评分（1-5 分）并给出理由：
+1. <span class="hl">新颖性</span>：与已有方法本质区别在哪？增量改进 or 范式突破？
+2. <span class="hl">正确性</span>：理论推导/实验设置是否有漏洞？统计检验是否充分？
+3. <span class="hl">实验验证</span>：baseline 是否公平？消融实验是否完整？
+4. <span class="hl">清晰度</span>：motivation 是否明确？图表是否有助于理解？
+5. <span class="hl">重要性</span>：该工作的领域影响力预期有多大？
+
+<span class="cm">## 强制证据（策略❸）</span>
+<span class="at">每条评价必须引用论文中的具体段落或公式。</span>
+禁止使用 "interesting" "promising" "well-written" 等无证据空洞词汇。
+
+<span class="cm">## 对抗性视角（策略❹）</span>
+先用最严厉的标准找出论文的 <span class="hl">3 个致命弱点</span>，
+再转为建设性视角：针对每个弱点给出作者可以改进的具体方案。
+
+<span class="cm">## 输出格式</span>
+- Summary (3 句)
+- Major Comments (逐条编号，每条引用原文证据)
+- Minor Comments
+- Overall Score &amp; Recommendation
+  </div>
+  <div class="quote info">
+    <strong>一句话秘诀</strong>：<em>把你自己的审稿标准写进 prompt，而不是让 AI 猜你的标准。</em> 审稿质量 = 人类判断力 × AI 分析效率。
+  </div>
+</section>
+
+<!-- ========== ④ 进阶技巧 ========== -->
+<section>
+  <div class="s-title"><span class="num c4">④</span> 进阶技巧</div>
+  <div class="grid2">
+    <div class="card c4">
+      <div class="t">📎 分段投喂 + 逐章审</div>
+      <div class="d">Abstract → Introduction → Method → Experiments → Conclusion，分段输入。每段让 AI 先总结理解再评价。避免长文本注意力衰减。</div>
+    </div>
+    <div class="card c4">
+      <div class="t">🔄 交叉验证提示</div>
+      <div class="d">"请检查 Table 2 中 Method A 的数据是否与 Section 3.2 的描述一致"。强制 AI 做论文内部的逻辑一致性检查。</div>
+    </div>
+    <div class="card c4">
+      <div class="t">📐 数学推导检查</div>
+      <div class="d">"请逐步验证 Eq.(5) 从 Eq.(3) 和 Eq.(4) 的推导过程"。把公式作为 prompt 的一部分逐行输入。</div>
+    </div>
+    <div class="card c4">
+      <div class="t">📚 Related Work 盲区扫描</div>
+      <div class="d">"这篇论文声称的贡献 X，是否有 2022-2024 年间的重要相关工作被遗漏？请列出可能的遗漏论文。"</div>
+    </div>
+    <div class="card c4">
+      <div class="t">📊 实验缺陷探测</div>
+      <div class="d">"作为实验设计专家，请指出当前实验方案可能遗漏的 3 个关键消融实验。每个需说明为什么重要。"</div>
+    </div>
+    <div class="card c4">
+      <div class="t">🗣️ Rebuttal 预演</div>
+      <div class="d">在给出审稿意见后追问："如果你是作者，你会如何回应这些批评？哪些批评是合理的，哪些可能被 rebut？"</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ⑤ 常见陷阱 ========== -->
+<section>
+  <div class="s-title"><span class="num c5">⑤</span> 必须警惕的陷阱</div>
+  <div class="grid2">
+    <div class="card c5">
+      <div class="t">🔒 保密性红线</div>
+      <div class="d">绝不能将未发表论文全文输入公共 LLM（ChatGPT Web / Claude Web）。这会违反审稿保密协议。使用 API 版且确认数据不被用于训练，或使用本地模型。</div>
+    </div>
+    <div class="card c5">
+      <div class="t">🎭 AI 幻觉</div>
+      <div class="d">AI 可能「编造」论文中不存在的内容（假公式、假引用、假数据）。每条 AI 生成的 criticism 必须人工验证原文是否存在。</div>
+    </div>
+    <div class="card c5">
+      <div class="t">🤖 过度依赖</div>
+      <div class="d">AI 看不到你看到的东西。它不理解领域内的隐性知识、学术政治、审稿人的经验判断。永远不要用 AI 的推荐替代你自己的判断。</div>
+    </div>
+    <div class="card c5">
+      <div class="t">⏳ 同质化风险</div>
+      <div class="d">使用相同 prompt 模板会导致审美疲劳：所有审稿意见风格趋同。定期轮换角色设定和评分维度顺序以避免模板化。</div>
+    </div>
+    <div class="card c5">
+      <div class="t">📏 伦理边界</div>
+      <div class="d">ICLR/NeurIPS/ACL 等顶会目前态度：AI 可辅助但不能替代审稿人。审稿人需要对最终提交的评审意见承担全部责任。</div>
+    </div>
+    <div class="card c5">
+      <div class="t">💬 语言劣势放大</div>
+      <div class="d">非英语母语论文在 AI 审稿中可能被误判为"写作差"。应在 prompt 中明确指示区分语言问题和内容问题。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ⑥ 效果对比 ========== -->
+<section>
+  <div class="s-title" style="margin-bottom:16px;">📊 策略效果对比</div>
+  <table>
+    <tr>
+      <th>审稿方式</th><th>具体性</th><th>深度</th><th>建设性</th><th>整体质量</th>
+    </tr>
+    <tr>
+      <td>原始 prompt：「帮我审这篇论文」</td>
+      <td style="color:#dc2626;">★★☆☆☆</td>
+      <td style="color:#dc2626;">★☆☆☆☆</td>
+      <td style="color:#dc2626;">★★☆☆☆</td>
+      <td style="color:#dc2626;">★☆☆☆☆</td>
+    </tr>
+    <tr>
+      <td>+ 结构化 Rubric（策略❶）</td>
+      <td style="color:#f59e0b;">★★★☆☆</td>
+      <td style="color:#f59e0b;">★★★☆☆</td>
+      <td style="color:#f59e0b;">★★★☆☆</td>
+      <td style="color:#f59e0b;">★★★☆☆</td>
+    </tr>
+    <tr>
+      <td>+ 角色扮演 + 领域锚定（策略❷）</td>
+      <td style="color:#f59e0b;">★★★☆☆</td>
+      <td style="color:#16a34a;">★★★★☆</td>
+      <td style="color:#f59e0b;">★★★☆☆</td>
+      <td style="color:#f59e0b;">★★★☆☆</td>
+    </tr>
+    <tr>
+      <td>+ 强制证据链（策略❸）</td>
+      <td style="color:#16a34a;">★★★★★</td>
+      <td style="color:#f59e0b;">★★★☆☆</td>
+      <td style="color:#f59e0b;">★★★☆☆</td>
+      <td style="color:#16a34a;">★★★★☆</td>
+    </tr>
+    <tr>
+      <td>+ 对抗性思维（策略❹）</td>
+      <td style="color:#16a34a;">★★★★☆</td>
+      <td style="color:#16a34a;">★★★★★</td>
+      <td style="color:#f59e0b;">★★★☆☆</td>
+      <td style="color:#16a34a;">★★★★☆</td>
+    </tr>
+    <tr>
+      <td><b>五策叠加 + 人工复核</b></td>
+      <td style="color:#16a34a;font-weight:700;">★★★★★</td>
+      <td style="color:#16a34a;font-weight:700;">★★★★★</td>
+      <td style="color:#16a34a;font-weight:700;">★★★★★</td>
+      <td style="color:#16a34a;font-weight:700;">★★★★★</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ========== ⑦ Checklist ========== -->
+<section>
+  <div class="s-title" style="margin-bottom: 18px;">🗹 AI 辅助审稿操作清单</div>
+  <ul class="cl">
+    <li><span class="cb"></span> 确认使用的是 API 版本（数据不用于训练），或本地模型。绝不用公共 Web 版审未发表论文。</li>
+    <li><span class="cb"></span> Prompt 中写入了至少 4 个评分维度 + 每个维度的具体评分标准。</li>
+    <li><span class="cb"></span> 设定了领域专家角色（「你是 XX 方向的资深审稿人，顶会发表经历 N 篇」）。</li>
+    <li><span class="cb"></span> Prompt 中要求每条 criticism 引用原文具体段落/公式/表格。</li>
+    <li><span class="cb"></span> AI 提出的每一条批评都经过了人工原文核对（防幻觉）。</li>
+    <li><span class="cb"></span> 最终的 Recommendation 是你自己的判断，不是 AI 的推荐。</li>
+    <li><span class="cb"></span> 审稿意见的语言风格已经过人工润色，不直接使用 AI 原文。</li>
+    <li><span class="cb"></span> 对非英语母语论文，已排除语言问题对内容判断的干扰。</li>
+  </ul>
+</section>
+
+<!-- Footer -->
+<footer>
+  <strong>一句话总结</strong>：<em>AI 审稿的质量上限 = 你的 prompt 质量 × 你的领域判断力。</em> 别让 AI 替你思考，让它替你执行。&nbsp;|&nbsp; <a href="../index.html">← 返回 Auto 导航</a>
+</footer>
+
+</div>
+</body>
+</html>
