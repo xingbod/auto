@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>再年轻化 — 生命科学的终极前沿</title>
+<style>
+:root {
+  --bg: #0d1117; --card: #161b22; --ink: #e6edf3; --ink-2: #8b949e; --ink-3: #6e7681;
+  --line: #30363d; --accent: #79c0ff; --accent2: #d2a8ff; --green: #7ee787;
+  --red: #ff7b72; --orange: #ffa657; --pink: #f778ba; --cyan: #39d2c0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; font-family: -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; background: var(--bg); color: var(--ink); }
+#app { width: 100%; height: 100%; position: relative; }
+.slide { position: absolute; inset: 0; display: none; flex-direction: column; justify-content: center; padding: 70px 60px 90px; overflow-y: auto; }
+.slide.active { display: flex; }
+.slide h1 { font-size: 32px; margin-bottom: 18px; line-height: 1.3; color: #fff; }
+.slide h2 { font-size: 24px; margin-bottom: 14px; color: var(--accent); }
+.slide h3 { font-size: 18px; color: var(--accent2); margin: 16px 0 8px; }
+.slide p, .slide li { font-size: 15px; line-height: 1.65; margin: 4px 0; color: var(--ink); }
+.slide ul, .slide ol { padding-left: 24px; margin: 4px 0; }
+.slide .small { font-size: 13px; color: var(--ink-2); }
+.slide .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; margin: 1px 3px; }
+.tag.epi { background: rgba(121,192,255,0.15); color: var(--accent); border: 1px solid rgba(121,192,255,0.3); }
+.tag.repro { background: rgba(210,168,255,0.15); color: var(--accent2); border: 1px solid rgba(210,168,255,0.3); }
+.tag.seno { background: rgba(255,123,114,0.15); color: var(--red); border: 1px solid rgba(255,123,114,0.3); }
+.tag.nad { background: rgba(126,231,135,0.15); color: var(--green); border: 1px solid rgba(126,231,135,0.3); }
+.tag.gene { background: rgba(247,120,186,0.15); color: var(--pink); border: 1px solid rgba(247,120,186,0.3); }
+.tag.mtor { background: rgba(255,166,87,0.15); color: var(--orange); border: 1px solid rgba(255,166,87,0.3); }
+.tag.stem { background: rgba(57,210,192,0.15); color: var(--cyan); border: 1px solid rgba(57,210,192,0.3); }
+
+/* table */
+table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 13px; }
+th, td { padding: 6px 10px; text-align: left; border: 1px solid var(--line); }
+th { background: rgba(48,54,61,0.5); color: var(--ink-2); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+td { color: var(--ink); }
+
+/* flex grid */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 8px 0; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 8px 0; }
+.box { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+.box h4 { font-size: 14px; color: var(--accent); margin-bottom: 6px; }
+.box p, .box li { font-size: 13px; line-height: 1.55; }
+
+/* timeline */
+.tl { position: relative; padding-left: 24px; border-left: 2px solid var(--line); margin: 8px 0; }
+.tl-item { margin-bottom: 10px; position: relative; }
+.tl-item::before { content: ''; position: absolute; left: -30px; top: 4px; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; }
+.tl-year { font-weight: 700; color: var(--accent); font-size: 14px; }
+.tl-text { font-size: 13px; color: var(--ink); }
+
+/* pipeline */
+.pipeline { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 10px 0; }
+.pipe-step { padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; background: var(--card); border: 1px solid var(--line); color: var(--ink); }
+.pipe-arrow { color: var(--ink-3); font-size: 16px; }
+
+/* key-val */
+.kv { display: inline-block; background: var(--card); border: 1px solid var(--line); border-radius: 5px; padding: 6px 12px; margin: 2px 4px; font-size: 13px; }
+.kv b { color: var(--accent); }
+
+/* bar */
+.topbar { position: fixed; top: 0; left: 0; right: 0; height: 36px; background: rgba(13,17,23,0.92); backdrop-filter: blur(8px); display: flex; align-items: center; padding: 0 24px; z-index: 100; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-2); }
+.topbar b { color: var(--accent); margin-right: 12px; }
+.topbar .keys { margin-left: auto; font-size: 12px; color: var(--ink-3); }
+.progress-bar { position: fixed; top: 36px; left: 0; height: 3px; background: var(--accent); z-index: 101; transition: width 0.3s; }
+.page-indicator { position: fixed; bottom: 28px; left: 0; right: 0; text-align: center; font-size: 13px; color: var(--ink-3); z-index: 99; }
+.copyright { position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999; border-top: 1px solid rgba(48,54,61,0.6); padding: 5px 16px; text-align: center; font-size: 11px; color: var(--ink-3); background: rgba(13,17,23,0.92); backdrop-filter: blur(6px); line-height: 1.4; }
+.copyright b { color: var(--ink); font-weight: 600; }
+
+/* highlight */
+.hl { color: var(--accent); font-weight: 600; }
+.hl2 { color: var(--accent2); font-weight: 600; }
+.hl3 { color: var(--green); font-weight: 600; }
+.hl4 { color: var(--orange); font-weight: 600; }
+
+/* tight */
+.slide.tight { padding: 56px 50px 76px; }
+.slide.tight h3 { margin: 8px 0 4px; font-size: 16px; }
+.slide.tight p, .slide.tight li { font-size: 14px; line-height: 1.45; margin: 2px 0; }
+.slide.tight .grid2, .slide.tight .grid3 { gap: 10px; }
+.slide.tight .box { padding: 10px 12px; }
+
+.slide.tight.denser table { font-size: 12px; }
+.slide.tight.denser th, .slide.tight.denser td { padding: 4px 6px; line-height: 1.3; }
+
+@media print { body { overflow: visible; } .slide { position: relative; display: block !important; page-break-after: always; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <b>再年轻化 (Rejuvenation)</b> 生命科学的终极前沿
+  <span class="keys">← → 翻页 · Home/End 首尾 · P 打印</span>
+</div>
+<div class="progress-bar" id="pbar"></div>
+<div class="page-indicator" id="pagenum"></div>
+<div class="copyright">
+  <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO
+</div>
+
+<div id="app">
+
+<!-- SLIDE 1: Cover -->
+<section class="slide active">
+<h1 style="font-size:40px; text-align:center;">再年轻化 (Rejuvenation)</h1>
+<h2 style="text-align:center; font-size:22px; margin-top:4px;">生命科学的终极前沿 — 从分子机制到临床转化</h2>
+<p style="text-align:center; color:var(--ink-2); margin-top:16px;">
+<span class="tag epi">表观遗传重编程</span>
+<span class="tag repro">OSKM 重编程</span>
+<span class="tag seno">衰老细胞清除</span>
+<span class="tag nad">NAD⁺ 代谢</span>
+<span class="tag gene">基因治疗</span>
+<span class="tag mtor">mTOR 抑制</span>
+</p>
+<p style="text-align:center; margin-top:30px; color:var(--ink-3); font-size:14px;">共 25 页 · 2026 年 7 月</p>
+</section>
+
+<!-- SLIDE 2: 学习目标 -->
+<section class="slide">
+<h2>学习目标</h2>
+<p>本 slides 旨在系统梳理<strong>再年轻化（rejuvenation）</strong>研究的前沿进展，回答以下核心问题：</p>
+<div class="grid2" style="margin-top:16px;">
+<div class="box">
+<h4>机制层</h4>
+<p>衰老的分子标志有哪些？什么是表观遗传时钟？为什么可以逆转？</p>
+</div>
+<div class="box">
+<h4>技术层</h4>
+<p>目前主流的再年轻化技术路线有哪些？各自的核心原理、关键实验和局限性？</p>
+</div>
+<div class="box">
+<h4>转化层</h4>
+<p>哪些技术已进入临床试验？距离真正的人类应用还有多远？</p>
+</div>
+<div class="box">
+<h4>批判层</h4>
+<p>再年轻化领域存在哪些争议、炒作和安全性隐患？科学界对"逆转衰老"持什么态度？</p>
+</div>
+</div>
+</section>
+
+<!-- SLIDE 3: Hallmarks of Aging -->
+<section class="slide">
+<h2>衰老的分子标志 (Hallmarks of Aging)</h2>
+<p>López-Otín et al., <em>Cell</em> (2013, 2023 更新) — 衰老的 12 大标志</p>
+<div class="grid3" style="margin-top:12px;">
+<div class="box"><h4>基因组不稳定</h4><p>DNA 损伤积累，修复能力下降</p></div>
+<div class="box"><h4>端粒磨损</h4><p>端粒缩短，Hayflick 极限</p></div>
+<div class="box"><h4>表观遗传改变</h4><p>DNA 甲基化、组蛋白修饰漂移</p></div>
+<div class="box"><h4>蛋白质稳态丧失</h4><p>错误折叠蛋白积累、自噬衰退</p></div>
+<div class="box"><h4>营养感知失调</h4><p>mTOR、AMPK、sirtuins 通路紊乱</p></div>
+<div class="box"><h4>线粒体功能障碍</h4><p>ROS 增加、能量代谢衰退</p></div>
+<div class="box"><h4>细胞衰老</h4><p>SASP 分泌、组织微环境恶化</p></div>
+<div class="box"><h4>干细胞耗竭</h4><p>组织再生能力下降</p></div>
+<div class="box"><h4>细胞间通讯改变</h4><p>炎症老化 (inflammaging)</p></div>
+</div>
+<p class="small" style="margin-top:10px;">2023 新增：<span class="hl">巨自噬失活</span>、<span class="hl">慢性炎症</span>、<span class="hl">微生态失调</span></p>
+</section>
+
+<!-- SLIDE 4: 什么是再年轻化 -->
+<section class="slide">
+<h2>什么是"再年轻化"？</h2>
+<p><strong>再年轻化 (Rejuvenation)</strong>：通过干预衰老的分子和细胞机制，使衰老组织或生物体恢复年轻状态的过程。</p>
+<div class="grid2" style="margin-top:16px;">
+<div class="box">
+<h4>与"抗衰老"的区别</h4>
+<ul>
+<li><strong>抗衰老 (anti-aging)</strong>：延缓衰老进程，减速</li>
+<li><strong>再年轻化 (rejuvenation)</strong>：逆转衰老状态，倒车</li>
+</ul>
+</div>
+<div class="box">
+<h4>核心范式</h4>
+<ul>
+<li><strong>信息论衰老 (Information Theory of Aging)</strong> — David Sinclair：衰老是表观遗传信息的丢失</li>
+<li><strong>程序性衰老</strong> — 衰老是发育程序的延续</li>
+<li><strong>损伤累积</strong> — 再年轻化需要"清除+修复"双管齐下</li>
+</ul>
+</div>
+</div>
+<p class="small" style="margin-top:10px;">关键争议：衰老是"程序"还是"熵增"？如果是程序，就可以被重编程；如果是熵增，就需要持续的修复和清除。</p>
+</section>
+
+<!-- SLIDE 5: Timeline -->
+<section class="slide tight">
+<h2>再年轻化研究时间线</h2>
+<div class="tl">
+<div class="tl-item"><span class="tl-year">1939</span> <span class="tl-text">McCay — 热量限制延长大鼠寿命</span></div>
+<div class="tl-item"><span class="tl-year">1990s</span> <span class="tl-text">端粒酶发现 (Greider/Blackburn, 2009 诺奖)</span></div>
+<div class="tl-item"><span class="tl-year">2006</span> <span class="tl-text">Yamanaka — 四因子 OSKM 将成体细胞重编程为 iPSC (2012 诺奖)</span></div>
+<div class="tl-item"><span class="tl-year">2011</span> <span class="tl-text">Baker et al. <em>Nature</em> — 清除衰老细胞改善小鼠健康</span></div>
+<div class="tl-item"><span class="tl-year">2013</span> <span class="tl-text">Horvath — 表观遗传时钟 (353 CpG)，可预测所有组织的生物年龄</span></div>
+<div class="tl-item"><span class="tl-year">2016</span> <span class="tl-text">Ocampo/Belmonte <em>Cell</em> — 体内部分重编程延长早衰小鼠寿命</span></div>
+<div class="tl-item"><span class="tl-year">2019</span> <span class="tl-text">Fahy TRIIM — 首个逆转人类表观遗传年龄的临床试验 (2.5 岁)</span></div>
+<div class="tl-item"><span class="tl-year">2020</span> <span class="tl-text">Sinclair/Lu <em>Nature</em> — OSK 三因子恢复老年小鼠视神经再生</span></div>
+<div class="tl-item"><span class="tl-year">2022</span> <span class="tl-text">Altos Labs — 贝佐斯等投资 30 亿美元，重编程抗衰老</span></div>
+<div class="tl-item"><span class="tl-year">2023</span> <span class="tl-text">Sinclair — 化学重编程逆转细胞年龄；首个 senolytic 获批</span></div>
+<div class="tl-item"><span class="tl-year">2024-25</span> <span class="tl-text">多项重编程/senolytic 进入 II/III 期临床</span></div>
+</div>
+</section>
+
+<!-- SLIDE 6: Epigenetic Clocks 1 -->
+<section class="slide">
+<h2>路线一：表观遗传时钟 · 测量衰老的标尺</h2>
+<div class="grid2">
+<div class="box">
+<h4>Horvath Clock (2013)</h4>
+<p>基于 353 个 CpG 位点的 DNA 甲基化水平</p>
+<p>适用 51 种组织/细胞类型</p>
+<p>中位误差 ~3.6 年</p>
+<p><span class="hl">发现： cerebellum 衰老最慢</span></p>
+</div>
+<div class="box">
+<h4>GrimAge (2019)</h4>
+<p>Lu/Horvath — 基于 1030 CpG</p>
+<p>融入血浆蛋白 + 吸烟史</p>
+<p><span class="hl">最强死亡预测力</span></p>
+<p>每加速 1 岁，全因死亡风险 +10%</p>
+</div>
+<div class="box">
+<h4>PhenoAge (2018)</h4>
+<p>Levine — 基于临床生化指标 + 甲基化</p>
+<p>预测多种年龄相关疾病</p>
+<p>被广泛用于临床试验终点</p>
+</div>
+<div class="box">
+<h4>DunedinPACE (2022)</h4>
+<p>跟踪同一队列 20 年</p>
+<p>测量"衰老速度"而非"当前年龄"</p>
+<p>被认为更能反映干预效果</p>
+</div>
+</div>
+<p class="small" style="margin-top:8px;">核心假设：DNA 甲基化模式随年龄系统性漂移，且<strong>可以被逆转</strong></p>
+</section>
+
+<!-- SLIDE 7: Epigenetic Clocks 2 — TRIIM -->
+<section class="slide">
+<h2>路线一续：时钟可以逆转吗？TRIIM 试验</h2>
+<p><strong>TRIIM (Thymus Regeneration, Immunorestoration and Insulin Mitigation)</strong></p>
+<p>Fahy et al., <em>Aging Cell</em> (2019, 2024 更新)</p>
+<div class="grid2" style="margin-top:10px;">
+<div class="box">
+<h4>方案</h4>
+<ul>
+<li>重组人生长激素 (rhGH)</li>
+<li>脱氢表雄酮 (DHEA)</li>
+<li>二甲双胍 (Metformin)</li>
+<li>持续 12 个月</li>
+</ul>
+</div>
+<div class="box">
+<h4>结果</h4>
+<ul>
+<li>胸腺再生（MRI 证实脂肪组织被功能组织替代）</li>
+<li><span class="hl3">表观遗传年龄平均逆转 2.5 岁</span></li>
+<li>免疫老化指标改善</li>
+<li>一些参与者逆转超过 7 年</li>
+</ul>
+</div>
+</div>
+<p class="small" style="margin-top:10px;">这是<strong>首个</strong>在人类中观察到表观遗传年龄逆转的随机对照试验。后续 TRIIM-X 扩大样本正在推进中。</p>
+<p class="small">其他证据：热量限制 (CALERIE 试验)、运动干预、衰老细胞清除均能在小规模人体研究中降低表观遗传年龄。</p>
+</section>
+
+<!-- SLIDE 8: Partial Reprogramming 1 -->
+<section class="slide">
+<h2>路线二：细胞部分重编程 · OSKM 因子</h2>
+<p><strong>核心思想：</strong>利用 Yamanaka 四因子 (Oct4, Sox2, Klf4, c-Myc) <strong>短暂、可控地</strong>表达，擦除表观遗传衰老标记，但不引起细胞身份丧失或癌变。</p>
+<div class="pipeline" style="margin:16px 0;">
+<div class="pipe-step">衰老细胞</div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-step" style="border-color: var(--accent2); color: var(--accent2);">OSKM 短暂表达<br><span class="small">2-4 天</span></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-step">表观遗传擦除<br><span class="small">老化标记去除</span></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-step" style="border-color: var(--green); color: var(--green);">年轻化细胞<br><span class="small">功能恢复 · 身份保持</span></div>
+</div>
+<div class="grid2" style="margin-top:8px;">
+<div class="box">
+<h4>关键区别</h4>
+<ul><li><strong>完全重编程</strong> → iPSC (成体→多能干细胞)，身份重置，畸胎瘤风险</li>
+<li><strong>部分重编程</strong> → 保留细胞身份，仅擦除衰老标记</li></ul>
+</div>
+<div class="box">
+<h4>关键发现</h4>
+<p>Ocampo / Belmonte <em>Cell</em> 2016：在早衰小鼠中周期性诱导 OSKM 4 天，寿命延长 30%，且无畸胎瘤</p>
+</div>
+</div>
+</section>
+
+<!-- SLIDE 9: Partial Reprogramming 2 — OSK -->
+<section class="slide">
+<h2>路线二续：OSK 三因子与视觉再生</h2>
+<p>Sinclair Lab / Lu et al., <em>Nature</em> (2020)</p>
+<div class="grid2" style="margin-top:12px;">
+<div class="box">
+<h4>实验设计</h4>
+<ul>
+<li>使用腺相关病毒 (AAV) 递送 <strong>Oct4, Sox2, Klf4</strong>（去掉致癌因子 c-Myc）</li>
+<li>在老年小鼠 (12 月龄，相当于人类 ~60 岁) 中表达</li>
+<li>测试视神经挤压损伤后的再生</li>
+</ul>
+</div>
+<div class="box">
+<h4>惊人结果</h4>
+<ul>
+<li>老年小鼠视神经恢复再生能力，达到 <span class="hl3">年轻小鼠水平</span></li>
+<li>伴随视网膜神经节细胞 DNA 甲基化年龄逆转</li>
+<li><strong>青光眼模型</strong>中也有效</li>
+</ul>
+</div>
+</div>
+<p style="margin-top:14px;"><span class="hl2">信息论衰老的核心证据：</span>衰老细胞保留了年轻的表观遗传信息副本——就像 DVD 上的划痕，数据还在，只需"抛光"即可恢复读取。</p>
+<p class="small">2023 年 Sinclair 实验室进一步展示六种小分子混合物可在 4 天内化学逆转细胞年龄（<em>Aging</em>, 2023）。</p>
+</section>
+
+<!-- SLIDE 10: Altos Labs -->
+<section class="slide">
+<h2>路线二续：Altos Labs · 重编程竞赛</h2>
+<div class="grid2">
+<div class="box">
+<h4>Altos Labs (2022–)</h4>
+<p>贝佐斯等投资 <span class="hl4">30 亿美元</span></p>
+<p>三位诺贝尔奖得主加入：</p>
+<ul>
+<li><strong>山中伸弥</strong> (iPSC 发明人)</li>
+<li><strong>Jennifer Doudna</strong> (CRISPR)</li>
+<li><strong>Frances Arnold</strong> (定向进化)</li>
+</ul>
+<p>核心方向：通过<strong>可控的部分重编程</strong>实现细胞再年轻化</p>
+<span class="tag repro">重编程</span><span class="tag epi">表观遗传</span>
+</div>
+<div class="box">
+<h4>竞争格局</h4>
+<ul>
+<li><strong>Calico (Google/Alphabet)</strong> — 15 亿美元，衰老生物学基础研究</li>
+<li><strong>Retro Biosciences</strong> — Sam Altman 投资 1.8 亿美元</li>
+<li><strong>NewLimit</strong> — Brian Armstrong (Coinbase) 创立</li>
+<li><strong>Turn Biotechnologies</strong> — mRNA 递送重编程因子</li>
+<li><strong>AgeX Therapeutics</strong> —  Michael West (Geron 创始人)</li>
+</ul>
+</div>
+</div>
+<p class="small" style="margin-top:10px;">2023-2026：Altos Labs 在 <em>Nature</em>, <em>Cell</em>, <em>Science</em> 发表多篇重编程机制论文，但仍处于临床前阶段。</p>
+</section>
+
+<!-- SLIDE 11: Senolytics 1 -->
+<section class="slide">
+<h2>路线三：衰老细胞清除 · Senolytics</h2>
+<p>衰老细胞 (senescent cells) 虽然停止分裂，但分泌 SASP（senescence-associated secretory phenotype），毒害周围健康组织。</p>
+<p style="margin-top:12px;"><strong>"就像腐烂的苹果会传染整筐苹果。"</strong> — James Kirkland, Mayo Clinic</p>
+<div class="grid3" style="margin-top:12px;">
+<div class="box">
+<h4>达沙替尼+槲皮素</h4>
+<p>D+Q 组合</p>
+<p>靶向脂肪祖细胞和内皮细胞的衰老细胞</p>
+<p>Kirkland Lab, 2015–</p>
+<span class="tag seno">Senolytic</span>
+</div>
+<div class="box">
+<h4>Fisetin (非瑟酮)</h4>
+<p>天然黄酮类化合物</p>
+<p>草莓、苹果等富含</p>
+<p>Mayo Clinic 多项临床试验</p>
+<span class="tag seno">天然</span>
+</div>
+<div class="box">
+<h4>Navitoclax</h4>
+<p>BCL-2 家族抑制剂</p>
+<p>高效但血小板毒性</p>
+<p>Unity Biotech — 局部注射</p>
+<span class="tag seno">靶向</span>
+</div>
+</div>
+<p class="small" style="margin-top:8px;">Baker et al., <em>Nature</em> (2011) — 敲除 p16 阳性衰老细胞使小鼠健康寿命延长 25%</p>
+</section>
+
+<!-- SLIDE 12: Senolytics 2 — Trials -->
+<section class="slide">
+<h2>路线三续：Senolytics 关键临床试验</h2>
+<table>
+<tr><th>试验</th><th>药物</th><th>适应症</th><th>阶段</th><th>关键结果</th></tr>
+<tr><td>Mayo (2019)</td><td>D+Q</td><td>特发性肺纤维化 (IPF)</td><td>I 期</td><td>改善步行距离，减少 frailty 生物标志物</td></tr>
+<tr><td>TAME 子研究</td><td>Fisetin</td><td>老年人衰弱</td><td>II 期</td><td>降低 SASP 因子，改善炎症指标</td></tr>
+<tr><td>Unity (2021)</td><td>UBX1325</td><td>糖尿病黄斑水肿</td><td>II 期</td><td>单次注射效果持续 6+ 个月</td></tr>
+<tr><td>Mayo (2023)</td><td>D+Q</td><td>老年新冠后遗症</td><td>II 期</td><td>减少死亡率和恢复时间</td></tr>
+<tr><td>多中心 (2024–)</td><td>D+Q+Fisetin</td><td>骨关节炎</td><td>II/III</td><td>正在进行</td></tr>
+</table>
+<p class="small" style="margin-top:10px;">关键挑战：<strong>间歇给药</strong>（"hit-and-run"）是 senolytic 的核心策略——只需周期性清除衰老细胞，不需持续用药。</p>
+</section>
+
+<!-- SLIDE 13: NAD+ and Sirtuins -->
+<section class="slide">
+<h2>路线四：NAD⁺ 与 Sirtuins 通路</h2>
+<div class="grid2">
+<div class="box">
+<h4>核心机制</h4>
+<ul>
+<li><strong>NAD⁺</strong> (烟酰胺腺嘌呤二核苷酸)：关键辅酶，随年龄下降 ~50%</li>
+<li><strong>Sirtuins</strong>：NAD⁺ 依赖的去乙酰化酶，调控 DNA 修复、线粒体生成、炎症</li>
+<li>SIRT1–7 中 SIRT1 和 SIRT6 在衰老中尤为关键</li>
+</ul>
+</div>
+<div class="box">
+<h4>补充策略</h4>
+<ul>
+<li><strong>NMN</strong> (烟酰胺单核苷酸)：Sinclair 本人长期服用</li>
+<li><strong>NR</strong> (烟酰胺核苷)：Niagen (Chromadex)</li>
+<li><strong>NAD⁺ 静脉输注</strong>：高端诊所流行，但缺乏 RCT 证据</li>
+</ul>
+</div>
+</div>
+<p class="small" style="margin-top:12px;">Sinclair Lab — 2013 年发现 NAD⁺ 前体恢复老年小鼠线粒体功能至年轻水平。但人体证据混杂：小规模试验有改善肌肉功能的信号，2023 年一项大规模 RCT 未达主要终点。NIH 仍在评估中。</p>
+<p class="small"><span class="hl4">争议：</span>Sinclair 大力推广 NMN，但被批评存在利益冲突（创立多家 NAD⁺ 相关公司）。FDA 一度将 NMN 归类为药物而非补充剂。</p>
+</section>
+
+<!-- SLIDE 14: Heterochronic Parabiosis -->
+<section class="slide">
+<h2>路线五：异体共生与血液因子</h2>
+<p><strong>异体共生 (Heterochronic Parabiosis)</strong>：将年轻和年老动物的循环系统缝合在一起</p>
+<div class="grid2" style="margin-top:12px;">
+<div class="box">
+<h4>经典发现 (2005 →)</h4>
+<p>Conboy/Irina &amp; Michael Conboy, <em>Nature</em> (2005)：</p>
+<ul>
+<li>年轻血液使老年小鼠肝脏和肌肉干细胞恢复年轻功能</li>
+<li>年老血液使年轻小鼠组织衰老</li>
+</ul>
+<p>Wyss-Coray Lab — 年轻血浆改善老年小鼠海马神经发生和认知</p>
+</div>
+<div class="box">
+<h4>关键分子</h4>
+<ul>
+<li><strong>GDF11</strong> — 争议：早期称其恢复年轻心脏，后续无法复现</li>
+<li><strong>TIMP2</strong> — 年轻血液中富集，改善海马功能</li>
+<li><strong>CCL11 (Eotaxin)</strong> — 年老血液中升高，抑制神经发生</li>
+<li><strong>CSF2</strong> — 类似效果</li>
+</ul>
+</div>
+</div>
+<p class="small" style="margin-top:10px;"><strong>Ambrosia 争议 (2016–2019)</strong>：收费 $8,000/次 向老年人输注年轻血浆，声称有抗衰老效果，被 FDA 警告叫停——缺乏安全性和有效性证据。科学界普遍认为"稀释"年老血液（血浆置换）可能比"加入"年轻血液更安全。</p>
+</section>
+
+<!-- SLIDE 15: mTOR — Rapamycin -->
+<section class="slide">
+<h2>路线六：mTOR 抑制 · 雷帕霉素</h2>
+<p><strong>mTOR</strong> (mechanistic Target of Rapamycin) — 细胞生长与代谢的中心调控器</p>
+<div class="grid2" style="margin-top:12px;">
+<div class="box">
+<h4>发现历程</h4>
+<ul>
+<li>1965: 雷帕霉素（rapamycin）从复活节岛土壤细菌中发现</li>
+<li>2009: Harrison et al. <em>Nature</em> — 雷帕霉素延长小鼠寿命：♂ +9%, ♀ +14%</li>
+<li>即使从 20 月龄（相当于 60 岁人类）开始给药，仍有效</li>
+</ul>
+</div>
+<div class="box">
+<h4>作用机制</h4>
+<ul>
+<li>抑制 mTORC1 → 模拟热量限制信号</li>
+<li>增强自噬 (autophagy)</li>
+<li>减少蛋白质合成错误积累</li>
+<li>改善免疫功能（低剂量）</li>
+</ul>
+</div>
+</div>
+<p class="small" style="margin-top:14px;"><strong>临床进展：</strong>RADICAL / PEARL 试验正在测试低剂量雷帕霉素在老年人中的安全性和免疫增强效果。2024 年结果显示低剂量耐受性良好，免疫功能指标改善。</p>
+<p class="small"><strong>副作用需关注：</strong>口腔溃疡、高剂量免疫抑制（移植排斥用途）、代谢改变。关键挑战：找到"抗衰老而不免疫抑制"的剂量窗口。</p>
+</section>
+
+<!-- SLIDE 16: Caloric Restriction / Metformin -->
+<section class="slide">
+<h2>路线七：热量限制模拟物 · 二甲双胍 TAME</h2>
+<div class="grid2">
+<div class="box">
+<h4>热量限制 (CR)</h4>
+<p>McCay (1939) — CR 延长大鼠寿命</p>
+<p>CALERIE 试验 (2015)：2 年 25% CR</p>
+<ul>
+<li>体重↓，心血管代谢指标全面改善</li>
+<li>但不改变 GrimAge 时钟</li>
+<li>对大型动物（恒河猴）效果减弱</li>
+</ul>
+</div>
+<div class="box">
+<h4>TAME 试验</h4>
+<p>Targeting Aging with MEtformin</p>
+<p>Nir Barzilai, Albert Einstein 医学院</p>
+<ul>
+<li><strong>3000 名 65-79 岁</strong>参与者</li>
+<li>测试二甲双胍是否延缓"多种年龄相关疾病"时间</li>
+<li>若成功：FDA 可能首次批准"衰老"作为适应症</li>
+</ul>
+<span class="tag mtor">里程碑</span>
+</div>
+</div>
+<p class="small" style="margin-top:10px;"><strong>其他 CR 模拟物：</strong>白藜芦醇（SIRT1 激活剂，Sinclair 2003）— 早期炒作后褪色；亚精胺 — 增强自噬，人体证据有限；α-酮戊二酸 (AKG) — 小鼠中延长寿命。</p>
+</section>
+
+<!-- SLIDE 17: Gene Therapy -->
+<section class="slide">
+<h2>路线八：基因治疗 · 端粒酶 &amp; Klotho</h2>
+<div class="grid2">
+<div class="box">
+<h4>端粒酶激活 (TERT)</h4>
+<ul>
+<li>端粒酶逆转录酶 — 延长端粒</li>
+<li>Bernardes de Jesus et al., <em>EMBO Mol Med</em> (2012) — AAV-TERT 延长小鼠寿命 24%</li>
+<li><strong>BioViva (Liz Parrish)</strong> — 2015 年自我注射 AAV-TERT + AAV-follistatin，声称端粒延长，未经同行评议，广受批评</li>
+<li>Libella Gene Therapeutics — 宣称哥伦比亚临床试验</li>
+</ul>
+</div>
+<div class="box">
+<h4>Klotho 基因</h4>
+<ul>
+<li>Klotho 蛋白随年龄下降</li>
+<li>过表达延长小鼠寿命 30%</li>
+<li>Dubal Lab (UCSF) — 注射 Klotho 蛋白片段改善老年猴认知功能 (2023 <em>Nature Aging</em>)</li>
+<li><span class="hl3">潜力：单次注射，效果持续</span></li>
+</ul>
+</div>
+</div>
+<p class="small" style="margin-top:12px;"><span class="hl4">风险警示：</span>端粒酶激活可能增加癌症风险；BioViva 是领域内最具争议的公司之一。Klotho 目前被认为最安全的基因治疗候选。</p>
+</section>
+
+<!-- SLIDE 18: Stem Cell Therapy -->
+<section class="slide">
+<h2>路线九：干细胞疗法</h2>
+<div class="grid3" style="margin-top:12px;">
+<div class="box">
+<h4>间充质干细胞 (MSC)</h4>
+<ul>
+<li>来源：脐带、脂肪、骨髓</li>
+<li>机制：旁分泌（分泌因子）而非替代</li>
+<li>降低炎症、促进修复</li>
+<li>已大量用于"抗衰老"诊所（监管灰色地带）</li>
+</ul>
+<span class="tag stem">广泛</span>
+</div>
+<div class="box">
+<h4>造血干细胞</h4>
+<ul>
+<li>年轻 HSC 移植 → 改善老年受体免疫功能</li>
+<li>但：骨髓移植风险高</li>
+<li>方向：HSC 在体外"年轻化"后再回输</li>
+</ul>
+<span class="tag stem">自体</span>
+</div>
+<div class="box">
+<h4>iPSC 衍生细胞</h4>
+<ul>
+<li>从患者自身细胞诱导 iPSC → 分化为所需细胞类型</li>
+<li>日本已用于黄斑变性（RPE 细胞）</li>
+<li>挑战：成本、畸胎瘤风险、生产一致性</li>
+</ul>
+<span class="tag stem">精准</span>
+</div>
+</div>
+<p class="small" style="margin-top:12px;"><strong>中国进展：</strong>中科院动物所、同济大学等在干细胞抗衰老方向有多项临床前研究。国内干细胞"抗衰老"市场混乱，大量未获批的诊所提供可疑治疗。</p>
+</section>
+
+<!-- SLIDE 19: Chemical Reprogramming -->
+<section class="slide">
+<h2>路线十：小分子化学重编程</h2>
+<p><strong>核心理念：</strong>用小分子化合物替代基因操作，实现细胞再年轻化——更安全、更易规模化、且可逆。</p>
+<div class="grid2" style="margin-top:12px;">
+<div class="box">
+<h4>Sinclair Lab 2023</h4>
+<p><em>Aging</em> (2023)：六种小分子混合物</p>
+<ul>
+<li>丙戊酸、CHIR-99021、E-616452、Tranylcypromine、Forskolin、TTNPB</li>
+<li>4 天逆转成纤维细胞转录组年龄</li>
+<li>7 天 逆转表观遗传年龄</li>
+</ul>
+<span class="tag repro">化学</span>
+</div>
+<div class="box">
+<h4>邓宏魁 (北大) 2022</h4>
+<p><em>Nature</em> (2022)：化学诱导人体细胞重编程为多能干细胞 (CiPSC)</p>
+<ul>
+<li>完全用化学小分子实现重编程</li>
+<li>避开转基因风险</li>
+<li>糖尿病 CiPSC 衍生胰岛细胞已进入临床</li>
+</ul>
+<span class="tag stem">突破</span>
+</div>
+</div>
+<p class="small" style="margin-top:10px;"><strong>优势：</strong>小分子可控、给药可逆、生产成本低、无需基因操作。重编程程度可控（部分 or 完全）。</p>
+</section>
+
+<!-- SLIDE 20: Comparison Table -->
+<section class="slide tight denser">
+<h2>十大路线对比总表</h2>
+<table>
+<tr><th>路线</th><th>核心机制</th><th>代表人/机构</th><th>临床阶段</th><th>安全性</th><th>潜力评级</th></tr>
+<tr><td>表观遗传时钟逆转</td><td>DNA 甲基化重置</td><td>Fahy, Horvath</td><td>II 期</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td>部分重编程 (OSKM/OSK)</td><td>表观遗传擦除</td><td>Sinclair, Belmonte, Altos Labs</td><td>临床前</td><td>⭐⭐</td><td>⭐⭐⭐⭐⭐</td></tr>
+<tr><td>Senolytics (衰老细胞清除)</td><td>凋亡诱导 p16+ 细胞</td><td>Kirkland (Mayo), Unity</td><td>II/III 期</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td>NAD⁺ / Sirtuins</td><td>代谢辅酶补充</td><td>Sinclair (Harvard)</td><td>II 期</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td></tr>
+<tr><td>血液因子/血浆置换</td><td>循环环境重塑</td><td>Conboy, Wyss-Coray</td><td>I/II 期</td><td>⭐⭐⭐</td><td>⭐⭐⭐</td></tr>
+<tr><td>mTOR 抑制 (雷帕霉素)</td><td>自噬增强</td><td>Kaeberlein, Mannick</td><td>II/III 期</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td>CR 模拟物 (二甲双胍)</td><td>AMPK 激活</td><td>Barzilai (TAME)</td><td>III 期</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐</td></tr>
+<tr><td>基因治疗 (TERT/Klotho)</td><td>端粒/神经营养</td><td>Dubal, BioViva</td><td>临床前/I 期</td><td>⭐</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td>干细胞移植</td><td>组织再生/旁分泌</td><td>多个学术中心</td><td>II/III 期</td><td>⭐⭐⭐</td><td>⭐⭐⭐</td></tr>
+<tr><td>化学重编程</td><td>小分子表观调控</td><td>Sinclair, 邓宏魁</td><td>临床前</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td></tr>
+</table>
+<p class="small" style="margin-top:4px;">潜力评级综合考量：机制深刻性 × 转化可行性 × 安全窗口。⭐⭐⭐⭐⭐ = 颠覆潜力，⭐ = 高风险早期。</p>
+</section>
+
+<!-- SLIDE 21: Clinical Trial Landscape -->
+<section class="slide">
+<h2>临床试验全景 (2024–2026)</h2>
+<div class="grid2" style="margin-top:10px;">
+<div class="box">
+<h4>已进入 III 期</h4>
+<ul>
+<li><strong>TAME</strong> — 二甲双胍抗衰老 (3000 人)</li>
+<li><strong>PEARL</strong> — 低剂量雷帕霉素免疫增强</li>
+</ul>
+</div>
+<div class="box">
+<h4>II 期重点</h4>
+<ul>
+<li>D+Q — IPF、骨关节炎、新冠后</li>
+<li>Fisetin — 老年人衰弱、COVID</li>
+<li>TRIIM-X — 胸腺再生方案扩大</li>
+<li>NAD⁺ 前体 — 肌肉功能、代谢</li>
+</ul>
+</div>
+</div>
+<p style="margin-top:14px;"><span class="hl">2026 年最值得关注的里程碑：</span></p>
+<ul>
+<li><strong>TAME 试验结果</strong> — 若成功，"衰老"可能首次被 FDA 认定为可治疗的适应症，重塑整个监管和保险体系</li>
+<li><strong>首个部分重编程人体试验</strong> — Altos Labs 和 Retro 均计划近期启动</li>
+<li><strong>衰老生物标志物验证</strong> — DunedinPACE 等被纳入 FDA 认可的替代终点</li>
+</ul>
+</section>
+
+<!-- SLIDE 22: Controversies -->
+<section class="slide">
+<h2>争议与审慎思考</h2>
+<div class="grid2">
+<div class="box" style="border-color: rgba(255,123,114,0.3);">
+<h4 style="color:var(--red);">炒作与利益冲突</h4>
+<ul>
+<li>Sinclair 创立多家 NAD⁺/重编程公司，经常在社交平台推广未经验证的方案</li>
+<li>Altos Labs 30 亿美元投入，但截至 2026 年尚未产出可转化成果</li>
+<li>"长寿诊所"收费数千美元提供 NAD⁺ 输液等未经 FDA 批准的治疗</li>
+</ul>
+</div>
+<div class="box" style="border-color: rgba(255,166,87,0.3);">
+<h4 style="color:var(--orange);">安全性隐患</h4>
+<ul>
+<li><strong>OSKM 重编程 → 畸胎瘤风险</strong>：即使去掉 c-Myc，仍有可能</li>
+<li><strong>端粒酶 → 癌症促进</strong>：多数癌症需要端粒酶激活才能无限增殖</li>
+<li><strong>雷帕霉素 → 免疫抑制</strong>：高剂量是移植排斥药物</li>
+<li><strong>衰老细胞清除 → 伤口愈合受损</strong>：p16+ 细胞在某些场景下有利</li>
+</ul>
+</div>
+</div>
+<p class="small" style="margin-top:12px;"><strong>科学共识：</strong>再年轻化有巨大潜力，但距离成为安全有效的医疗手段还有很长一段路。目前最理性的建议是：运动、健康饮食、充足睡眠——这些是经过验证的"抗衰老"措施。</p>
+</section>
+
+<!-- SLIDE 23: Future Directions -->
+<section class="slide">
+<h2>未来方向</h2>
+<div class="grid3" style="margin-top:12px;">
+<div class="box">
+<h4>组合疗法</h4>
+<p>单一干预不足以逆转所有衰老标志。未来将是 <strong>senolytic + 重编程 + mTOR 抑制</strong> 等组合策略的时代。</p>
+<span class="tag epi">系统</span>
+</div>
+<div class="box">
+<h4>精准衰老医学</h4>
+<p>基于个人表观遗传时钟、蛋白组学和代谢组学的个性化干预方案。类似肿瘤精准治疗。</p>
+<span class="tag epi">精准</span>
+</div>
+<div class="box">
+<h4>AI 加速发现</h4>
+<p>AlphaFold 预测蛋白结构；AI 筛选 senolytic 候选分子；机器学习预测组合治疗最优方案。</p>
+<span class="tag mtor">AI</span>
+</div>
+<div class="box">
+<h4>器官特异性再年轻化</h4>
+<p>先解决"最容易"的靶器官（眼、皮肤、免疫系统），再逐步推广到全身。</p>
+<span class="tag seno">分步</span>
+</div>
+<div class="box">
+<h4>衰老生物标志物标准化</h4>
+<p>FDA/NIH 推动 DunedinPACE, OMICmAge 等纳入临床终点，为抗衰老药物审批铺路。</p>
+<span class="tag nad">监管</span>
+</div>
+<div class="box">
+<h4>可及性与伦理</h4>
+<p>如果抗衰老技术成功，如何避免成为富人的特权？衰老是否应该被视为疾病？</p>
+<span class="tag gene">伦理</span>
+</div>
+</div>
+</section>
+
+<!-- SLIDE 24: Discussion -->
+<section class="slide">
+<h2>课堂讨论</h2>
+<div class="grid2" style="margin-top:16px;">
+<div class="box">
+<h4>科学问题</h4>
+<ol>
+<li>衰老是"程序"还是"熵增"？这对再年轻化策略的选择有何影响？</li>
+<li>为什么 senolytics 的"hit-and-run"策略优于持续给药？</li>
+<li>表观遗传时钟逆转是否等价于真正的功能再年轻化？</li>
+</ol>
+</div>
+<div class="box">
+<h4>转化与伦理</h4>
+<ol>
+<li>TAME 试验如果成功，FDA 批准衰老为适应症，会对社会产生什么影响？</li>
+<li>Altos Labs 的 30 亿美元如果用于基础衰老生物学研究，会更好吗？</li>
+<li>再年轻化技术应该优先用于哪些适应症（罕见早衰症、年龄相关疾病、还是"正常衰老"）？</li>
+</ol>
+</div>
+</div>
+<p style="margin-top:20px; text-align:center; color:var(--accent2); font-size:16px;">"长寿研究的终极目的不是长生不老，而是让更多人在生命的最后阶段保持健康和尊严。"</p>
+</section>
+
+<!-- SLIDE 25: References -->
+<section class="slide tight">
+<h2>核心参考文献</h2>
+<div class="grid2">
+<div class="box" style="font-size:12px;">
+<h4>奠基性工作</h4>
+<ol style="font-size:12px; line-height:1.45;">
+<li>López-Otín et al. "Hallmarks of aging." <em>Cell</em> 2013/2023</li>
+<li>Takahashi &amp; Yamanaka. "Induction of pluripotent stem cells." <em>Cell</em> 2006</li>
+<li>Horvath. "DNA methylation age of human tissues and cell types." <em>Genome Biol</em> 2013</li>
+<li>Baker et al. "Clearance of p16Ink4a-positive senescent cells delays ageing." <em>Nature</em> 2011</li>
+</ol>
+</div>
+<div class="box" style="font-size:12px;">
+<h4>关键突破</h4>
+<ol start="5" style="font-size:12px; line-height:1.45;">
+<li>Ocampo et al. "In vivo amelioration of age-associated hallmarks by partial reprogramming." <em>Cell</em> 2016</li>
+<li>Lu et al. "Reprogramming to recover youthful epigenetic information." <em>Nature</em> 2020</li>
+<li>Fahy et al. "Reversal of epigenetic aging... in humans." <em>Aging Cell</em> 2019</li>
+<li>Harrison et al. "Rapamycin fed late in life extends lifespan." <em>Nature</em> 2009</li>
+</ol>
+</div>
+<div class="box" style="font-size:12px;">
+<h4>最新进展</h4>
+<ol start="9" style="font-size:12px; line-height:1.45;">
+<li>Yang et al. "Chemically induced reprogramming..." <em>Nature</em> 2022 (邓宏魁)</li>
+<li>Lu et al. "Chemical reprogramming..." <em>Aging</em> 2023 (Sinclair)</li>
+<li>Castner et al. "Klotho therapy." <em>Nature Aging</em> 2023</li>
+<li>Barzilai et al. "Metformin as a Tool to Target Aging." <em>Cell Metab</em> 2016</li>
+</ol>
+</div>
+<div class="box" style="font-size:12px;">
+<h4>综述与批判性分析</h4>
+<ol start="13" style="font-size:12px; line-height:1.45;">
+<li>Gems &amp; de Magalhães. "The hoverfly and the wasp." <em>Ageing Res Rev</em> 2021</li>
+<li>Kaeberlein. "Is rapamycin a geroprotector?" <em>Geroscience</em> 2022</li>
+<li>Mahmoudi et al. "Turning back time with emerging rejuvenation strategies." <em>Nat Cell Biol</em> 2019</li>
+</ol>
+</div>
+</div>
+<p class="small" style="margin-top:6px;">注：本 slides 基于截至 2026 年中的公开文献和业界动态整理。建议持续跟踪 NIH ClinicalTrials.gov 和 bioRxiv 预印本获取最新进展。</p>
+</section>
+
+</div>
+
+<script>
+(function(){
+var slides = document.querySelectorAll('.slide');
+var total = slides.length;
+var cur = 0;
+function show(i){
+  slides[cur].classList.remove('active');
+  cur = (i + total) % total;
+  slides[cur].classList.add('active');
+  document.getElementById('pagenum').textContent = (cur+1) + ' / ' + total;
+  document.getElementById('pbar').style.width = ((cur+1)/total*100)+'%';
+}
+document.addEventListener('keydown',function(e){
+  if(e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); show(cur+1); }
+  else if(e.key === 'ArrowLeft') { e.preventDefault(); show(cur-1); }
+  else if(e.key === 'Home') { e.preventDefault(); show(0); }
+  else if(e.key === 'End') { e.preventDefault(); show(total-1); }
+  else if(e.key === 'p' || e.key === 'P') { window.print(); }
+});
+show(0);
+})();
+</script>
+</body>
+</html>
