@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>计算机科学论文审稿指南 · 期刊与会议审稿一页通</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+
+    --c1: #1e40af; --c1s: #eff6ff; /* 蓝 - 理念 */
+    --c2: #b45309; --c2s: #fffbeb; /* 琥珀 - 维度 */
+    --c3: #0d9488; --c3s: #f0fdfa; /* 青 - 报告结构 */
+    --c4: #dc2626; --c4s: #fef2f2; /* 红 - 误区 */
+    --c5: #7c3aed; --c5s: #f5f3ff; /* 紫 - 会议vs期刊 */
+    --c6: #db2777; --c6s: #fdf2f8; /* 粉 - 伦理 */
+
+    --card-shadow: 0 0 0 1px var(--line);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.6;
+    font-size: 14.5px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 800px;
+    margin: 0 auto 40px;
+    background: var(--card);
+    box-shadow: var(--card-shadow);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 40px 48px 30px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 700px 180px at top right, #eff6ff 0%, transparent 70%),
+      radial-gradient(ellipse 400px 160px at bottom left, #f0fdfa 0%, transparent 70%);
+    position: relative;
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c1);
+    background: var(--c1s);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 28px;
+    line-height: 1.3;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+  }
+  header h1 .accent { color: var(--c1); }
+  header .sub {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.55;
+  }
+
+  /* ---------- Section ---------- */
+  section { padding: 28px 48px; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: none; }
+
+  .s-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px; font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+  .s-title .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    font-size: 13px; font-weight: 800;
+  }
+  .s-title .num.c1 { background: var(--c1s); color: var(--c1); }
+  .s-title .num.c2 { background: var(--c2s); color: var(--c2); }
+  .s-title .num.c3 { background: var(--c3s); color: var(--c3); }
+  .s-title .num.c4 { background: var(--c4s); color: var(--c4); }
+  .s-title .num.c5 { background: var(--c5s); color: var(--c5); }
+  .s-title .num.c6 { background: var(--c6s); color: var(--c6); }
+
+  /* ---------- Cards grid ---------- */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  .card {
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+  }
+  .card .icon { font-size: 18px; margin-bottom: 6px; }
+  .card .t { font-weight: 700; font-size: 13.5px; margin-bottom: 4px; color: var(--ink); }
+  .card .d { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+
+  .card.c1 { border-color: #bfdbfe; background: var(--c1s); }
+  .card.c2 { border-color: #fde68a; background: var(--c2s); }
+  .card.c3 { border-color: #99f6e4; background: var(--c3s); }
+  .card.c4 { border-color: #fecaca; background: var(--c4s); }
+  .card.c5 { border-color: #ddd6fe; background: var(--c5s); }
+  .card.c6 { border-color: #fbcfe8; background: var(--c6s); }
+
+  /* ---------- Table ---------- */
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px;
+  }
+  th, td {
+    padding: 10px 14px; text-align: left;
+    border-bottom: 1px solid var(--line);
+  }
+  th {
+    font-weight: 700; font-size: 11px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-3); background: #fafafa;
+  }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-weight: 600; }
+
+  /* ---------- Ol list ---------- */
+  ol.steps { padding-left: 24px; }
+  ol.steps li { margin-bottom: 10px; line-height: 1.55; }
+  ol.steps li b { color: var(--c1); }
+
+  /* ---------- Quote ---------- */
+  .quote {
+    padding: 16px 20px; margin: 14px 0 0;
+    background: #f8fafc; border-left: 3px solid var(--c2);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px; color: var(--ink-2); line-height: 1.55;
+  }
+
+  /* ---------- Badges ---------- */
+  .b { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; margin-right: 4px; margin-bottom: 4px; }
+  .b.g { background: #dcfce7; color: #166534; }
+  .b.y { background: #fef9c3; color: #854d0e; }
+  .b.r { background: #fee2e2; color: #991b1b; }
+
+  /* ---------- Checklist ---------- */
+  .cl { padding: 0; list-style: none; }
+  .cl li {
+    padding: 8px 0; border-bottom: 1px solid #f3f4f6;
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px; color: var(--ink-2);
+  }
+  .cl li:last-child { border-bottom: none; }
+  .cl .cb { flex-shrink: 0; width: 18px; height: 18px; border: 2px solid #d1d5db; border-radius: 4px; margin-top: 1px; }
+
+  /* ---------- Footer ---------- */
+  footer {
+    padding: 18px 48px 28px;
+    font-size: 11.5px; color: var(--ink-3);
+    border-top: 1px solid var(--line);
+  }
+  footer a { color: var(--c1); text-decoration: none; }
+
+  @media (max-width: 640px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    section { padding: 24px 22px; }
+    header { padding: 28px 22px 22px; }
+    footer { padding: 14px 22px 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ========== Header ========== -->
+<header>
+  <div class="tag">Peer Review Guide</div>
+  <h1>计算机科学<span class="accent">论文审稿</span>指南</h1>
+  <p class="sub">期刊 &amp; 会议审稿人的实战手册：从核心理念到评审报告的结构化方法论，一页讲清楚。</p>
+</header>
+
+<!-- ========== ① 核心理念 ========== -->
+<section>
+  <div class="s-title"><span class="num c1">①</span> 审稿的核心理念</div>
+  <div class="grid3">
+    <div class="card c1">
+      <div class="icon">🛠️</div>
+      <div class="t">建设性批评</div>
+      <div class="d">目标是帮助作者改进论文，而非判决作品。每条批评都应附带改进建议。</div>
+    </div>
+    <div class="card c1">
+      <div class="icon">⚖️</div>
+      <div class="t">公正客观</div>
+      <div class="d">基于论文本身评价，不受作者身份、机构、国籍等因素影响。用证据说话。</div>
+    </div>
+    <div class="card c1">
+      <div class="icon">🎯</div>
+      <div class="t">匹配标准</div>
+      <div class="d">根据目标会议/期刊的 bar 来评价。顶会顶刊与 workshop 的标准截然不同。</div>
+    </div>
+  </div>
+  <div class="quote">
+    <strong>黄金法则</strong>：想象你是作者，你希望收到怎样的审稿意见？写你愿意收到的审稿报告。
+  </div>
+</section>
+
+<!-- ========== ② 评审七维度 ========== -->
+<section>
+  <div class="s-title"><span class="num c2">②</span> 评审的七个维度</div>
+  <div class="grid2">
+    <div class="card c2">
+      <div class="t">1. 新颖性 Novelty</div>
+      <div class="d">提出了什么新问题/新方法？增量改进 vs. 范式突破？与已有工作的本质区别在哪？</div>
+    </div>
+    <div class="card c2">
+      <div class="t">2. 正确性 Correctness</div>
+      <div class="d">理论推导无漏洞？实验设置合理？统计检验充分？消融实验是否支撑结论？</div>
+    </div>
+    <div class="card c2">
+      <div class="t">3. 清晰度 Clarity</div>
+      <div class="d">Motivation 是否明确？技术描述是否精确？图表是否有助于理解？</div>
+    </div>
+    <div class="card c2">
+      <div class="t">4. 实验验证 Validation</div>
+      <div class="d">baseline 是否公平？数据集合理？指标全面？是否报告了方差/显著性？</div>
+    </div>
+    <div class="card c2">
+      <div class="t">5. 重要性 Significance</div>
+      <div class="d">对该领域的推动有多大？研究问题是否值得关注？成果是否可推广？</div>
+    </div>
+    <div class="card c2">
+      <div class="t">6. 可复现性 Reproducibility</div>
+      <div class="d">方法描述是否详尽到可复现？是否提供代码/数据？超参数和随机种子是否说明？</div>
+    </div>
+  </div>
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card c2" style="grid-column: 1 / -1;">
+      <div class="t">7. 文献引用 Related Work</div>
+      <div class="d">是否完整覆盖了相关领域的关键工作？对比讨论是否深入？是否有故意遗漏关键竞争对手的情况？引用是否最新（近 2-3 年）？</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ③ 审稿报告结构 ========== -->
+<section>
+  <div class="s-title"><span class="num c3">③</span> 审稿报告的标准结构</div>
+  <ol class="steps">
+    <li><b>Summary（总结）</b>—— 用 3-5 句话概括论文的主要贡献与方法。证明你认真读懂了论文，也帮助 AC/Editor 快速定位。</li>
+    <li><b>Major Comments（主要意见）</b>—— 对新颖性、正确性、实验验证等核心问题逐条展开。每条编号，附带具体建议。这是报告最重要的部分。</li>
+    <li><b>Minor Comments（次要意见）</b>—— 拼写错误、引用格式、图表清晰度、术语一致性等。不影响你最终推荐的修改。</li>
+    <li><b>Overall Recommendation（总体推荐）</b>—— 给出明确的评分/推荐等级：
+      <span class="b g">Strong Accept</span><span class="b g">Accept</span><span class="b y">Weak Accept</span><span class="b y">Borderline</span><span class="b r">Weak Reject</span><span class="b r">Reject</span><span class="b r">Strong Reject</span>
+    </li>
+    <li><b>Confidence（置信度）</b>—— 你对该领域有多熟悉？诚实地评估自己的 expertise level。</li>
+  </ol>
+</section>
+
+<!-- ========== ④ 常见误区 ========== -->
+<section>
+  <div class="s-title"><span class="num c4">④</span> 十大常见审稿误区</div>
+  <div class="grid2">
+    <div class="card c4"><div class="t">❌ 只挑刺不建设</div><div class="d">指出问题却不给解决方案，等于没审。</div></div>
+    <div class="card c4"><div class="t">❌ 要求补充不相关实验</div><div class="d">额外实验必须有明确目的，不是越多越好。</div></div>
+    <div class="card c4"><div class="t">❌ 「我不喜欢这种方法」</div><div class="d">个人偏好不是审稿理由。方法只要正确就应尊重。</div></div>
+    <div class="card c4"><div class="t">❌ 用 novelty 一票否决</div><div class="d">完善的 engineering 贡献同样有价值，如系统、benchmark。</div></div>
+    <div class="card c4"><div class="t">❌ 缺乏具体证据</div><div class="d">「实验不充分」不如「缺少 X 数据集上的对比，原因……」。模糊批评最无力。</div></div>
+    <div class="card c4"><div class="t">❌ 要求做论文范围外的工作</div><div class="d">审稿应评判论文已做的，而非要求做你想看的。</div></div>
+    <div class="card c4"><div class="t">❌ 双重标准</div><div class="d">不能用顶会 paper 的标准要求 workshop paper，vice versa。</div></div>
+    <div class="card c4"><div class="t">❌ 歧视性语言</div><div class="d">「太简单」「本科生也能做」——贬低性措辞既不专业也无价值。</div></div>
+    <div class="card c4"><div class="t">❌ 忽略 rebuttal</div><div class="d">作者 rebuttal 后应认真阅读并调整你的评价，而非固守原判。</div></div>
+    <div class="card c4"><div class="t">❌ SOTA 崇拜</div><div class="d">不是每篇论文都需要刷 SOTA。理论分析、新范式定义同等重要。</div></div>
+  </div>
+</section>
+
+<!-- ========== ⑤ 会议 vs 期刊 ========== -->
+<section>
+  <div class="s-title"><span class="num c5">⑤</span> 会议审稿 vs 期刊审稿</div>
+  <table>
+    <tr>
+      <th>维度</th><th>会议 (如 CVPR/NeurIPS)</th><th>期刊 (如 TPAMI/TIP)</th>
+    </tr>
+    <tr>
+      <td>审稿周期</td><td>紧（~4-6 周）</td><td>长（3-6 个月，可能多轮）</td>
+    </tr>
+    <tr>
+      <td>页数限制</td><td>严格（8-10 页）</td><td>宽松（12-18 页常见）</td>
+    </tr>
+    <tr>
+      <td>新颖性门槛</td><td>较高（追求 novelty）</td><td>完整性与深度优先</td>
+    </tr>
+    <tr>
+      <td>实验要求</td><td>充分但可接受有限消融</td><td>要求更全面、更深入的验证</td>
+    </tr>
+    <tr>
+      <td>Rebuttal</td><td>有（1 周，单轮）</td><td>有（多轮修改-审稿循环）</td>
+    </tr>
+    <tr>
+      <td>录用后修改</td><td>Camera-ready 小幅修改</td><td>Minor/Major revision 常见</td>
+    </tr>
+    <tr>
+      <td>审稿人权重</td><td>高（多数顶会无 AE 机制）</td><td>AE 会综合判断，权重略低</td>
+    </tr>
+    <tr>
+      <td>典型风格</td><td>快节奏、聚焦核心贡献</td><td>细读、深究方法完整性</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ========== ⑥ 伦理 ========== -->
+<section>
+  <div class="s-title"><span class="num c6">⑥</span> 评审伦理与底线</div>
+  <div class="grid3">
+    <div class="card c6">
+      <div class="icon">🔒</div>
+      <div class="t">严格保密</div>
+      <div class="d">论文内容、审稿意见均不可分享或讨论（匿名评审系统外）。审稿期间不可用于自己的研究。</div>
+    </div>
+    <div class="card c6">
+      <div class="icon">🚫</div>
+      <div class="t">回避利益冲突</div>
+      <div class="d">同机构、近期合作者、导师/学生关系、项目竞争者 —— 任何 COI 都应主动告知 AC/Editor 并拒审。</div>
+    </div>
+    <div class="card c6">
+      <div class="icon">📋</div>
+      <div class="t">检查学术不端</div>
+      <div class="d">可疑的抄袭、一稿多投、数据伪造 —— 发现后应通过私密渠道向 AC/Editor 报告，不写在公开评审中。</div>
+    </div>
+    <div class="card c6">
+      <div class="icon">⏰</div>
+      <div class="t">按时提交</div>
+      <div class="d">审稿意见拖延会影响作者修改和录用决策。若无法按时完成，尽早告知 AE 避免延误流程。</div>
+    </div>
+    <div class="card c6">
+      <div class="icon">🔍</div>
+      <div class="t">不强制引用</div>
+      <div class="d">可建议作者补充相关文献，但不能强制要求引用自己的论文。这属于学术不端（citation coercion）。</div>
+    </div>
+    <div class="card c6">
+      <div class="icon">🤖</div>
+      <div class="t">LLM 使用声明</div>
+      <div class="d">使用大模型辅助审稿时需注意：不能将论文全文输入公共 LLM（违反保密），使用本地模型更安全。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ⑥B 实战 Checklist ========== -->
+<section>
+  <div class="s-title" style="margin-bottom: 18px;">🗹 审稿自检清单</div>
+  <ul class="cl">
+    <li><span class="cb"></span> 我是否理解了论文的核心贡献？能用 3 句话总结出来？</li>
+    <li><span class="cb"></span> 我的批评是否具体且附带改进建议？</li>
+    <li><span class="cb"></span> 我的审稿标准是否匹配目标会议/期刊的 bar？</li>
+    <li><span class="cb"></span> 我是否区分了 Major（致命/显著影响）和 Minor（可修复）问题？</li>
+    <li><span class="cb"></span> 我是否检查了利益冲突？是否保证了论文内容的保密性？</li>
+    <li><span class="cb"></span> 我的语气是否专业、尊重？是否避免了歧视性或贬低性语言？</li>
+    <li><span class="cb"></span> 实验部分：baseline 合理吗？消融实验充分吗？统计检验对吗？</li>
+    <li><span class="cb"></span> Related work：是否遗漏了关键工作？引用是否偏旧？</li>
+    <li><span class="cb"></span> 如果有 rebuttal，我是否认真阅读并调整了评价？</li>
+    <li><span class="cb"></span> 我的 Overall Recommendation 是否有明确理由支撑？</li>
+  </ul>
+</section>
+
+<!-- ========== Footer ========== -->
+<footer>
+  <strong>参考资源</strong>：NeurIPS Reviewer Guidelines · CVPR Reviewer Tutorial · ACL Reviewer Guidelines · ICLR Reviewing Guide · Elsevier Reviewer Guidelines &nbsp;|&nbsp; <a href="../index.html">← 返回 Auto 导航</a>
+</footer>
+
+</div>
+</body>
+</html>
