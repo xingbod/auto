@@ -1,0 +1,351 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>模型对抗攻击与鲁棒性 · 研究进展</title><style>
+:root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--ink:#e6edf3;--muted:#8b949e;--blue:#58a6ff;--green:#3fb950;--yellow:#f2cc60;--orange:#f97316;--red:#ff7b72;--purple:#a78bfa;--cyan:#7dd3fc;--pink:#ec4899}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:radial-gradient(circle at 10% 8%,rgba(255,123,114,.14),transparent 30%),radial-gradient(circle at 84% 20%,rgba(88,166,255,.10),transparent 28%),linear-gradient(135deg,#0d1117,#111827 55%,#0b1120);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:15px}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:32px 32px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.75),transparent 85%);pointer-events:none}
+.topbar{position:fixed;top:0;left:0;right:0;height:38px;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(13,17,23,.88);border-bottom:1px solid var(--line);backdrop-filter:blur(12px);font-size:12px;color:var(--muted)}
+.progress{position:fixed;top:38px;left:0;height:3px;background:linear-gradient(90deg,var(--red),var(--orange),var(--blue));z-index:1001;width:0}
+.slide{position:absolute;inset:0;display:none;padding:70px 58px 80px;overflow-y:auto}
+.slide.active{display:flex;flex-direction:column}
+.slide.tight{padding:52px 50px 70px}
+.slide.cover,.slide.end{display:none}
+.slide.cover.active,.slide.end.active{display:flex;justify-content:center}
+.kicker{font-size:12px;color:var(--red);font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+h1{font-size:38px;line-height:1.1;margin:0 0 16px;letter-spacing:-.03em}
+h2{font-size:28px;line-height:1.15;margin:0 0 14px;letter-spacing:-.02em}
+h3{font-size:16px;margin:8px 0 5px;color:#fff}
+p{line-height:1.5;margin:5px 0;color:#c9d1d9}
+ul{margin:5px 0 0 1.1em;padding:0}
+li{margin:4px 0;color:#c9d1d9;line-height:1.45}
+.blue{color:var(--blue)}.green{color:var(--green)}.yellow{color:var(--yellow)}.orange{color:var(--orange)}.red{color:var(--red)}.purple{color:var(--purple)}.muted{color:var(--muted)}
+.big{font-size:17px;line-height:1.55}
+.tag{display:inline-block;padding:3px 10px;margin:2px 4px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(255,123,114,.12);color:var(--red);border:1px solid rgba(255,123,114,.22)}
+.tag.blue{background:rgba(88,166,255,.12);color:var(--blue);border-color:rgba(88,166,255,.22)}
+.tag.green{background:rgba(63,185,80,.12);color:var(--green);border-color:rgba(63,185,80,.22)}
+.tag.orange{background:rgba(249,115,22,.12);color:var(--orange);border-color:rgba(249,115,22,.22)}
+.tag.purple{background:rgba(167,139,250,.12);color:var(--purple);border-color:rgba(167,139,250,.22)}
+.callout{padding:10px 16px;margin:10px 0;background:rgba(255,123,114,.06);border-left:3px solid var(--red);border-radius:0 6px 6px 0;font-size:14px;color:var(--red)}
+.callout.blue{border-left-color:var(--blue);color:var(--blue);background:rgba(88,166,255,.06)}
+.callout.green{border-left-color:var(--green);color:var(--green);background:rgba(63,185,80,.06)}
+.callout.orange{border-left-color:var(--orange);color:var(--orange);background:rgba(249,115,22,.06)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:8px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.card h3{font-size:14px;margin:0 0 5px}
+.card p{font-size:13px;color:var(--muted);margin:2px 0}
+.pipeline{display:flex;align-items:center;justify-content:space-between;margin:10px 0;padding:10px 8px;background:var(--panel);border-radius:8px;border:1px solid var(--line);gap:2px}
+.pipeline .step{flex:1;text-align:center;padding:6px 2px;border-radius:5px;background:rgba(255,123,114,.08);border:1px solid rgba(255,123,114,.18);font-size:11px;font-weight:600}
+.pipeline .arrow{font-size:16px;color:var(--muted);flex:0 0 20px;text-align:center}
+.tree{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;white-space:pre;background:var(--panel);padding:10px 14px;border-radius:5px;border:1px solid var(--line);line-height:1.3}
+.formula{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:14px;background:var(--panel);padding:6px 14px;border-radius:5px;border:1px solid var(--line);display:inline-block;margin:3px 0;color:var(--yellow)}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-weight:700;color:var(--red);font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+td{color:#c9d1d9}
+.box{display:inline-block;padding:3px 8px;border-radius:5px;font-weight:600;font-size:11px;margin:1px 2px;border:1px solid}
+.box.red{background:rgba(255,123,114,.12);color:var(--red);border-color:rgba(255,123,114,.25)}
+.box.blue{background:rgba(88,166,255,.12);color:var(--blue);border-color:rgba(88,166,255,.25)}
+.box.green{background:rgba(63,185,80,.12);color:var(--green);border-color:rgba(63,185,80,.25)}
+.box.orange{background:rgba(249,115,22,.12);color:var(--orange);border-color:rgba(249,115,22,.25)}
+.box.purple{background:rgba(167,139,250,.12);color:var(--purple);border-color:rgba(167,139,250,.25)}
+.numgrid{display:flex;gap:14px;margin:10px 0;flex-wrap:wrap}
+.num{text-align:center;padding:10px 16px;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.num b{font-size:28px;display:block;color:var(--red);line-height:1.2}
+.num span{font-size:11px;color:var(--muted)}
+.end h1{font-size:46px;text-align:center}
+@media(max-width:800px){.grid2,.grid3{grid-template-columns:1fr}h1{font-size:28px}h2{font-size:22px}.slide{padding:60px 24px 80px}}
+</style></head><body>
+<div class="topbar"><b>模型对抗攻击与鲁棒性 · Adversarial Robustness</b><span>←/→ 翻页 · Space 下一页 · P 打印</span></div>
+<div class="progress" id="prog"></div>
+
+<!-- SLIDE 1: Cover -->
+<section class="slide cover active">
+<div class="kicker">Adversarial Machine Learning</div>
+<h1>模型对抗攻击<br>与<span class="red">鲁棒性</span></h1>
+<p class="big">从 FGSM 到 AutoAttack：深度学习安全攻防的前沿进展</p>
+<div>
+<span class="tag">对抗样本</span><span class="tag blue">对抗训练</span><span class="tag green">可验证鲁棒性</span>
+<span class="tag orange">黑盒攻击</span><span class="tag purple">大模型鲁棒</span>
+</div>
+</section>
+
+<!-- SLIDE 2: 什么是对抗样本 -->
+<section class="slide">
+<div class="kicker">定义</div>
+<h2>什么是对抗样本？</h2>
+<div class="grid2">
+<div class="card"><h3>🔍 形式化定义</h3><p>对原始输入 x 施加人眼不可察觉的微小扰动 δ，使得模型 f 输出错误预测：<br><span class="formula" style="font-size:13px">f(x+δ) ≠ y, ||δ||_p ≤ ε</span></p></div>
+<div class="card"><h3>🎨 视觉示例</h3><p>原始图：熊猫 (57.7% 置信)。加扰动后：人眼仍看到熊猫，模型以 99.3% 置信度预测为长臂猿。扰动幅度仅 ε=0.007/255。</p></div>
+</div>
+<div class="callout">Szegedy et al. (2014, ICLR) 首次发现：深度神经网络存在反直觉的脆弱性——近乎相同的输入可以产生完全不同的输出。</div>
+</section>
+
+<!-- SLIDE 3: 威胁模型 -->
+<section class="slide">
+<div class="kicker">威胁模型</div>
+<h2>对抗攻击的威胁模型分类</h2>
+<div class="tree">
+对抗攻击威胁模型
+│
+├── <span class="red">按攻击者知识</span>
+│   ├── 白盒 (White-box)：攻击者完全知道模型结构、参数、梯度
+│   ├── 黑盒 (Black-box)：攻击者只能查询模型输入输出
+│   │   ├── 基于查询 (Query-based)：N 次查询逼近决策边界
+│   │   └── 基于迁移 (Transfer-based)：替代模型生成→迁移
+│   └── 灰盒 (Gray-box)：部分知识 (如知道结构但不知参数)
+│
+├── <span class="orange">按攻击目标</span>
+│   ├── 非定向 (Untargeted)：只要分错就行
+│   └── 定向 (Targeted)：必须分到指定类别 T
+│
+├── <span class="blue">按扰动范数</span>
+│   ├── L∞ 攻击：每个像素最大改动受限 (最常见的设定)
+│   ├── L2 攻击：总体扰动能量受限
+│   └── L0 攻击：只改极少像素
+│
+└── <span class="green">按攻击阶段</span>
+    ├── 逃避攻击 (Evasion)：测试时扰动
+    ├── 投毒攻击 (Poisoning)：训练数据投毒
+    └── 后门攻击 (Backdoor)：植入触发器
+</div>
+</section>
+
+<!-- SLIDE 4: 经典白盒攻击 -->
+<section class="slide">
+<div class="kicker">白盒攻击</div>
+<h2>经典白盒攻击方法</h2>
+<table>
+<tr><th>方法</th><th>年份</th><th>核心思想</th><th>公式简化</th></tr>
+<tr><td><span class="red">FGSM</span></td><td>2015</td><td>沿梯度符号方向单步扰动</td><td>x' = x + ε·sign(∇Loss)</td></tr>
+<tr><td><span class="orange">PGD</span></td><td>2018</td><td>多步迭代 + 投影回 ε 球</td><td>x^(t+1) = Proj(x^t + α·sign(∇))</td></tr>
+<tr><td><span class="blue">C&W</span></td><td>2017</td><td>优化目标：最小扰动 + 错分类</td><td>min ||δ|| + c·L(f(x+δ), t)</td></tr>
+<tr><td><span class="green">DeepFool</span></td><td>2016</td><td>迭代投影到最近的决策边界</td><td>每次找最近的超平面跨过去</td></tr>
+<tr><td><span class="purple">AutoAttack</span></td><td>2020</td><td>4 种攻击的集成：APGD + 带目标 APGD + FAB + Square</td></tr>
+</table>
+<div class="callout orange">PGD 是当前最标准的白盒鲁棒性评估方法。AutoAttack 是更强的集成攻击，已成为衡量防御效果的"金标准"基准。</div>
+</section>
+
+<!-- SLIDE 5: 黑盒攻击 -->
+<section class="slide">
+<div class="kicker">黑盒攻击</div>
+<h2>黑盒攻击：不依赖梯度的攻击</h2>
+<div class="grid3">
+<div class="card"><h3>🔢 基于分数 (Score-based)</h3><p>知道模型输出的概率/置信度。用有限差分估计梯度 (NES, SPSA) 或沿随机方向搜索 (Square Attack)。</p></div>
+<div class="card"><h3>🎯 基于决策 (Decision-based)</h3><p>只知道 top-1 标签。从大扰动开始，逐步向原图收缩——边界攻击 (Brendel & Bethge, 2018)。</p></div>
+<div class="card"><h3>🔄 迁移攻击 (Transfer)</h3><p>在白盒替代模型上生成对抗样本，迁移到目标黑盒模型。成功率依赖于替代模型与目标模型的相似度。</p></div>
+</div>
+<div class="callout blue">实战中迁移攻击最危险——不需要任何查询。黑盒模型的决策边界在替代模型附近有"共同脆弱区"，2023-2024 年大模型 (ViT/LLM) 也未能幸免。</div>
+</section>
+
+<!-- SLIDE 6: 防御方法总览 -->
+<section class="slide">
+<div class="kicker">防御</div>
+<h2>防御方法总览</h2>
+<div class="tree">
+对抗防御方法谱系
+│
+├── <span class="red">经验防御 (Empirical)</span>
+│   ├── 对抗训练 (Adversarial Training) ★ 最有效
+│   │   ├── PGD-AT (Madry 2018)：用 PGD 生成样本训练
+│   │   └── TRADES (Zhang 2019)：平衡准确率与鲁棒性
+│   ├── 输入预处理：JPEG 压缩、随机缩放、特征压缩
+│   └── 随机化：随机噪声注入、随机 dropout
+│
+├── <span class="green">可验证防御 (Certified)</span>
+│   ├── 区间边界传播 (IBP)：逐层传播扰动区间
+│   ├── 随机平滑 (Randomized Smoothing)：概率保证的鲁棒
+│   └── Lipschitz 约束：限制网络对输入变化的敏感度
+│
+├── <span class="blue">检测方法 (Detection)</span>
+│   ├── 统计特征检测：对抗样本的统计分布异常
+│   ├── 辅助分类器检测
+│   └── 特征一致性检查
+│
+└── <span class="purple">架构层面</span>
+    ├── 模型蒸馏 (Defensive Distillation)
+    ├── 去噪块集成
+    └── Vision Transformer 的天然鲁棒性?
+</div>
+</section>
+
+<!-- SLIDE 7: 对抗训练 -->
+<section class="slide">
+<div class="kicker">核心防御</div>
+<h2>对抗训练：金标准方法</h2>
+<div class="grid2">
+<div class="card"><h3>💪 PGD-AT (Madry 2018)</h3><p>每步训练时先用 PGD 生成最强对抗样本，再最小化其损失：<br><span class="formula" style="font-size:13px">min_θ E[max_{||δ||≤ε} L(f(x+δ), y)]</span></p></div>
+<div class="card"><h3>⚖️ TRADES (Zhang 2019)</h3><p>解耦准确率与鲁棒性的 trade-off：<br><span class="formula" style="font-size:13px">L = CE(f(x),y) + β·KL(f(x)||f(x+δ))</span></p></div>
+</div>
+<div class="callout green">CIFAR-10 上 PGD-AT 的 SOTA：2023 年 ~70% AutoAttack 鲁棒准确率 (ε=8/255)。但代价是干净准确率从 ~95% 降到 ~85%。这是著名的 <span class="green">鲁棒性-准确率 trade-off</span>。</div>
+</section>
+
+<!-- SLIDE 8: 可验证鲁棒性 -->
+<section class="slide">
+<div class="kicker">可验证防御</div>
+<h2>可验证鲁棒性 (Certified Robustness)</h2>
+<div class="grid3">
+<div class="card"><h3>🔒 随机平滑<br>(Randomized Smoothing)</h3><p>在输入上加高斯噪声，投票决定最终类别。提供概率保证：以 1-α 置信度保证 ε 半径内预测不变。Cohen et al. (2019, ICML)。</p></div>
+<div class="card"><h3>📐 区间边界传播<br>(IBP)</h3><p>逐层传播输入区间的上下界。训练时直接优化 IBP 的验证边界。Gowal et al. (2018) 达到第一个非平凡的可验证准确率。</p></div>
+<div class="card"><h3>📏 Lipschitz 网络</h3><p>约束网络对输入的 Lipschitz 常数 ≤ L，保证 ||f(x)-f(x')|| ≤ L·||x-x'||。Cisse et al. (2017) 的 Parseval 网络是早期代表。</p></div>
+</div>
+<div class="callout blue">经验防御 vs 可验证防御：经验防御（如 PGD-AT）在实际攻击下表现好但无数学保证。可验证防御有理论保证，但可验证的半径通常远小于实际鲁棒半径。</div>
+</section>
+
+<!-- SLIDE 9: 鲁棒性评估 -->
+<section class="slide">
+<div class="kicker">评估</div>
+<h2>鲁棒性评估标准与陷阱</h2>
+<div class="grid2">
+<div class="card"><h3>✅ 正确做法</h3><p>用 <span class="green">AutoAttack</span> (APGD+目标APGD+FAB+Square) 或更强的复合攻击评估。报告多种 ε 值下的准确率曲线。使用标准化的 RobustBench 基准。</p></div>
+<div class="card"><h3>❌ 常见陷阱</h3><p><span class="red">梯度遮掩 (Gradient Masking)</span>：防御使梯度消失，浅显攻击失败——但更强的攻击 (如 BPDA) 仍然有效。不要只用 FGSM 评估。</p></div>
+</div>
+<div class="callout orange">Athalye et al. (2018, ICML) 的经典论文指出：ICLR 2018 接收的 9 篇防御论文中有 7 篇被更强的攻击攻破。梯度遮掩是防御研究中最大的陷阱。</div>
+</section>
+
+<!-- SLIDE 10: 超越分类 -->
+<section class="slide">
+<div class="kicker">超越分类</div>
+<h2>对抗攻击的疆域扩展</h2>
+<div class="grid3">
+<div class="card"><h3>🖼️ 目标检测/分割</h3><p>DAG, RAP 等方法可让检测器完全忽略目标物体。物理对抗补丁使 YOLO 无法检测行人——直接影响自动驾驶安全。</p></div>
+<div class="card"><h3>📝 NLP 对抗</h3><p>文本对抗样本：同义词替换、字符级扰动。BERT 对对抗性文本同样脆弱。TextFooler、BERT-Attack 等方法的成功率可达 80%+。</p></div>
+<div class="card"><h3>🎙️ 语音/多模态</h3><p>语音命令注入：人耳听不到的超声波攻击。多模态模型 (CLIP, GPT-4V) 的视觉对抗样本可诱导错误的文本输出。</p></div>
+</div>
+</section>
+
+<!-- SLIDE 11: 大模型鲁棒性 -->
+<section class="slide">
+<div class="kicker">大模型</div>
+<h2>大模型时代的对抗鲁棒性 (2023-2025)</h2>
+<div class="grid3">
+<div class="card"><h3>🦾 ViT 的鲁棒性</h3><p>Vision Transformer 比 CNN 对对抗扰动天然更鲁棒? 有争议。ViT 对高频扰动鲁棒，但对低频扰动同样脆弱。Patch-based 攻击对 ViT 特别有效。</p></div>
+<div class="card"><h3>🤖 LLM 的对抗攻击</h3><p>Jailbreaking 是最主要的对抗形式。GCG (Zou et al., 2023) 用组合优化自动搜索 suffix token，使 Llama 输出被禁止的内容。AutoDAN 用遗传算法生成流畅越狱提示。</p></div>
+<div class="card"><h3>🧬 多模态模型</h3><p>Visual adversarial examples 可绕过 GPT-4V 的安全过滤。图像中嵌入对抗扰动 → 模型拒绝回答的机制被颠覆。跨模态对抗是 2024-2025 的最大新战场。</p></div>
+</div>
+</section>
+
+<!-- SLIDE 12: 物理对抗 -->
+<section class="slide">
+<div class="kicker">物理攻击</div>
+<h2>物理世界对抗攻击：从数字到现实</h2>
+<div class="grid2">
+<div class="card"><h3>🎭 对抗补丁 (Adversarial Patch)</h3><p>打印一个彩色贴纸，贴在停车牌上 → 自动驾驶系统无法识别停车牌。Brown et al. (2017) 首次展示。</p></div>
+<div class="card"><h3>👓 对抗眼镜</h3><p>特制眼镜框图案 → 人脸识别系统将你识别为另一个人。Sharif et al. (2016) 的 CMU 工作。</p></div>
+<div class="card"><h3>🚗 对抗伪装</h3><p>车辆表面特定图案 → 目标检测器完全忽略该车辆。Eykholt et al. (2018) 的 Robust Physical Perturbation (RP2)。</p></div>
+<div class="card"><h3>🧥 对抗斗篷</h3><p>穿特制图案的衣服 → 行人检测完全失效。Thys et al. (2019) 的设计仅需 A4 纸打印。</p></div>
+</div>
+<div class="callout red">物理攻击的独特挑战：需要在不同角度、距离、光照下保持有效。Expectation over Transformation (EOT) 是标准优化技巧。</div>
+</section>
+
+<!-- SLIDE 13: 前沿方向 -->
+<section class="slide">
+<div class="kicker">前沿</div>
+<h2>2023-2025 前沿方向</h2>
+<table>
+<tr><th>方向</th><th>核心问题</th><th>代表工作</th></tr>
+<tr><td>扩散模型鲁棒性</td><td>Diffusion-based 分类器是否天然鲁棒？</td><td>DiffPure (Nie 2022), DensePure</td></tr>
+<tr><td>合成数据对抗训练</td><td>用生成模型造对抗训练数据</td><td>Gowal (2021): DDPM 生成=数据增强</td></tr>
+<tr><td>标准训练即鲁棒？</td><td>大数据+大模型=自动鲁棒？</td><td>CLIP 零样本的对抗鲁棒性</td></tr>
+<tr><td>对抗训练加速</td><td>如何让 AT 不再 5-10× 慢于标准训练</td><td>Fast-AT (Wong 2020), YOPO</td></tr>
+<tr><td>LLM 安全对齐</td><td>RLHF 能否对抗 jailbreaking？</td><td>Constitutional AI, RLAIF</td></tr>
+<tr><td>对抗性世界模型</td><td>策略梯度中的对抗扰动？</td><td>SA-MDP (Zhang 2020), RARL</td></tr>
+</table>
+</section>
+
+<!-- SLIDE 14: 关键论文 -->
+<section class="slide tight">
+<div class="kicker">文献</div>
+<h2>关键论文一览</h2>
+<table>
+<tr><th>论文</th><th>贡献</th><th>会议</th></tr>
+<tr><td>Szegedy et al. (2014)</td><td>发现对抗样本，命名 Adversarial Examples</td><td>ICLR</td></tr>
+<tr><td>Goodfellow et al. (2015)</td><td>FGSM：快速梯度符号攻击</td><td>ICLR</td></tr>
+<tr><td>Madry et al. (2018)</td><td>PGD-AT：对抗训练的 SOTA 框架</td><td>ICLR</td></tr>
+<tr><td>Carlini & Wagner (2017)</td><td>C&W 攻击：最强的白盒 L2 攻击</td><td>IEEE S&P</td></tr>
+<tr><td>Athalye et al. (2018)</td><td>梯度遮掩：粉碎 7/9 篇 ICLR 防御</td><td>ICML</td></tr>
+<tr><td>Cohen et al. (2019)</td><td>随机平滑：第一个实用的可验证防御</td><td>ICML</td></tr>
+<tr><td>Zhang et al. (2019)</td><td>TRADES：解决鲁棒性-准确率 trade-off</td><td>ICML</td></tr>
+<tr><td>Croce & Hein (2020)</td><td>AutoAttack：集成攻击金标准</td><td>ICML</td></tr>
+<tr><td>Zou et al. (2023)</td><td>GCG：LLM 自动越狱 token 搜索</td><td>NeurIPS</td></tr>
+</table>
+</section>
+
+<!-- SLIDE 15: 应用与产业 -->
+<section class="slide">
+<div class="kicker">产业</div>
+<h2>产业应用与标准化</h2>
+<div class="grid3">
+<div class="card"><h3>🚗 自动驾驶</h3><p>对抗补丁 → 感知失效。行业应对：多传感器融合 (激光雷达+相机+毫米波)，物理对抗鲁棒性评估框架。</p></div>
+<div class="card"><h3>🔐 人脸识别</h3><p>支付/安检系统的对抗风险。ISO/IEC 30107 标准定义了针对生物识别呈现攻击的测试方法。</p></div>
+<div class="card"><h3>🤖 LLM API 安全</h3><p>OpenAI、Anthropic、Google 等部署了对抗性红队测试。NIST AI 100-2 E2 首次制定了对抗 ML 的标准化评估框架。</p></div>
+</div>
+<div class="callout green">2024 年 NIST AI 100-2e2023 正式发布对抗机器学习评估标准，标志着该领域从学术研究走向工程实践。</div>
+</section>
+
+<!-- SLIDE 16: 开放挑战 -->
+<section class="slide">
+<div class="kicker">挑战</div>
+<h2>未解决的开放挑战</h2>
+<div class="grid2">
+<div class="card"><h3>⚖️ 鲁棒性-准确率 Trade-off</h3><p>最佳 CIFAR-10 对抗训练：~70% 鲁棒准确率 vs ~95% 标准准确率。25% 的差距是领域的核心难题。</p></div>
+<div class="card"><h3>📐 可验证的实用性</h3><p>可验证方法 (随机平滑) 的保证半径太小 (~0.5/255 L2)，远小于实际攻击范围 (~1.0 L2)。理论保证与实用之间的鸿沟。</p></div>
+<div class="card"><h3>🔄 自适应攻击</h3><p>新的防御往往被更强的自适应攻击攻破。防御-攻击的军备竞赛何时能收敛？</p></div>
+<div class="card"><h3>🧠 人类 vs 模型鲁棒性</h3><p>人类视觉系统天然鲁棒于微小扰动——我们不会把加噪的熊猫看成别的东西。人类鲁棒性的机制能否启发新防御？</p></div>
+</div>
+</section>
+
+<!-- SLIDE 17: 总结 -->
+<section class="slide end">
+<div class="kicker">Summary</div>
+<h1>对抗鲁棒性<br><span class="red">远未解决</span></h1>
+<p class="big" style="text-align:center">
+从 FGSM 到 AutoAttack，从 Madry 到 TRADES，<br>
+从 CNN 到 ViT/LLM，从数字空间到物理世界——<br>
+对抗鲁棒性仍是深度学习最根本的挑战之一
+</p>
+<div style="text-align:center;margin-top:24px">
+<span class="tag">攻击</span><span class="tag blue">防御</span><span class="tag green">验证</span>
+<span class="tag orange">大模型</span><span class="tag purple">物理世界</span>
+</div>
+</section>
+
+<!-- SLIDE 18: 参考 -->
+<section class="slide tight">
+<div class="kicker">References</div>
+<h2>参考资源</h2>
+<ul>
+<li>Szegedy et al. "Intriguing properties of neural networks." ICLR 2014.</li>
+<li>Goodfellow et al. "Explaining and harnessing adversarial examples." ICLR 2015.</li>
+<li>Madry et al. "Towards deep learning models resistant to adversarial attacks." ICLR 2018.</li>
+<li>Carlini & Wagner. "Towards evaluating the robustness of neural networks." IEEE S&P 2017.</li>
+<li>Athalye et al. "Obfuscated gradients give a false sense of security." ICML 2018.</li>
+<li>Croce & Hein. "Reliable evaluation of adversarial robustness with AutoAttack." ICML 2020.</li>
+<li>Zhang et al. "Theoretically principled trade-off between robustness and accuracy." ICML 2019.</li>
+<li>Cohen et al. "Certified adversarial robustness via randomized smoothing." ICML 2019.</li>
+<li>Zou et al. "Universal and transferable adversarial attacks on LLMs." NeurIPS 2023.</li>
+<li>RobustBench: robustbench.github.io — 对抗鲁棒性标准排行榜</li>
+<li>NIST AI 100-2 E2: Adversarial Machine Learning — A Taxonomy and Terminology</li>
+</ul>
+<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);text-align:center">
+<b style="color:#e6edf3">由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO
+</div>
+</section>
+
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:9999;border-top:1px solid rgba(255,255,255,.06);padding:5px 16px;text-align:center;font-size:11px;color:#8b949e;background:rgba(13,17,23,.92);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;line-height:1.4;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)">
+<b style="color:#e6edf3;font-weight:600">由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];let idx=0;
+const prog=document.getElementById('prog');
+function show(i){idx=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,j)=>s.classList.toggle('active',j===idx));prog.style.width=((idx+1)/slides.length*100)+'%';location.hash='#'+(idx+1)}
+function next(){show(idx+1)}function prev(){show(idx-1)}
+document.addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown'].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev()}else if(e.key==='Home'){show(0)}else if(e.key==='End'){show(slides.length-1)}else if(e.key.toLowerCase()==='p'){window.print()}});
+let tx=0,ty=0,moved=false;
+document.addEventListener('touchstart',e=>{if(!e.touches.length)return;tx=e.touches[0].clientX;ty=e.touches[0].clientY;moved=false},{passive:true});
+document.addEventListener('touchmove',e=>{const dx=e.touches[0].clientX-tx;if(Math.abs(dx)>10)moved=true},{passive:true});
+document.addEventListener('touchend',e=>{if(!e.changedTouches.length)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>48){dx<0?next():prev();return}if(!moved){e.changedTouches[0].clientX<window.innerWidth*.28?prev():next()}},{passive:true});
+document.addEventListener('click',e=>{if(e.target.closest('a,button,kbd'))return;e.clientX<window.innerWidth*.28?prev():next()});
+if(location.hash){const n=parseInt(location.hash.slice(1),10);if(n)idx=n-1}show(idx);
+</script>
+</body></html>
