@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 智能体驱动的学习方法体系</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --line: #30363d;
+    --ink: #e6edf3;
+    --ink2: #c9d1d9;
+    --ink3: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --orange: #d29922;
+    --purple: #a371f7;
+    --pink: #db61a2;
+    --cyan: #39d2c0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 15px; line-height: 1.55; background: var(--bg); color: var(--ink);
+    overflow: hidden; height: 100vh;
+  }
+  .slide {
+    position: absolute; inset: 0; padding: 28px 60px 96px;
+    display: none; flex-direction: column; justify-content: flex-start;
+  }
+  .slide.active { display: flex; }
+  .slide.center { justify-content: center; align-items: center; text-align: center; }
+  .slide.center h1 { font-size: 32px; }
+  .slide.center .sub { font-size: 18px; color: var(--ink3); margin-top: 8px; }
+  .slide.center .hint { font-size: 13px; color: var(--ink3); margin-top: 32px; }
+
+  h1 { font-size: 26px; margin-bottom: 8px; color: var(--ink); }
+  h2 { font-size: 22px; margin: 18px 0 10px; color: var(--accent); }
+  h3 { font-size: 17px; margin: 12px 0 6px; color: var(--ink2); }
+  p, li { margin-bottom: 5px; }
+  ul, ol { padding-left: 22px; }
+  li { margin-bottom: 4px; }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 4px; }
+  .tag.accent { background: rgba(88,166,255,0.15); color: var(--accent); }
+  .tag.green { background: rgba(63,185,80,0.15); color: var(--green); }
+  .tag.red { background: rgba(248,81,73,0.15); color: var(--red); }
+  .tag.purple { background: rgba(163,113,247,0.15); color: var(--purple); }
+  .tag.orange { background: rgba(210,153,34,0.15); color: var(--orange); }
+  .tag.pink { background: rgba(219,97,162,0.15); color: var(--pink); }
+  .tag.cyan { background: rgba(57,210,192,0.15); color: var(--cyan); }
+
+  .box {
+    display: inline-block; padding: 4px 10px; border-radius: 5px;
+    font-weight: 600; font-size: 12px; margin: 1px 3px; border: 1px solid;
+  }
+  .box.role   { background: rgba(88,166,255,0.15); color: var(--accent); border-color: var(--accent); }
+  .box.process { background: rgba(163,113,247,0.15); color: var(--purple); border-color: var(--purple); }
+  .box.output  { background: rgba(63,185,80,0.15); color: var(--green); border-color: var(--green); }
+  .box.when    { background: rgba(210,153,34,0.15); color: var(--orange); border-color: var(--orange); }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px 16px; margin: 5px 0;
+  }
+  .card h4 { font-size: 14px; margin-bottom: 4px; color: var(--accent); }
+  .card p { font-size: 13px; color: var(--ink2); line-height: 1.45; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 6px 0; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 6px 0; }
+
+  .small { font-size: 12px; color: var(--ink3); }
+  .gray { color: var(--ink3); }
+
+  /* Method card */
+  .method-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+    padding: 10px 14px; height: 100%;
+  }
+  .method-card .num { font-size: 24px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+  .method-card h4 { font-size: 14px; margin-bottom: 6px; }
+  .method-card .ai-role { font-size: 11px; color: var(--accent); margin-bottom: 4px; }
+  .method-card p { font-size: 12px; line-height: 1.35; color: var(--ink3); }
+
+  /* Pipeline */
+  .pipeline { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 10px 0; flex-wrap: wrap; }
+  .pstep { padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; text-align: center; }
+  .pstep.self  { background: rgba(210,153,34,0.12); border: 1px solid var(--orange); color: var(--orange); }
+  .pstep.ai    { background: rgba(88,166,255,0.12); border: 1px solid var(--accent); color: var(--accent); }
+  .pstep.out   { background: rgba(63,185,80,0.12); border: 1px solid var(--green); color: var(--green); }
+  .pipe-arrow { color: var(--ink3); font-size: 16px; }
+
+  /* Comparison table */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6px 0; }
+  th, td { padding: 6px 10px; border: 1px solid var(--line); text-align: left; }
+  th { background: var(--surface); color: var(--accent); font-weight: 600; font-size: 12px; }
+
+  .vstext { font-size: 12px; color: var(--ink3); }
+
+  /* Decision framework */
+  .d-tree {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+    font-size: 12px; margin: 8px 0;
+  }
+  .d-node {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 6px; padding: 8px 10px; line-height: 1.25;
+  }
+  .d-node .q { color: var(--orange); font-weight: 600; }
+  .d-node .a { color: var(--ink2); margin-top: 3px; }
+
+  /* Topbar */
+  #topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 99;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 16px; background: rgba(13,17,23,0.92);
+    border-bottom: 1px solid var(--line);
+    font-size: 12px; color: var(--ink3);
+  }
+  #progress {
+    position: fixed; top: 36px; left: 0; height: 3px; z-index: 99;
+    background: var(--accent); transition: width 0.2s;
+  }
+  .slide { padding-top: 70px; }
+
+  .kbd {
+    display: inline-block; padding: 0 5px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 3px; font-size: 11px;
+    font-family: monospace; margin: 0 2px;
+  }
+
+  .slide.tight { padding: 50px 50px 70px; }
+  .slide.tight h1 { font-size: 24px; margin-bottom: 6px; }
+  .slide.tight h3 { margin: 8px 0 4px; font-size: 15px; }
+  .slide.tight p, .slide.tight li { font-size: 13px; line-height: 1.35; }
+
+  .purple { color: var(--purple); }
+  .orange-text { color: var(--orange); }
+  .accent-text { color: var(--accent); }
+  .green-text { color: var(--green); }
+  .pink-text { color: var(--pink); }
+  .cyan-text { color: var(--cyan); }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <span><b>AI 智能体驱动的学习方法体系</b></span>
+  <span class="small"><span class="kbd">← →</span> 翻页 &nbsp; <span class="kbd">P</span> 打印</span>
+</div>
+<div id="progress"></div>
+
+<!-- SLIDE 1: 封面 -->
+<section class="slide center active">
+  <h1>AI 智能体驱动的<br>学习方法体系</h1>
+  <div class="sub">从"AI 替代思考"到"AI 放大思考"：10 种 AI 增强的学习方法</div>
+  <div class="hint">
+    <span class="tag accent">学习科学</span>
+    <span class="tag purple">AI Agent</span>
+    <span class="tag green">方法论</span>
+  </div>
+  <p class="small" style="margin-top:24px;"><span class="kbd">→</span> 开始浏览 · 共 <span id="totalPages">?</span> 页</p>
+</section>
+
+<!-- SLIDE 2: 核心命题 -->
+<section class="slide">
+  <h1>核心命题：AI 智能体改变的是学习的什么？</h1>
+  <div class="grid2">
+    <div>
+      <h3>❌ 错误用法：AI 替代思考</h3>
+      <ul>
+        <li>让 AI 直接写作业/论文</li>
+        <li>让 AI 总结 → 自己不读原文</li>
+        <li>让 AI 解题 → 自己不推演</li>
+        <li>结果：<span class="tag red">学习被短路</span></li>
+      </ul>
+    </div>
+    <div>
+      <h3>✅ 正确用法：AI 放大思考</h3>
+      <ul>
+        <li>AI 提问 → 你回答（苏格拉底）</li>
+        <li>AI 生成初稿 → 你批判修改</li>
+        <li>AI 搭框架 → 你填血肉</li>
+        <li>结果：<span class="tag green">学习被强化</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:8px;">
+    <h4>一条判断标准</h4>
+    <p>在使用 AI 学习之后，<b>如果你能独立完成同样的任务</b>——AI 帮到了你。如果你离不开 AI 了——AI 害了你。</p>
+  </div>
+</section>
+
+<!-- SLIDE 3: 方法全景图 -->
+<section class="slide tight">
+  <h1 style="font-size:22px;">10 种 AI 增强学习方法 · 全景图</h1>
+  <div class="grid3" style="gap:6px;">
+    <div class="method-card" style="padding:6px 10px;">
+      <div class="num" style="font-size:18px;color:var(--accent);">01</div>
+      <h4 style="font-size:12px;margin-bottom:2px;">一页纸极简 <span class="tag accent">压缩</span></h4>
+      <p style="font-size:11px;">AI 压缩为单页精华，建立全局认知地图。</p>
+    </div>
+    <div class="method-card" style="padding:6px 10px;">
+      <div class="num" style="font-size:18px;color:var(--purple);">02</div>
+      <h4 style="font-size:12px;margin-bottom:2px;">Slides 体系 <span class="tag purple">框架</span></h4>
+      <p style="font-size:11px;">AI 搭建系统性知识架构，按 slide 顺序遍历。</p>
+    </div>
+    <div class="method-card" style="padding:6px 10px;">
+      <div class="num" style="font-size:18px;color:var(--green);">03</div>
+      <h4 style="font-size:12px;margin-bottom:2px;">费曼-苏格拉底 <span class="tag green">讲解</span></h4>
+      <p style="font-size:11px;">你给 AI 讲课，AI 追问"为什么"到底。</p>
+    </div>
+    <div class="method-card" style="padding:6px 10px;">
+      <div class="num" style="font-size:18px;color:var(--orange);">04</div>
+      <h4 style="font-size:12px;margin-bottom:2px;">辩论互搏 <span class="tag orange">对抗</span></h4>
+      <p style="font-size:11px;">AI 持对立观点与你结构化辩论。</p>
+    </div>
+    <div class="method-card" style="padding:6px 10px;">
+      <div class="num" style="font-size:18px;color:var(--red);">05</div>
+      <h4 style="font-size:12px;margin-bottom:2px;">案例逆向拆解 <span class="tag red">案例</span></h4>
+      <p style="font-size:11px;">AI 给结局，你倒推原因。</p>
+    </div>
+    <div class="method-card" style="padding:6px 10px;">
+      <div class="num" style="font-size:18px;color:var(--pink);">06</div>
+      <h4 style="font-size:12px;margin-bottom:2px;">项目脚手架 <span class="tag pink">实践</span></h4>
+      <p style="font-size:11px;">AI 搭骨架，你填核心实现。</p>
+    </div>
+    <div class="method-card" style="padding:6px 10px;">
+      <div class="num" style="font-size:18px;color:var(--cyan);">07</div>
+      <h4 style="font-size:12px;margin-bottom:2px;">知识图谱联结 <span class="tag cyan">连接</span></h4>
+      <p style="font-size:11px;">AI 构建跨域概念网络。</p>
+    </div>
+    <div class="method-card" style="padding:6px 10px;">
+      <div class="num" style="font-size:18px;color:var(--accent);">08</div>
+      <h4 style="font-size:12px;margin-bottom:2px;">间隔+变体 <span class="tag accent">记忆</span></h4>
+      <p style="font-size:11px;">AI 按遗忘曲线换场景出题。</p>
+    </div>
+    <div class="method-card" style="padding:6px 10px;">
+      <div class="num" style="font-size:18px;color:var(--purple);">09</div>
+      <h4 style="font-size:12px;margin-bottom:2px;">反向写作 <span class="tag purple">写作</span></h4>
+      <p style="font-size:11px;">AI 写初稿，你批判修改。</p>
+    </div>
+    <div class="method-card" style="padding:6px 10px;">
+      <div class="num" style="font-size:18px;color:var(--green);">10</div>
+      <h4 style="font-size:12px;margin-bottom:2px;">元认知对话 <span class="tag green">反思</span></h4>
+      <p style="font-size:11px;">AI 引导反思学习策略本身。</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: 方法1 一页纸 -->
+<section class="slide">
+  <h1>方法 1 · 一页纸极简学习法 <span class="tag accent">压缩·可视化</span></h1>
+  <div class="grid2">
+    <div>
+      <h3>👤 AI 角色：信息压缩器 + 视觉设计师</h3>
+      <p>将课程/论文/书的一章压缩为单页 HTML 信息图。核心原则：<b>一页之内不翻页，视觉层次当导航</b>。</p>
+    </div>
+    <div>
+      <h3>🧠 学习机制</h3>
+      <ul>
+        <li><b>全局预览效应</b>：先见森林再见树木</li>
+        <li><b>空间记忆编码</b>：位置=概念关系</li>
+        <li><b>提取练习</b>：盖住一页，默写复原</li>
+      </ul>
+    </div>
+  </div>
+  <div class="pipeline">
+    <span class="pstep self">你：给 AI 原始材料</span>
+    <span class="pipe-arrow">→</span>
+    <span class="pstep ai">AI：提炼核心 + 设计布局</span>
+    <span class="pipe-arrow">→</span>
+    <span class="pstep out">你：对照一页纸复述全文逻辑</span>
+  </div>
+  <div class="card" style="margin-top:8px;">
+    <h4><span class="tag orange">最适合</span> 快速建立全局认知、考前复习、跨域迁移时抓本质</h4>
+  </div>
+</section>
+
+<!-- SLIDE 5: 方法2 Slides -->
+<section class="slide">
+  <h1>方法 2 · Slides 幻灯片体系学习法 <span class="tag purple">框架·结构化</span></h1>
+  <div class="grid2">
+    <div>
+      <h3>👤 AI 角色：课程设计师</h3>
+      <p>AI 按"封面→学习目标→时间线→经典工作→对比表→脉络总结→Q&A→参考文献"的模板构建知识体系。</p>
+    </div>
+    <div>
+      <h3>🧠 学习机制</h3>
+      <ul>
+        <li><b>结构化编码</b>：知识按固定模板归档</li>
+        <li><b>顺序加工</b>：slide 顺序=认知发展路径</li>
+        <li><b>讲给别人听</b>：slides 即讲义</li>
+      </ul>
+    </div>
+  </div>
+  <div class="pipeline">
+    <span class="pstep self">你：定义主题和深度</span>
+    <span class="pipe-arrow">→</span>
+    <span class="pstep ai">AI：调研+构建N页 slides</span>
+    <span class="pipe-arrow">→</span>
+    <span class="pstep out">你：逐页精读+标注+给别人讲</span>
+  </div>
+  <div class="card" style="margin-top:8px;">
+    <h4><span class="tag orange">最适合</span> 系统性掌握一个学科/子领域，或准备做学术报告、综述写作</h4>
+  </div>
+  <p class="small gray" style="margin-top:4px;">你已经在用了——这就是本 slides 本身 ⬆</p>
+</section>
+
+<!-- SLIDE 6: 方法3 费曼-苏格拉底 -->
+<section class="slide">
+  <h1>方法 3 · 费曼-苏格拉底双轮法 <span class="tag green">讲解·追问</span></h1>
+  <div class="grid2">
+    <div>
+      <h3>👤 AI 角色：层层追问的"笨学生"</h3>
+      <p>你扮演老师给 AI 讲一个概念。AI 不断追问"为什么""能举个反例吗""这和 X 有什么区别"……直到你卡住，发现自己的理解边界。</p>
+    </div>
+    <div>
+      <h3>🧠 学习机制</h3>
+      <ul>
+        <li><b>生成效应</b>：说出来 > 读进去</li>
+        <li><b>苏格拉底诘问</b>：追问暴露盲区</li>
+        <li><b>费曼原则</b>：能用简单话讲清=真懂</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:6px;">
+    <h4>对话示例</h4>
+    <p style="font-size:13px;">
+      <span class="purple"><b>你</b>：</span>"DGF 就是肾移植术后需要透析。"<br>
+      <span class="accent-text"><b>AI</b>：</span>"为什么术后会需要透析？是供体肾坏了还是受体的问题？"<br>
+      <span class="purple"><b>你</b>：</span>"主要是缺血再灌注损伤……"<br>
+      <span class="accent-text"><b>AI</b>：</span>"那为什么有些供体肾缺血 30 分钟就有 DGF，有些 2 小时也没事？"
+    </p>
+  </div>
+</section>
+
+<!-- SLIDE 7: 方法4 辩论 -->
+<section class="slide">
+  <h1>方法 4 · 辩论互搏学习法 <span class="tag orange">对抗·多视角</span></h1>
+  <div class="grid2">
+    <div>
+      <h3>👤 AI 角色：持相反观点的高阶对手</h3>
+      <p>你选择一个立场，AI 自动站到对面。结构化辩论：开篇陈述→交叉质询→总结陈词。</p>
+    </div>
+    <div>
+      <h3>🧠 学习机制</h3>
+      <ul>
+        <li><b>打破确认偏误</b>：被迫面对反面证据</li>
+        <li><b>辩证思维</b>：理解"为什么有人不同意"</li>
+        <li><b>论证能力</b>：需要引用文献支持观点</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:6px;">
+    <h4>典型场景</h4>
+    <p style="font-size:13px;">
+      <span class="green-text"><b>你</b>（正方）：</span>"ML 模型应该取代 KDPI 用于肾分配。"<br>
+      <span class="pink-text"><b>AI</b>（反方）：</span>"ML 模型缺乏前瞻性验证，黑箱不可解释，且可能编码历史偏差。你有 RCT 证据吗？"
+    </p>
+  </div>
+  <div class="card">
+    <h4><span class="tag orange">最适合</span> 学习有争议的主题（政策、伦理、临床指南变更），准备论文 Discussion 的"正反两面"</h4>
+  </div>
+</section>
+
+<!-- SLIDE 8: 方法5 案例逆向拆解 -->
+<section class="slide">
+  <h1>方法 5 · 案例逆向拆解法 <span class="tag red">案例·推演</span></h1>
+  <div class="grid2">
+    <div>
+      <h3>👤 AI 角色：案例库 + 引导提问者</h3>
+      <p>AI 给一个案例的"结局"（如：术后第 3 天患者 Cr 不降反升），但不给诊断过程。你像侦探一样从结局倒推原因。</p>
+    </div>
+    <div>
+      <h3>🧠 学习机制</h3>
+      <ul>
+        <li><b>逆向推理</b>：从果到因，临床思维训练</li>
+        <li><b>鉴别诊断</b>：逼你列举所有可能原因</li>
+        <li><b>模式识别</b>：积累"案例→疾病"映射</li>
+      </ul>
+    </div>
+  </div>
+  <div class="pipeline">
+    <span class="pstep ai">AI：给案例结局</span>
+    <span class="pipe-arrow">→</span>
+    <span class="pstep self">你：提出假设诊断</span>
+    <span class="pipe-arrow">→</span>
+    <span class="pstep ai">AI：给新线索</span>
+    <span class="pipe-arrow">→</span>
+    <span class="pstep self">你：修正诊断</span>
+    <span class="pipe-arrow">→</span>
+    <span class="pstep out">你：总结推理链</span>
+  </div>
+  <div class="card">
+    <h4><span class="tag orange">最适合</span> 医学/法学/工程故障分析——任何需要"根据结果推断原因"的领域</h4>
+  </div>
+</section>
+
+<!-- SLIDE 9: 方法6 项目脚手架 -->
+<section class="slide">
+  <h1>方法 6 · 项目脚手架学习法 <span class="tag pink">实践·做中学</span></h1>
+  <div class="grid2">
+    <div>
+      <h3>👤 AI 角色：项目架构师</h3>
+      <p>AI 不帮你写代码/报告，而是帮你搭框架：项目结构、API 设计、文件模板、测试骨架。你负责填充核心逻辑。</p>
+    </div>
+    <div>
+      <h3>🧠 学习机制</h3>
+      <ul>
+        <li><b>脚手架理论</b>：在最近发展区学习</li>
+        <li><b>构造主义</b>：亲手做出来的东西记得最牢</li>
+        <li><b>即时反馈</b>：跑不通 = 理解有误</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <h4>示例：学习 ML 的"从头写 Transformer 训练流水线"</h4>
+    <p style="font-size:13px;">
+      <b>AI 提供</b>：项目结构、数据加载器模板、模型骨架类定义、loss 函数接口。<br>
+      <b>你完成</b>：attention 前向传播、position encoding、train loop 实现、debug 全流程。<br>
+      <b>AI 不做</b>：不帮你写核心实现代码——脚手架到此为止。
+    </p>
+  </div>
+</section>
+
+<!-- SLIDE 10: 方法7 知识图谱 -->
+<section class="slide">
+  <h1>方法 7 · 知识图谱联结学习法 <span class="tag cyan">连接·迁移</span></h1>
+  <div class="grid2">
+    <div>
+      <h3>👤 AI 角色：知识网络构建者</h3>
+      <p>AI 自动从你阅读的材料中提取概念节点和关系边，生成可视化知识图谱，标注跨域桥接。</p>
+    </div>
+    <div>
+      <h3>🧠 学习机制</h3>
+      <ul>
+        <li><b>精细编码</b>：连接越多，提取路径越多</li>
+        <li><b>类比迁移</b>：A 领域的方案可能解 B 领域的问题</li>
+        <li><b>盲区发现</b>：图上孤立节点=你没学透的</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:6px;">
+    <h4>三类联结</h4>
+    <p style="font-size:13px;">
+      <span class="accent-text">🟦 同域连接</span>：DGF → IRI → 冷缺血时间 → 机器灌注 → DGF<br>
+      <span class="green-text">🟩 跨域连接</span>：肾 IRI 的氧化应激 ↔ 心梗 IRI 的再灌注损伤 ↔ 卒中 IRI<br>
+      <span class="orange-text">🟧 方法连接</span>：生存分析（移植）↔ Cox 回归（肿瘤学）↔ Kaplan-Meier（任何纵向数据）
+    </p>
+  </div>
+</section>
+
+<!-- SLIDE 11: 方法8 间隔重复 -->
+<section class="slide">
+  <h1>方法 8 · 间隔重复 + 情境变体法 <span class="tag accent">记忆·变式</span></h1>
+  <div class="grid2">
+    <div>
+      <h3>👤 AI 角色：个性化复习教练</h3>
+      <p>AI 模拟 Anki + 增强版：不仅按遗忘曲线安排复习时间，还每次换一个应用场景出题。</p>
+    </div>
+    <div>
+      <h3>🧠 学习机制</h3>
+      <ul>
+        <li><b>间隔效应</b>：遗忘临界点复习效果最好</li>
+        <li><b>变式练习</b>：同一概念在不同场景提取，防止情境依赖</li>
+        <li><b>交错练习</b>：混合不同主题，增强区分能力</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:4px;">
+    <h4>同一概念的三次复习（间隔 1天→3天→7天）</h4>
+    <p style="font-size:12px;">
+      <b>Day 1</b>：DGF 的定义是什么？<br>
+      <b>Day 4</b>（换场景）：一位 55 岁 DCD 供体，CIT=18h，KDPI=85%。这个病例 DGF 风险高吗？为什么？<br>
+      <b>Day 11</b>（换场景）：你设计的 ML 模型预测某患者 DGF 概率 0.72。SHAP 显示最重要的特征是 CIT。向临床医生解释这个结果并给建议。
+    </p>
+  </div>
+</section>
+
+<!-- SLIDE 12: 方法9 反向写作 -->
+<section class="slide">
+  <h1>方法 9 · 反向写作学习法 <span class="tag purple">写作·批判</span></h1>
+  <div class="grid2">
+    <div>
+      <h3>👤 AI 角色：初稿写手</h3>
+      <p>AI 写一篇关于某主题的短文初稿（有意包含一些不准确或不够深入的论述）。你的任务：<b>找出所有问题，重写</b>。</p>
+    </div>
+    <div>
+      <h3>🧠 学习机制</h3>
+      <ul>
+        <li><b>批判性阅读</b>：修改别人的错误比自己写更难</li>
+        <li><b>精确性训练</b>："这个地方表述不准"=你懂了</li>
+        <li><b>再创造效应</b>：修改后的成品是你真懂的证明</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:6px;">
+    <h4>为什么"改"比"写"更考验理解？</h4>
+    <p style="font-size:13px;">从零写时你可以逃避不熟的内容（避重就轻）。但改别人的稿子时，你必须逐个击破每个模糊点——<b>所有盲区无处可躲</b>。</p>
+  </div>
+</section>
+
+<!-- SLIDE 13: 方法10 元认知 -->
+<section class="slide">
+  <h1>方法 10 · 元认知对话学习法 <span class="tag green">反思·策略</span></h1>
+  <div class="grid2">
+    <div>
+      <h3>👤 AI 角色：学习策略教练</h3>
+      <p>每次学习结束后，AI 引导你反思"学习过程本身"——这是对其他九种方法的元层提升。</p>
+    </div>
+    <div>
+      <h3>🧠 学习机制</h3>
+      <ul>
+        <li><b>元认知监控</b>：知道自己知道什么、不知道什么</li>
+        <li><b>策略校准</b>：什么方法对你最有效？</li>
+        <li><b>成长心态</b>：把"卡住了"看作学习信号</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:6px;">
+    <h4>AI 的五个元认知提问</h4>
+    <p style="font-size:13px;">
+      1️⃣ "今天的学习中，哪个概念你觉得最模糊？"<br>
+      2️⃣ "如果用一句话告诉你上周的自己这个概念，你会说什么？"<br>
+      3️⃣ "今天用的是哪种方法？换个方法会不会更好？"<br>
+      4️⃣ "你今天分心了几次？什么触发了分心？"<br>
+      5️⃣ "下次学这个主题，你会怎么调整策略？"
+    </p>
+  </div>
+</section>
+
+<!-- SLIDE 14: 对比表 -->
+<section class="slide">
+  <h1>10 种方法 · 全维度对比</h1>
+  <table style="font-size:11.5px;">
+    <tr><th>方法</th><th>AI 角色</th><th>核心认知机制</th><th>最佳场景</th><th>难度</th></tr>
+    <tr><td>1. 一页纸</td><td>信息压缩器</td><td>全局预览+空间记忆</td><td>快速入门/复习</td><td>★☆</td></tr>
+    <tr><td>2. Slides</td><td>课程设计师</td><td>结构化编码+顺序加工</td><td>系统掌握</td><td>★★</td></tr>
+    <tr><td>3. 费曼-苏格拉底</td><td>追问的笨学生</td><td>生成效应+深度加工</td><td>攻克难点</td><td>★★★</td></tr>
+    <tr><td>4. 辩论互搏</td><td>对立观点对手</td><td>反偏误+辩证思维</td><td>有争议主题</td><td>★★★★</td></tr>
+    <tr><td>5. 案例逆向拆解</td><td>案例库+提问者</td><td>逆向推理+模式识别</td><td>临床/诊断训练</td><td>★★★</td></tr>
+    <tr><td>6. 项目脚手架</td><td>项目架构师</td><td>做中学+即时反馈</td><td>技能型学习</td><td>★★★</td></tr>
+    <tr><td>7. 知识图谱</td><td>网络构建者</td><td>精细编码+类比迁移</td><td>跨域连接</td><td>★★</td></tr>
+    <tr><td>8. 间隔+变体</td><td>复习教练</td><td>间隔效应+变式练习</td><td>长期记忆</td><td>★★</td></tr>
+    <tr><td>9. 反向写作</td><td>初稿写手</td><td>批判阅读+再创造</td><td>写作/论证</td><td>★★★★</td></tr>
+    <tr><td>10. 元认知对话</td><td>策略教练</td><td>元认知监控+策略校准</td><td>提升学习效率</td><td>★★</td></tr>
+  </table>
+  <p class="small gray" style="margin-top:6px;">★ = 入门友好, ★★★★ = 需要较高主动性。难度 ≠ 效果——高难度方法往往学得更深。</p>
+</section>
+
+<!-- SLIDE 15: 如何选择 -->
+<section class="slide">
+  <h1>如何选择：一张决策矩阵</h1>
+  <div class="d-tree" style="grid-template-columns: 1fr 1fr 1fr;">
+    <div class="d-node"><div class="q">我想快速了解一个新领域</div><div class="a">→ 一页纸 (#1)</div></div>
+    <div class="d-node"><div class="q">我想系统性掌握一个学科</div><div class="a">→ Slides (#2)</div></div>
+    <div class="d-node"><div class="q">有个概念我总是似懂非懂</div><div class="a">→ 费曼-苏格拉底 (#3)</div></div>
+    <div class="d-node"><div class="q">我想理解争议性话题的两面</div><div class="a">→ 辩论互搏 (#4)</div></div>
+    <div class="d-node"><div class="q">我要训练临床诊断思维</div><div class="a">→ 案例逆向拆解 (#5)</div></div>
+    <div class="d-node"><div class="q">我想学一个实际技能(如编程)</div><div class="a">→ 项目脚手架 (#6)</div></div>
+    <div class="d-node"><div class="q">我想发现不同领域的联系</div><div class="a">→ 知识图谱 (#7)</div></div>
+    <div class="d-node"><div class="q">我要备考/长期记住内容</div><div class="a">→ 间隔+变体 (#8)</div></div>
+    <div class="d-node"><div class="q">我想提升写作与批判思维</div><div class="a">→ 反向写作 (#9)</div></div>
+    <div class="d-node"><div class="q">我不确定哪种方法最适合我</div><div class="a">→ 元认知对话 (#10)</div></div>
+  </div>
+  <div class="card" style="margin-top:8px;">
+    <h4>🔄 组合策略（推荐）</h4>
+    <p style="font-size:13px;">
+      <b>三步走</b>：一页纸建立全局认知 → Slides 系统学习 → 费曼-苏格拉底攻克难点。<br>
+      <b>长期巩固</b>：每周末用间隔+变体复习本周 Slides，每月用元认知对话复盘。
+    </p>
+  </div>
+</section>
+
+<!-- SLIDE 16: 你的实践 -->
+<section class="slide">
+  <h1>董老师的实践图谱</h1>
+  <div class="grid2">
+    <div class="card">
+      <h4>已在使用的方法</h4>
+      <p style="font-size:13px;">
+        <span class="tag green">✓</span> <b>一页纸</b>：onepage-* 系列（暗光增强、模型量化、Prompt注入……）<br>
+        <span class="tag green">✓</span> <b>Slides</b>：29 个 slides deck（CNN 史、YOLO 史、脑连接、OPO-DGF……）<br>
+        <span class="tag green">✓</span> <b>知识图谱</b>：脑 FC-梯度-图论 slides（连接组学三支柱）
+      </p>
+    </div>
+    <div class="card">
+      <h4>可以马上尝试的</h4>
+      <p style="font-size:13px;">
+        <span class="tag orange">试试</span> <b>费曼-苏格拉底</b>：找个你写的 onepage，让 AI 扮演学生追问你<br>
+        <span class="tag orange">试试</span> <b>辩论互搏</b>：在 AI 安全/对抗鲁棒性领域与 AI 辩论<br>
+        <span class="tag orange">试试</span> <b>反向写作</b>：让 AI 写论文初稿，你批判修改
+      </p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:6px;">
+    <h4>一个具体的组合方案：用 AI 学习"AI 安全与对齐"</h4>
+    <p style="font-size:13px;">
+      ① 一页纸：Prompt Injection 防御全景 → ② Slides：对抗鲁棒性研究进展（已有！）→ ③ 辩论：与 AI 就"是否应该公开 LLM 权重"展开辩论 → ④ 反向写作：让 AI 写一份安全评估报告初稿，你修改。
+    </p>
+  </div>
+</section>
+
+<!-- SLIDE 17: 核心原则 -->
+<section class="slide">
+  <h1>核心原则：AI 学习方法的三个不</h1>
+  <div class="grid3" style="margin-top:20px;">
+    <div class="card" style="text-align:center;border-top:3px solid var(--red);">
+      <h4 style="color:var(--red);">🚫 不让 AI 替代思考</h4>
+      <p class="small">AI 可以压缩、提问、搭框架，但最终的认知加工必须由你做。AI 替你思考的那一刻，学习就停止了。</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--orange);">
+      <h4 style="color:var(--orange);">🚫 不跳过必要难度</h4>
+      <p class="small">学习科学反复验证：越难提取的记忆越牢固。AI 不应该帮你绕过困难——困难本身就是学习信号。</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--accent);">
+      <h4 style="color:var(--accent);">🚫 不依赖单一方法</h4>
+      <p class="small">不同目标用不同方法。如果一个方法让你感觉"太容易"了，可能是你在偷懒——换一个更高认知负荷的方法。</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:20px;">
+    <h4>一句话总结</h4>
+    <p style="font-size:16px;text-align:center;font-weight:600;">AI 智能体是学习的<b>放大镜</b>，不是学习的<b>替代品</b>——它放大你已经有的思考，不替你做你还没做的思考。</p>
+  </div>
+</section>
+
+<!-- SLIDE 18: 总结 -->
+<section class="slide">
+  <h1>总结：AI 学习方法的金字塔</h1>
+  <div class="pipeline" style="flex-direction:column;align-items:stretch;gap:6px;">
+    <div style="display:flex;align-items:center;gap:8px;padding:12px;background:rgba(63,185,80,0.08);border:1px solid rgba(63,185,80,0.3);border-radius:8px;">
+      <span style="font-size:20px;font-weight:800;color:var(--green);min-width:30px;">L3</span>
+      <span style="font-weight:600;">创造层</span>
+      <span class="small" style="margin-left:auto;">辩论互搏 · 反向写作 · 案例逆向拆解</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:12px;background:rgba(88,166,255,0.08);border:1px solid rgba(88,166,255,0.3);border-radius:8px;">
+      <span style="font-size:20px;font-weight:800;color:var(--accent);min-width:30px;">L2</span>
+      <span style="font-weight:600;">理解层</span>
+      <span class="small" style="margin-left:auto;">费曼-苏格拉底 · 项目脚手架 · 知识图谱</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:12px;background:rgba(210,153,34,0.08);border:1px solid rgba(210,153,34,0.3);border-radius:8px;">
+      <span style="font-size:20px;font-weight:800;color:var(--orange);min-width:30px;">L1</span>
+      <span style="font-weight:600;">信息层</span>
+      <span class="small" style="margin-left:auto;">一页纸 · Slides · 间隔+变体</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:12px;background:rgba(163,113,247,0.08);border:1px solid rgba(163,113,247,0.3);border-radius:8px;">
+      <span style="font-size:20px;font-weight:800;color:var(--purple);min-width:30px;">元</span>
+      <span style="font-weight:600;">元认知层</span>
+      <span class="small" style="margin-left:auto;">元认知对话（贯穿所有层）</span>
+    </div>
+  </div>
+  <p class="small gray" style="margin-top:12px;text-align:center;">信息层让你"知道" · 理解层让你"懂" · 创造层让你"能用" · 元认知层让你"越来越会学"</p>
+</section>
+
+<!-- SLIDE 19: Q&A -->
+<section class="slide center">
+  <h1>讨论与 Q&A</h1>
+  <div class="sub" style="margin-top:16px;">开放问题</div>
+  <ul style="text-align:left;max-width:600px;margin:16px auto;font-size:14px;">
+    <li>在你目前的研究中，哪种方法最适合嵌入到日常工作流？</li>
+    <li>如果把"一页纸 + Slides"当作你的核心输出格式，哪些方法可以作为输入端的补充？</li>
+    <li>你是否愿意每周留 30 分钟做一次"元认知对话"复盘？</li>
+    <li>有没有一种方法组合，你觉得可以变成你的"AI 学习 SOP"？</li>
+  </ul>
+  <p class="small gray" style="margin-top:32px;">由 DONG XINGBO 创建整理 · 安徽大学 人工智能学院</p>
+</section>
+
+<!-- Footer -->
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:9999;border-top:1px solid rgba(255,255,255,0.06);padding:5px 16px;text-align:center;font-size:11px;color:#6b7280;background:rgba(13,17,23,0.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);">
+  <b style="color:#e6edf3;font-weight:600;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO
+</div>
+
+<script>
+let slides = document.querySelectorAll('.slide');
+let total = slides.length;
+let cur = 0;
+function show(i) {
+  slides.forEach(s => s.classList.remove('active'));
+  if (i < 0) i = 0; if (i >= total) i = total - 1;
+  slides[i].classList.add('active');
+  cur = i;
+  document.getElementById('progress').style.width = ((cur+1)/total*100) + '%';
+  document.querySelector('#nav .page').textContent = (cur+1) + ' / ' + total;
+  window.location.hash = (cur+1);
+}
+document.getElementById('totalPages').textContent = total;
+let nav = document.createElement('div');
+nav.id = 'nav';
+nav.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99;display:flex;align-items:center;justify-content:center;gap:20px;padding:10px 16px;background:rgba(13,17,23,0.92);border-top:1px solid var(--line);font-size:13px;color:var(--ink3);';
+nav.innerHTML = '<span class="hint"><span class="kbd">←</span> 上页</span> <span class="page">1 / ' + total + '</span> <span class="hint">下页 <span class="kbd">→</span></span>';
+document.body.appendChild(nav);
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); show(cur+1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); show(cur-1); }
+  if (e.key === 'Home') { e.preventDefault(); show(0); }
+  if (e.key === 'End') { e.preventDefault(); show(total-1); }
+  if (e.key === 'p' || e.key === 'P') { e.preventDefault(); window.print(); }
+});
+let hash = parseInt(window.location.hash.substring(1));
+if (hash >= 1 && hash <= total) show(hash-1); else show(0);
+</script>
+</body>
+</html>
