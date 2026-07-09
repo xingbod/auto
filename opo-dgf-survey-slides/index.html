@@ -639,7 +639,241 @@
   </div>
 </section>
 
-<!-- ===== SLIDE 18: 总结 ===== -->
+<!-- ===== PART II: 子刊级别研究方向 ===== -->
+<!-- ===== SLIDE 18: 目标期刊概览 ===== -->
+<section class="slide">
+  <h1>Part Ⅱ · 子刊级别研究机会</h1>
+  <h2>目标期刊与发表策略</h2>
+  <div class="grid3" style="margin:8px 0;">
+    <div class="card" style="text-align:center;">
+      <h4>🏥 临床顶刊子刊</h4>
+      <p class="small">Lancet Digital Health</p>
+      <p class="small">JAMA Surgery</p>
+      <p class="small">BMJ Surgery</p>
+      <p class="small">NEJM AI</p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h4>🧬 Nature 系子刊</h4>
+      <p class="small">Nature Medicine</p>
+      <p class="small">Nature Communications</p>
+      <p class="small">npj Digital Medicine</p>
+      <p class="small">Nature Biomedical Eng.</p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h4>⚡ Science 系子刊</h4>
+      <p class="small">Science Translational Med.</p>
+      <p class="small">Science Advances</p>
+      <p class="small">Cell Reports Medicine</p>
+      <p class="small">Patterns (Cell Press AI)</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:8px;">
+    <h4>发表的核心门槛：不是方法多新，而是 <span class="tag red">回答了一个临床无法回避的问题</span></h4>
+    <p>子刊级研究 = <b>前瞻性证据</b> + <b>多中心数据</b> + <b>可复现</b> + <b>临床可操作性</b>。纯回顾性 ML 几乎无法命中这些期刊。</p>
+  </div>
+</section>
+
+<!-- ===== SLIDE 19: 方向1 ===== -->
+<section class="slide">
+  <h1>方向 1 · 前瞻性多中心 RCT 验证</h1>
+  <div class="grid2">
+    <div class="card">
+      <h4><span class="tag accent">核心问题</span></h4>
+      <p>几乎所有 ML-DGF 模型停留在回顾性单中心。前瞻性多中心 RCT 是当前<b>最大的证据空白</b>。</p>
+    </div>
+    <div class="card">
+      <h4><span class="tag green">靶向期刊</span></h4>
+      <p>Lancet Digital Health · JAMA Surgery · NEJM AI</p>
+    </div>
+  </div>
+  <h3>推荐研究设计</h3>
+  <div class="pipeline">
+    <span class="box model">多中心前瞻性队列</span>
+    <span class="pipe-arrow">→</span>
+    <span class="box model">ML模型实时预测</span>
+    <span class="pipe-arrow">→</span>
+    <span class="box clini">随机分组</span>
+    <span class="pipe-arrow">→</span>
+    <span class="box clini">干预 vs 对照</span>
+  </div>
+  <p style="font-size:13px;">
+    <b>具体方案</b>：3-5 家移植中心，连续入组 500-800 例死亡供体肾移植。术中实时 ML 预测 DGF 风险 → 高风险组 1:1 随机接受强化管理（早期 CNI 调整 + 灌注优化）vs 常规护理。主要终点：DGF 发生率。次要终点：1 年 eGFR、住院天数。
+  </p>
+</section>
+
+<!-- ===== SLIDE 20: 方向2 ===== -->
+<section class="slide">
+  <h1>方向 2 · 联邦学习跨 OPO 协作</h1>
+  <div class="grid2">
+    <div class="card">
+      <h4><span class="tag accent">核心突破</span></h4>
+      <p>首次在移植领域实现<b>隐私保护的跨机构联合建模</b>。各 OPO/中心的供体数据不出本地，模型聚合。</p>
+    </div>
+    <div class="card">
+      <h4><span class="tag green">靶向期刊</span></h4>
+      <p>Nature Communications · npj Digital Medicine · Science Advances</p>
+    </div>
+  </div>
+  <h3>技术路线</h3>
+  <div class="pipeline">
+    <span class="box data">OPO A 本地数据</span>
+    <span class="pipe-arrow">↘</span>
+    <span class="box model">联邦聚合服务器</span>
+    <span class="pipe-arrow">→</span>
+    <span class="box model">全局 DGF 预测模型</span>
+    <span class="pipe-arrow">→</span>
+    <span class="box clini">多中心验证</span>
+  </div>
+  <p style="font-size:13px;margin-top:5px;">
+    <span class="box data">OPO B/C/D 本地数据</span>
+    <span class="pipe-arrow" style="display:inline;">↗</span>
+  </p>
+  <p style="font-size:13px;">
+    <b>创新点</b>：(1) 首次 FL + 移植；(2) 非 IID 数据分布下的鲁棒训练策略；(3) 差分隐私保证供体信息安全；(4) FL 模型 vs 单中心模型 vs 集中式训练的公平性对比
+  </p>
+</section>
+
+<!-- ===== SLIDE 21: 方向3 ===== -->
+<section class="slide">
+  <h1>方向 3 · 多模态移植基础模型</h1>
+  <div class="grid2">
+    <div class="card">
+      <h4><span class="tag accent">核心突破</span></h4>
+      <p>融合病理全切片图像（WSI）+ 临床表格 + 基因组学 + 实验室时序数据，构建<b>移植领域第一个多模态基础模型</b></p>
+    </div>
+    <div class="card">
+      <h4><span class="tag green">靶向期刊</span></h4>
+      <p>Nature Medicine · Nature Biomedical Engineering · Cell Reports Medicine</p>
+    </div>
+  </div>
+  <h3>模型架构设想</h3>
+  <div class="pipeline">
+    <span class="box bio">WSI (病理图像)</span>
+    <span class="pipe-arrow">+</span>
+    <span class="box data">临床表格</span>
+    <span class="pipe-arrow">+</span>
+    <span class="box bio">供体基因组</span>
+    <span class="pipe-arrow">+</span>
+    <span class="box data">肌酐时序</span>
+    <span class="pipe-arrow">→</span>
+    <span class="box model">多模态 Transformer</span>
+    <span class="pipe-arrow">→</span>
+    <span class="box clini">DGF + 存活联合预测</span>
+  </div>
+  <p style="font-size:13px;">
+    <b>为什么这是子刊级别</b>：(1) 医学 AI 正在从"单模态分类器"走向"多模态基础模型"；(2) 移植是理想的 benchmark —— 模态天然多元且大量互信息；(3) WSI 中 Banff 病变的 DL 检测 → 2026 年 Kidney Int Reports 已有苗头；(4) 可预训练、可微调、可零样本推理的移植 Foundation Model 在领域内尚属空白。
+  </p>
+</section>
+
+<!-- ===== SLIDE 22: 方向4 ===== -->
+<section class="slide">
+  <h1>方向 4 · 因果推断与可干预因素</h1>
+  <div class="grid2">
+    <div class="card">
+      <h4><span class="tag accent">核心突破</span></h4>
+      <p>从"预测谁会发生 DGF"升级为<b>"改变哪个变量能降低 DGF 风险"</b>——预测 vs 干预的范式跃迁</p>
+    </div>
+    <div class="card">
+      <h4><span class="tag green">靶向期刊</span></h4>
+      <p>Science Translational Medicine · JAMA Surgery · Lancet Digital Health</p>
+    </div>
+  </div>
+  <h3>因果框架</h3>
+  <div class="pipeline">
+    <span class="box data">UNOS/SRTR 观察数据</span>
+    <span class="pipe-arrow">→</span>
+    <span class="box model">因果发现算法</span>
+    <span class="pipe-arrow">→</span>
+    <span class="box model">DAG + do-calculus</span>
+    <span class="pipe-arrow">→</span>
+    <span class="box clini">可干预靶点量化</span>
+  </div>
+  <p style="font-size:13px;">
+    <b>关键问题举例</b>：(1) 冷缺血时间（CIT）缩短 2h 能降低多少绝对 DGF 风险？— 不是关联，是因果效应；(2) 机器灌注 vs 静态冷保存的因果比较 — 观察性数据的靶向试验模拟；(3) 供体 Cr 动态轨迹的因果中介分析 — Cr 下降速度通过什么机制影响 DGF？
+  </p>
+</section>
+
+<!-- ===== SLIDE 23: 方向5 ===== -->
+<section class="slide">
+  <h1>方向 5 · 公平性感知的器官分配算法</h1>
+  <div class="grid2">
+    <div class="card">
+      <h4><span class="tag accent">核心突破</span></h4>
+      <p>在 KDPI/EPTS 分配框架中嵌入<b>算法公平性约束</b>，解决种族/地域/社会经济偏差问题</p>
+    </div>
+    <div class="card">
+      <h4><span class="tag green">靶向期刊</span></h4>
+      <p>Nature Medicine · Science Translational Medicine · JAMA</p>
+    </div>
+  </div>
+  <h3>研究框架</h3>
+  <table>
+    <tr><th>维度</th><th>当前问题</th><th>AI 解决方案</th></tr>
+    <tr><td>种族公平性</td><td>KDPI 包含种族校正因子（争议巨大）</td><td>对抗去偏 + 公平约束优化</td></tr>
+    <tr><td>地域公平性</td><td>OPO 服务质量差异影响供体评估</td><td>多层次模型 + 地域效应分解</td></tr>
+    <tr><td>社会经济</td><td>贫困地区受体等待时间显著更长</td><td>公平性感知的匹配策略</td></tr>
+    <tr><td>性别</td><td>女性供体肾脏尺寸不匹配率更高</td><td>尺寸-受体匹配的 ML 优化</td></tr>
+  </table>
+  <p class="small gray" style="margin-top:6px;">已有铺垫: BMC Medical Ethics 2024 系统审查了分配算法公平性 — 但尚无提出具体解决方案的高影响力工作。</p>
+</section>
+
+<!-- ===== SLIDE 24: 方向6 ===== -->
+<section class="slide">
+  <h1>方向 6 · 从预测到临床决策支持</h1>
+  <div class="grid2">
+    <div class="card">
+      <h4><span class="tag accent">核心突破</span></h4>
+      <p>将 ML 预测嵌入真实临床工作流，研究<b>AI 辅助决策对供体接受率、弃用率和移植预后的因果影响</b></p>
+    </div>
+    <div class="card">
+      <h4><span class="tag green">靶向期刊</span></h4>
+      <p>Lancet Digital Health · NEJM AI · JAMA Surgery</p>
+    </div>
+  </div>
+  <h3>研究设计：阶梯楔形整群随机试验</h3>
+  <div class="pipeline">
+    <span class="box clini">阶段0: 历史对照</span>
+    <span class="pipe-arrow">→</span>
+    <span class="box data">阶段1: AI并行运行(黑箱)</span>
+    <span class="pipe-arrow">→</span>
+    <span class="box model">阶段2: AI公开预测</span>
+    <span class="pipe-arrow">→</span>
+    <span class="box clini">阶段3: AI+临床决策支持</span>
+  </div>
+  <p style="font-size:13px;">
+    <b>核心指标</b>：供体接受率变化、高 KDPI 供肾弃用率、DGF 发生率、1 年移植物存活率。<br>
+    <b>亮点</b>：(1) 不只看预测精度，更看临床行为改变；(2) 经典"AI 辅助 vs 无 AI"对照在移植领域是空白；(3) 联合 Nica et al. (2026) 的 DGF 持续时间预测，构建完整的供体-受体决策仪表盘。
+  </p>
+</section>
+
+<!-- ===== SLIDE 25: 研究路线图 ===== -->
+<section class="slide">
+  <h1>研究路线图：从现有基础到子刊发表</h1>
+  <div class="timeline" style="font-size:12.5px;">
+    <div class="timeline-item">
+      <div class="yr">Phase 0（当前）</div>
+      <b>数据积累 + 回顾性验证</b>：整合 UNOS/SRTR + 中国 COTRS，复现 SOTA ML 模型（XGBoost/TabNet），SHAP 分析识别关键特征
+    </div>
+    <div class="timeline-item">
+      <div class="yr">Phase 1（6-12 月）</div>
+      <b>方法创新</b>：开发多模态融合（临床+WSI）、联邦学习原型、因果推断框架 → 投稿 npj Digital Medicine / JAMIA
+    </div>
+    <div class="timeline-item">
+      <div class="yr">Phase 2（12-24 月）</div>
+      <b>前瞻性队列 + 多中心合作</b>：启动 3-5 中心前瞻性验证，收集术中实时数据，建立公平性评估基准
+    </div>
+    <div class="timeline-item">
+      <div class="yr">Phase 3（24-36 月）</div>
+      <b>RCT + 临床落地</b>：阶梯楔形试验评估 AI-CDSS，因果效应量化 → 冲击 Lancet Digital Health / Nature Medicine
+    </div>
+  </div>
+  <div class="card" style="margin-top:8px;">
+    <h4><span class="tag orange">关键成功因素</span></h4>
+    <p>(1) 尽早与移植中心建立数据共享协议；(2) 优先选择有前瞻性数据库的中心；(3) 在方法创新阶段就嵌入公平性/可解释性评估；(4) 从"中国数据+COTRS"切入建立独特性，避免与已有 UNOS 分析同质化。</p>
+  </div>
+</section>
+
+<!-- ===== SLIDE 26: 总结 ===== -->
 <section class="slide">
   <h1>总结与关键要点</h1>
   <div class="grid2">
@@ -670,7 +904,7 @@
   </div>
 </section>
 
-<!-- ===== SLIDE 19: Q&A ===== -->
+<!-- ===== SLIDE 27: Q&A ===== -->
 <section class="slide center">
   <h1>讨论与 Q&A</h1>
   <div class="sub" style="margin-top:16px;">开放问题</div>
@@ -684,7 +918,7 @@
   <p class="small gray" style="margin-top:32px;">联系：董兴波 · 安徽大学 人工智能学院</p>
 </section>
 
-<!-- ===== SLIDE 20: 参考文献 ===== -->
+<!-- ===== SLIDE 28: 参考文献 ===== -->
 <section class="slide">
   <h1>参考文献 (1/2)</h1>
   <ol class="ref-list">
@@ -701,7 +935,7 @@
   </ol>
 </section>
 
-<!-- ===== SLIDE 21: 参考文献 2 ===== -->
+<!-- ===== SLIDE 29: 参考文献 2 ===== -->
 <section class="slide">
   <h1>参考文献 (2/2)</h1>
   <ol class="ref-list" start="11">
