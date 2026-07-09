@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>火箭绕太阳一周返回地球 · 运动方程</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+
+    --c1: #0891b2; --c1s: #ecfeff; /* 青 - 基础方程 */
+    --c2: #7c3aed; --c2s: #f5f3ff; /* 紫 - 守恒 */
+    --c3: #dc2626; --c3s: #fef2f2; /* 红 - 轨道 */
+    --c4: #0d9488; --c4s: #f0fdfa; /* 绿 - 返回条件 */
+
+    --card-shadow: 0 0 0 1px var(--line);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.6;
+    font-size: 14.5px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 800px;
+    margin: 0 auto 40px;
+    background: var(--card);
+    box-shadow: var(--card-shadow);
+  }
+
+  /* Header */
+  header {
+    padding: 40px 48px 30px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 700px 180px at top right, #ecfeff 0%, transparent 70%),
+      radial-gradient(ellipse 400px 160px at bottom left, #f5f3ff 0%, transparent 70%);
+    text-align: center;
+  }
+  header h1 {
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  header .sub {
+    font-size: 0.92rem;
+    color: var(--ink-2);
+  }
+
+  /* Sections */
+  .body { padding: 0 48px 32px; }
+
+  section {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  section:last-child { border-bottom: none; }
+
+  section h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  section h2 .tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  section h2 .tag.c1 { background: var(--c1); }
+  section h2 .tag.c2 { background: var(--c2); }
+  section h2 .tag.c3 { background: var(--c3); }
+  section h2 .tag.c4 { background: var(--c4); }
+
+  p { margin-bottom: 10px; color: var(--ink-2); }
+
+  /* Equation blocks */
+  .eq {
+    margin: 12px 0;
+    padding: 14px 18px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border-left: 3px solid var(--line);
+    text-align: center;
+    font-family: "STIX Two Text", "Times New Roman", "Latin Modern Math",
+                 Cambria Math, serif;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+  .eq.c1 { border-left-color: var(--c1); background: var(--c1s); }
+  .eq.c2 { border-left-color: var(--c2); background: var(--c2s); }
+  .eq.c3 { border-left-color: var(--c3); background: var(--c3s); }
+  .eq.c4 { border-left-color: var(--c4); background: var(--c4s); }
+  .eq .label {
+    float: right;
+    font-family: -apple-system, sans-serif;
+    font-size: 0.78rem;
+    color: var(--ink-3);
+    margin-top: 2px;
+  }
+
+  /* Highlight boxes */
+  .hl {
+    margin: 12px 0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 0.92rem;
+  }
+  .hl.c1 { background: var(--c1s); border: 1px solid color-mix(in srgb, var(--c1) 30%, transparent); }
+  .hl.c4 { background: var(--c4s); border: 1px solid color-mix(in srgb, var(--c4) 30%, transparent); }
+  .hl strong { color: var(--ink); }
+
+  /* Lists */
+  ul { margin: 8px 0 12px 20px; }
+  li { margin-bottom: 5px; color: var(--ink-2); font-size: 0.92rem; }
+
+  /* Footer */
+  footer {
+    padding: 16px 48px;
+    border-top: 1px solid var(--line);
+    font-size: 0.82rem;
+    color: var(--ink-3);
+    text-align: center;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --ink: #e6edf3;
+      --ink-2: #8b949e;
+      --ink-3: #6e7681;
+      --line: #30363d;
+      --c1s: #0c2d38;
+      --c2s: #1c1333;
+      --c3s: #2d1212;
+      --c4s: #0c2d24;
+    }
+    .eq { background: #0d1117; }
+  }
+
+  @media print {
+    .page { box-shadow: none; margin: 0; }
+    header { padding: 24px 32px 18px; }
+    .body { padding: 0 32px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <h1>火箭绕太阳一周返回地球 · 运动方程</h1>
+  <div class="sub">二体问题框架下从地球发射、绕日一周、再入地球的轨道力学</div>
+</header>
+
+<div class="body">
+
+<!-- ============ 1 SETUP ============ -->
+<section>
+<h2><span class="tag c1">1</span> 问题设定</h2>
+<p>将火箭视为质量 <em>m</em> 的质点，受太阳（质量 <em>M</em>）引力作用。地球公转轨道近似为半径 <em>R</em> = 1 AU 的圆。火箭从地球位置<strong>以相对于太阳的速度 v₀</strong> 发射，沿椭圆轨道绕日一周后精确回到地球所在位置。</p>
+
+<div class="eq c1">
+GM = μ ,  μ<sub>☉</sub> ≈ 1.327 × 10²⁰ m³/s²
+<span class="label">(1) 太阳引力常数</span>
+</div>
+
+<div class="hl c1">
+<strong>坐标系：</strong>以太阳为原点，极坐标 (r, θ)。地球初始位置为 r = R, θ = 0。火箭初始速度 v₀ 沿切向（垂直于径向），即与地球公转同向。
+</div>
+</section>
+
+<!-- ============ 2 EOM ============ -->
+<section>
+<h2><span class="tag c1">2</span> 极坐标运动方程</h2>
+<p>在太阳引力场中，火箭的运动方程可从牛顿第二定律直接写出：</p>
+
+<div class="eq c1">
+<em>m</em>(r̈ − rθ̇²) = −<em>m</em>μ/r²  (径向) <span class="label">(2a)</span><br>
+<em>m</em>(rθ̈ + 2ṙθ̇) = 0      (角向) <span class="label">(2b)</span>
+</div>
+
+<p>角向方程(2b)等价于角动量守恒：</p>
+
+<div class="eq c1">
+d(r²θ̇)/dt = 0  ⟹  r²θ̇ = <em>h</em> （常数）<span class="label">(3) 角动量守恒</span>
+</div>
+
+<p>其中 <em>h</em> 是单位质量角动量。将 θ̇ = h/r² 代入径向方程得纯径向形式：</p>
+
+<div class="eq c1">
+r̈ − h²/r³ = −μ/r² <span class="label">(4)</span>
+</div>
+</section>
+
+<!-- ============ 3 CONSERVATION ============ -->
+<section>
+<h2><span class="tag c2">3</span> 守恒律</h2>
+<p>除角动量外，系统还存在机械能守恒（二体问题为保守系统）：</p>
+
+<div class="eq c2">
+<em>E</em> = ½(ṙ² + r²θ̇²) − μ/r = 常数 <span class="label">(5) 单位质量能量</span>
+</div>
+
+<p>将 θ̇ = h/r² 代入：</p>
+
+<div class="eq c2">
+<em>E</em> = ½ṙ² + h²/(2r²) − μ/r <span class="label">(6) 一维等效势能形式</span>
+</div>
+
+<p>这等价于一个在一维有效势 <em>V</em><sub>eff</sub>(r) = h²/(2r²) − μ/r 中运动的粒子。</p>
+
+<div class="hl c2">
+<strong>重要关系：</strong>轨道形状完全由能量 <em>E</em> 和角动量 <em>h</em> 决定。<br>
+<em>E</em> &lt; 0 → 椭圆轨道（束缚态）&ensp;|&ensp;<em>E</em> = 0 → 抛物线 &ensp;|&ensp;<em>E</em> &gt; 0 → 双曲线
+</div>
+</section>
+
+<!-- ============ 4 BINET ============ -->
+<section>
+<h2><span class="tag c3">4</span> 轨道方程（Binet 公式）</h2>
+<p>引入变量 <em>u</em> = 1/r，以 θ 为自变量，可将运动方程简化为线性微分方程：</p>
+
+<div class="eq c3">
+d²u/dθ² + u = μ/h² <span class="label">(7) Binet 公式</span>
+</div>
+
+<p>其通解为标准简谐振动形式：</p>
+
+<div class="eq c3">
+u(θ) = μ/h² + <em>C</em>·cos(θ − θ₀) <span class="label">(8)</span>
+</div>
+
+<p>回到 r = 1/u，即圆锥曲线标准方程：</p>
+
+<div class="eq c3">
+r(θ) = p / (1 + e·cos(θ − θ₀)) <span class="label">(9) 轨道方程</span><br>
+p = h²/μ （半正焦弦）&ensp; e = C·h²/μ （偏心率）
+</div>
+
+<p>其中 <em>e</em> 和 <em>p</em> 由初始条件 <em>r</em>(0) = R 和 ṙ(0), θ̇(0) 唯一确定。</p>
+</section>
+
+<!-- ============ 5 ELLIPTICAL ORBIT ============ -->
+<section>
+<h2><span class="tag c3">5</span> 椭圆轨道参数</h2>
+<p>对于返回地球的轨道，火箭必须被束缚在太阳系内（<em>E</em> &lt; 0），轨道为椭圆。取 θ₀ = 0，近/远日点在 θ = 0, π 处：</p>
+
+<div class="eq c3">
+r(θ) = a(1 − e²) / (1 + e·cos θ) <span class="label">(10)</span><br>
+p = a(1 − e²) , 0 ≤ e &lt; 1
+</div>
+
+<p>轨道参数与能量、角动量的关系：</p>
+
+<div class="eq c3">
+a = −μ/(2E) （半长轴）<span class="label">(11a)</span><br>
+h = √[μ a (1 − e²)] （角动量）<span class="label">(11b)</span><br>
+T = 2π√(a³/μ) （周期，开普勒第三定律）<span class="label">(11c)</span>
+</div>
+
+<p>近/远日点距离：</p>
+
+<div class="eq c3">
+r<sub>p</sub> = a(1 − e) （近日点）&ensp; r<sub>a</sub> = a(1 + e) （远日点）<span class="label">(12)</span>
+</div>
+</section>
+
+<!-- ============ 6 RETURN CONDITION ============ -->
+<section>
+<h2><span class="tag c4">6</span> 返回地球的条件</h2>
+<p>火箭从地球位置（<em>r</em>(0) = R）以切向速度 v₀ 出发，经过一个完整椭圆周期后回到同一点。这要求轨道周期满足：</p>
+
+<div class="eq c4">
+一周期后：r(T) = R , θ(T) = 2π <span class="label">(13) 空间返回条件</span>
+</div>
+
+<p>由于火箭和地球都在运动，要使火箭与地球同时到达同一点，还需<strong>时间同步</strong>：火箭绕日周期 T 与地球轨道周期 T<sub>⊕</sub> 满足：</p>
+
+<div class="eq c4">
+T = <em>k</em>·T<sub>⊕</sub> , k = 1, 2, 3, … <span class="label">(14) 时间同步条件</span>
+</div>
+
+<div class="hl c4">
+<strong>最简单情形（k = 1）：</strong>火箭周期恰好为 1 年。<br>
+由开普勒第三定律 a ∝ T<sup>2/3</sup> 得 a = R（与地球相同）。<br>
+∴ r(0) = R 且 a = R ⟹ r(0) = a = R ⟹ 近日点就是发射点。<br>
+此时 r<sub>p</sub> = a(1 − e) = R 且 a = R ⟹ e = 0，<strong>圆形轨道</strong>。<br>
+火箭只需以地球公转速度 v<sub>⊕</sub> = √(μ/R) ≈ <strong>29.8 km/s</strong>（相对于太阳）切向发射，即与地球同轨运行，恰好一年后返回地球。
+</div>
+
+<p><strong>更有趣的情形（k = 2）：</strong>火箭周期为 2 年，此时地球已绕两圈。由 Kepler 第三定律：</p>
+
+<div class="eq c4">
+a = (T/T<sub>⊕</sub>)<sup>2/3</sup> R = 2<sup>2/3</sup> R ≈ 1.587 AU <span class="label">(15)</span>
+</div>
+
+<p>火箭从地球位置 r(0) = R = 1 AU 出发，此即近日点 r<sub>p</sub> = R：</p>
+
+<div class="eq c4">
+r<sub>p</sub> = a(1 − e) = R ⟹ e = 1 − R/a = 1 − 2<sup>−2/3</sup> ≈ 0.370 <span class="label">(16)</span><br>
+远日点 r<sub>a</sub> = a(1 + e) = 2a − R ≈ 2.174 AU
+</div>
+
+<p><strong>所需发射速度：</strong>相对于太阳的切向速度</p>
+
+<div class="eq c4">
+h = √[μ a (1 − e²)] ⟹ v₀ = h/R = √[μ a (1 − e²)] / R <span class="label">(17)</span><br>
+代入 a = 2<sup>2/3</sup>R, e = 1 − 2<sup>−2/3</sup>：<br>
+v₀ = √[μ(1+e)/R] = √[2μ/(R) − μ/a] = √(2μ/R − μ/a) ≈ <strong>32.7 km/s</strong>
+</div>
+
+<p>相对地球的发射速度增量（地球公转速度 29.8 km/s，方向同向）：</p>
+
+<div class="eq c4">
+Δv = v₀ − v<sub>⊕</sub> ≈ 32.7 − 29.8 = <strong>2.9 km/s</strong>（切向加速）<span class="label">(18)</span>
+</div>
+</section>
+
+<!-- ============ 7 SUMMARY ============ -->
+<section>
+<h2><span class="tag c2">7</span> 一般形式总结</h2>
+<p>给定周期比 k = T/T<sub>⊕</sub>（正整数），发射速度和轨道参数：</p>
+
+<div class="eq c2">
+a = k<sup>2/3</sup> R , e = 1 − k<sup>−2/3</sup> , r<sub>a</sub> = (2k<sup>2/3</sup> − 1)R <span class="label">(19)</span><br>
+v₀ = √(μ/R · (2 − k<sup>−2/3</sup>)) = v<sub>⊕</sub> √(2 − k<sup>−2/3</sup>)
+</div>
+
+<p>其中地球轨道速度 v<sub>⊕</sub> = √(μ/R)。发射速度增量：</p>
+
+<div class="eq c2">
+Δv = v<sub>⊕</sub> [√(2 − k<sup>−2/3</sup>) − 1] <span class="label">(20)</span>
+</div>
+
+<table style="width:100%; border-collapse: collapse; margin:14px 0; font-size:0.88rem;">
+  <tr style="background:var(--c2s);">
+    <th style="padding:8px 10px; text-align:center; border:1px solid var(--line);">k (周期比)</th>
+    <th style="padding:8px 10px; text-align:center; border:1px solid var(--line);">a (AU)</th>
+    <th style="padding:8px 10px; text-align:center; border:1px solid var(--line);">e</th>
+    <th style="padding:8px 10px; text-align:center; border:1px solid var(--line);">r<sub>a</sub> (AU)</th>
+    <th style="padding:8px 10px; text-align:center; border:1px solid var(--line);">v₀ (km/s)</th>
+    <th style="padding:8px 10px; text-align:center; border:1px solid var(--line);">Δv (km/s)</th>
+  </tr>
+  <tr><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">1</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">1.000</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">0</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">1.000</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">29.8</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">0</td></tr>
+  <tr><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">2</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">1.587</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">0.370</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">2.174</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">32.7</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">2.9</td></tr>
+  <tr><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">3</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">2.080</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">0.519</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">3.160</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">35.0</td><td style="padding:6px 10px; text-align:center; border:1px solid var(--line);">5.2</td></tr>
+</table>
+
+<p>一般地，k 越大，火箭需飞越更远（远日点 > 3 AU 已进入小行星带），发射速度也越接近逃逸速度 v<sub>esc</sub> = √(2μ/R) ≈ 42.1 km/s。</p>
+</section>
+
+</div>
+
+<footer>
+方程采用标准二体问题框架 · 忽略其他行星摄动、火箭自身推力阶段与地球引力影响<br>
+仅考虑纯 Kepler 轨道运动 · 发射为瞬时脉冲近似
+</footer>
+</div>
+</body>
+</html>
