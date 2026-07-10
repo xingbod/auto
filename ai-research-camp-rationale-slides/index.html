@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>暑期 24 天 AI 科研集训营 · 设置初衷</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --panel-2: #1c2330;
+    --line: #30363d;
+    --line-2: #21262d;
+    --ink: #e6edf3;
+    --ink-2: #c9d1d9;
+    --ink-3: #8b949e;
+    --ink-4: #6e7681;
+
+    /* 4 主色，对应 4 个理由 */
+    --sky:    #38bdf8;     /* Reason 1: 拥抱 AI */
+    --amber:  #fbbf24;     /* Reason 2: 科研全链 */
+    --green:  #34d399;     /* Reason 3: 提升效率 */
+    --violet: #a78bfa;     /* Reason 4: 同伴互教 */
+
+    --red:    #f87171;
+    --red-soft: rgba(248, 113, 113, 0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    height: 100%;
+    overflow: hidden;
+    line-height: 1.55;
+  }
+
+  /* ---------- Topbar ---------- */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: 38px;
+    background: rgba(13, 17, 23, 0.92);
+    border-bottom: 1px solid var(--line);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center;
+    padding: 0 24px;
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+  .topbar .brand { color: var(--ink); font-weight: 600; letter-spacing: 0.04em; }
+  .topbar .brand .dot { color: var(--sky); }
+  .topbar .sub { margin-left: 12px; color: var(--ink-4); }
+  .topbar .keys { margin-left: auto; font-size: 11px; color: var(--ink-4); }
+  .topbar .keys kbd {
+    display: inline-block;
+    padding: 1px 5px;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--panel);
+    color: var(--ink-3);
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    margin: 0 1px;
+  }
+
+  /* ---------- Progress bar ---------- */
+  .progress {
+    position: fixed; top: 38px; left: 0; right: 0; z-index: 99;
+    height: 3px;
+    background: var(--line-2);
+  }
+  .progress .bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sky), var(--violet));
+    width: 0%;
+    transition: width 0.25s ease;
+  }
+
+  /* ---------- Slides ---------- */
+  .slide {
+    position: absolute; inset: 0;
+    padding: 64px 60px 70px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; }
+  .slide h1 {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.18;
+    margin-bottom: 14px;
+  }
+  .slide h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.005em;
+  }
+  .slide h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 10px 0 6px;
+    letter-spacing: 0.02em;
+  }
+  .slide p {
+    font-size: 14.5px;
+    color: var(--ink-2);
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+  .slide .lede {
+    font-size: 16px;
+    color: var(--ink-2);
+    line-height: 1.6;
+    max-width: 900px;
+  }
+  .slide .small {
+    font-size: 12px;
+    color: var(--ink-4);
+  }
+
+  /* ---------- Cover ---------- */
+  .cover {
+    justify-content: center;
+    text-align: left;
+    background:
+      radial-gradient(ellipse 800px 400px at top right, rgba(56, 189, 248, 0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 600px 400px at bottom left, rgba(167, 139, 250, 0.08) 0%, transparent 70%);
+  }
+  .cover .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+  .cover h1 {
+    font-size: 52px;
+    line-height: 1.12;
+    margin-bottom: 18px;
+  }
+  .cover h1 .hl-sky    { color: var(--sky); }
+  .cover h1 .hl-amber  { color: var(--amber); }
+  .cover h1 .hl-violet { color: var(--violet); }
+  .cover h1 .hl-green  { color: var(--green); }
+  .cover .sub {
+    font-size: 19px;
+    color: var(--ink-2);
+    max-width: 720px;
+    line-height: 1.5;
+    margin-bottom: 28px;
+  }
+  .cover .teasers {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+  .cover .teaser {
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    background: rgba(22, 27, 34, 0.6);
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: var(--ink-2);
+    font-weight: 600;
+  }
+  .cover .teaser.sky    { border-color: rgba(56,189,248,0.5); color: var(--sky); }
+  .cover .teaser.amber  { border-color: rgba(251,191,36,0.5); color: var(--amber); }
+  .cover .teaser.green  { border-color: rgba(52,211,153,0.5); color: var(--green); }
+  .cover .teaser.violet { border-color: rgba(167,139,250,0.5); color: var(--violet); }
+  .cover .host {
+    font-size: 13px;
+    color: var(--ink-3);
+    border-top: 1px solid var(--line-2);
+    padding-top: 14px;
+    max-width: 720px;
+  }
+  .cover .host b { color: var(--ink); }
+
+  /* ---------- Overview grid (2x2 reasons) ---------- */
+  .reason-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 14px 0;
+  }
+  .reason-card {
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--panel);
+    position: relative;
+    overflow: hidden;
+  }
+  .reason-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px;
+  }
+  .reason-card.r1::before { background: var(--sky); }
+  .reason-card.r2::before { background: var(--amber); }
+  .reason-card.r3::before { background: var(--green); }
+  .reason-card.r4::before { background: var(--violet); }
+  .reason-card .num {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: var(--ink-4);
+    margin-bottom: 4px;
+  }
+  .reason-card.r1 .num { color: var(--sky); }
+  .reason-card.r2 .num { color: var(--amber); }
+  .reason-card.r3 .num { color: var(--green); }
+  .reason-card.r4 .num { color: var(--violet); }
+  .reason-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 6px;
+  }
+  .reason-card .desc {
+    font-size: 13px;
+    color: var(--ink-3);
+    line-height: 1.55;
+  }
+
+  /* ---------- Timeline (Reason 1) ---------- */
+  .timeline {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 14px 0 8px;
+    margin-top: 8px;
+    border-top: 1px solid var(--line-2);
+    border-bottom: 1px solid var(--line-2);
+  }
+  .tl-step {
+    flex: 1;
+    min-width: 110px;
+    padding: 12px 14px;
+    border-right: 1px dashed var(--line);
+    position: relative;
+  }
+  .tl-step:last-child { border-right: none; }
+  .tl-step .date {
+    font-size: 11px;
+    color: var(--sky);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-family: ui-monospace, monospace;
+    margin-bottom: 4px;
+  }
+  .tl-step .event {
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .tl-step .detail {
+    font-size: 11.5px;
+    color: var(--ink-3);
+    line-height: 1.4;
+  }
+
+  .alert {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    background: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.4);
+    border-left: 4px solid var(--red);
+  }
+  .alert b { color: var(--red); }
+  .alert .quote { font-size: 14.5px; color: var(--ink-2); line-height: 1.6; }
+
+  /* ---------- Pipeline (Reason 2) ---------- */
+  .pipeline {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+    margin: 14px 0 8px;
+    flex-wrap: wrap;
+  }
+  .pipe-step {
+    flex: 1;
+    min-width: 90px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    text-align: center;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .pipe-step.high {
+    background: rgba(251, 191, 36, 0.08);
+    border-color: rgba(251, 191, 36, 0.5);
+  }
+  .pipe-step .step-num {
+    font-size: 10px;
+    color: var(--ink-4);
+    font-family: ui-monospace, monospace;
+    letter-spacing: 0.04em;
+  }
+  .pipe-step .step-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 3px 0;
+  }
+  .pipe-step .step-tag {
+    font-size: 10.5px;
+    color: var(--ink-3);
+  }
+  .pipe-step.high .step-name { color: var(--amber); }
+  .pipe-step.high .step-tag { color: var(--amber); opacity: 0.85; }
+  .pipe-step.high::after {
+    content: '★';
+    position: absolute;
+    top: -8px; right: -6px;
+    color: var(--amber);
+    font-size: 16px;
+    background: var(--bg);
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(251, 191, 36, 0.5);
+  }
+
+  /* ---------- Number table (Reason 3) ---------- */
+  .num-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+  .num-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-bottom: 1px solid var(--line);
+  }
+  .num-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-2);
+    color: var(--ink-2);
+  }
+  .num-table tr:last-child td { border-bottom: none; }
+  .num-table .accel {
+    font-family: ui-monospace, monospace;
+    color: var(--green);
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .num-table .accel.inf { color: var(--amber); }
+  .num-table .task { color: var(--ink); font-weight: 600; }
+  .num-table .before { color: var(--ink-3); text-decoration: line-through; }
+
+  /* ---------- Peer teaching (Reason 4) ---------- */
+  .peer-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 12px 0;
+  }
+  .peer-stat {
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    text-align: center;
+  }
+  .peer-stat.violet .num { color: var(--violet); }
+  .peer-stat.amber .num { color: var(--amber); }
+  .peer-stat.sky .num { color: var(--sky); }
+  .peer-stat .num {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-family: ui-monospace, monospace;
+  }
+  .peer-stat .lbl {
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+
+  .peer-flow {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .peer-flow .node {
+    text-align: center;
+    flex: 1;
+    padding: 0 8px;
+    position: relative;
+  }
+  .peer-flow .node + .node::before {
+    content: '→';
+    position: absolute;
+    left: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-4);
+    font-size: 18px;
+  }
+  .peer-flow .node .name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .peer-flow .node .role {
+    font-size: 11.5px;
+    color: var(--ink-3);
+    margin-top: 2px;
+  }
+
+  /* ---------- Phase overview (24-day slide) ---------- */
+  .phase-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .phase-card {
+    padding: 14px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    position: relative;
+    overflow: hidden;
+  }
+  .phase-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .phase-card.p1::before { background: #94a3b8; }   /* slate */
+  .phase-card.p2::before { background: var(--amber); }
+  .phase-card.p3::before { background: var(--violet); }
+  .phase-card.p4::before { background: #f87171; }   /* rose */
+  .phase-card.p5::before { background: var(--green); }
+  .phase-card .days {
+    font-size: 10.5px;
+    color: var(--ink-4);
+    font-family: ui-monospace, monospace;
+    letter-spacing: 0.03em;
+  }
+  .phase-card .name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 4px 0;
+  }
+  .phase-card .range {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-bottom: 6px;
+  }
+  .phase-card .topic {
+    font-size: 11.5px;
+    color: var(--ink-3);
+    line-height: 1.4;
+  }
+
+  /* ---------- Gain cards (slide 9) ---------- */
+  .gain-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 14px 0;
+  }
+  .gain-card {
+    padding: 18px 20px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    position: relative;
+    overflow: hidden;
+  }
+  .gain-card .icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  .gain-card h3 {
+    font-size: 16px;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .gain-card p {
+    font-size: 13px;
+    color: var(--ink-3);
+    margin: 0;
+    line-height: 1.55;
+  }
+  .gain-card.sky    { border-top: 3px solid var(--sky); }
+  .gain-card.amber  { border-top: 3px solid var(--amber); }
+  .gain-card.violet { border-top: 3px solid var(--violet); }
+
+  /* ---------- Bottom controls ---------- */
+  .controls {
+    position: fixed; bottom: 38px; left: 0; right: 0; z-index: 50;
+    text-align: center;
+    pointer-events: none;
+  }
+  .controls .ctr {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 6px 16px;
+    background: rgba(22, 27, 34, 0.85);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--ink-3);
+    pointer-events: auto;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+  .controls .ctr button {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: inherit;
+  }
+  .controls .ctr button:hover { border-color: var(--sky); color: var(--sky); }
+  .controls .ctr .counter { font-family: ui-monospace, monospace; min-width: 50px; }
+
+  /* ---------- Footer credit (fixed) ---------- */
+  .credit {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 5px 16px;
+    text-align: center;
+    font-size: 11px;
+    color: #6b7280;
+    background: rgba(13, 17, 23, 0.92);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    line-height: 1.4;
+    margin: 0;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+  .credit b { color: #e6edf3; font-weight: 600; }
+
+  /* ---------- Responsive (mobile) ---------- */
+  @media (max-width: 760px) {
+    .slide { padding: 50px 24px 90px; overflow-y: auto; }
+    .slide h1 { font-size: 26px; }
+    .cover h1 { font-size: 32px; }
+    .reason-grid { grid-template-columns: 1fr; }
+    .phase-row { grid-template-columns: 1fr 1fr; }
+    .peer-stats { grid-template-columns: 1fr; }
+    .gain-grid { grid-template-columns: 1fr; }
+    .peer-flow { flex-direction: column; gap: 8px; }
+    .peer-flow .node + .node::before { content: '↓'; left: 50%; top: -14px; transform: translateX(-50%); }
+    .pipeline { flex-direction: column; }
+    .pipe-step { min-width: auto; }
+  }
+
+  /* ---------- Print ---------- */
+  @media print {
+    .topbar, .controls, .credit, .progress { display: none; }
+    body { overflow: visible; }
+    .slide { display: flex; page-break-after: always; height: auto; position: relative; padding: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="brand">AI × Research <span class="dot">·</span> 24-Day Bootcamp</div>
+  <div class="sub">设置初衷 · Rationale</div>
+  <div class="keys">
+    <kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp; <kbd>P</kbd> 打印
+  </div>
+</div>
+
+<!-- Progress -->
+<div class="progress"><div class="bar" id="bar"></div></div>
+
+<!-- ============ SLIDE 1: Cover ============ -->
+<section class="slide cover active" id="s1">
+  <div class="eyebrow">SUMMER BOOTCAMP · 2026</div>
+  <h1>
+    暑期 24 天 <span class="hl-sky">AI 科研集训营</span><br>
+    <span style="font-size: 32px; color: var(--ink-3); font-weight: 600;">— 为什么办这个营 —</span>
+  </h1>
+  <p class="sub">
+    AI 一年等于过去的五年。<br>
+    我们需要的不只是"会用 AI 的人"，而是<b>把 AI 嵌入科研全流程</b>的同行者。
+  </p>
+  <div class="teasers">
+    <span class="teaser sky">拥抱 AI</span>
+    <span class="teaser amber">科研全链</span>
+    <span class="teaser green">提升效率</span>
+    <span class="teaser violet">同伴互教</span>
+  </div>
+  <div class="host">
+    主持 / 主讲协调：<b>张俊宁</b> &nbsp;·&nbsp; 24 位主讲同学 &nbsp;·&nbsp; 24 天连续集训 &nbsp;·&nbsp; 2026.7.10 – 8.2
+  </div>
+</section>
+
+<!-- ============ SLIDE 2: 4 reasons overview ============ -->
+<section class="slide" id="s2">
+  <h2>四个理由，为什么办这个营</h2>
+  <p class="lede">每一条都来自过去 18 个月里，我们在自己课题上反复踩过的坑与惊喜。</p>
+
+  <div class="reason-grid" style="margin-top: 20px;">
+    <div class="reason-card r1">
+      <div class="num">REASON 01</div>
+      <h3>AI 发展迅速，必须主动拥抱</h3>
+      <div class="desc">不拥抱 AI 的研究者，12 个月后会落后一个时代。这不是预测，是已经发生的事实。</div>
+    </div>
+    <div class="reason-card r2">
+      <div class="num">REASON 02</div>
+      <h3>覆盖整个科研的环节</h3>
+      <div class="desc">不只是写作或代码 — 从选题、文献、实验、写作到投稿，AI 在每一个节点都能放大你的能力。</div>
+    </div>
+    <div class="reason-card r3">
+      <div class="num">REASON 03</div>
+      <h3>把每一步的效率提升到极致</h3>
+      <div class="desc">文献精读、代码调试、论文润色、红蓝对抗 — 每一个环节都有 5-10× 的加速空间。</div>
+    </div>
+    <div class="reason-card r4">
+      <div class="num">REASON 04</div>
+      <h3>同学即是学习者，也是教授者</h3>
+      <div class="desc">24 位主讲每天轮换登台，peer-teaching 而非传统讲授 — 教，是最深的学。</div>
+    </div>
+  </div>
+
+  <p class="small" style="margin-top: 18px;">接下来 4 页，每一页深入一个理由。</p>
+</section>
+
+<!-- ============ SLIDE 3: Reason 1 ============ -->
+<section class="slide" id="s3">
+  <h2><span style="color: var(--sky);">Reason 01 ·</span> AI 发展迅速，必须主动拥抱</h2>
+  <p class="lede">从 2022 年底 ChatGPT 发布到现在，模型能力曲线已经换了三轮 — 每一轮都重写了科研的工作方式。</p>
+
+  <div class="timeline">
+    <div class="tl-step">
+      <div class="date">2022.11</div>
+      <div class="event">ChatGPT 发布</div>
+      <div class="detail">对话式 AI 走入大众，第一次让"问大模型"成为日常</div>
+    </div>
+    <div class="tl-step">
+      <div class="date">2023.03</div>
+      <div class="event">GPT-4 上线</div>
+      <div class="detail">推理、长文、图像理解 — 第一次让大模型能写论文</div>
+    </div>
+    <div class="tl-step">
+      <div class="date">2024.02</div>
+      <div class="event">Sora / Claude 3</div>
+      <div class="detail">视频生成 + 工具调用 — AI 开始有"手脚"</div>
+    </div>
+    <div class="tl-step">
+      <div class="date">2024.09</div>
+      <div class="event">o1 推理模型</div>
+      <div class="detail">"慢思考"模式 — 数学、代码、博士级问题解法重新定义</div>
+    </div>
+    <div class="tl-step">
+      <div class="date">2025.01</div>
+      <div class="event">DeepSeek-R1</div>
+      <div class="detail">开源推理模型 + 极致性价比 — 国内大模型正式接入科研流水线</div>
+    </div>
+    <div class="tl-step">
+      <div class="date">2025.05+</div>
+      <div class="event">Agent 爆发</div>
+      <div class="detail">Cursor / Claude Code / Manus — AI 第一次能独立跑完 30 分钟的工作流</div>
+    </div>
+    <div class="tl-step">
+      <div class="date">2026</div>
+      <div class="event">多模态 + Agent 全栈</div>
+      <div class="detail">科研场景全栈渗透 — 文献、代码、写作、投稿、审稿，每个环节都有专属 Agent</div>
+    </div>
+  </div>
+
+  <div class="alert">
+    <div class="quote">
+      <b>关键观察：</b>2023 年"用 AI 写邮件"是加分项；2024 年"用 AI 跑通实验"是及格线；2026 年"不会用 Agent 串起整条工作流"已经成了科研能力的硬伤。<br>
+      <span style="color: var(--ink-3); font-size: 13px; margin-top: 6px; display: inline-block;">
+      不是 AI 替你做科研，而是不会 AI 的研究者，被会 AI 的研究者替代。
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 4: Reason 2 ============ -->
+<section class="slide" id="s4">
+  <h2><span style="color: var(--amber);">Reason 02 ·</span> 覆盖整个科研的环节</h2>
+  <p class="lede">科研不是单一动作，是一条链。AI 在每一条链上都有落点 — 集训营 24 天正好对应这条链的 8 个核心节点。</p>
+
+  <div class="pipeline">
+    <div class="pipe-step high">
+      <div class="step-num">STEP 1</div>
+      <div class="step-name">选题立意</div>
+      <div class="step-tag">Gap 挖掘</div>
+    </div>
+    <div class="pipe-step high">
+      <div class="step-num">STEP 2</div>
+      <div class="step-name">文献调研</div>
+      <div class="step-tag">批量精读</div>
+    </div>
+    <div class="pipe-step high">
+      <div class="step-num">STEP 3</div>
+      <div class="step-name">基金标书</div>
+      <div class="step-tag">立项 + 红蓝对抗</div>
+    </div>
+    <div class="pipe-step high">
+      <div class="step-num">STEP 4</div>
+      <div class="step-name">代码构建</div>
+      <div class="step-tag">复现 + Debug</div>
+    </div>
+    <div class="pipe-step high">
+      <div class="step-num">STEP 5</div>
+      <div class="step-name">数据分析</div>
+      <div class="step-tag">结果解读</div>
+    </div>
+    <div class="pipe-step high">
+      <div class="step-num">STEP 6</div>
+      <div class="step-name">论文撰写</div>
+      <div class="step-tag">IMRAD + 润色</div>
+    </div>
+    <div class="pipe-step high">
+      <div class="step-num">STEP 7</div>
+      <div class="step-name">投稿选刊</div>
+      <div class="step-tag">Cover Letter</div>
+    </div>
+    <div class="pipe-step high">
+      <div class="step-num">STEP 8</div>
+      <div class="step-name">审稿应对</div>
+      <div class="step-tag">Rebuttal</div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;">
+    <div style="padding: 16px; border-radius: 10px; background: rgba(251, 191, 36, 0.06); border: 1px solid rgba(251, 191, 36, 0.3);">
+      <div style="font-size: 13px; color: var(--amber); font-weight: 700; margin-bottom: 4px;">★ 标星环节：AI 增益最大</div>
+      <div style="font-size: 12.5px; color: var(--ink-2); line-height: 1.6;">
+        选题、文献、写作 — 这三环传统上一位研究生要花 60% 时间，现在 30% 就能完成同样的输出，剩下的时间可以全部投入真正的研究问题。
+      </div>
+    </div>
+    <div style="padding: 16px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line);">
+      <div style="font-size: 13px; color: var(--ink-2); font-weight: 700; margin-bottom: 4px;">★ 24 天 = 5 阶段 × 8 节点</div>
+      <div style="font-size: 12.5px; color: var(--ink-3); line-height: 1.6;">
+        5 阶段：环境 / 文献 / 代码 / 写作 / 投稿。8 节点全覆盖。每节课都"先方法论 + 后 AI 工具"双线并行，不空谈、不炫技。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 5: Reason 3 ============ -->
+<section class="slide" id="s5">
+  <h2><span style="color: var(--green);">Reason 03 ·</span> 把每一步的效率提升到极致</h2>
+  <p class="lede">24 天的全部意义，就是把你已经会做的工作加速 5-10 倍 — 然后把省下来的时间还给真正的思考。</p>
+
+  <table class="num-table">
+    <thead>
+      <tr>
+        <th style="width: 25%;">科研环节</th>
+        <th style="width: 25%;">传统耗时</th>
+        <th style="width: 25%;">AI 辅助后</th>
+        <th style="width: 25%; text-align: right;">加速比</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="task">单篇文献精读 (摘要+方法+实验)</td>
+        <td class="before">1-2 小时</td>
+        <td>5-10 分钟</td>
+        <td style="text-align: right;"><span class="accel">10×</span></td>
+      </tr>
+      <tr>
+        <td class="task">跨 50 篇文献综述梳理</td>
+        <td class="before">2-3 周</td>
+        <td>2-3 天</td>
+        <td style="text-align: right;"><span class="accel">7×</span></td>
+      </tr>
+      <tr>
+        <td class="task">GitHub 顶会代码复现</td>
+        <td class="before">1-2 周</td>
+        <td>1-2 天</td>
+        <td style="text-align: right;"><span class="accel">7×</span></td>
+      </tr>
+      <tr>
+        <td class="task">Debug 一个报错堆栈</td>
+        <td class="before">半天到 2 天</td>
+        <td>5-30 分钟</td>
+        <td style="text-align: right;"><span class="accel">15×</span></td>
+      </tr>
+      <tr>
+        <td class="task">论文 Method 章节润色</td>
+        <td class="before">3-5 天</td>
+        <td>半天</td>
+        <td style="text-align: right;"><span class="accel">6×</span></td>
+      </tr>
+      <tr>
+        <td class="task">Cover Letter 起草</td>
+        <td class="before">1-2 天</td>
+        <td>15-30 分钟</td>
+        <td style="text-align: right;"><span class="accel">50×</span></td>
+      </tr>
+      <tr>
+        <td class="task">开题方案"盲审专家"压力测试</td>
+        <td class="before">无（找不到人）</td>
+        <td>1 天 50 轮</td>
+        <td style="text-align: right;"><span class="accel inf">∞</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top: 14px; padding: 14px 18px; background: rgba(52, 211, 153, 0.06); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 10px;">
+    <div style="font-size: 13px; color: var(--green); font-weight: 700; margin-bottom: 6px;">★ 关键不是"AI 替你做了多少"，而是"你拿回了多少时间"</div>
+    <div style="font-size: 12.5px; color: var(--ink-2); line-height: 1.6;">
+      文献阅读省下的时间可以用来真正理解研究问题；代码调试省下的时间可以用来设计实验；写作润色省下的时间可以用来打磨 Insight。<br>
+      <b style="color: var(--ink);">AI 节省的不是动作，是注意力 — 把最贵的资源留给最值得思考的地方。</b>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6: Reason 4 ============ -->
+<section class="slide" id="s6">
+  <h2><span style="color: var(--violet);">Reason 04 ·</span> 同学即是学习者，也是教授者</h2>
+  <p class="lede">24 位主讲每天轮换登台 — 每一个工具都被一位"用得最熟"的同学拆给你看。Peer-teaching 是这个营最特别的设计。</p>
+
+  <div class="peer-stats">
+    <div class="peer-stat violet">
+      <div class="num">24</div>
+      <div class="lbl">主讲同学 · 每天 1 位轮换</div>
+    </div>
+    <div class="peer-stat amber">
+      <div class="num">24</div>
+      <div class="lbl">节课时 · 5 阶段 8 节点全覆盖</div>
+    </div>
+    <div class="peer-stat sky">
+      <div class="num">30+</div>
+      <div class="lbl">国内外工具与平台 · 国内国外平替</div>
+    </div>
+  </div>
+
+  <div class="peer-flow">
+    <div class="node">
+      <div class="name">每位主讲</div>
+      <div class="role">先当学生（23 天）<br>再当老师（1 天）</div>
+    </div>
+    <div class="node">
+      <div class="name">每位同学</div>
+      <div class="role">听 23 位"老师"<br>自己讲 1 节课</div>
+    </div>
+    <div class="node">
+      <div class="name">整个营</div>
+      <div class="role">24 套真实工作流<br>24 个第一手踩坑经验</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 18px; padding: 14px 18px; background: rgba(167, 139, 250, 0.06); border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 10px;">
+    <div style="font-size: 13px; color: var(--violet); font-weight: 700; margin-bottom: 6px;">★ "教，是最深的学"</div>
+      <div style="font-size: 12.5px; color: var(--ink-2); line-height: 1.6;">
+        主讲同学在准备讲课的那一周，自己对工具的理解会比平时深 3 倍 — 因为你必须能回答同学的"那如果 XXX 呢"。<br>
+        听同学的同学讲，比听老师讲更容易问出"小白问题"；讲给同学听，比讲给老师讲更容易暴露"理解盲区"。<br>
+        <b style="color: var(--ink);">24 天结束，你不只是学了 30 个工具，更是和 24 位同学结成了一个随时可以互相提问的小型智库。</b>
+      </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 7: 24-day overview ============ -->
+<section class="slide" id="s7">
+  <h2>24 天的全景 · 5 阶段 8 节点</h2>
+  <p class="lede">从环境配置到选刊投稿 — 一条完整的"AI × 科研"工作流，详见配套 onepage。</p>
+
+  <div class="phase-row">
+    <div class="phase-card p1">
+      <div class="days">DAY 1 – 5</div>
+      <div class="name">基础环境</div>
+      <div class="range">7.10 – 7.14</div>
+      <div class="topic">Agent 认知 · Python · API · RAG · Prompt</div>
+    </div>
+    <div class="phase-card p2">
+      <div class="days">DAY 6 – 11</div>
+      <div class="name">文献与开题</div>
+      <div class="range">7.15 – 7.20</div>
+      <div class="topic">批量下载 · 综述 · Gap · 标书 · 红蓝对抗</div>
+    </div>
+    <div class="phase-card p3">
+      <div class="days">DAY 12 – 15</div>
+      <div class="name">代码构建</div>
+      <div class="range">7.21 – 7.24</div>
+      <div class="topic">ML 建模 · 复现 · Debug · 结果解读</div>
+    </div>
+    <div class="phase-card p4">
+      <div class="days">DAY 16 – 21</div>
+      <div class="name">论文撰写</div>
+      <div class="range">7.25 – 7.30</div>
+      <div class="topic">IMRAD · Method · Result · 引言结论 · 摘要 · 诚信</div>
+    </div>
+    <div class="phase-card p5">
+      <div class="days">DAY 22 – 24</div>
+      <div class="name">投稿选刊</div>
+      <div class="range">7.31 – 8.2</div>
+      <div class="topic">选刊 · Cover Letter · 审稿回复</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 18px; padding: 14px 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;">
+    <div style="font-size: 13px; color: var(--ink); font-weight: 700; margin-bottom: 8px;">📅 每日结构</div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 12.5px; color: var(--ink-2);">
+      <div>
+        <span style="color: var(--sky); font-weight: 700;">09:00 – 10:00</span> &nbsp; 上午讲解（主讲 60 min）
+      </div>
+      <div>
+        <span style="color: var(--amber); font-weight: 700;">14:00 – 17:00</span> &nbsp; 下午动手（实操 180 min）
+      </div>
+      <div>
+        <span style="color: var(--violet); font-weight: 700;">20:00 – 21:00</span> &nbsp; 晚间输出（每日最小 demo）
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 8: What you'll gain ============ -->
+<section class="slide" id="s8">
+  <h2>24 天后，你将带走 3 样东西</h2>
+  <p class="lede">不是证书，不是打卡记录 — 是真正能用的资产。</p>
+
+  <div class="gain-grid" style="margin-top: 24px;">
+    <div class="gain-card sky">
+      <div class="icon">🛠️</div>
+      <h3>一套完整的"AI × 科研"工作流</h3>
+      <p>从环境配置到投稿回复，每一步都有固定可复用的 System Prompt + 工具组合 + 检查清单。<br><br>换课题也能用，换学校也能用，毕业也能用。</p>
+    </div>
+    <div class="gain-card amber">
+      <div class="icon">🧠</div>
+      <h3>一个随时可调用的同行知识网络</h3>
+      <p>24 位主讲同学各自擅长 1 个工具/方法论，组成了一个<b>第一手踩坑经验库</b>。<br><br>未来遇到任何 AI 工具问题，你都不是一个人在问。</p>
+    </div>
+    <div class="gain-card violet">
+      <div class="icon">🗺️</div>
+      <h3>一份真正属于自己的课题路线图</h3>
+      <p>经过 Day 11 红蓝对抗的压力测试 + Day 24 审稿模拟的反复打磨。<br><br>不再是"导师说做这个"，而是"我想做这个，因为它值得做"。</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 22px; text-align: center; padding: 16px; background: rgba(56, 189, 248, 0.06); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 10px;">
+    <div style="font-size: 14px; color: var(--ink-2); line-height: 1.7;">
+      24 天很短。<b style="color: var(--sky);">24 天后，你的工作方式会和今天完全不同。</b>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 9: Q&A ============ -->
+<section class="slide cover" id="s9">
+  <div class="eyebrow">Q & A · 自由讨论</div>
+  <h1>
+    24 天，<span class="hl-sky">一起把 AI</span><br>
+    <span class="hl-violet">变成科研的肌肉记忆</span>
+  </h1>
+  <p class="sub">
+    关于这个营，关于 AI，关于你的课题 —<br>
+    任何问题，欢迎现在问，也欢迎 24 天里随时问。
+  </p>
+  <div class="teasers">
+    <span class="teaser sky">📅 2026.7.10 – 8.2</span>
+    <span class="teaser amber">🎯 24 主讲 · 24 节课</span>
+    <span class="teaser green">🚀 5 阶段 8 节点</span>
+    <span class="teaser violet">🤝 peer-teaching</span>
+  </div>
+  <div class="host">
+    <b>主持 / 主讲协调：张俊宁</b><br>
+    主办：<b>暑期 24 天 AI 科研集训营 · 组委会</b><br>
+    配套材料：<b style="color: var(--sky);">www.drdongai.com/auto/onepage-ai-research-camp/</b>
+  </div>
+</section>
+
+<!-- ============ Controls ============ -->
+<div class="controls">
+  <div class="ctr">
+    <button onclick="prev()">← Prev</button>
+    <span class="counter"><span id="cur">1</span> / <span id="tot">9</span></span>
+    <button onclick="next()">Next →</button>
+    <button onclick="window.print()">🖨 Print</button>
+  </div>
+</div>
+
+<!-- Fixed footer credit -->
+<div class="credit">
+  <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const tot = slides.length;
+  document.getElementById('tot').textContent = tot;
+  let cur = 0;
+  const bar = document.getElementById('bar');
+  const curEl = document.getElementById('cur');
+
+  function show(i) {
+    cur = ((i % tot) + tot) % tot;
+    slides.forEach((s, k) => s.classList.toggle('active', k === cur));
+    curEl.textContent = cur + 1;
+    bar.style.width = ((cur + 1) / tot * 100) + '%';
+    location.hash = '#' + (cur + 1);
+  }
+  function next() { show(cur + 1); }
+  function prev() { show(cur - 1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') { show(0); }
+    else if (e.key === 'End') { show(tot - 1); }
+    else if (e.key === 'p' || e.key === 'P') { window.print(); }
+  });
+
+  // Touch navigation for mobile
+  let tx=0,ty=0,tt=0,moved=false;
+  document.addEventListener('touchstart', e => {
+    if (!e.touches.length) return;
+    tx=e.touches[0].clientX; ty=e.touches[0].clientY;
+    tt=Date.now(); moved=false;
+  }, {passive:true});
+  document.addEventListener('touchmove', e => {
+    if (!e.touches.length) return;
+    const dx=e.touches[0].clientX-tx, dy=e.touches[0].clientY-ty;
+    if (Math.abs(dx)>10||Math.abs(dy)>10) moved=true;
+  }, {passive:true});
+  document.addEventListener('touchend', e => {
+    if (!e.changedTouches.length) return;
+    const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty, dt=Date.now()-tt;
+    if (Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.25) { dx<0?next():prev(); return; }
+    if (!moved && dt<450) {
+      e.changedTouches[0].clientX<window.innerWidth*0.28?prev():next();
+    }
+  }, {passive:true});
+  document.addEventListener('click', e => {
+    if (e.target.closest('a,button,kbd')) return;
+    e.clientX<window.innerWidth*0.28?prev():next();
+  });
+
+  // Initial from hash
+  if (location.hash) {
+    const n = parseInt(location.hash.slice(1));
+    if (!isNaN(n) && n >= 1 && n <= tot) show(n - 1);
+  } else {
+    show(0);
+  }
+</script>
+
+</body>
+</html>

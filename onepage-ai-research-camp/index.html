@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>暑期 24 天 AI 科研集训营 · 一页日程全景</title>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --ink-2: #475569;
+      --ink-3: #94a3b8;
+      --line: #e2e8f0;
+      --line-2: #f1f5f9;
+
+      /* 主色：深炭灰 — 学术严谨 / 工具理性 */
+      --m1:        #1f2937;
+      --m1-soft:   #f1f5f9;
+      --m1-deep:   #0f172a;
+
+      /* 辅色：深琥珀 — 文献与开题 */
+      --m2:        #b45309;
+      --m2-soft:   #fef3c7;
+      --m2-deep:   #78350f;
+
+      /* 辅色：深紫罗兰 — 代码构建 */
+      --m3:        #5b21b6;
+      --m3-soft:   #ede9fe;
+      --m3-deep:   #4c1d95;
+
+      /* 辅色：深玫瑰红 — 论文撰写 */
+      --m4:        #be123c;
+      --m4-soft:   #ffe4e6;
+      --m4-deep:   #881337;
+
+      /* 辅色：深翠绿 — 投稿选刊 */
+      --m5:        #15803d;
+      --m5-soft:   #dcfce7;
+      --m5-deep:   #14532d;
+
+      --red:       #ef4444;
+      --red-soft:  #fef2f2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                   "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.55;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 880px;
+      margin: 0 auto;
+      background: var(--card);
+      box-shadow: 0 0 0 1px var(--line);
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      padding: 36px 44px 28px;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(ellipse 600px 200px at top right, var(--m1-soft) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 200px at bottom left, var(--m3-soft) 0%, transparent 70%);
+    }
+    header .tag {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--m1-deep);
+      background: var(--m1-soft);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    header h1 {
+      font-size: 28px;
+      line-height: 1.28;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    header .subtitle {
+      font-size: 14px;
+      color: var(--ink-2);
+      line-height: 1.6;
+    }
+    header .meta {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    header .meta span {
+      font-size: 11.5px;
+      color: var(--ink-3);
+      background: var(--line-2);
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+
+    /* ---------- Sections ---------- */
+    section {
+      padding: 28px 44px;
+      border-bottom: 1px solid var(--line-2);
+    }
+    section:last-of-type { border-bottom: none; }
+
+    /* ---------- Key Numbers ---------- */
+    .kv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .kv-box {
+      text-align: center;
+      padding: 18px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #fafafa;
+    }
+    .kv-box .num { font-size: 26px; font-weight: 800; color: var(--m1); letter-spacing: -0.02em; }
+    .kv-box .label { font-size: 12px; color: var(--ink-2); margin-top: 4px; line-height: 1.4; }
+
+    /* ---------- Overview ---------- */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    .ov-card {
+      padding: 12px 8px;
+      border-radius: 10px;
+      text-align: center;
+      border: 1px solid var(--line);
+      font-size: 12px;
+    }
+    .ov-card .emoji { font-size: 22px; margin-bottom: 4px; display: block; }
+    .ov-card .name  { font-weight: 700; margin-bottom: 2px; font-size: 12.5px; }
+    .ov-card .en    { font-size: 9.5px; color: var(--ink-3); letter-spacing: 0.04em; line-height: 1.3; }
+    .ov-card.c1 { background: var(--m1-soft);   border-color: #cbd5e1; }
+    .ov-card.c2 { background: var(--m2-soft);   border-color: #fde68a; }
+    .ov-card.c3 { background: var(--m3-soft);   border-color: #ddd6fe; }
+    .ov-card.c4 { background: var(--m4-soft);   border-color: #fecdd3; }
+    .ov-card.c5 { background: var(--m5-soft);   border-color: #bbf7d0; }
+
+    /* ---------- Numbered module ---------- */
+    .module { margin-bottom: 28px; }
+    .module:last-child { margin-bottom: 0; }
+    .module-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .module-num {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 10px;
+      font-size: 15px; font-weight: 800; color: #fff;
+      flex-shrink: 0;
+    }
+    .m1 .module-num { background: var(--m1); }
+    .m2 .module-num { background: var(--m2); }
+    .m3 .module-num { background: var(--m3); }
+    .m4 .module-num { background: var(--m4); }
+    .m5 .module-num { background: var(--m5); }
+
+    .module-title { font-size: 17px; font-weight: 700; line-height: 1.3; }
+    .module-title .en { font-size: 11px; font-weight: 500; color: var(--ink-3); display: block; letter-spacing: 0.05em; margin-top: 2px; }
+    .module-meta {
+      font-size: 11.5px;
+      color: var(--ink-2);
+      margin-bottom: 12px;
+      padding: 6px 12px;
+      background: var(--line-2);
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .module-meta b { color: var(--ink); }
+
+    /* ---------- Day rows ---------- */
+    .day-list { display: flex; flex-direction: column; gap: 6px; }
+    .day-row {
+      display: flex;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fdfdfd;
+      transition: border-color 0.15s;
+    }
+    .day-row:hover { border-color: #cbd5e1; }
+
+    .day-meta {
+      flex-shrink: 0;
+      width: 56px;
+      text-align: center;
+      padding: 4px 0;
+      border-right: 1px solid var(--line-2);
+      padding-right: 12px;
+    }
+    .day-meta .day-num {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: 0.02em;
+    }
+    .day-meta .day-date {
+      font-size: 10.5px;
+      color: var(--ink-3);
+      margin-top: 2px;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    }
+
+    .day-body { flex: 1; min-width: 0; }
+    .day-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 3px;
+    }
+    .day-content {
+      font-size: 12.5px;
+      color: var(--ink-2);
+      line-height: 1.55;
+      margin-bottom: 4px;
+    }
+    .day-foot {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 11px;
+      color: var(--ink-3);
+      flex-wrap: wrap;
+    }
+    .day-foot .tools { color: var(--ink-2); }
+    .day-foot .presenter {
+      margin-left: auto;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--line-2);
+      font-weight: 600;
+      color: var(--ink);
+      font-size: 11px;
+    }
+
+    /* Module accent for tools + presenter */
+    .m1 .day-foot .tools b { color: var(--m1-deep); }
+    .m2 .day-foot .tools b { color: var(--m2-deep); }
+    .m3 .day-foot .tools b { color: var(--m3-deep); }
+    .m4 .day-foot .tools b { color: var(--m4-deep); }
+    .m5 .day-foot .tools b { color: var(--m5-deep); }
+
+    /* ---------- Pitfalls ---------- */
+    .pitfall-list { display: flex; flex-direction: column; gap: 10px; }
+    .pitfall {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--red-soft);
+      border-left: 4px solid var(--red);
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+    .pitfall .cross {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; background: var(--red);
+      border-radius: 50%;
+      font-size: 14px; font-weight: 800;
+      margin-top: 1px;
+    }
+    .pitfall .wrong { text-decoration: line-through; color: #b91c1c; }
+    .pitfall .right { color: #15803d; font-weight: 700; }
+
+    /* ---------- Footer ---------- */
+    footer {
+      padding: 28px 44px 32px;
+      background: var(--ink);
+      color: #e2e8f0;
+    }
+    footer .tl-dr {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 14px;
+    }
+    footer .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    footer .sum-item {
+      padding: 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      font-size: 12.5px;
+      line-height: 1.55;
+    }
+    footer .sum-item .label {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: #fda4af;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    footer .oneliner {
+      padding: 16px 20px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.7;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    footer .oneliner .hl { color: #fda4af; }
+
+    .credit {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 11.5px;
+      color: #64748b;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 720px) {
+      header, section, footer { padding-left: 24px; padding-right: 24px; }
+      .overview-grid { grid-template-columns: 1fr 1fr; }
+      .kv-grid { grid-template-columns: 1fr 1fr; }
+      footer .summary-grid { grid-template-columns: 1fr; }
+      .day-row { flex-direction: column; gap: 6px; }
+      .day-meta { width: auto; text-align: left; border-right: none; border-bottom: 1px solid var(--line-2); padding: 0 0 6px 0; display: flex; gap: 8px; }
+      .day-foot .presenter { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+<!-- ====== Header ====== -->
+<header>
+  <div class="tag">AI × Research · 24-Day Bootcamp</div>
+  <h1>暑期 24 天 AI 科研集训营 · 一页日程全景</h1>
+  <p class="subtitle">
+    从环境配置到选刊投稿 — 5 阶段 24 节课，AI 全程嵌入科研闭环。<br>
+    <b style="color: var(--m1-deep);">同学即学习者，也是教授者。</b>24 位主讲同学每天轮换登台，全程 peer-teaching。
+  </p>
+  <div class="meta">
+    <span>📅 2026.7.10 – 8.2</span>
+    <span>🎯 主持：张俊宁</span>
+    <span>📚 5 阶段 / 24 天 / 24 主讲同学</span>
+  </div>
+</header>
+
+<!-- ====== Key Numbers ====== -->
+<section>
+  <div class="kv-grid">
+    <div class="kv-box"><div class="num">5</div><div class="label">阶段<br>环境 / 文献 / 代码 / 写作 / 投稿</div></div>
+    <div class="kv-box"><div class="num">24</div><div class="label">天连续集训<br>7.10 – 8.2</div></div>
+    <div class="kv-box"><div class="num">24</div><div class="label">主讲同学<br>peer-teaching</div></div>
+    <div class="kv-box"><div class="num">30+</div><div class="label">工具与平台<br>国内外平替全栈</div></div>
+  </div>
+</section>
+
+<!-- ====== Overview ====== -->
+<section>
+  <div class="overview-grid">
+    <div class="ov-card c1"><span class="emoji">🛠️</span><div class="name">基础环境</div><div class="en">ENV · AGENT</div></div>
+    <div class="ov-card c2"><span class="emoji">📚</span><div class="name">文献与开题</div><div class="en">LITERATURE · GAP</div></div>
+    <div class="ov-card c3"><span class="emoji">💻</span><div class="name">代码构建</div><div class="en">CODE · DEBUG</div></div>
+    <div class="ov-card c4"><span class="emoji">✍️</span><div class="name">论文撰写</div><div class="en">IMRAD · POLISH</div></div>
+    <div class="ov-card c5"><span class="emoji">🎯</span><div class="name">投稿选刊</div><div class="en">SUBMIT · REVIEW</div></div>
+  </div>
+</section>
+
+<!-- ====== Module 01 ====== -->
+<section class="module m1">
+  <div class="module-head">
+    <div class="module-num">01</div>
+    <div class="module-title">基础环境与智能体认知<span class="en">FOUNDATION · ENVIRONMENT · AGENT LITERACY</span></div>
+  </div>
+  <div class="module-meta">📅 <b>Day 1 – 5</b> &nbsp;·&nbsp; 7.10 – 7.14 &nbsp;·&nbsp; 5 位主讲</div>
+
+  <div class="day-list">
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 1</div><div class="day-date">7.10</div></div>
+      <div class="day-body">
+        <div class="day-title">AI Agent 在科研中的应用全景</div>
+        <div class="day-content">传统大模型对话 vs 智能体的核心功能差异 · 常见科研型工具盘点与底层运行机制解析 · 演示智能体自动执行本地文件操作与自主排错</div>
+        <div class="day-foot"><span class="tools">工具：<b>ChatGPT Plus / Claude / Kimi / DeepSeek</b></span><span class="presenter">马跃洋</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 2</div><div class="day-date">7.11</div></div>
+      <div class="day-body">
+        <div class="day-title">Python 与科研开发环境自动化配置</div>
+        <div class="day-content">大语言模型在解决依赖冲突中的辅助作用 · 利用 AI 辅助编写本地终端环境配置脚本 · 一键自动化安装 Python 科学计算栈</div>
+        <div class="day-foot"><span class="tools">工具：<b>Miniconda + Claude Code / Cursor</b></span><span class="presenter">戈欣悦</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 3</div><div class="day-date">7.12</div></div>
+      <div class="day-body">
+        <div class="day-title">大模型 API 接入与本地智能体部署</div>
+        <div class="day-content">大模型 API 接口调用基础原理与鉴权机制 · 本地大型语言模型离线运行环境部署 · 开源图形化 AI 客户端的配置与唤醒测试</div>
+        <div class="day-foot"><span class="tools">工具：<b>OpenRouter / 硅基流动 / Ollama / Chatbox / Cherry Studio</b></span><span class="presenter">杨帆</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 4</div><div class="day-date">7.13</div></div>
+      <div class="day-body">
+        <div class="day-title">基于 RAG 的专属科研资料库构建</div>
+        <div class="day-content">检索增强生成 (RAG) 与向量数据库核心概念 · 零代码构建个人本地科研知识库 · 批量文献 PDF 导入与基于专有文献库的专业问答</div>
+        <div class="day-foot"><span class="tools">工具：<b>FastGPT / Dify · AnythingLLM（备选）</b></span><span class="presenter">胡烯悦</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 5</div><div class="day-date">7.14</div></div>
+      <div class="day-body">
+        <div class="day-title">提示词工程与科研 System Prompt 设计</div>
+        <div class="day-content">Prompt Engineering 核心原则与结构化逻辑表达 · System Prompt 中的角色设定、背景约束与输出规范 · 构建并持久化个人课题专属系统级提示词模板</div>
+        <div class="day-foot"><span class="tools">工具：<b>各类大模型的"系统指令/助手"设置界面</b></span><span class="presenter">金太宇</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== Module 02 ====== -->
+<section class="module m2">
+  <div class="module-head">
+    <div class="module-num">02</div>
+    <div class="module-title">文献检索与开题设计<span class="en">LITERATURE REVIEW · GAP MINING · PROPOSAL DESIGN</span></div>
+  </div>
+  <div class="module-meta">📅 <b>Day 6 – 11</b> &nbsp;·&nbsp; 7.15 – 7.20 &nbsp;·&nbsp; 6 位主讲</div>
+
+  <div class="day-list">
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 6</div><div class="day-date">7.15</div></div>
+      <div class="day-body">
+        <div class="day-title">自动化文献批量下载与精读提取</div>
+        <div class="day-content">面向论文摘要、研究动机、实验方法的结构化提取规则 · 文献管理软件与 AI 阅读插件的结合 · 跨文献精读与大数据提取分析</div>
+        <div class="day-foot"><span class="tools">工具：<b>Zotero + 翻译/阅读插件 · SciSpace · Kimi 长文本</b></span><span class="presenter">曾德祥</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 7</div><div class="day-date">7.16</div></div>
+      <div class="day-body">
+        <div class="day-title">多文档阅读与宏观文献综述梳理</div>
+        <div class="day-content">突破上下文长度限制的长文本信息处理策略 · 同细分领域数十篇文献的并行投喂与要点对齐 · 领域发展时间轴与技术流派树状图自动化生成</div>
+        <div class="day-foot"><span class="tools">工具：<b>NotebookLM · Kimi 超长文本</b></span><span class="presenter">江驰</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 8</div><div class="day-date">7.17</div></div>
+      <div class="day-body">
+        <div class="day-title">研究空白 (Research Gap) 的纵深挖掘</div>
+        <div class="day-content">苏格拉底式交叉提问法在大模型对话中的运用 · 基于文献综述的科研痛点与现存局限性梳理 · 领域未解难题的定位与切入点可行性评估</div>
+        <div class="day-foot"><span class="tools">工具：<b>Claude 3.5 Sonnet / GPT-4o · DeepSeek / Qwen-Max</b></span><span class="presenter">王啸</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 9</div><div class="day-date">7.18</div></div>
+      <div class="day-body">
+        <div class="day-title">基金标书"立项依据"与"技术路线"撰写</div>
+        <div class="day-content">学术开题核心逻辑链条解析 (背景 → 痛点 → 问题 → 方案) · 研究动机的深度提炼与立意升华 · 一键生成开题一、二级结构化标题框架</div>
+        <div class="day-foot"><span class="tools">工具：<b>ChatGPT Plus · 智谱清言 / Kimi</b></span><span class="presenter">刘梓萌</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 10</div><div class="day-date">7.19</div></div>
+      <div class="day-body">
+        <div class="day-title">基金标书的研究内容撰写</div>
+        <div class="day-content">科研基金标书学术语言的高度、严密性与套路解析</div>
+        <div class="day-foot"><span class="tools">工具：<b>无（纯方法论与语言训练）</b></span><span class="presenter">甘芷睿</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 11</div><div class="day-date">7.20</div></div>
+      <div class="day-body">
+        <div class="day-title">开题方案"红蓝对抗"与盲审压力测试</div>
+        <div class="day-content">大模型红蓝对抗机制在科研开题论证中的应用 · "盲审专家"角色提示词的极度严苛设定与防御测试 · 实验设计漏洞排查与课题抗压性迭代</div>
+        <div class="day-foot"><span class="tools">工具：<b>Claude 3.5 Sonnet · DeepSeek / 通义千问</b></span><span class="presenter">徐杰</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== Module 03 ====== -->
+<section class="module m3">
+  <div class="module-head">
+    <div class="module-num">03</div>
+    <div class="module-title">代码构建与解读实战<span class="en">CODE CONSTRUCTION · DEBUGGING · RESULT INTERPRETATION</span></div>
+  </div>
+  <div class="module-meta">📅 <b>Day 12 – 15</b> &nbsp;·&nbsp; 7.21 – 7.24 &nbsp;·&nbsp; 4 位主讲</div>
+
+  <div class="day-list">
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 12</div><div class="day-date">7.21</div></div>
+      <div class="day-body">
+        <div class="day-title">基础机器学习算法模型的快速搭建</div>
+        <div class="day-content">经典预测与分类模型 (随机森林、SVM) 的数学基础 · 零代码基础用 AI 编写数据集划分与 Scikit-Learn 框架 · 训练过程、精度指标与混淆矩阵解读</div>
+        <div class="day-foot"><span class="tools">工具：<b>Cursor + GPT-4o / DeepSeek API</b></span><span class="presenter">何炫颖</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 13</div><div class="day-date">7.22</div></div>
+      <div class="day-body">
+        <div class="day-title">GitHub 顶会论文开源代码解析与复现</div>
+        <div class="day-content">深度学习开源代码仓库目录架构与 README.md 阅读 · 复杂项目依赖 (requirements.txt) 的环境排雷 · 源码克隆、编译排错与 Demo 成功运行</div>
+        <div class="day-foot"><span class="tools">工具：<b>Cursor / GitHub Copilot</b></span><span class="presenter">王琦华</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 14</div><div class="day-date">7.23</div></div>
+      <div class="day-body">
+        <div class="day-title">代码全自动排错 (Debug) 与超参优化</div>
+        <div class="day-content">终端报错堆栈信息的逻辑阅读 · 投喂完整报错日志进行环境配置或运行错误的定位修复 · 结合输出让 AI 评估并建议超参优化方向</div>
+        <div class="day-foot"><span class="tools">工具：<b>Claude Code · DeepSeek Coder</b></span><span class="presenter">牟刘蕊</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 15</div><div class="day-date">7.24</div></div>
+      <div class="day-body">
+        <div class="day-title">实验数据结果的结构化学术解读</div>
+        <div class="day-content">统计学核心指标 (P 值、方差、相关系数等) 的书面学术转换 · 数据表格趋势与绘图结果的综合对比分析 · 使用显著性检验等词汇生成严密学术段落</div>
+        <div class="day-foot"><span class="tools">工具：<b>Claude 3.5 Sonnet · 通义千问 / Kimi</b></span><span class="presenter">王乐平</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== Module 04 ====== -->
+<section class="module m4">
+  <div class="module-head">
+    <div class="module-num">04</div>
+    <div class="module-title">学术论文撰写与深度润色<span class="en">IMRAD STRUCTURE · SCIENTIFIC WRITING · POLISH</span></div>
+  </div>
+  <div class="module-meta">📅 <b>Day 16 – 21</b> &nbsp;·&nbsp; 7.25 – 7.30 &nbsp;·&nbsp; 6 位主讲</div>
+
+  <div class="day-list">
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 16</div><div class="day-date">7.25</div></div>
+      <div class="day-body">
+        <div class="day-title">核心数据简报至 IMRAD 结构大纲演化</div>
+        <div class="day-content">学术长文 IMRAD (引言-方法-结果-讨论) 标准写作范式 · 论文核心章节间的逻辑承接与内容篇幅分配 · 结合 AI 脑图工具一键生成完整级联标题骨架</div>
+        <div class="day-foot"><span class="tools">工具：<b>Xmind Copilot / GitMind</b></span><span class="presenter">陈义天</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 17</div><div class="day-date">7.26</div></div>
+      <div class="day-body">
+        <div class="day-title">Method (方法学) 的规范表述</div>
+        <div class="day-content">实验操作与方案复现性描述规范及被动语态转换规则 · 冗长口语化实验步骤至学术化叙述的文本重写指令设计 · 临床特征或实验参数的结构化描述生成</div>
+        <div class="day-foot"><span class="tools">工具：<b>Claude 3.5 Sonnet · DeepSeek / Kimi</b></span><span class="presenter">汪文轩</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 18</div><div class="day-date">7.27</div></div>
+      <div class="day-body">
+        <div class="day-title">Result (结果) 章节图文协同分析与撰写</div>
+        <div class="day-content">客观陈述测定数据与凸显核心发现 (Finding) 的行文平衡 · 图表指标引述与文本数据分析段落的自然衔接 · 强化整体研究突破点的深层数据解析</div>
+        <div class="day-foot"><span class="tools">工具：<b>Claude 3.5 Sonnet · 通义千问</b></span><span class="presenter">陶铜铜</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 19</div><div class="day-date">7.28</div></div>
+      <div class="day-body">
+        <div class="day-title">Introduction 与 Conclusion 的学术立意拔高</div>
+        <div class="day-content">引言部分"漏斗结构"的纵深剖析 (从宏观背景收敛到微观差距) · 结论撰写的学术反思原则与研究局限性 (Limitation) 深度探讨 · 基于核心 Result 逆向推演升华背景与结论</div>
+        <div class="day-foot"><span class="tools">工具：<b>Claude 3.5 Sonnet · 通义千问 Qwen-Max</b></span><span class="presenter">谷鑫</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 20</div><div class="day-date">7.29</div></div>
+      <div class="day-body">
+        <div class="day-title">Abstract 精炼压缩与论文 Title 优化提取</div>
+        <div class="day-content">SCI/顶刊摘要的严格字数限制与核心科研要素布局规则 · 超长学术文本的极限信息压缩与核心提炼 · 强传播力学术标题的提取原则与检索关键词匹配</div>
+        <div class="day-foot"><span class="tools">工具：<b>ChatGPT Plus · Kimi 长文本</b></span><span class="presenter">冯恩琪</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 21</div><div class="day-date">7.30</div></div>
+      <div class="day-body">
+        <div class="day-title">学术诚信底线与"代写检测"工具规避</div>
+        <div class="day-content">国际主流学术出版机构针对生成式 AI 工具的使用边界与政策 · 常见 AI 文本检测系统的判别机制与扫描原理 · 坚守"人机协同、辅助润色"底线，保留个人原始叙事风格</div>
+        <div class="day-foot"><span class="tools">工具：<b>（方法论 + 政策解读为主）</b></span><span class="presenter">冯佳雯</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== Module 05 ====== -->
+<section class="module m5">
+  <div class="module-head">
+    <div class="module-num">05</div>
+    <div class="module-title">选刊投稿与审稿应对<span class="en">JOURNAL MATCHING · COVER LETTER · REBUTTAL</span></div>
+  </div>
+  <div class="module-meta">📅 <b>Day 22 – 24</b> &nbsp;·&nbsp; 7.31 – 8.2 &nbsp;·&nbsp; 3 位主讲</div>
+
+  <div class="day-list">
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 22</div><div class="day-date">7.31</div></div>
+      <div class="day-body">
+        <div class="day-title">命中率预估匹配选刊与预警库筛查</div>
+        <div class="day-content">基于论文创新层级与期望影响因子的 Target Journal 匹配策略 · 利用摘要/结论进行大数据期刊命中匹配 · 结合最新年度中科院官方预警期刊名单的批量排雷比对</div>
+        <div class="day-foot"><span class="tools">工具：<b>LetPub 期刊推荐系统</b></span><span class="presenter">金波</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 23</div><div class="day-date">8.1</div></div>
+      <div class="day-body">
+        <div class="day-title">复杂参考文献格式自动化适配与 Cover Letter</div>
+        <div class="day-content">各大期刊差异化排版指南的提取与参考文献风格自动化转换 · 第一作者致主编投稿信 (Cover Letter) 必需包含的核心说服要素 · 生成高度凝练价值的推销信模板</div>
+        <div class="day-foot"><span class="tools">工具：<b>EndNote / Zotero · ChatGPT Plus / Kimi / DeepSeek</b></span><span class="presenter">王陈号</span></div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-meta"><div class="day-num">Day 24</div><div class="day-date">8.2</div></div>
+      <div class="day-body">
+        <div class="day-title">严苛审稿意见 (Reviewer Comments) 拆解与回复信起草</div>
+        <div class="day-content">面对大修/拒稿的学术心态调适与审稿意见结构归类 · 越过尖锐措辞，提炼冗长审稿意见背后的核心科学顾虑 · 逐条撰写逻辑严密的回驳建议与补充实验框架规划</div>
+        <div class="day-foot"><span class="tools">工具：<b>Claude 3.5 Sonnet · DeepSeek</b></span><span class="presenter">辛家丽</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== Pitfalls ====== -->
+<section>
+  <div class="pitfall-list">
+    <div class="pitfall">
+      <span class="cross">✗</span>
+      <div>
+        <b style="color: var(--m1-deep);">把 AI 当"代写神器"</b> — <span class="wrong">直接拷贝大模型输出当论文投稿</span><br>
+        <span class="right">👉 AI 是放大器，不是替代器</span>。坚守"人机协同、辅助润色"底线，保留个人原始叙事风格；用 AI 检测工具反复扫描自己的初稿。
+      </div>
+    </div>
+    <div class="pitfall">
+      <span class="cross">✗</span>
+      <div>
+        <b style="color: var(--m1-deep);">只追新模型，不沉淀方法论</b> — <span class="wrong">今天用 ChatGPT 明天切 Claude，没有固定工作流</span><br>
+        <span class="right">👉 在 Day 5 沉淀专属 System Prompt 模板</span>，把"角色 + 背景 + 约束 + 输出规范"固化下来，跨模型迁移成本才低。
+      </div>
+    </div>
+    <div class="pitfall">
+      <span class="cross">✗</span>
+      <div>
+        <b style="color: var(--m1-deep);">"听讲式"被动学习</b> — <span class="wrong">坐在下面听同学讲，自己不动手</span><br>
+        <span class="right">👉 每天课后必须有一个"今天我用 AI 解决了 X"的最小产出</span>。24 天后你带走的不只是知识，是 24 套已经跑通的工作流。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== Footer ====== -->
+<footer>
+  <div class="tl-dr">这一页先记住 · TL;DR</div>
+  <div class="summary-grid">
+    <div class="sum-item">
+      <div class="label">PATH · 路径</div>
+      <b>环境 → 文献 → 代码 → 写作 → 投稿</b>。5 阶段闭环，覆盖科研全流程。<br>每阶段都"先方法论 + 后 AI 工具"双线并行。
+    </div>
+    <div class="sum-item">
+      <div class="label">PEOPLE · 人员</div>
+      <b>24 位主讲每天轮换登台</b>。每位主讲负责 1 节课，深入自己最擅长的工具与方法。<br>peer-teaching 而非传统讲授。
+    </div>
+    <div class="sum-item">
+      <div class="label">MINDSET · 心法</div>
+      <b>人机协同、批判使用</b>。AI 放大你的能力边界，不是替代你的判断。<br>Day 8 找 gap，Day 11 红蓝对抗，Day 21 守住学术诚信。
+    </div>
+  </div>
+  <div class="oneliner">
+    24 天后，你将带走：<span class="hl">一套完整的"AI × 科研"工作流 + 一个随时可调用的同行知识网络 + 一份真正属于自己的课题路线图。</span>
+  </div>
+
+  <div class="credit">
+    <b style="color: var(--ink-2); font-weight: 700;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+    <span style="font-size: 10.5px; color: var(--ink-3);">© 2026 DONG XINGBO · All rights reserved</span>
+  </div>
+</footer>
+
+</div>
+</body>
+</html>
