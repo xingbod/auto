@@ -1,0 +1,1010 @@
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 时代如何开展科研 · 读研指南</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif; background: #0d1117; color: #e6edf3; }
+
+/* Slide container */
+.slide { position: absolute; inset: 0; display: none; flex-direction: column; justify-content: center; padding: 36px 64px 90px; background: #0d1117; overflow-y: auto; }
+.slide.active { display: flex; }
+.slide.tight { padding: 28px 56px 76px; }
+.slide.tight h2 { margin: 0 0 10px; font-size: 28px; }
+.slide.tight p, .slide.tight li { font-size: 14.5px; line-height: 1.4; margin: 3px 0; }
+
+/* Typography */
+h1 { font-size: 36px; font-weight: 700; margin: 0 0 10px; background: linear-gradient(135deg, #58a6ff, #bc8cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.3; }
+h1.no-grad { background: none; -webkit-text-fill-color: #e6edf3; }
+h2 { font-size: 30px; font-weight: 700; margin: 0 0 14px; color: #e6edf3; }
+h2 .hl { color: #58a6ff; }
+h3 { font-size: 19px; font-weight: 600; margin: 10px 0 6px; color: #f0f6fc; }
+p { font-size: 16px; line-height: 1.55; margin: 6px 0; color: #c9d1d9; }
+p.small { font-size: 13px; color: #8b949e; }
+p.gray { color: #8b949e; }
+ul, ol { margin: 6px 0 6px 20px; }
+li { font-size: 16px; line-height: 1.5; margin: 4px 0; color: #c9d1d9; }
+
+/* Grid layouts */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+
+/* Boxes / Cards */
+.card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 14px 16px; }
+.card h4 { font-size: 15px; font-weight: 600; margin: 0 0 6px; color: #58a6ff; }
+.card p, .card li { font-size: 13.5px; line-height: 1.4; margin: 2px 0; }
+.card ul { margin: 4px 0 4px 14px; }
+.card li { font-size: 13px; line-height: 1.35; }
+
+.box { display: inline-block; padding: 4px 10px; border-radius: 5px; font-weight: 600; font-size: 13px; margin: 2px 3px; border: 1px solid; }
+.box.blue   { background: rgba(88,166,255,0.12); color: #58a6ff; border-color: #58a6ff; }
+.box.green  { background: rgba(63,185,80,0.12);  color: #3fb950; border-color: #3fb950; }
+.box.purple { background: rgba(188,140,255,0.12); color: #bc8cff; border-color: #bc8cff; }
+.box.orange { background: rgba(210,153,34,0.12);  color: #d29922; border-color: #d29922; }
+.box.red    { background: rgba(248,81,73,0.12);   color: #f85149; border-color: #f85149; }
+.box.pink   { background: rgba(236,72,153,0.12);  color: #ec4899; border-color: #ec4899; }
+.box.cyan   { background: rgba(86,207,225,0.12);  color: #56cfe1; border-color: #56cfe1; }
+.box.gray   { background: rgba(139,148,158,0.12); color: #8b949e; border-color: #8b949e; }
+
+/* Pipeline flow */
+.pipeline { display: flex; align-items: center; justify-content: center; margin: 10px 0; padding: 10px; background: #161b22; border-radius: 8px; border: 1px solid #30363d; gap: 4px; flex-wrap: wrap; }
+.pipeline-step { flex: 1; min-width: 60px; text-align: center; padding: 8px 6px; border-radius: 5px; background: rgba(88,166,255,0.08); border: 1px solid #58a6ff; font-size: 12px; font-weight: 600; color: #c9d1d9; }
+.pipeline-step .small { font-size: 10px; color: #8b949e; font-weight: 400; margin-top: 2px; }
+.pipeline-arrow { font-size: 16px; color: #58a6ff; margin: 0 2px; }
+
+/* Skill tags */
+.tag { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; margin: 2px 3px; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; }
+.tag.ess { border-color: #58a6ff; color: #58a6ff; }
+.tag.imp { border-color: #3fb950; color: #3fb950; }
+.tag.nice { border-color: #8b949e; color: #8b949e; }
+
+/* Quote */
+.quote { border-left: 3px solid #58a6ff; padding: 10px 16px; margin: 10px 0; background: #161b22; border-radius: 0 8px 8px 0; font-style: italic; }
+.quote p { font-size: 15px; color: #c9d1d9; margin: 0; }
+.quote .author { font-size: 13px; color: #8b949e; margin-top: 6px; text-align: right; }
+
+/* Highlight blocks */
+.highlight { display: inline-block; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+.highlight.blue { background: rgba(88,166,255,0.2); color: #58a6ff; }
+.highlight.green { background: rgba(63,185,80,0.2); color: #3fb950; }
+.highlight.purple { background: rgba(188,140,255,0.2); color: #bc8cff; }
+.highlight.orange { background: rgba(210,153,34,0.2); color: #d29922; }
+
+/* Number grid */
+.num-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 8px 0; }
+.num-cell { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 10px; text-align: center; }
+.num-cell .lbl { font-size: 11px; color: #8b949e; }
+.num-cell .val { font-size: 20px; font-weight: bold; margin: 3px 0; font-family: ui-monospace, monospace; color: #58a6ff; }
+.num-cell .sub { font-size: 11px; color: #8b949e; }
+
+/* Tree */
+.tree { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px; white-space: pre; background: #161b22; padding: 10px 14px; border-radius: 6px; border: 1px solid #30363d; line-height: 1.35; color: #c9d1d9; overflow-x: auto; }
+
+/* Navigation controls */
+#controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; align-items: center; gap: 12px; background: rgba(22,27,34,0.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid #30363d; border-radius: 20px; padding: 6px 14px; }
+#controls button { background: #21262d; border: 1px solid #30363d; color: #e6edf3; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 13px; font-family: inherit; transition: .15s; }
+#controls button:hover { background: #30363d; border-color: #58a6ff; }
+#page-indicator { font-size: 13px; color: #8b949e; min-width: 80px; text-align: center; }
+#progress-bar { position: fixed; bottom: 0; left: 0; height: 3px; background: linear-gradient(90deg, #58a6ff, #bc8cff); z-index: 1001; transition: width .3s ease; }
+
+/* Keyboard hint */
+#keyboard-hint { position: fixed; top: 10px; right: 14px; z-index: 999; font-size: 11px; color: #484f58; }
+
+/* Copyright bar - fixed at bottom */
+#copyright-bar { position: fixed; bottom: 70px; left: 0; right: 0; z-index: 999; text-align: center; font-size: 11px; color: #484f58; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; line-height: 1.4; pointer-events: none; }
+#copyright-bar b { color: #6e7681; font-weight: 600; }
+
+/* Code block */
+.code { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 10px 14px; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 13px; line-height: 1.4; color: #c9d1d9; overflow-x: auto; margin: 6px 0; white-space: pre; }
+
+/* Diagram */
+.diagram { background: rgba(0,0,0,.20); border: 1px solid #30363d; border-radius: 12px; padding: 10px 14px; margin: 4px 0; }
+.diag-row { display: flex; align-items: stretch; gap: 6px; margin: 4px 0; flex-wrap: wrap; }
+.diag-row .grp { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 80px; padding: 6px 8px; background: rgba(88,166,255,.06); border: 1px solid rgba(88,166,255,.22); border-radius: 8px; }
+.diag-row .grp .gl { font-size: 11px; color: #58a6ff; font-weight: 600; letter-spacing: .03em; margin-bottom: 2px; }
+.diag-row .grp .gn { display: inline-block; padding: 2px 5px; border-radius: 4px; background: rgba(255,255,255,.06); border: 1px solid #30363d; font-size: 12px; margin: 1px; color: #c9d1d9; }
+.diag-row .grp.blue   { background: rgba(88,166,255,.06); border-color: rgba(88,166,255,.25); }
+.diag-row .grp.green  { background: rgba(63,185,80,.06);  border-color: rgba(63,185,80,.25); .gl { color: #3fb950; } }
+.diag-row .grp.purple { background: rgba(188,140,255,.06); border-color: rgba(188,140,255,.25); .gl { color: #bc8cff; } }
+.diag-row .grp.orange { background: rgba(210,153,34,.06); border-color: rgba(210,153,34,.25); .gl { color: #d29922; } }
+.diag-row .grp.pink   { background: rgba(236,72,153,.06); border-color: rgba(236,72,153,.25); .gl { color: #ec4899; } }
+.diag-row .grp.cyan   { background: rgba(86,207,225,.06); border-color: rgba(86,207,225,.25); .gl { color: #56cfe1; } }
+.diag-flow { text-align: center; color: #484f58; font-size: 13px; margin: 2px 0; }
+
+/* Phase bar */
+.phase-row { display: flex; gap: 8px; margin: 10px 0; }
+.phase { flex: 1; background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 10px 12px; text-align: center; }
+.phase .pn { font-size: 15px; font-weight: 700; color: #58a6ff; margin-bottom: 4px; }
+.phase .pd { font-size: 12px; color: #8b949e; line-height: 1.35; }
+.phase .pr { display: inline-block; margin-top: 4px; font-size: 11px; padding: 2px 6px; border-radius: 4px; background: rgba(63,185,80,0.12); color: #3fb950; border: 1px solid rgba(63,185,80,0.25); }
+
+/* Skill table */
+.skill-table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 13px; }
+.skill-table th { background: #161b22; border: 1px solid #30363d; padding: 6px 10px; text-align: left; color: #8b949e; font-weight: 600; font-size: 12px; }
+.skill-table td { border: 1px solid #30363d; padding: 5px 10px; color: #c9d1d9; line-height: 1.35; }
+.skill-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: 封面 -->
+<section class="slide active">
+  <div style="text-align: center; max-width: 780px; margin: 0 auto;">
+    <div style="margin-bottom: 20px;">
+      <span class="box blue">AI 时代</span>
+      <span class="box green">科研方法</span>
+      <span class="box purple">读研指南</span>
+    </div>
+    <h1 style="font-size: 42px; margin-bottom: 16px;">AI 时代如何开展科研？<br>应该怎么读研？</h1>
+    <p style="font-size: 18px; color: #8b949e; margin-bottom: 20px;">从选题 · 技能 · 工具 · 心态，系统构建你的研究生涯</p>
+    <div style="margin-top: 30px;">
+      <div class="pipeline" style="max-width: 600px; margin: 0 auto;">
+        <span class="pipeline-step" style="border-color: #3fb950;">🎯 方向<span class="small">选题定位</span></span>
+        <span class="pipeline-arrow">→</span>
+        <span class="pipeline-step" style="border-color: #58a6ff;">🛠 技能<span class="small">硬核能力</span></span>
+        <span class="pipeline-arrow">→</span>
+        <span class="pipeline-step" style="border-color: #bc8cff;">📝 方法<span class="small">科研范式</span></span>
+        <span class="pipeline-arrow">→</span>
+        <span class="pipeline-step" style="border-color: #d29922;">🔄 进化<span class="small">持续成长</span></span>
+      </div>
+    </div>
+    <p class="small gray" style="margin-top: 40px;">← → / Space 翻页 · Home/End 首尾 · P 打印</p>
+  </div>
+</section>
+
+<!-- SLIDE 2: 为什么需要这门课 -->
+<section class="slide">
+  <h2>🤔 为什么需要这门课？</h2>
+  <div class="grid2" style="margin-top: 8px;">
+    <div class="card">
+      <h4>AI 重塑科研范式</h4>
+      <ul>
+        <li>ChatGPT/Claude 改变了文献调研方式</li>
+        <li>AI 代码生成降低了编程门槛</li>
+        <li>大模型成为"第二大脑"辅助思考</li>
+        <li>自动化实验工具加速迭代</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>研究生面临的新挑战</h4>
+      <ul>
+        <li>信息过载：论文太多，读不过来</li>
+        <li>同质化竞争：大家都在用 AI</li>
+        <li>AI 能做"新手级"工作，你的价值在哪？</li>
+        <li>传统读研方法已不完全适用</li>
+      </ul>
+    </div>
+  </div>
+  <div class="quote" style="margin-top: 12px;">
+    <p>"AI 不会取代研究者，但会用 AI 的研究者将取代不会用 AI 的研究者。"</p>
+  </div>
+</section>
+
+<!-- SLIDE 3: 核心框架总览 -->
+<section class="slide">
+  <h2>🗺️ 科研能力全景图</h2>
+  <div class="diagram" style="margin-top: 10px;">
+    <div class="diag-row">
+      <div class="grp blue" style="flex: 0 0 22%;">
+        <span class="gl">📍 选题定位</span>
+        <div><span class="gn">发现真问题</span> <span class="gn">调研效率</span></div>
+        <div><span class="gn">趋势判断</span> <span class="gn">差异化</span></div>
+      </div>
+      <div class="grp green" style="flex: 0 0 22%;">
+        <span class="gl">🛠 硬核技能</span>
+        <div><span class="gn">编程/框架</span> <span class="gn">数学建模</span></div>
+        <div><span class="gn">实验设计</span> <span class="gn">AI 工具</span></div>
+      </div>
+      <div class="grp purple" style="flex: 0 0 22%;">
+        <span class="gl">📖 科研方法</span>
+        <div><span class="gn">文献精读</span> <span class="gn">论文写作</span></div>
+        <div><span class="gn">实验管理</span> <span class="gn">学术交流</span></div>
+      </div>
+      <div class="grp orange" style="flex: 0 0 22%;">
+        <span class="gl">🧠 思维模式</span>
+        <div><span class="gn">批判思维</span> <span class="gn">第一性原理</span></div>
+        <div><span class="gn">复现习惯</span> <span class="gn">持续学习</span></div>
+      </div>
+    </div>
+    <div class="diag-flow">⬇ 贯穿始终</div>
+    <div class="diag-row">
+      <div class="grp pink" style="flex: 1;">
+        <span class="gl">🔧 AI 工具链</span>
+        <div><span class="gn">LLM 辅助写作</span> <span class="gn">AI 代码助手</span> <span class="gn">自动化实验</span> <span class="gn">文献管理</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: AI时代的科研范式变革 -->
+<section class="slide">
+  <h2>🔄 AI 时代的科研范式变革</h2>
+  <div class="grid2" style="margin-top: 8px;">
+    <div class="card">
+      <h4>❌ 旧范式 (2018前)</h4>
+      <ul>
+        <li>手动检索文献 (PubMed/Google Scholar)</li>
+        <li>逐行手写代码 (PyTorch/TF)</li>
+        <li>手动调参 + 网格搜索</li>
+        <li>人工撰写论文 + 反复校对</li>
+        <li>投稿周期 ≈ 6-12 个月</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>✅ 新范式 (2025+)</h4>
+      <ul>
+        <li>AI 辅助文献综述 (Semantic Scholar + LLM)</li>
+        <li>AI 生成代码框架 + 自动补全 (Cursor/Codex)</li>
+        <li>自动超参搜索 + 实验编排 (W&B/Hydra)</li>
+        <li>AI 辅助写作 + 润色 + 翻译</li>
+        <li>预印本 + 快速评审 (arXiv + OpenReview)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight blue" style="margin-top: 8px; font-size: 14px;">核心变化：研究者从"执行者"向"架构师"转变</div>
+</section>
+
+<!-- SLIDE 5: 研究生阶段目标 -->
+<section class="slide">
+  <h2>🎯 读研的核心目标</h2>
+  <div class="num-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="num-cell">
+      <div class="lbl">① 思维训练</div>
+      <div class="val" style="font-size: 16px; color: #58a6ff;">批判性 · 系统性</div>
+      <div class="sub">学会"提好问题"</div>
+    </div>
+    <div class="num-cell">
+      <div class="lbl">② 能力构建</div>
+      <div class="val" style="font-size: 16px; color: #3fb950;">技能树 · 方法论</div>
+      <div class="sub">成为独立研究者</div>
+    </div>
+    <div class="num-cell">
+      <div class="lbl">③ 成果产出</div>
+      <div class="val" style="font-size: 16px; color: #bc8cff;">论文 · 项目 · 影响力</div>
+      <div class="sub">积累学术资本</div>
+    </div>
+  </div>
+  <div style="margin-top: 10px;">
+    <div class="phase-row">
+      <div class="phase">
+        <div class="pn">硕士</div>
+        <div class="pd">学会做研究的方法<br>完整走通一次科研流程</div>
+        <div class="pr">学会"如何学"</div>
+      </div>
+      <div class="phase">
+        <div class="pn">博士</div>
+        <div class="pd">做出有影响力的原创贡献<br>成为细分领域专家</div>
+        <div class="pr">学会"如何创造"</div>
+      </div>
+      <div class="phase">
+        <div class="pn">博后/青椒</div>
+        <div class="pd">独立领导研究方向<br>培养团队、申请基金</div>
+        <div class="pr">学会"如何领导"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6: 一图看懂：读研路线图 -->
+<section class="slide">
+  <h2>🗺️ 研究生三年路线图</h2>
+  <div class="diagram">
+    <div class="diag-row">
+      <div class="grp pink" style="flex: 0 0 30%;">
+        <span class="gl">📅 研一 · 筑基期</span>
+        <div><span class="gn">课程学习</span> <span class="gn">文献入门</span></div>
+        <div><span class="gn">复现 baseline</span> <span class="gn">找导师聊方向</span></div>
+        <div><span class="gn">熟悉实验室工具链</span></div>
+      </div>
+      <div class="diag-flow">→</div>
+      <div class="grp blue" style="flex: 0 0 30%;">
+        <span class="gl">📅 研二 · 产出期</span>
+        <div><span class="gn">确定研究方向</span> <span class="gn">做实验出结果</span></div>
+        <div><span class="gn">撰写第一篇论文</span> <span class="gn">投会议/期刊</span></div>
+        <div><span class="gn">参加学术会议</span></div>
+      </div>
+      <div class="diag-flow">→</div>
+      <div class="grp green" style="flex: 0 0 30%;">
+        <span class="gl">📅 研三 · 冲刺期</span>
+        <div><span class="gn">深化研究</span> <span class="gn">第二/三篇论文</span></div>
+        <div><span class="gn">毕业论文</span> <span class="gn">找工作/申博</span></div>
+        <div><span class="gn">学术盘点</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="small gray" style="margin-top: 8px;">💡 关键原则：早动手、勤迭代、多交流。第一篇论文越早投越好。</p>
+</section>
+
+<!-- SLIDE 7: 技能总览 -->
+<section class="slide">
+  <h2>🧰 研究生必备技能矩阵</h2>
+  <div class="grid2" style="margin-top: 8px;">
+    <div class="card">
+      <h4>🔧 硬技能 (Hard Skills)</h4>
+      <ul>
+        <li><span class="tag ess">核心</span> Python / PyTorch / 数据处理</li>
+        <li><span class="tag ess">核心</span> 深度学习基础 & 经典模型</li>
+        <li><span class="tag imp">重要</span> Linux / Git / 实验管理</li>
+        <li><span class="tag imp">重要</span> 数学：线代/概率/最优化</li>
+        <li><span class="tag nice">加分</span> 分布式训练 / 模型部署</li>
+        <li><span class="tag nice">加分</span> 统计分析与实验设计</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🤝 软技能 (Soft Skills)</h4>
+      <ul>
+        <li><span class="tag ess">核心</span> 学术写作 & 逻辑表达</li>
+        <li><span class="tag ess">核心</span> 文献检索 & 批判阅读</li>
+        <li><span class="tag imp">重要</span> 学术汇报 & 展示技巧</li>
+        <li><span class="tag imp">重要</span> 时间管理 & 多线并行</li>
+        <li><span class="tag nice">加分</span> 开源协作 / 团队领导</li>
+        <li><span class="tag nice">加分</span> 跨学科沟通能力</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: 编程技能树 -->
+<section class="slide">
+  <h2>🐍 编程与工程能力</h2>
+  <div class="grid2" style="margin-top: 6px;">
+    <div class="card">
+      <h4>必学（90% 场景覆盖）</h4>
+      <ul>
+        <li><span class="box blue">Python</span> numpy / pandas / matplotlib</li>
+        <li><span class="box blue">PyTorch</span> tensor / dataloader / autograd</li>
+        <li><span class="box green">Linux</span> 命令行 / shell 脚本 / SSH</li>
+        <li><span class="box green">Git</span> 版本控制 / 分支管理 / CI</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>进阶（差异化竞争力）</h4>
+      <ul>
+        <li><span class="box purple">W&B / MLflow</span> 实验追踪</li>
+        <li><span class="box purple">Docker / Slurm</span> 环境与集群</li>
+        <li><span class="box orange">CUDA / C++</span> 算子优化 (CV 方向必备)</li>
+        <li><span class="box cyan">Streamlit / Gradio</span> 快速 Demo</li>
+      </ul>
+    </div>
+  </div>
+  <div class="quote" style="margin-top: 8px;">
+    <p>"不是要成为软件工程师，但至少要能用代码把想法<strong>跑通、复现、交付</strong>。"</p>
+  </div>
+</section>
+
+<!-- SLIDE 9: 深度学与分析能力 -->
+<section class="slide">
+  <h2>🧮 深度学习 & 分析能力</h2>
+  <div class="grid3" style="margin-top: 8px;">
+    <div class="card">
+      <h4>深度学习核心</h4>
+      <ul>
+        <li>CNN / RNN / Transformer</li>
+        <li>注意力机制 & 自注意力</li>
+        <li>ResNet / ViT / MLP-Mixer</li>
+        <li>扩散模型 / 生成模型</li>
+        <li>对比学习 / 自监督学习</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>数学基础</h4>
+      <ul>
+        <li>线性代数：矩阵分解、SVD</li>
+        <li>概率统计：贝叶斯、假设检验</li>
+        <li>最优化：梯度下降、正则化</li>
+        <li>信息论：熵、KL 散度</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>数据分析</h4>
+      <ul>
+        <li>实验统计分析</li>
+        <li>消融实验设计</li>
+        <li>可视化：t-SNE / UMAP</li>
+        <li>显著性检验</li>
+        <li>ROC / 混淆矩阵分析</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 10: AI工具链 -->
+<section class="slide">
+  <h2>🤖 AI 辅助科研工具链</h2>
+  <p class="small gray" style="margin-bottom: 6px;">会用工具 ≠ 依赖工具。工具是放大器，不是替代品。</p>
+  <div class="grid2" style="margin-top: 4px;">
+    <div class="card">
+      <h4>📚 文献调研</h4>
+      <ul>
+        <li><span class="box blue">Semantic Scholar</span> AI 论文推荐</li>
+        <li><span class="box blue">Connected Papers</span> 引用图谱</li>
+        <li><span class="box green">ChatGPT/Claude</span> 论文摘要 + 提问</li>
+        <li><span class="box green">arXiv</span> 每日更新 + RSS</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>💻 代码与实验</h4>
+      <ul>
+        <li><span class="box blue">Cursor / Codex</span> AI 编程助手</li>
+        <li><span class="box blue">GitHub Copilot</span> 代码补全</li>
+        <li><span class="box green">W&B</span> 实验追踪</li>
+        <li><span class="box green">Hugging Face</span> 模型/数据集 Hub</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>✍️ 论文写作</h4>
+      <ul>
+        <li><span class="box blue">Overleaf</span> LaTeX 在线协作</li>
+        <li><span class="box blue">ChatGPT/Claude</span> 润色 + 翻译</li>
+        <li><span class="box green">Grammarly / DeepL</span> 语言校对</li>
+        <li><span class="box green">Zotero / Mendeley</span> 文献管理</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>📊 可视化 & 演示</h4>
+      <ul>
+        <li><span class="box blue">Manim</span> 数学动画</li>
+        <li><span class="box blue">Matplotlib / Plotly</span> 数据图</li>
+        <li><span class="box green">D2 / Mermaid</span> 架构图</li>
+        <li><span class="box green">LaTeX Beamer</span> 学术 slides</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 11: 文献调研方法 -->
+<section class="slide">
+  <h2>📖 高效文献调研方法论</h2>
+  <div class="diagram">
+    <div class="diag-row">
+      <div class="grp blue" style="flex: 0 0 28%;">
+        <span class="gl">① 广撒网</span>
+        <div><span class="gn">关键词搜索</span></div>
+        <div><span class="gn">综述精读 3-5 篇</span></div>
+        <div><span class="gn">引文回溯</span></div>
+      </div>
+      <div class="diag-flow">→</div>
+      <div class="grp green" style="flex: 0 0 28%;">
+        <span class="gl">② 深挖洞</span>
+        <div><span class="gn">精选 20 篇精读</span></div>
+        <div><span class="gn">复现核心实验</span></div>
+        <div><span class="gn">找 gap / limitation</span></div>
+      </div>
+      <div class="diag-flow">→</div>
+      <div class="grp purple" style="flex: 0 0 28%;">
+        <span class="gl">③ 定方向</span>
+        <div><span class="gn">对比表分析</span></div>
+        <div><span class="gn">总结未解决问题</span></div>
+        <div><span class="gn">提出研究设想</span></div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top: 8px;">
+    <div class="card">
+      <h4>精读每篇论文时的 checklist</h4>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
+        <span class="tag">[ ] 核心问题是什么？</span>
+        <span class="tag">[ ] 方法的核心 insight？</span>
+        <span class="tag">[ ] 实验设置是否合理？</span>
+        <span class="tag">[ ] 方法和谁比？</span>
+        <span class="tag">[ ] 局限在哪？</span>
+        <span class="tag">[ ] 我能否做得更好？</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 12: 论文写作 -->
+<section class="slide">
+  <h2>✍️ 学术论文写作方法论</h2>
+  <div class="grid2" style="margin-top: 8px;">
+    <div class="card">
+      <h4>写作原则</h4>
+      <ul>
+        <li><strong>先做后写</strong>：实验全部做完再动笔</li>
+        <li><strong>Story first</strong>：先讲好故事再填内容</li>
+        <li><strong>Figure-driven</strong>：图做好了，论文就完成了一半</li>
+        <li><strong>反复迭代</strong>：好论文是改出来的</li>
+        <li><strong>读者意识</strong>：reviewer 是读者，不是对手</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>结构要点</h4>
+      <ul>
+        <li>Title <span class="gray">→ 吸引 + 准确</span></li>
+        <li>Abstract <span class="gray">→ 一句话总结贡献</span></li>
+        <li>Introduction <span class="gray">→ 问题 + 差距 + 方案</span></li>
+        <li>Method <span class="gray">→ 清晰可复现</span></li>
+        <li>Experiment <span class="gray">→ 公平 + 充分</span></li>
+        <li>Conclusion <span class="gray">→ 贡献 + 局限</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight blue" style="margin-top: 8px; font-size: 14px;">💡 新人写作建议：先从复现(reproduction report / baseline)开始，<br>再尝试写短文(workshop/letter)，最后冲击顶会。</div>
+</section>
+
+<!-- SLIDE 13: 实验管理 -->
+<section class="slide">
+  <h2>🧪 实验管理最佳实践</h2>
+  <div class="diagram" style="margin-top: 8px;">
+    <div class="diag-row">
+      <div class="grp blue">
+        <span class="gl">🔬 可复现性</span>
+        <div><span class="gn">固定随机种子</span> <span class="gn">记录超参数</span></div>
+        <div><span class="gn">版本控制代码</span> <span class="gn">保存模型权重</span></div>
+      </div>
+      <div class="grp green">
+        <span class="gl">📊 实验追踪</span>
+        <div><span class="gn">W&B 自动记录指标</span></div>
+        <div><span class="gn">每实验记日志</span></div>
+        <div><span class="gn">图表自动保存</span></div>
+      </div>
+      <div class="grp purple">
+        <span class="gl">⚡ 效率提升</span>
+        <div><span class="gn">Hydra 配置管理</span></div>
+        <div><span class="gn">多 GPU 训练</span></div>
+        <div><span class="gn">实验并行化</span></div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap;">
+    <span class="box blue">$ python train.py --config config.yaml</span>
+    <span class="box green">wandb.init() / wandb.log()</span>
+    <span class="box purple">torch.manual_seed(42)</span>
+  </div>
+</section>
+
+<!-- SLIDE 14: 学术交流 -->
+<section class="slide">
+  <h2>🎤 学术交流与展示</h2>
+  <div class="grid2" style="margin-top: 8px;">
+    <div class="card">
+      <h4>学术汇报 (Group Meeting)</h4>
+      <ul>
+        <li>每周/双周汇报进度</li>
+        <li>15-20 分钟：问题 → 方法 → 实验 → 下一步</li>
+        <li>修炼"电梯演讲"(30秒说清贡献)</li>
+        <li>主动提问 & 接受反馈</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>学术会议 (Conference)</h4>
+      <ul>
+        <li>Poster 展示：准备 3 分钟介绍</li>
+        <li>关注同方向 oral 报告</li>
+        <li>主动与大佬交流</li>
+        <li>会后 follow-up：建立学术联系</li>
+      </ul>
+    </div>
+  </div>
+  <div class="quote" style="margin-top: 8px;">
+    <p>"你的研究价值不仅在于做了什么，还在于让多少人知道并受它启发。"</p>
+  </div>
+</section>
+
+<!-- SLIDE 15: 第一性原理思维 -->
+<section class="slide">
+  <h2>🧠 研究者的思维方式</h2>
+  <div class="grid2" style="margin-top: 8px;">
+    <div class="card">
+      <h4>🔍 第一性原理</h4>
+      <ul>
+        <li>不要盲目 follow 已有方法</li>
+        <li>回到问题本身：<br>"本质困难是什么？"</li>
+        <li>拆解到基本单元再重建</li>
+        <li>敢于质疑主流假设</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🔄 批判性思维</h4>
+      <ul>
+        <li>对每一篇论文问：<br>"如果这个结论是错的呢？"</li>
+        <li>关注实验陷阱：数据泄漏、不公平对比</li>
+        <li>区分相关性与因果性</li>
+        <li>保持"建设性怀疑"</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight orange" style="margin-top: 8px; font-size: 14px;">💡 "不要只学知识，要学知识是如何被生产出来的。"</div>
+</section>
+
+<!-- SLIDE 16: 如何选择研究方向 -->
+<section class="slide">
+  <h2>🎯 如何选择研究方向</h2>
+  <div class="grid2" style="margin-top: 8px;">
+    <div class="card">
+      <h4>三个维度评估</h4>
+      <ul>
+        <li><span class="highlight blue">兴趣</span> 你愿意花 1-3 年死磕吗？</li>
+        <li><span class="highlight green">能力</span> 你的技能树能否支撑？</li>
+        <li><span class="highlight orange">前景</span> 领域是否在上升期？</li>
+      </ul>
+      <div style="margin-top: 6px;">
+        <div class="tree">最 佳 方 向 = 兴趣 ∩ 能力 ∩ 前景</div>
+      </div>
+    </div>
+    <div class="card">
+      <h4>选题策略</h4>
+      <ul>
+        <li><strong>跟导师</strong>：利用导师的资源和经验</li>
+        <li><strong>读综述</strong>：找热门子领域</li>
+        <li><strong>看顶会</strong>：CVPR/NeurIPS/ICML 最新收录</li>
+        <li><strong>找 gap</strong>：已有工作的不足</li>
+        <li><strong>小步快跑</strong>：先做小问题出成果</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 17: 心态建设 -->
+<section class="slide">
+  <h2>💪 研究生心态建设</h2>
+  <div class="grid2" style="margin-top: 8px;">
+    <div class="card">
+      <h4>🔥 常见困境</h4>
+      <ul>
+        <li>焦虑：别人发论文了我还没有</li>
+        <li>浮躁：追热点、浅尝辄止</li>
+        <li>迷茫：不知研究意义何在</li>
+        <li>挫败：论文被拒、实验失败</li>
+        <li>孤立：一个人闷头做</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>💡 应对之道</h4>
+      <ul>
+        <li><strong>进度 ≠ 质量</strong>：你看到的是别人的结果</li>
+        <li><strong>深比广重要</strong>：把一个点做透</li>
+        <li><strong>意义在过程中</strong>：能力成长比论文更值</li>
+        <li><strong>拒稿是常态</strong>：顶会接收率 ≈ 20-25%</li>
+        <li><strong>多找人聊</strong>：师兄师姐同学导师</li>
+      </ul>
+    </div>
+  </div>
+  <div class="quote" style="margin-top: 8px;">
+    <p>"读研不是一场考试，而是一场马拉松。比的不是谁起跑快，而是谁跑得久、跑得稳。"</p>
+  </div>
+</section>
+
+<!-- SLIDE 18: 时间管理 -->
+<section class="slide">
+  <h2>⏰ 研究生时间管理</h2>
+  <div class="grid2" style="margin-top: 8px;">
+    <div class="card">
+      <h4>推荐工作法</h4>
+      <ul>
+        <li><strong>深度工作</strong>：每天 3-4 小时无干扰时段</li>
+        <li><strong>番茄工作法</strong>：25+5 或 90+20</li>
+        <li><strong>周计划</strong>：周一规划，周五复盘</li>
+        <li><strong>任务拆解</strong>：大目标 → 周任务 → 日行动</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>要避免的陷阱</h4>
+      <ul>
+        <li>❌ 被即时通讯/社交媒体碎片化</li>
+        <li>❌ 完美主义：等想清楚再动手</li>
+        <li>❌ 多任务同时进行</li>
+        <li>❌ 白天睡觉，晚上修仙</li>
+        <li>✅ 规律作息胜过延长工时</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 19: AI带来的新能力清单 -->
+<section class="slide">
+  <h2>🤖 AI 时代新技能清单</h2>
+  <table class="skill-table">
+    <tr><th>能力</th><th>说明</th><th>重要性</th></tr>
+    <tr><td><strong>Prompt Engineering</strong></td><td>与 AI 高效交互的能力</td><td><span class="box green">核心</span></td></tr>
+    <tr><td><strong>AI 代码审查</strong></td><td>能判断 AI 生成代码的正确性</td><td><span class="box green">核心</span></td></tr>
+    <tr><td><strong>AI 论文解读</strong></td><td>用 AI 加速文献消化</td><td><span class="box green">核心</span></td></tr>
+    <tr><td><strong>Agent 工作流</strong></td><td>构建自动化科研 pipeline</td><td><span class="box blue">重要</span></td></tr>
+    <tr><td><strong>模型微调</strong></td><td>领域内模型适配</td><td><span class="box blue">重要</span></td></tr>
+    <tr><td><strong>数据工程</strong></td><td>合成数据 / 数据增强</td><td><span class="box blue">重要</span></td></tr>
+    <tr><td><strong>AI 伦理</strong></td><td>理解偏见、幻觉、可解释性</td><td><span class="box orange">加分</span></td></tr>
+  </table>
+</section>
+
+<!-- SLIDE 20: 常见误区 -->
+<section class="slide">
+  <h2>⚠️ 研究生的常见误区</h2>
+  <div class="grid2" style="margin-top: 8px;">
+    <div class="card">
+      <h4>❌ 误区 1："等我想清楚了再做"</h4>
+      <ul>
+        <li>想清楚是永远不可能的</li>
+        <li>先动手做 baseline 复现</li>
+        <li>实践中发现问题</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>❌ 误区 2："论文越多越好"</h4>
+      <ul>
+        <li>质量 >> 数量</li>
+        <li>一篇高引论文 > 十篇水文</li>
+        <li>学会识别 "可做可不做" 的工作</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>❌ 误区 3："AI 会替我做好一切"</h4>
+      <ul>
+        <li>AI 生成的内容必须验证</li>
+        <li>核心洞察来自人的思考</li>
+        <li>依赖 AI 会消解独立思考能力</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>❌ 误区 4："导师应该告诉我所有细节"</h4>
+      <ul>
+        <li>研究生是"半独立研究者"</li>
+        <li>导师给方向，自己找路径</li>
+        <li>主动汇报 & 主动求解</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 21: 给新生的建议 -->
+<section class="slide">
+  <h2>💌 给研究生新生的 10 条建议</h2>
+  <div class="grid2" style="margin-top: 6px;">
+    <ol style="grid-column: 1;">
+      <li>📖 读综述 ≠ 读论文，先读 5 篇综述建立领域框架</li>
+      <li>🔄 复现是最高效的学习方式</li>
+      <li>📝 每周写"科研日志"，记录想法和实验</li>
+      <li>🤝 找 2-3 个同学定期交流</li>
+      <li>🛠 先精通一套工具链，再横向拓展</li>
+    </ol>
+    <ol start="6" style="grid-column: 2;">
+      <li>📊 可视化是最强的沟通工具</li>
+      <li>🔗 有问题先自己查 30 分钟，再问人</li>
+      <li>🏃 第一个小目标：3 个月内复现一篇顶会论文</li>
+      <li>🧘 接受"大部分实验会失败"的事实</li>
+      <li>🌟 保持好奇心 — 这是你进入学术界的原因</li>
+    </ol>
+  </div>
+</section>
+
+<!-- SLIDE 22: AI作为科研助手 vs AI作为研究对象 -->
+<section class="slide">
+  <h2>🔮 AI 的两重身份</h2>
+  <div class="grid2" style="margin-top: 8px;">
+    <div class="card" style="border-color: rgba(88,166,255,0.4);">
+      <h4 style="color: #58a6ff;">AI as Tool 🛠</h4>
+      <p style="font-size: 14px;">AI 辅助所有研究者提升效率</p>
+      <ul>
+        <li>代码生成 & 调试</li>
+        <li>文献检索 & 总结</li>
+        <li>实验自动化编排</li>
+        <li>论文润色 & 翻译</li>
+        <li>数据可视化</li>
+      </ul>
+      <p class="small gray" style="margin-top: 4px;">✅ 对每个研究生都适用</p>
+    </div>
+    <div class="card" style="border-color: rgba(188,140,255,0.4);">
+      <h4 style="color: #bc8cff;">AI as Subject 🎯</h4>
+      <p style="font-size: 14px;">AI 本身作为研究对象</p>
+      <ul>
+        <li>新的模型架构设计</li>
+        <li>AI 安全 & 对齐</li>
+        <li>可解释性研究</li>
+        <li>模型压缩 & 加速</li>
+        <li>AI 在交叉学科的应用</li>
+      </ul>
+      <p class="small gray" style="margin-top: 4px;">✅ 适合有一定基础后深入</p>
+    </div>
+  </div>
+  <div class="highlight purple" style="margin-top: 8px; font-size: 14px;">💡 先学会用 AI 做工具，再考虑把 AI 当研究课题</div>
+</section>
+
+<!-- SLIDE 23: AI时代科研伦理 -->
+<section class="slide">
+  <h2>⚖️ AI 时代科研伦理红线</h2>
+  <div class="card" style="margin-top: 8px; border-color: rgba(248,81,73,0.3);">
+    <h4 style="color: #f85149;">🚫 绝不可越的红线</h4>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;">
+      <span class="box red">直接用 AI 写论文不声明</span>
+      <span class="box red">捏造实验数据</span>
+      <span class="box red">抄袭 / 洗稿</span>
+      <span class="box red">隐瞒代码来源(非开源)</span>
+    </div>
+  </div>
+  <div class="grid2" style="margin-top: 8px;">
+    <div class="card">
+      <h4>✅ 正确做法</h4>
+      <ul>
+        <li>声明 AI 辅助的范围</li>
+        <li>验证 AI 生成的每一个数字</li>
+        <li>遵守期刊/会议的 AI 使用政策</li>
+        <li>保持对结果的最终责任</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>📋 注意事项</h4>
+      <ul>
+        <li>不要将论文直接喂给公共 AI</li>
+        <li>遵守机构的数据隐私规定</li>
+        <li>审稿时禁止使用 AI 生成评审</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 24: 资源推荐 -->
+<section class="slide">
+  <h2>📚 推荐资源</h2>
+  <div class="grid2" style="margin-top: 8px;">
+    <div class="card">
+      <h4>📖 必读书籍</h4>
+      <ul>
+        <li>《深度学习》— Goodfellow et al.</li>
+        <li>《统计学习基础》— Hastie et al.</li>
+        <li>《How to Write a Good Paper》</li>
+        <li>《Research Methodology》— Kothari</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🌐 在线资源</h4>
+      <ul>
+        <li><strong>arXiv.org</strong> — 最新论文预印本</li>
+        <li><strong>PapersWithCode</strong> — 论文+代码</li>
+        <li><strong>Hugging Face</strong> — 模型 & 数据集</li>
+        <li><strong>MLOps Community</strong> — 工程实践</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🎓 课程推荐</h4>
+      <ul>
+        <li>CS231n / CS224n — 斯坦福经典</li>
+        <li>Fast.ai — 实践导向</li>
+        <li>DeepLearning.AI — 吴恩达</li>
+        <li>Full Stack Deep Learning</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🛠 开源项目</h4>
+      <ul>
+        <li><strong>PyTorch</strong> — 深度学习框架</li>
+        <li><strong>HuggingFace Transformers</strong></li>
+        <li><strong>MMSegmentation / Detectron2</strong></li>
+        <li><strong>W&B / TensorBoard</strong></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 25: 发展与就业 -->
+<section class="slide">
+  <h2>🚀 研究生之后的路径</h2>
+  <div class="diagram" style="margin-top: 10px;">
+    <div class="diag-row">
+      <div class="grp blue">
+        <span class="gl">🎓 学术界</span>
+        <div><span class="gn">攻读博士</span> <span class="gn">出国深造</span></div>
+        <div><span class="gn">博士后 → 教职</span></div>
+        <div><span class="gn">科研院所</span></div>
+      </div>
+      <div class="grp green">
+        <span class="gl">🏭 工业界</span>
+        <div><span class="gn">算法工程师</span> <span class="gn">研究科学家</span></div>
+        <div><span class="gn">AI 应用开发</span></div>
+        <div><span class="gn">AI 产品经理</span></div>
+      </div>
+      <div class="grp purple">
+        <span class="gl">🚀 创业</span>
+        <div><span class="gn">AI 创业公司</span></div>
+        <div><span class="gn">技术顾问</span></div>
+        <div><span class="gn">独立开发者</span></div>
+      </div>
+      <div class="grp orange">
+        <span class="gl">🔗 交叉方向</span>
+        <div><span class="gn">AI for Science</span></div>
+        <div><span class="gn">AI + 医疗 / 环境</span></div>
+        <div><span class="gn">AI 安全 / 政策</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="small gray" style="margin-top: 6px;">💡 无论选择哪条路径，<strong>独立解决问题的能力</strong>才是研究生生涯最大的收获。</p>
+</section>
+
+<!-- SLIDE 26: 结语 -->
+<section class="slide">
+  <div style="text-align: center; max-width: 700px; margin: 0 auto;">
+    <h2 style="margin-bottom: 16px;">🧭 写在最后</h2>
+    <div class="quote" style="margin: 16px 0;">
+      <p>"AI 时代的研究生，<br>要比以前跑得更快、想得更深、做得更本质。"</p>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 16px 0;">
+      <span class="box blue">保持好奇</span>
+      <span class="box green">动手实践</span>
+      <span class="box purple">批判思考</span>
+      <span class="box orange">持续输出</span>
+      <span class="box pink">交流合作</span>
+      <span class="box cyan">反复迭代</span>
+    </div>
+    <p style="margin-top: 20px; font-size: 16px; color: #8b949e;">你的研究生涯，从今天开始。</p>
+    <div style="margin-top: 24px; font-size: 24px; letter-spacing: 8px;">
+      🎯 🚀 ✨
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 27: Q&A -->
+<section class="slide">
+  <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+    <h1 class="no-grad" style="font-size: 48px; margin-bottom: 16px;">❓ Q & A</h1>
+    <p style="font-size: 18px; color: #8b949e; margin-bottom: 10px;">讨论与交流</p>
+    <div class="quote" style="margin: 16px 0;">
+      <p>"The best way to predict the future is to create it."<br>— Alan Kay</p>
+    </div>
+    <div style="margin-top: 20px;">
+      <span class="box cyan">github.com/xingbod/auto</span>
+      <span class="box gray">ai-era-research-grad-slides</span>
+    </div>
+  </div>
+</section>
+
+<!-- Controls -->
+<div id="controls">
+  <button onclick="prevSlide()">◀</button>
+  <span id="page-indicator">1 / 27</span>
+  <button onclick="nextSlide()">▶</button>
+</div>
+<div id="progress-bar" style="width: 3.7%;"></div>
+<div id="keyboard-hint">← → · Space · Home · End · P</div>
+
+<!-- Copyright bar -->
+<div id="copyright-bar">
+  <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载 · © 2026 DONG XINGBO
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  function show(idx) {
+    if (idx < 0) idx = 0;
+    if (idx >= total) idx = total - 1;
+    slides.forEach(s => s.classList.remove('active'));
+    slides[idx].classList.add('active');
+    current = idx;
+    document.getElementById('page-indicator').textContent = (idx + 1) + ' / ' + total;
+    document.getElementById('progress-bar').style.width = ((idx + 1) / total * 100) + '%';
+  }
+
+  window.show = show;
+
+  window.nextSlide = function() { show(current + 1); };
+  window.prevSlide = function() { show(current - 1); };
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'Space' || e.key === 'ArrowDown') {
+      e.preventDefault(); nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); prevSlide();
+    } else if (e.key === 'Home') {
+      e.preventDefault(); show(0);
+    } else if (e.key === 'End') {
+      e.preventDefault(); show(total - 1);
+    } else if (e.key === 'p' || e.key === 'P') {
+      window.print();
+    }
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', function(e) { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', function(e) {
+    const diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+  });
+})();
+</script>
+</body>
+</html>
