@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>研究生 vs 本科生 · 两种阶段的本质区别</title>
+  <style>
+    :root {
+      --bg: #fff;
+      --ink: #111827;
+      --ink-2: #4b5563;
+      --ink-3: #9ca3af;
+      --line: #e5e7eb;
+
+      --m1: #881337;  /* 深酒红 — 研究生 */
+      --m1s: #fdf2f8; /* 浅粉底 */
+      --m2: #1d4ed8;  /* 钴蓝 — 本科生 */
+      --m2s: #eff6ff; /* 浅蓝底 */
+
+      --c1: #881337; --c1s: #fdf2f8;  /* 酒红 - 研究生相关 */
+      --c2: #1d4ed8; --c2s: #eff6ff;  /* 钴蓝 - 本科生相关 */
+      --c3: #0d9488; --c3s: #f0fdfa;  /* 青 - 对比/交汇 */
+      --c4: #7c3aed; --c4s: #f5f3ff;  /* 紫 - 进阶思考 */
+      --c5: #dc2626; --c5s: #fef2f2;  /* 红 - 误区 */
+      --c6: #b45309; --c6s: #fffbeb;  /* 琥珀 - 总结 */
+
+      --radius: 10px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      line-height: 1.6;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .page {
+      max-width: 800px;
+      width: 100%;
+      padding: 0;
+    }
+
+    /* ===== Header ===== */
+    header {
+      padding: 44px 48px 32px;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(ellipse 700px 180px at top right, #fdf2f8 0%, transparent 70%),
+        radial-gradient(ellipse 400px 160px at bottom left, #eff6ff 0%, transparent 70%);
+    }
+
+    header .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--m1);
+      background: var(--m1s);
+      padding: 3px 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    header h1 .accent1 { color: var(--m1); }  /* 研究生 */
+    header h1 .accent2 { color: var(--m2); }  /* 本科生 */
+
+    header .subtitle {
+      font-size: 14.5px;
+      color: var(--ink-2);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    header .subtitle .hl {
+      font-weight: 700;
+      color: var(--m1);
+    }
+
+    header .meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    header .meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11.5px;
+      color: var(--ink-3);
+      background: #f9fafb;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    /* ===== Sections ===== */
+    section {
+      padding: 28px 48px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    section:last-of-type { border-bottom: none; }
+
+    .s-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .s-title .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .s-title .num.c1 { background: var(--c1s); color: var(--c1); }
+    .s-title .num.c2 { background: var(--c2s); color: var(--c2); }
+    .s-title .num.c3 { background: var(--c3s); color: var(--c3); }
+    .s-title .num.c4 { background: var(--c4s); color: var(--c4); }
+    .s-title .num.c5 { background: var(--c5s); color: var(--c5); }
+    .s-title .num.c6 { background: var(--c6s); color: var(--c6); }
+
+    /* ===== Grid cards ===== */
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+    .card {
+      padding: 16px 18px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+    }
+    .card .icon { font-size: 20px; margin-bottom: 6px; }
+    .card .t { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+    .card .d { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+    .card .d .g { color: var(--m1); font-weight: 600; }
+    .card .d .u { color: var(--m2); font-weight: 600; }
+
+    .card.c1 { border-color: #fbcfe8; background: var(--c1s); }
+    .card.c2 { border-color: #bfdbfe; background: var(--c2s); }
+    .card.c3 { border-color: #99f6e4; background: var(--c3s); }
+    .card.c4 { border-color: #ddd6fe; background: var(--c4s); }
+    .card.c5 { border-color: #fecaca; background: var(--c5s); }
+    .card.c6 { border-color: #fde68a; background: var(--c6s); }
+
+    /* ===== Compact overview cards ===== */
+    .overview-card {
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+    }
+    .overview-card .icon { font-size: 18px; }
+    .overview-card .main-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .overview-card .label {
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .overview-card .compare {
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .overview-card .compare .u { color: var(--m2); font-weight: 600; }
+    .overview-card .compare .g { color: var(--m1); font-weight: 600; }
+    .overview-card .compare .arr { color: var(--ink-3); margin: 0 4px; }
+
+    .overview-card.c1 { border-color: #fbcfe8; background: var(--c1s); }
+    .overview-card.c2 { border-color: #bfdbfe; background: var(--c2s); }
+    .overview-card.c3 { border-color: #99f6e4; background: var(--c3s); }
+    .overview-card.c4 { border-color: #ddd6fe; background: var(--c4s); }
+    .overview-card.c5 { border-color: #fde68a; background: var(--c6s); }
+    .overview-card.c6 { border-color: #fecaca; background: var(--c5s); }
+
+    /* ===== Table ===== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 11px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    th {
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      background: #fafafa;
+    }
+    th:first-child { width: 22%; }
+    th:nth-child(2) { width: 39%; }
+    th:nth-child(3) { width: 39%; }
+    tr:last-child td { border-bottom: none; }
+    td:first-child { font-weight: 700; font-size: 13px; }
+    td .g { color: var(--m1); font-weight: 600; }
+    td .u { color: var(--m2); font-weight: 600; }
+
+    /* ===== Side-by-side day comparison ===== */
+    .day-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .day-col {
+      padding: 18px 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+    }
+    .day-col .day-label {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .day-col ul { padding: 0; margin: 0; list-style: none; }
+    .day-col li {
+      padding: 7px 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 13px;
+      color: var(--ink-2);
+      line-height: 1.5;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .day-col li:last-child { border-bottom: none; }
+    .day-col li .ti { font-weight: 600; color: var(--ink); flex-shrink: 0; }
+    .day-col.grad {
+      border-color: #fbcfe8;
+      background: var(--c1s);
+    }
+    .day-col.grad .day-label { color: var(--m1); }
+    .day-col.grad li .ti { color: var(--m1); }
+    .day-col.undergrad {
+      border-color: #bfdbfe;
+      background: var(--c2s);
+    }
+    .day-col.undergrad .day-label { color: var(--m2); }
+    .day-col.undergrad li .ti { color: var(--m2); }
+
+    /* ===== Quote ===== */
+    .quote {
+      padding: 14px 20px;
+      margin: 12px 0 0;
+      background: #f8fafc;
+      border-left: 3px solid var(--c3);
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: var(--ink-2);
+      line-height: 1.55;
+    }
+    .quote.warn {
+      border-left-color: #f59e0b;
+      background: #fffbeb;
+    }
+    .quote.info {
+      border-left-color: var(--m2);
+      background: var(--c2s);
+    }
+    .quote.grad {
+      border-left-color: var(--m1);
+      background: var(--c1s);
+    }
+
+    /* ===== Pitfalls ===== */
+    .pitfall {
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      border-radius: var(--radius);
+      border: 1px solid #fecaca;
+      background: var(--c5s);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .pitfall:last-child { margin-bottom: 0; }
+    .pitfall .x {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--c5);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .pitfall .body { font-size: 13px; color: var(--ink-2); line-height: 1.55; }
+    .pitfall .body .wrong {
+      text-decoration: line-through;
+      color: var(--c5);
+      font-weight: 600;
+    }
+    .pitfall .body .right {
+      color: #16a34a;
+      font-weight: 700;
+    }
+
+    /* ===== Footer / Summary ===== */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .summary-card {
+      padding: 16px 18px;
+      border-radius: var(--radius);
+      background: #f9fafb;
+      border: 1px solid var(--line);
+      text-align: center;
+    }
+    .summary-card .s-icon { font-size: 22px; margin-bottom: 6px; }
+    .summary-card .s-t { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+    .summary-card .s-d { font-size: 12px; color: var(--ink-2); line-height: 1.5; }
+
+    .oneliner {
+      padding: 20px 24px;
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: var(--radius);
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+    }
+    .oneliner .hl1 { color: #fda4af; }  /* 浅酒红 */
+    .oneliner .hl2 { color: #93c5fd; }  /* 浅蓝 */
+    .oneliner .hl3 { color: #fbbf24; }  /* 金 */
+
+    /* ===== Checklist ===== */
+    .cl { padding: 0; margin: 8px 0 0; list-style: none; }
+    .cl li {
+      padding: 6px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--ink-2);
+    }
+    .cl .cb {
+      flex-shrink: 0;
+      width: 18px; height: 18px;
+      border: 2px solid #d1d5db;
+      border-radius: 4px;
+      margin-top: 1px;
+    }
+    .cl .cb.done {
+      background: var(--m1);
+      border-color: var(--m1);
+      position: relative;
+    }
+    .cl .cb.done::after {
+      content: "✓";
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 640px) {
+      header { padding: 28px 20px 24px; }
+      section { padding: 22px 20px; }
+      header h1 { font-size: 22px; }
+      .grid3 { grid-template-columns: 1fr 1fr; }
+      .day-compare { grid-template-columns: 1fr; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .overview-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ===== Credit ===== */
+    .credit {
+      padding: 28px 48px 32px;
+      border-top: 1px solid var(--line);
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--ink-3);
+      line-height: 1.6;
+    }
+    .credit b { color: var(--ink); font-weight: 700; }
+
+    /* ===== Two-tone highlight block ===== */
+    .dual-block {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 10px 0;
+    }
+    .dual-item {
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      border: 1px solid;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .dual-item .h {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dual-item.g { border-color: #fbcfe8; background: var(--c1s); color: var(--ink-2); }
+    .dual-item.g .h { color: var(--m1); }
+    .dual-item.u { border-color: #bfdbfe; background: var(--c2s); color: var(--ink-2); }
+    .dual-item.u .h { color: var(--m2); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ======== HEADER ======== -->
+  <header>
+    <div class="tag">📖 阶段对比 · Grad vs Undergrad</div>
+    <h1>
+      <span class="accent1">研究生</span> vs <span class="accent2">本科生</span>：
+      两种阶段，本质区别
+    </h1>
+    <p class="subtitle">
+      从 <span class="hl">知识的消费者</span> 到 <span class="hl">知识的生产者</span>——
+      看清分水岭，走对每一步
+    </p>
+    <div class="meta">
+      <span>🎯 大学生 · 准研究生 · 考研党</span>
+      <span>⏱ 5 分钟读完</span>
+    </div>
+  </header>
+
+  <!-- ======== SECTION 1: 核心差异总览 ======== -->
+  <section>
+    <div class="s-title"><span class="num c1">①</span> 核心差异 · 一张总览</div>
+
+    <div class="grid3 overview-grid">
+      <div class="overview-card c1">
+        <div class="main-row">
+          <span class="icon">🎯</span>
+          <span class="label">目标定位</span>
+        </div>
+        <div class="compare">
+          <span class="u">本科</span> 通识 + 专业基础<span class="arr">→</span><span class="g">研</span> 科研 + 创新力
+        </div>
+      </div>
+
+      <div class="overview-card c2">
+        <div class="main-row">
+          <span class="icon">📚</span>
+          <span class="label">学习方式</span>
+        </div>
+        <div class="compare">
+          <span class="u">本科</span> 课堂 + 考试<span class="arr">→</span><span class="g">研</span> 课题 + 自主探索
+        </div>
+      </div>
+
+      <div class="overview-card c3">
+        <div class="main-row">
+          <span class="icon">👨‍🏫</span>
+          <span class="label">导师角色</span>
+        </div>
+        <div class="compare">
+          <span class="u">本科</span> 班主任 / 辅导员<span class="arr">→</span><span class="g">研</span> 学术导师 + 合作者
+        </div>
+      </div>
+
+      <div class="overview-card c4">
+        <div class="main-row">
+          <span class="icon">📊</span>
+          <span class="label">评价体系</span>
+        </div>
+        <div class="compare">
+          <span class="u">本科</span> GPA + 学分<span class="arr">→</span><span class="g">研</span> 论文 + 专利 + 成果
+        </div>
+      </div>
+
+      <div class="overview-card c5">
+        <div class="main-row">
+          <span class="icon">⏱</span>
+          <span class="label">时间节奏</span>
+        </div>
+        <div class="compare">
+          <span class="u">本科</span> 固定学期制<span class="arr">→</span><span class="g">研</span> 弹性 + 项目驱动
+        </div>
+      </div>
+
+      <div class="overview-card c6">
+        <div class="main-row">
+          <span class="icon">📝</span>
+          <span class="label">产出形式</span>
+        </div>
+        <div class="compare">
+          <span class="u">本科</span> 课程作业 + 实验报告<span class="arr">→</span><span class="g">研</span> 期刊论文 + 学术报告
+        </div>
+      </div>
+    </div>
+
+    <div class="quote info">
+      <b>一句话剧透：</b>
+      本科是<span class="u">"学已有的知识"</span>，研究生是<span class="g">"创造新的知识"</span>——
+      两套不同的底层逻辑。
+    </div>
+  </section>
+
+  <!-- ======== SECTION 2: 六大维度深度对比 ======== -->
+  <section>
+    <div class="s-title"><span class="num c2">②</span> 六大维度 · 深度对比</div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>维度</th>
+          <th>本科生 <span style="color:var(--m2); font-weight:400;">Undergrad</span></th>
+          <th>研究生 <span style="color:var(--m1); font-weight:400;">Graduate</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>📘 知识获取</td>
+          <td><span class="u">教材 + 课堂讲授</span> 为主，内容成熟、结构化</td>
+          <td><span class="g">文献 + 前沿论文</span> 为主，信息碎片化、未定论</td>
+        </tr>
+        <tr>
+          <td>🧠 学习方法</td>
+          <td><span class="u">听课 → 记笔记 → 刷题 → 考试</span>，闭环清晰</td>
+          <td><span class="g">读文献 → 提问题 → 做实验 → 写论文</span>，开环迭代</td>
+        </tr>
+        <tr>
+          <td>💡 思维训练</td>
+          <td><span class="u">理解 + 记忆 + 复现</span>，强调"学得像"</td>
+          <td><span class="g">批判 + 创新 + 论证</span>，强调"想得深"</td>
+        </tr>
+        <tr>
+          <td>🗓 时间管理</td>
+          <td><span class="u">固定课表 + 学期节奏</span>，外部框架强约束</td>
+          <td><span class="g">自主规划 + deadline 驱动</span>，自我管理是生存技能</td>
+        </tr>
+        <tr>
+          <td>🤝 团队协作</td>
+          <td><span class="u">小组作业（松散）</span>，贡献不均，收尾即散</td>
+          <td><span class="g">课题组 + 实验室（紧密）</span>，长期协作、共同署名</td>
+        </tr>
+        <tr>
+          <td>🏁 最终产出</td>
+          <td><span class="u">毕业设计 / 论文</span>（综述或小型应用）</td>
+          <td><span class="g">期刊论文 / 专利 / 学位论文</span>（创新贡献是硬通货）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="quote warn">
+      ⚠️ 六条差异背后只有一个核心变量：
+      <b>从"被安排"到"自我驱动"</b>——研究生的每一天都在回答同一个问题：
+      "今天我为自己的课题做了什么实质性推进？"
+    </div>
+  </section>
+
+  <!-- ======== SECTION 3: 两种角色的一天 ======== -->
+  <section>
+    <div class="s-title"><span class="num c3">③</span> 两种角色 · 典型一天</div>
+
+    <div class="day-compare">
+      <div class="day-col undergrad">
+        <div class="day-label">🎓 本科生的一天</div>
+        <ul>
+          <li><span class="ti">☀️ 上午</span> 2–3 节大课 + 记笔记</li>
+          <li><span class="ti">🌤 下午</span> 完成课后作业 / 实验报告</li>
+          <li><span class="ti">🌙 晚上</span> 自习 / 社团活动 / 休息</li>
+          <li><span class="ti">📅 周末</span> 明确的休息 + 社交时间</li>
+        </ul>
+      </div>
+
+      <div class="day-col grad">
+        <div class="day-label">🔬 研究生的一天</div>
+        <ul>
+          <li><span class="ti">☀️ 上午</span> 读 2–3 篇文献 → 和导师/同门讨论新想法</li>
+          <li><span class="ti">🌤 下午</span> 跑实验 / 写代码 → 分析结果 → 记录日志</li>
+          <li><span class="ti">🌙 晚上</span> 写论文草稿 / 改图 / 整理 PPT</li>
+          <li><span class="ti">📅 周末</span> 实验不能停——等结果、补实验是常态</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dual-block">
+      <div class="dual-item u">
+        <div class="h">✅ 本科的竞争力</div>
+        <div>GPA 前 10% + 项目经历 + 竞赛奖项 + 英语能力。核心是<span style="color:var(--m2);font-weight:600;">"学得好"</span>——证明你能高效掌握已有知识体系。</div>
+      </div>
+      <div class="dual-item g">
+        <div class="h">✅ 研究生的竞争力</div>
+        <div>论文发表 + 代码开源 + 学术报告 + 同行认可。核心是<span style="color:var(--m1);font-weight:600;">"做得出"</span>——证明你能创造同行认可的新知识。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== SECTION 4: 常见认知误区 ======== -->
+  <section>
+    <div class="s-title"><span class="num c4">④</span> 常见认知误区</div>
+
+    <div class="pitfall">
+      <div class="x">✕</div>
+      <div class="body">
+        <span class="wrong">研究生 = 多上两年课</span><br>
+        👉 <span class="right">研究生的课程只是铺垫和工具</span>，真正的核心是独立科研——发现问题、提出假设、设计实验、验证结论。不是等老师教，是自己去挖。
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <div class="x">✕</div>
+      <div class="body">
+        <span class="wrong">读研 = 逃避就业压力</span><br>
+        👉 <span class="right">没有内驱力，三年会非常痛苦。</span> 研究生阶段没人催你上什么课、做什么作业，但 deadline（论文截稿、中期检查、答辩）无处不在。没有自驱力的人容易陷入"躺又躺不平、卷又卷不动"的状态。
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <div class="x">✕</div>
+      <div class="body">
+        <span class="wrong">GPA 高 = 适合读研</span><br>
+        👉 <span class="right">考试能力和科研能力是两套体系。</span> GPA 高说明"学得好"；但科研还需要：抗挫折能力（实验失败 90% 是常态）、创造性思维（发现没人做过的问题）、沟通能力（写论文、做报告）。GPA 只是入场券，不是通行证。
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <div class="x">✕</div>
+      <div class="body">
+        <span class="wrong">论文数量越多越好</span><br>
+        👉 <span class="right">质量永远 > 数量。</span> 一篇顶会/顶刊论文的含金量远胜五六篇水会短文。学术圈看的是"谁做出了怎样的贡献"，不是"谁发的篇数多"。
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== SECTION 5: 总结 + 自检清单 ======== -->
+  <section>
+    <div class="s-title"><span class="num c5">⑤</span> 一句话总结</div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="s-icon">📖</div>
+        <div class="s-t">本科 · 学</div>
+        <div class="s-d">掌握已有知识体系，建立学科框架</div>
+      </div>
+      <div class="summary-card">
+        <div class="s-icon">⚡</div>
+        <div class="s-t">研究生 · 研</div>
+        <div class="s-d">创造新知识，从执行者变为探索者</div>
+      </div>
+      <div class="summary-card">
+        <div class="s-icon">🌉</div>
+        <div class="s-t">质变的桥梁</div>
+        <div class="s-d">从"学得好"到"做得出"，不可跨越</div>
+      </div>
+    </div>
+
+    <div class="oneliner">
+      研究生不是本科的延续，而是从<span class="hl1">"学"</span>到<span class="hl2">"研"</span>的质变。<br>
+      <span class="hl3">学好</span> → <span class="hl2">会学</span> → <span class="hl1">能创</span>，每一步都不可跨越。
+    </div>
+
+    <div style="margin-top: 16px;">
+      <div class="s-title" style="font-size:15px; margin-bottom:6px;">🔍 自检：你准备好读研了吗？</div>
+      <ul class="cl">
+        <li><span class="cb done"></span> 我能在没有外部监督的情况下持续学习</li>
+        <li><span class="cb"></span> 我能接受 90% 的实验/想法都失败</li>
+        <li><span class="cb"></span> 我享受"发现未知"而非"解出已知"</li>
+        <li><span class="cb"></span> 我愿意为一篇论文反复修改 20 版</li>
+        <li><span class="cb"></span> 我能主动联系导师、讨论、汇报进度</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ======== FOOTER ======== -->
+  <footer class="credit">
+    <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+    <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+  </footer>
+
+</div>
+</body>
+</html>
