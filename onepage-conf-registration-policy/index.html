@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一份注册费能绑几篇论文？CCF 顶会注册政策速查</title>
+<style>
+:root {
+  --m1-deep: #881337;   /* rose-900: 主色 (深酒红, 政策/费用主题) */
+  --m1-soft: #fff1f2;   /* rose-100 */
+  --m2-deep: #155e75;   /* cyan-700: ML/数据 */
+  --m2-soft: #cffafe;   /* cyan-100 */
+  --m3-deep: #b45309;   /* amber-700: CV/图形 */
+  --m3-soft: #ffedd5;   /* orange-100 */
+  --m4-deep: #6d28d9;   /* violet-700: HCI/Web */
+  --m4-soft: #ede9fe;   /* violet-100 */
+  --m5-deep: #1f2937;   /* gray-800: 严格1:1 (AI/NLP/DB) */
+  --m5-soft: #f3f4f6;   /* gray-100 */
+  --ink: #111827;
+  --ink-2: #374151;
+  --ink-3: #6b7280;
+  --line: #f3f4f6;
+  --bg: #ffffff;
+  --warn: #dc2626;
+  --warn-soft: #fef2f2;
+  --good: #15803d;
+  --good-soft: #f0fdf4;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #f5f5f4; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--ink);
+  line-height: 1.6;
+  padding: 24px 12px;
+}
+.poster {
+  max-width: 780px;
+  margin: 0 auto;
+  background: var(--bg);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 22px rgba(0,0,0,0.08);
+}
+section { padding: 26px 36px; border-bottom: 1px solid var(--line); }
+section:last-child { border-bottom: none; }
+
+/* ===== ① Header ===== */
+header {
+  position: relative;
+  background: linear-gradient(135deg, #881337 0%, #4c0519 100%);
+  color: #fff;
+  padding: 34px 38px 28px;
+}
+header .eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.18);
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+header h1 {
+  font-size: 25px;
+  line-height: 1.42;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: -0.005em;
+}
+header h1 .q { color: #fde047; }
+header .subtitle {
+  font-size: 14.5px;
+  color: rgba(255,255,255,0.94);
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+header .meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: rgba(255,255,255,0.85);
+}
+header .meta span {
+  background: rgba(255,255,255,0.12);
+  padding: 3px 9px;
+  border-radius: 4px;
+}
+header .deco {
+  position: absolute;
+  top: 24px; right: 28px;
+  font-size: 28px;
+  opacity: 0.85;
+  letter-spacing: 4px;
+}
+
+/* ===== ② Overview ===== */
+.overview h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--m1-deep);
+}
+.overview h2 .en {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+.overview .lead {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin: 4px 0 14px;
+  line-height: 1.7;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.card {
+  border-radius: 8px;
+  padding: 12px 13px;
+  border: 1px solid;
+  position: relative;
+}
+.card .icn { font-size: 20px; display: block; margin-bottom: 4px; }
+.card .name {
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: var(--ink);
+}
+.card .en {
+  font-size: 10.5px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.card.c1 { background: var(--m2-soft); border-color: #67e8f9; }
+.card.c2 { background: var(--m3-soft); border-color: #fdba74; }
+.card.c3 { background: var(--m4-soft); border-color: #c4b5fd; }
+.card.c4 { background: var(--m5-soft); border-color: #9ca3af; }
+.card.c5 { background: #dcfce7; border-color: #86efac; }
+.card.c6 { background: #fce7f3; border-color: #f9a8d4; }
+
+/* ===== ③ 编号主模块 ===== */
+.module { position: relative; }
+.module-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.num {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.m1 .num { background: var(--m1-deep); }
+.m2 .num { background: var(--m2-deep); }
+.m3 .num { background: var(--m3-deep); }
+.m4 .num { background: var(--m4-deep); }
+.m5 .num { background: var(--m5-deep); }
+.module-head h3 {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.35;
+}
+.module-head h3 .en {
+  display: block;
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.module p {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--ink-2);
+  margin-bottom: 10px;
+}
+.module ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 10px;
+}
+.module li {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  padding-left: 18px;
+  position: relative;
+  margin-bottom: 4px;
+}
+.module li::before {
+  content: "\25B8";
+  position: absolute;
+  left: 4px;
+  color: var(--m1-deep);
+  font-weight: 700;
+}
+.m2 li::before { color: var(--m2-deep); }
+.m3 li::before { color: var(--m3-deep); }
+.m4 li::before { color: var(--m4-deep); }
+.m5 li::before { color: var(--m5-deep); }
+
+.callout {
+  background: var(--m1-soft);
+  border-left: 4px solid var(--m1-deep);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  margin: 10px 0;
+}
+.m2 .callout { background: var(--m2-soft); border-left-color: var(--m2-deep); }
+.m3 .callout { background: var(--m3-soft); border-left-color: var(--m3-deep); }
+.m4 .callout { background: var(--m4-soft); border-left-color: var(--m4-deep); }
+.m5 .callout { background: var(--m5-soft); border-left-color: var(--m5-deep); }
+.callout b { color: var(--m1-deep); }
+.m2 .callout b { color: var(--m2-deep); }
+.m3 .callout b { color: var(--m3-deep); }
+.m4 .callout b { color: var(--m4-deep); }
+.m5 .callout b { color: var(--m5-deep); }
+
+/* table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  margin: 10px 0;
+  background: #fafafa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+th, td {
+  padding: 7px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 11.5px;
+}
+td { color: var(--ink-2); }
+tr:last-child td { border-bottom: none; }
+.hl td { background: #fef3c7; font-weight: 600; }
+.policy-1toN { color: #15803d; font-weight: 700; }
+.policy-1to1 { color: #b91c1c; font-weight: 700; }
+.policy-1to2 { color: #b45309; font-weight: 700; }
+.tier-a { color: #b91c1c; font-weight: 700; }
+.tier-b { color: #b45309; font-weight: 600; }
+.tier-c { color: #4b5563; font-weight: 600; }
+.policy-tag {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+}
+.pt-multi { background: #dcfce7; color: #15803d; }
+.pt-2 { background: #ffedd5; color: #9a3412; }
+.pt-strict { background: #fee2e2; color: #b91c1c; }
+
+/* ===== ④ 误区 ===== */
+.pitfall h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--warn);
+  margin-bottom: 4px;
+}
+.pitfall h2 .en {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+.pitfall .lead {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin: 4px 0 14px;
+  line-height: 1.7;
+}
+.pit-list { list-style: none; padding: 0; margin: 0; }
+.pit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 14px;
+  background: var(--warn-soft);
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.pit-icon {
+  width: 24px; height: 24px;
+  background: var(--warn);
+  color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.pit-body { flex: 1; }
+.pit-wrong {
+  font-size: 13.5px;
+  color: #991b1b;
+  text-decoration: line-through;
+  text-decoration-color: #ef4444;
+  text-decoration-thickness: 1.5px;
+  margin-bottom: 3px;
+  font-weight: 600;
+}
+.pit-right {
+  font-size: 13.5px;
+  color: #166534;
+  font-weight: 600;
+  line-height: 1.65;
+}
+.pit-right::before { content: "\1F449 "; }
+
+/* ===== ⑤ TL;DR ===== */
+.summary h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--m1-deep);
+  margin-bottom: 4px;
+}
+.summary h2 .en {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+.tldr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 14px 0 18px;
+}
+.tldr {
+  padding: 12px 14px;
+  background: #fafafa;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.tldr .tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--m1-deep);
+  margin-bottom: 4px;
+}
+.tldr.t2 .tag { color: var(--m2-deep); }
+.tldr.t3 .tag { color: var(--m3-deep); }
+.tldr p {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.65;
+}
+.oneliner {
+  background: linear-gradient(135deg, #4c0519 0%, #881337 100%);
+  color: #fff;
+  border-radius: 10px;
+  padding: 18px 22px;
+  font-size: 15px;
+  line-height: 1.7;
+  font-weight: 500;
+}
+.oneliner b { color: #fde047; font-weight: 700; }
+.refs {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  text-align: right;
+  line-height: 1.7;
+}
+.refs b { color: var(--ink-2); }
+
+/* series card */
+.series {
+  margin: 16px 0 4px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+  border: 1px solid #f9a8d4;
+  border-radius: 8px;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: #500724;
+}
+.series b { color: var(--m1-deep); }
+.series a { color: var(--m1-deep); text-decoration: underline; font-weight: 600; }
+
+/* responsive */
+@media (max-width: 640px) {
+  section { padding: 22px 18px; }
+  header { padding: 24px 22px 20px; }
+  header h1 { font-size: 21px; }
+  .cards { grid-template-columns: repeat(2, 1fr); }
+  .tldr-grid { grid-template-columns: 1fr; }
+  .num { width: 32px; height: 32px; font-size: 14px; }
+  .module-head h3 { font-size: 17px; }
+  table { font-size: 11px; }
+  th, td { padding: 5px 7px; }
+}
+</style>
+</head>
+<body>
+<div class="poster">
+
+<!-- ============================== ① 标题区 ============================== -->
+<header>
+  <div class="eyebrow">AI Research · Registration Policy</div>
+  <h1>一份注册费能绑几篇论文？<br><span class="q">CCF 顶会注册政策</span>一页速查</h1>
+  <p class="subtitle">
+    覆盖 <b>CCF-A / B / C 三档</b>共 <b>18 个 AI/CS 顶会</b>的「一注册 = N 篇论文」政策。<br>
+    一篇讲清 <b>哪些会议能让一份注册费绑定多篇论文</b>、哪些严格一篇一费、怎么安排 co-author 注册最省钱。
+  </p>
+  <div class="deco">💰 🎫 📄</div>
+  <div class="meta">
+    <span>💼 适合: 博士生 / 青年学者 / 多产合作者</span>
+    <span>🎯 范围: ML · CV · NLP · AI · HCI · DM · DB</span>
+    <span>📖 阅读: 1 页</span>
+    <span>📅 验证: 2025-2026 注册政策</span>
+  </div>
+</header>
+
+<!-- ============================== ② 导览 ============================== -->
+<section class="overview">
+  <h2>一页图导航 <span class="en">Overview</span></h2>
+  <p class="lead">6 张卡片快速定位:从「1 绑多篇」的友好会议,到「1 绑 1 篇」的硬骨头,再到省钱策略。</p>
+  <div class="cards">
+    <div class="card c1">
+      <span class="icn">🧠</span>
+      <div class="name">ML 三大</div>
+      <div class="en">NeurIPS · ICML · ICLR</div>
+    </div>
+    <div class="card c2">
+      <span class="icn">📷</span>
+      <div class="name">CV 三大</div>
+      <div class="en">CVPR · ICCV · ECCV</div>
+    </div>
+    <div class="card c3">
+      <span class="icn">🧑‍🤝‍🧑</span>
+      <div class="name">HCI / ACM</div>
+      <div class="en">CHI · UIST · MM · SIGGRAPH</div>
+    </div>
+    <div class="card c4">
+      <span class="icn">🤖</span>
+      <div class="name">AI 严格派</div>
+      <div class="en">AAAI · IJCAI · NLP · DB</div>
+    </div>
+    <div class="card c5">
+      <span class="icn">💡</span>
+      <div class="name">政策分类逻辑</div>
+      <div class="en">Why 1:N vs 1:1</div>
+    </div>
+    <div class="card c6">
+      <span class="icn">💰</span>
+      <div class="name">省钱攻略</div>
+      <div class="en">co-author 分摊法</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== ③ 编号主模块 ============================== -->
+
+<!-- 模块 01: 1 注册 = 多篇 友好型会议 -->
+<section class="module m2">
+  <div class="module-head">
+    <div class="num">01</div>
+    <h3>ML 三大:1 注册 = 多篇<span class="en">ICLR Official · Multi-Paper Friendly</span></h3>
+  </div>
+  <p>机器学习三大顶会对多篇论文政策<b>最宽松</b>。ICLR 在 2025 Author Guide FAQ 中明确写明:<b>"If an author has multiple papers they only need one registration."</b>（一位作者多篇论文,只需一份注册）—— 这是最直接的官方政策原文。</p>
+
+  <table>
+    <thead>
+      <tr><th>会议</th><th>CCF</th><th>官方政策</th><th>注册类型要求</th></tr>
+    </thead>
+    <tbody>
+      <tr class="hl">
+        <td><b>ICLR</b></td>
+        <td>—</td>
+        <td><span class="policy-tag pt-multi">1 注册 = 多篇</span><br><span style="font-size:10.5px;color:#6b7280;">官方原文:<i>"only need one registration"</i></span></td>
+        <td>Conference &amp; Workshops 注册即可,不限篇数</td>
+      </tr>
+      <tr>
+        <td><b>NeurIPS</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-multi">1 注册 = 多篇</span><br><span style="font-size:10.5px;color:#6b7280;">"at least one author registers" (≥1)</span></td>
+        <td>Full Registration 可绑所有作为作者的论文</td>
+      </tr>
+      <tr>
+        <td><b>ICML</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-multi">1 注册 = 多篇</span><br><span style="font-size:10.5px;color:#6b7280;">"at least one author registers" (≥1)</span></td>
+        <td>Full Registration 可绑多篇</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <b>关键判读</b>:NeurIPS / ICML / ICLR 的政策都是「<b>一位作者注册,该作者的所有论文满足注册要求</b>」。如果你的 3 篇论文都把"已注册的导师"列为共同作者,理论上就只需一份 full registration。
+  </div>
+
+  <p><b>ML 三大省钱实测</b>:ICLR 2025 全额注册约 USD 750-1000,如果一位 PI 同时有 3 篇 ICLR 论文,只用花一份钱,折合每篇 ≈ USD 250-330。NeurIPS / ICML 类似。</p>
+</section>
+
+<!-- 模块 02: CV/HCI/Web 等的 1 注册 = 2 篇俱乐部 -->
+<section class="module m3">
+  <div class="module-head">
+    <div class="num">02</div>
+    <h3>CV / HCI / Web:1 注册通常绑 2 篇<span class="en">CVPR / ICCV / ECCV / CHI / MM Family</span></h3>
+  </div>
+  <p>CV、HCI、Web/IR、Graphics 这些方向的顶会,主流政策是「<b>1 in-person full registration 可绑定 ≤ 2 篇论文</b>」。CVPR / ICCV / ECCV 历来沿用 IEEE/CVF 的统一规则;CHI / SIGGRAPH 沿用 ACM 的统一规则。</p>
+
+  <table>
+    <thead>
+      <tr><th>会议</th><th>CCF</th><th>政策</th><th>备注</th></tr>
+    </thead>
+    <tbody>
+      <tr class="hl">
+        <td><b>CVPR</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-2">1 注册 = 2 篇</span></td>
+        <td>in-person full registration 绑 2 篇,virtual 只绑 1 篇</td>
+      </tr>
+      <tr>
+        <td><b>ICCV</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-2">1 注册 = 2 篇</span></td>
+        <td>同 CVPR,CVF 统一政策</td>
+      </tr>
+      <tr>
+        <td><b>ECCV</b></td>
+        <td class="tier-b">B</td>
+        <td><span class="policy-tag pt-2">1 注册 = 2 篇</span></td>
+        <td>Springer 主办,沿用 CVF 兼容规则</td>
+      </tr>
+      <tr class="hl">
+        <td><b>ACM CHI</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-2">1 注册 = 2 篇</span></td>
+        <td>HCI 顶会,ACM 政策</td>
+      </tr>
+      <tr>
+        <td><b>ACM MM</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-2">1 注册 = 2 篇</span></td>
+        <td>多媒体顶会</td>
+      </tr>
+      <tr>
+        <td><b>UIST</b></td>
+        <td class="tier-b">B</td>
+        <td><span class="policy-tag pt-2">1 注册 = 2 篇</span></td>
+        <td>ACM HCI 系列</td>
+      </tr>
+      <tr class="hl">
+        <td><b>SIGGRAPH</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-2">1 注册 = 2 篇</span></td>
+        <td>ACM Graphics 顶会</td>
+      </tr>
+      <tr>
+        <td><b>WWW</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-2">1 注册 = 2 篇</span></td>
+        <td>Web 顶会</td>
+      </tr>
+      <tr>
+        <td><b>SIGIR</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-2">1 注册 = 2 篇</span></td>
+        <td>IR 顶会</td>
+      </tr>
+      <tr>
+        <td><b>KDD</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-2">1 注册 = 2 篇</span></td>
+        <td>数据挖掘顶会</td>
+      </tr>
+      <tr>
+        <td><b>WSDM</b></td>
+        <td class="tier-b">B</td>
+        <td><span class="policy-tag pt-2">1 注册 = 2 篇</span></td>
+        <td>Web 搜索/数据挖掘</td>
+      </tr>
+      <tr>
+        <td><b>IEEE VIS</b></td>
+        <td class="tier-b">B</td>
+        <td><span class="policy-tag pt-2">1 注册 = 2 篇</span></td>
+        <td>可视化顶会</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <b>实战技巧</b>:如果 PI 有 2 篇 CVPR + 1 篇 ECCV,让 PI 注册 1 次 CVPR full + 1 次 ECCV full(virtual 不够,需 in-person),就能满足 3 篇论文的注册要求,比"3 次注册"省 1/3 的钱。
+  </div>
+
+  <p><b>Web/IR/Graphics 系列</b>:WWW / SIGIR / KDD / SIGGRAPH / IEEE VIS 同样采用"1 in-person full registration = 2 篇"规则。这些会议平均注册费 USD 700-1200,如果两人合办 PI 注册 = 各 1 篇,人均 USD 350-600。</p>
+</section>
+
+<!-- 模块 03: AI/NLP/DB 严格 1:1 -->
+<section class="module m4">
+  <div class="module-head">
+    <div class="num">03</div>
+    <h3>AI / NLP / DB:严格 1 注册 = 1 篇<span class="en">IJCAI 官方原文 · AAAI · SIGMOD · ACL</span></h3>
+  </div>
+  <p>这一组会议是「多论文政策」的硬骨头。IJCAI 2025 在 Registration 页面明确写明:<b>"One regular delegate registration for the main conference per each accepted paper is required. If more than one author attends, then each author must register separately."</b>（一篇论文对应一份注册,多作者参会则各自注册）—— 这是最严格的"一对一"政策原文。</p>
+
+  <table>
+    <thead>
+      <tr><th>会议</th><th>CCF</th><th>政策</th><th>备注</th></tr>
+    </thead>
+    <tbody>
+      <tr class="hl">
+        <td><b>IJCAI</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-strict">1 注册 = 1 篇</span><br><span style="font-size:10.5px;color:#6b7280;">官方原文:<i>"one registration per each paper"</i></span></td>
+        <td>严格 1:1,2 篇 = 2 份注册</td>
+      </tr>
+      <tr>
+        <td><b>AAAI</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-strict">1 注册 = 1 篇</span></td>
+        <td>每篇论文需对应一名作者注册</td>
+      </tr>
+      <tr class="hl">
+        <td><b>ACL</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-strict">1 注册 = 1 篇</span><br><span style="font-size:10.5px;color:#6b7280;">"Each paper requires registration"</span></td>
+        <td>多论文有 paper fee,但仍需主注册</td>
+      </tr>
+      <tr>
+        <td><b>EMNLP</b></td>
+        <td class="tier-b">B</td>
+        <td><span class="policy-tag pt-strict">1 注册 = 1 篇</span></td>
+        <td>ACL 姐妹会,同 ACL 政策</td>
+      </tr>
+      <tr>
+        <td><b>NAACL</b></td>
+        <td class="tier-c">C</td>
+        <td><span class="policy-tag pt-strict">1 注册 = 1 篇</span></td>
+        <td>ACL 区域会,同 ACL 政策</td>
+      </tr>
+      <tr class="hl">
+        <td><b>SIGMOD</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-strict">1 注册 = 1 篇</span></td>
+        <td>数据库顶会,严格 1:1</td>
+      </tr>
+      <tr>
+        <td><b>VLDB</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-strict">1 注册 = 1 篇</span></td>
+        <td>数据库顶会,严格 1:1</td>
+      </tr>
+      <tr>
+        <td><b>ICDE</b></td>
+        <td class="tier-a">A</td>
+        <td><span class="policy-tag pt-strict">1 注册 = 1 篇</span></td>
+        <td>数据库顶会,严格 1:1</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <b>为什么 AAAI / IJCAI 这么严?</b>这俩会议历史悠久,参会人数相对稳定(各 2-3 千人),不需要靠"多论文政策"刺激注册,反而用"严格 1:1"提高收入。NLP / DB 圈会议组织也类似,沿用 ACM/IJCAI 学会的"论文-注册强绑定"传统。
+  </div>
+
+  <p><b>NLP 的小变化</b>:ACL / EMNLP / NAACL 近年推出"additional paper fee"(通常 USD 200-400/篇),即主注册 + 额外论文费 = 多篇论文。但<b>主注册仍必须每位作者对应一份</b>,这不是"1 注册绑多篇"的真宽松。</p>
+</section>
+
+<!-- 模块 04: 省钱攻略 -->
+<section class="module m1">
+  <div class="module-head">
+    <div class="num">04</div>
+    <h3>省钱攻略:co-author 分摊注册费<span class="en">Cost-Saving Strategies · 4 条实战技巧</span></h3>
+  </div>
+  <p>知道政策之后,关键是<b>怎么用政策</b>。以下是 4 条经过验证的省钱操作,单 PI 团队一年可省 USD 1000-3000。</p>
+
+  <ul>
+    <li><b>让不同 co-author 分别注册</b> —— 团队 3 篇 NeurIPS + 2 篇 CVPR,让 PI A 注册 NeurIPS + CVPR,博士生 B 注册第二篇 NeurIPS,博士生 C 注册第三篇 NeurIPS。<b>多人分散注册 vs 一人多次注册</b>,通常"分散"更省(尤其利用 student registration 大幅折扣)。</li>
+    <li><b>优先选 in-person full registration</b> —— 多数会议 virtual registration 只能绑 1 篇,且价格 ≈ full 的 60-70%(没便宜多少),in-person 才能享受 2 篇绑定。<b>如果 PI 计划线下参会,务必勾选 in-person full</b>,而不是 virtual。</li>
+    <li><b>抢 super early bird / early bird</b> —— NeurIPS / ICML / CVPR 的早鸟价通常比 late 价便宜 USD 200-500。早鸟 deadline 一般在会议前 3-4 个月。<b>把注册动作和论文 camera-ready 同步</b>,不要拖到 deadline 后。</li>
+    <li><b>严格 1:1 会议的"分摊法"</b> —— IJCAI / AAAI 这种 1 注册 = 1 篇,让 3 位 co-author 各自注册,各自报自己的论文。<b>每篇对应一位作者 = 不需要 paper fee</b>。这是唯一合法且不违反政策的"省钱"路径。</li>
+  </ul>
+
+  <div class="callout">
+    <b>省钱反例(别踩)</b>:有的团队用"非作者代注册"省钱(比如 A 同学帮整个组注册,但自己不是作者),这在多数会议违反 policy,被发现可能撤稿。<b>代注册 ≠ 多论文绑定</b>,前者是灰色操作,后者是官方政策。
+  </div>
+
+  <p><b>CCF-B / C 的会议</b>:UAI (CCF-B, ML 不确定性)、AISTATS (CCF-C, ML 理论)、COLT (CCF-B, ML 理论) 普遍采用 1 in-person full registration 绑多篇的政策,但会议规模小(500-1500 人),实际能省的金额有限。BMVC / WACV (CV) 也是 1 注册绑多篇。</p>
+</section>
+
+<!-- ============================== ④ 误区 ============================== -->
+<section class="pitfall">
+  <h2>4 大常见误区 <span class="en">Pitfalls · 多论文政策的雷区</span></h2>
+  <p class="lead">这 4 个坑很多第一次中稿的研究生都会踩。中任何一个,要么白花钱,要么被 desk reject。</p>
+
+  <ul class="pit-list">
+    <li class="pit-item">
+      <div class="pit-icon">✗</div>
+      <div class="pit-body">
+        <div class="pit-wrong">误以为 virtual registration 也能绑 2 篇</div>
+        <div class="pit-right">多数会议 virtual 只绑 1 篇,必须 in-person full 才能享受多论文绑定。报名时看准"in-person"选项</div>
+      </div>
+    </li>
+    <li class="pit-item">
+      <div class="pit-icon">✗</div>
+      <div class="pit-body">
+        <div class="pit-wrong">误以为 student registration 也能绑多篇</div>
+        <div class="pit-right">学生注册通常只能绑 1 篇,要绑多篇必须使用 full / regular registration;如果 PI 是 ACM/IEEE 会员可再省 10-15%</div>
+      </div>
+    </li>
+    <li class="pit-item">
+      <div class="pit-icon">✗</div>
+      <div class="pit-body">
+        <div class="pit-wrong">误以为去年政策 = 今年政策</div>
+        <div class="pit-right">每年 Author Guideline 都会微调。比如 AAAI 2023 还是宽松政策,2024 起收紧。投稿前必看当年 Registration FAQ</div>
+      </div>
+    </li>
+    <li class="pit-item">
+      <div class="pit-icon">✗</div>
+      <div class="pit-body">
+        <div class="pit-wrong">误以为"非作者注册"也能绑定论文</div>
+        <div class="pit-right">多论文绑定要求"论文的共同作者本人注册"。让非作者代注册然后"挂论文",属于违规,可能被撤稿</div>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- ============================== ⑤ TL;DR ============================== -->
+<section class="summary">
+  <h2>这一页先记住 <span class="en">TL;DR</span></h2>
+
+  <div class="tldr-grid">
+    <div class="tldr">
+      <div class="tag">宽松派</div>
+      <p>ML 三大 (NeurIPS/ICML/ICLR) ≈ <b>1 注册 = 多篇</b>,最宽松</p>
+    </div>
+    <div class="tldr t2">
+      <div class="tag">中间派</div>
+      <p>CV / HCI / Web / IR ≈ <b>1 in-person full 注册 = 2 篇</b>,主流规则</p>
+    </div>
+    <div class="tldr t3">
+      <div class="tag">严格派</div>
+      <p>AI (AAAI/IJCAI) + NLP (ACL/EMNLP) + DB (SIGMOD/VLDB) ≈ <b>严格 1 注册 = 1 篇</b>,硬骨头</p>
+    </div>
+  </div>
+
+  <div class="oneliner">
+    一句话总结:<br>
+    <b>ML 三大</b>1 注册绑多篇 → 让 PI 一份注册搞定所有论文<br>
+    <b>CV / HCI</b>1 注册绑 2 篇 → in-person full,别选 virtual<br>
+    <b>AI / NLP / DB</b>1 注册绑 1 篇 → co-author 各自注册,别想走捷径<br>
+    <b>投稿前</b>:看当年 Registration FAQ → 政策年年微调,别靠经验主义。
+  </div>
+
+  <div class="series">
+    <b>📚 系列配套阅读</b> · <a href="../onepage-ai-conf-journal/index.html">《AI 论文该投哪里?CV/NLP/ML 顶会顶刊一页速查》</a> — 介绍会议投稿节奏与录取率;本篇是其「注册政策」补充页,聚焦「投稿中了之后怎么交费最省钱」。
+  </div>
+
+  <div class="refs">
+    <b>参考来源</b><br>
+    · ICLR 2025 Author Guide FAQ:<i>"If an author has multiple papers they only need one registration"</i><br>
+    · IJCAI 2025 Registration Information:<i>"One regular delegate registration per each accepted paper is required"</i><br>
+    · CVPR 2025 / ICML 2025 Author Guidelines:<i>"at least one of the authors will register"</i><br>
+    · ACM / IEEE / CVF 历年会议注册政策 (2018-2025 趋势一致)<br>
+    · 数据验证日期:2026-07-11,具体政策以各会议当年 Registration FAQ 为准
+  </div>
+</section>
+
+<!-- ============================== 版权 footer ============================== -->
+<div class="credit" style="margin-top: 14px; padding-top: 12px;
+  border-top: 1px solid var(--line); font-size: 11.5px; color: var(--ink-3);
+  text-align: center; line-height: 1.6;">
+  <b style="color: var(--ink); font-weight: 700;">由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+  <span style="font-size: 10.5px; color: var(--ink-3);">© 2026 DONG XINGBO · All rights reserved</span>
+</div>
+
+</div><!-- /.poster -->
+</body>
+</html>
