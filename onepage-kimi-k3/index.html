@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kimi K3 (Moonshot AI 2026) · 一页讲清楚</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --line: #e5e7eb;
+    --line-2: #f3f4f6;
+
+    /* Kimi K3 专属配色 (紫/天蓝/翠绿/琥珀) */
+    --idea:       #7c3aed;          /* 核心突破 : 皇家紫 (月之暗面 / Kimi 紫) */
+    --idea-soft:  #f5f3ff;
+    --idea-deep:  #5b21b6;
+
+    --arch:       #0284c7;          /* 架构创新 : 蔚蓝 (MoE & Attention) */
+    --arch-soft:  #f0f9ff;
+    --arch-deep:  #075985;
+
+    --cap:        #059669;          /* 性能基准 : 翠绿 (Arena #1) */
+    --cap-soft:   #ecfdf5;
+    --cap-deep:   #064e3b;
+
+    --impact:     #d97706;          /* 生态影响 : 琥珀 (EDA & 芯片) */
+    --impact-soft:#fffbeb;
+    --impact-deep:#78350f;
+
+    --red:        #dc2626;
+    --red-soft:   #fef2f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", "Hiragino Sans GB", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 36px 44px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse 600px 200px at top right, #f5f3ff 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at bottom left, #f0f9ff 0%, transparent 70%);
+  }
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--idea-deep);
+    background: var(--idea-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    border: 1px solid #ddd6fe;
+  }
+  header h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  header h1 .q {
+    color: var(--idea-deep);
+  }
+  header .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  header .chip {
+    font-size: 12px;
+    color: var(--ink-2);
+    background: white;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  header .chip b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Section base ---------- */
+  section { padding: 28px 44px; border-bottom: 1px solid var(--line-2); }
+  section:last-of-type { border-bottom: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .sec-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sec-head .en {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  .c1 .sec-num { background: var(--idea); }
+  .c2 .sec-num { background: var(--arch); }
+  .c3 .sec-num { background: var(--cap); }
+  .c4 .sec-num { background: var(--impact); }
+  .c5 .sec-num { background: var(--red); }
+
+  p { color: var(--ink-2); margin-bottom: 8px; }
+  p strong { color: var(--ink); font-weight: 700; }
+  p .hl { background: linear-gradient(transparent 60%, #ddd6fe 60%); padding: 0 2px; }
+
+  /* ---------- Overview Cards ---------- */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ov {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    background: white;
+  }
+  .ov .ico { font-size: 24px; margin-bottom: 6px; display: block; }
+  .ov .name { font-size: 13.5px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .ov .en { font-size: 10px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; }
+  .ov.a { background: var(--idea-soft); border-color: #c4b5fd; }
+  .ov.b { background: var(--arch-soft); border-color: #7dd3fc; }
+  .ov.c { background: var(--cap-soft); border-color: #6ee7b7; }
+  .ov.d { background: var(--impact-soft); border-color: #fcd34d; }
+
+  /* ---------- Section 01: Breakthroughs List ---------- */
+  .milestones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .ms-item {
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--idea);
+    border-radius: 8px;
+    padding: 12px 14px;
+    background: white;
+  }
+  .ms-item .ms-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ms-item .ms-badge {
+    font-size: 10.5px;
+    background: var(--idea-soft);
+    color: var(--idea-deep);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .ms-item .ms-desc {
+    font-size: 13.5px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+
+  /* ---------- Section 02: 3 Innovations ---------- */
+  .innov-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .innov-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    background: white;
+  }
+  .innov-card.i1 { border-top: 3px solid var(--idea); }
+  .innov-card.i2 { border-top: 3px solid var(--arch); }
+  .innov-card.i3 { border-top: 3px solid var(--cap); }
+
+  .innov-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .innov-header .title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .innov-header .tag-blue {
+    font-size: 11px;
+    background: var(--arch-soft);
+    color: var(--arch-deep);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .innov-body {
+    font-size: 13.5px;
+    color: var(--ink-2);
+    line-height: 1.55;
+  }
+  .innov-body ul {
+    margin-top: 8px;
+    padding-left: 18px;
+  }
+  .innov-body li {
+    margin-bottom: 4px;
+  }
+
+  /* ---------- Section 03: Benchmarks Table ---------- */
+  .table-wrapper {
+    overflow-x: auto;
+    margin-top: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  table.bench-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    text-align: left;
+    background: white;
+  }
+  table.bench-table th {
+    background: var(--line-2);
+    color: var(--ink);
+    font-weight: 700;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  table.bench-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--line-2);
+    color: var(--ink-2);
+  }
+  table.bench-table tr:last-child td { border-bottom: none; }
+  table.bench-table tr.highlight-row {
+    background: var(--cap-soft);
+    font-weight: 600;
+  }
+  table.bench-table tr.highlight-row td {
+    color: var(--cap-deep);
+  }
+  .winner-badge {
+    display: inline-block;
+    background: var(--cap);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 4px;
+  }
+
+  /* ---------- Section 04: Impact & Application Grid ---------- */
+  .impact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .imp-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    background: white;
+  }
+  .imp-card .imp-head {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .imp-card .imp-body {
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+
+  /* ---------- Section 05: Pitfalls ---------- */
+  .pitfall {
+    display: flex;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: white;
+    margin-top: 10px;
+  }
+  .pitfall .x {
+    color: var(--red);
+    font-weight: 800;
+    font-size: 16px;
+    line-height: 1.3;
+  }
+  .pitfall .body {
+    font-size: 13.5px;
+  }
+  .pitfall .bad {
+    display: block;
+    color: var(--red);
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .pitfall .fix {
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    padding: 32px 44px;
+    background: #f9fafb;
+    border-top: 1px solid var(--line);
+  }
+  footer .title {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  footer .points {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 16px;
+  }
+  footer .points li {
+    font-size: 13px;
+    color: var(--ink-2);
+    margin-bottom: 6px;
+    display: flex;
+    gap: 8px;
+  }
+  footer .points li b {
+    display: inline-block;
+    min-width: 70px;
+    color: var(--idea-deep);
+    font-weight: 700;
+  }
+  footer .oneliner {
+    background: var(--idea-soft);
+    border: 1px solid #c4b5fd;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    color: var(--idea-deep);
+    line-height: 1.5;
+    margin-bottom: 18px;
+  }
+  footer .stamp {
+    font-size: 11.5px;
+    color: var(--ink-3);
+    margin-bottom: 12px;
+  }
+  footer .credit {
+    font-size: 12px;
+    color: var(--ink-3);
+    text-align: center;
+    padding-top: 14px;
+    border-top: 1px solid var(--line-2);
+  }
+
+  @media (max-width: 640px) {
+    header, section, footer { padding: 24px 20px; }
+    .overview { grid-template-columns: repeat(2, 1fr); }
+    .impact-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- =================== HEADER =================== -->
+  <header>
+    <span class="tag">Moonshot AI 月之暗面 · 2026 旗舰大模型</span>
+    <h1>Kimi K3 <span class="q">发布</span> · 2.8万亿参数开源 MoE</h1>
+    <div class="subtitle">
+      全球首个 3万亿级开源权重模型 · Frontend Arena 盲测登顶世界第一 · 100万 Token 超长上下文
+    </div>
+    <div class="meta">
+      <span class="chip">发布日期：<b>2026年7月16日 (API) / 7月27日 (开源权重)</b></span>
+      <span class="chip">参数规模：<b>2.8T MoE (896 专家 / 16 激活)</b></span>
+      <span class="chip">激活参数：<b>~104B</b></span>
+      <span class="chip">开源协议：<b>Open Weights</b></span>
+    </div>
+  </header>
+
+  <!-- =================== OVERVIEW CARDS =================== -->
+  <section style="padding-top: 20px; padding-bottom: 20px; background: #fafafa;">
+    <div class="overview">
+      <div class="ov a">
+        <span class="ico">🔮</span>
+        <div class="name">2.8T 庞大体量</div>
+        <div class="en">2.8T MOE ARCH</div>
+      </div>
+      <div class="ov b">
+        <span class="ico">⚙️</span>
+        <div class="name">三大架构创新</div>
+        <div class="en">LATENT + KDA + ATTNRES</div>
+      </div>
+      <div class="ov c">
+        <span class="ico">🏆</span>
+        <div class="name">前端盲测 #1</div>
+        <div class="en">FRONTEND ARENA TOP</div>
+      </div>
+      <div class="ov d">
+        <span class="ico">⚡</span>
+        <div class="name">48h 自主 EDA</div>
+        <div class="en">CHIP DESIGN AGENT</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 01: 核心定位与重大突破 =================== -->
+  <section class="c1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>核心定位与 5 大里程碑突破</h2>
+      <span class="en">CORE BREAKTHROUGHS</span>
+    </div>
+    <p><b>Kimi K3</b> 是月之暗面（Moonshot AI）于 2026 年 7 月发布的下一代旗舰混合专家大模型，代表了全球开源大模型算力与智能水平的新巅峰：</p>
+
+    <div class="milestones">
+      <div class="ms-item">
+        <div class="ms-title">
+          <span>1. 全球首个 3万亿级开源权重大模型</span>
+          <span class="ms-badge">开源破局</span>
+        </div>
+        <div class="ms-desc">
+          拥有 <b>2.8 兆 (2.8 Trillion)</b> 参数总规模，并于 2026 年 7 月 27 日面向全球开源完整模型权重，打破顶级前沿模型被少数闭源巨头垄断的格局。
+        </div>
+      </div>
+
+      <div class="ms-item">
+        <div class="ms-title">
+          <span>2. 896 专家极度稀疏化 · 仅激活 104B</span>
+          <span class="ms-badge">高效推理</span>
+        </div>
+        <div class="ms-desc">
+          采用全新的 <b>Stable LatentMoE</b> 路由架构，共有 896 个细粒度专家，单 Token 仅激活 16 个专家（约 1040 亿参数），在维持海量知识容量的同时保持了极高的推理效率。
+        </div>
+      </div>
+
+      <div class="ms-item">
+        <div class="ms-title">
+          <span>3. Frontend Code Arena 登顶世界第一</span>
+          <span class="ms-badge">代码霸榜</span>
+        </div>
+        <div class="ms-desc">
+          在针对复杂 UI 渲染、前端工程编写与交互逻辑的 <b>Frontend Code Arena</b> 盲测中，Kimi K3 击败主流闭源与开源模型，斩获全球第一。
+        </div>
+      </div>
+
+      <div class="ms-item">
+        <div class="ms-title">
+          <span>4. 100万 Token 超长上下文 + KDA 线性注意力</span>
+          <span class="ms-badge">长文本</span>
+        </div>
+        <div class="ms-desc">
+          支持原生 <b>1,000,000 Token</b> 上下文窗口，结合 Kimi Delta Attention 机制，彻底克服了百万 Token 级别的显存爆炸与计算瓶颈，大海捞针测试保持 100% 精准召回。
+        </div>
+      </div>
+
+      <div class="ms-item">
+        <div class="ms-title">
+          <span>5. 2.5× Scaling 训练效率提升</span>
+          <span class="ms-badge">架构红利</span>
+        </div>
+        <div class="ms-desc">
+          凭借 Attention Residuals (AttnRes) 等底层创新，在相同 Token 与 Compute 训练预算下，取得相比上一代 Kimi K2 高达 <b>2.5 倍</b> 的扩展效率。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 02: 三大核心架构创新 =================== -->
+  <section class="c2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>三大底层架构创新 (Deep Architecture)</h2>
+      <span class="en">THREE ARCHITECTURAL INNOVATIONS</span>
+    </div>
+    <p>Kimi K3 能够实现 2.8T 庞大规模与超高效率，关键在于三大创新的协同生效：</p>
+
+    <div class="innov-grid">
+      <div class="innov-card i1">
+        <div class="innov-header">
+          <span class="title">💡 创新 1: Stable LatentMoE (稳定隐空间混合专家)</span>
+          <span class="tag-blue">路由平衡</span>
+        </div>
+        <div class="innov-body">
+          <b>解决传统 MoE 规模扩大时的路由坍缩与训练不稳定性问题：</b>
+          <ul>
+            <li><b>896 选 16 机制：</b> 将专家颗粒度切得分更细，兼顾专业知识分工与计算负载均衡。</li>
+            <li><b>Latent Space 路由决策：</b> 在低维隐空间中计算专家选择概率，大幅降低路由模块 Overhead。</li>
+            <li><b>激活规模仅 ~104B：</b> 推理延迟与常规千亿模型相当，却拥有近 3 万亿级别的参数容量储备。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="innov-card i2">
+        <div class="innov-header">
+          <span class="title">⚡ 创新 2: KDA (Kimi Delta Attention 线性增量注意力)</span>
+          <span class="tag-blue">1M 序列</span>
+        </div>
+        <div class="innov-body">
+          <b>破解百万级 Token 上下文计算复杂度的终极方案：</b>
+          <ul>
+            <li><b>混合线性注意力：</b> 在特定网络层采用 KDA 替代二次方复杂度 $O(N^2)$ 的 Standard Attention。</li>
+            <li><b>KV Cache 极度压缩：</b> 维持增量更新状态，将百万 Token 序列的推理显存消耗降低 60%+。</li>
+            <li><b>无损推理质量：</b> 在长程依赖推导、长代码重构中保持媲美 Full Attention 的注意力表达精度。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="innov-card i3">
+        <div class="innov-header">
+          <span class="title">🧬 创新 3: AttnRes (Attention Residuals 注意力残差)</span>
+          <span class="tag-blue">深度解耦</span>
+        </div>
+        <div class="innov-body">
+          <b>替代经典 ResNet 式逐层加法残差 (Layer Addition)：</b>
+          <ul>
+            <li><b>跨层动态表征检索：</b> 允许深层网络直接通过注意力机制从任意早期层无损提取特征。</li>
+            <li><b>打破梯度与信息瓶颈：</b> 解决深层 MoE 网络中浅层语义被稀释的沉降难题。</li>
+            <li><b>Scaling 效率提升 2.5×：</b> 在模型深度增加时保持强劲的表示学习提升率。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 03: 评测表现与能力对比 =================== -->
+  <section class="c3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>评测表现与能力基准对比</h2>
+      <span class="en">BENCHMARKS & AGENTIC POWER</span>
+    </div>
+    <p>在权威代码竞技场、Agent 任务与长文本评测中，Kimi K3 展示了统治级表现：</p>
+
+    <div class="table-wrapper">
+      <table class="bench-table">
+        <thead>
+          <tr>
+            <th>模型名称</th>
+            <th>参数总量 / 激活参数</th>
+            <th>Frontend Arena</th>
+            <th>SWE-bench</th>
+            <th>1M Context</th>
+            <th>开源状态</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight-row">
+            <td><b>Kimi K3 (Moonshot)</b> <span class="winner-badge">TOP 1</span></td>
+            <td>2.8T / 104B MoE</td>
+            <td><b>#1 (1380+)</b></td>
+            <td><b>74.2%</b></td>
+            <td><b>100% 召回</b></td>
+            <td><b>开源 (Open)</b></td>
+          </tr>
+          <tr>
+            <td>GPT-5 (OpenAI)</td>
+            <td>闭源未知 Dense/MoE</td>
+            <td>#2 (1365)</td>
+            <td>72.8%</td>
+            <td>99.6%</td>
+            <td>闭源 (API)</td>
+          </tr>
+          <tr>
+            <td>Claude 3.7 / 4.0 Sonnet</td>
+            <td>闭源未知</td>
+            <td>#3 (1350)</td>
+            <td>70.5%</td>
+            <td>99.4%</td>
+            <td>闭源 (API)</td>
+          </tr>
+          <tr>
+            <td>DeepSeek-V3</td>
+            <td>671B / 37B MoE</td>
+            <td>#5 (1310)</td>
+            <td>65.2%</td>
+            <td>99.1%</td>
+            <td>开源 (Open)</td>
+          </tr>
+          <tr>
+            <td>Kimi K2 (上一代)</td>
+            <td>1.2T MoE</td>
+            <td>#8 (1240)</td>
+            <td>58.4%</td>
+            <td>98.5%</td>
+            <td>部分开源</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top: 16px; font-size: 13.5px; color: var(--ink-2); line-height: 1.55;">
+      <p><b>🔑 核心能力三要素：</b></p>
+      <ul style="padding-left: 20px; margin-top: 4px;">
+        <li><b>全栈 Frontend 代码重构：</b> 在盲测竞技场中凭端到端生成高度可交互、美观、无 Bug 的 Web 界面胜出。</li>
+        <li><b>自主工程 Agent (Long-Horizon Agent):</b> 具备长达数百步的工具调用与 GitHub 仓库巡航重构能力。</li>
+        <li><b>原生多模态视觉理解：</b> 无外挂视觉适配器，直接在统一 Transformer 架构中处理高分辨率图像与视频。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- =================== 04: 行业影响与生态落地 =================== -->
+  <section class="c4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>行业影响与 AI 生态演进</h2>
+      <span class="en">INDUSTRY IMPACT & ECOSYSTEM</span>
+    </div>
+    <p>Kimi K3 的发布不仅是一次技术迭代，更在硬件设计、资本市场与开源生态中引发剧烈震响：</p>
+
+    <div class="impact-grid">
+      <div class="imp-card">
+        <div class="imp-head">
+          <span>🖥️ 48小时自主 EDA 芯片设计</span>
+        </div>
+        <div class="imp-body">
+          月之暗面演示了 Kimi K3 驱动的 Agent 在 <b>48 小时内自主完成晶片/电路逻辑设计与 Verilog 代码验证</b> 的能力，展示了 AI agent 深入半导体工业核心流程的巨大潜力。
+        </div>
+      </div>
+
+      <div class="imp-card">
+        <div class="imp-head">
+          <span>🚀 月之暗面估值达 $350 亿</span>
+        </div>
+        <div class="imp-body">
+          受益于 Kimi K3 的现象级轰动，月之暗面完成新一轮 <b>35 亿美元融资</b>，公司估值达到 350 亿美元，并传出正在积极筹备赴港上市（IPO）进程。
+        </div>
+      </div>
+
+      <div class="imp-card">
+        <div class="imp-head">
+          <span>🌐 开源社区 "DeepSeek 时刻" 再现</span>
+        </div>
+        <div class="imp-body">
+          将 2.8T 顶级旗舰模型权重完全开放给全球开发者与研究团队，极大降低了各行业构建专用超大模型 Agent 的门槛。
+        </div>
+      </div>
+
+      <div class="imp-card">
+        <div class="imp-head">
+          <span>⚡ API 与 Web/App 全线接入</span>
+        </div>
+        <div class="imp-body">
+          Kimi K3 已全面接入 kimi.ai Web、App 及 Open API，支持长文档分析、深度思考模式（Reasoning）与代码助手。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 05: 常见误区与 FAQ =================== -->
+  <section class="c5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>关于 Kimi K3 的 4 个常见认知误区</h2>
+      <span class="en">COMMON PITFALLS & FAQ</span>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">误区 1："2.8 万亿参数模型推理肯定又慢又贵"</span>
+        <span class="fix">👉 <b>实际上推理很高效！</b> Kimi K3 采用 896 选 16 的超级稀疏 MoE，每次推理仅激活 104B 参数，推理速度与显存开销媲美千亿级 Dense 模型。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">误区 2："KDA 线性注意力会损失 1M 上下文的细节精准度"</span>
+        <span class="fix">👉 <b>经大海捞针测试验证 100% 召回！</b> KDA 在特定网络层采取混合策略，既消除了显存爆炸，又保持了完全无损的长文本细节关联。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">误区 3："Kimi K3 是闭源商业模型"</span>
+        <span class="fix">👉 <b>权重已全面开源！</b> 2026年7月27日月之暗面已向 HuggingFace 和 GitHub 社区公布完整模型权重，是全球首个开源的 3万亿级大模型。</span>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <span class="x">✗</span>
+      <div class="body">
+        <span class="bad">误区 4："AttnRes 只是简单的残差相加"</span>
+        <span class="fix">👉 <b>AttnRes 是注意力加权跨层动态检索！</b> 传统 ResNet 式加法会导致浅层语义沉没，AttnRes 允许跨任意早期层无损提取表征，将 Scaling 效率提升 2.5 倍。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FOOTER =================== -->
+  <footer>
+    <div class="title">一页速记 · TL;DR</div>
+    <ul class="points">
+      <li><b>WHAT</b>月之暗面 (Moonshot AI) 于 2026年7月发布的 2.8T MoE 旗舰大模型，权重完全开源。</li>
+      <li><b>3 大创新</b>Stable LatentMoE (896选16) · KDA (1M 线性注意力) · AttnRes (注意力残差)</li>
+      <li><b>战绩</b>Frontend Code Arena 全球第一 · 2.5× Scaling 效率 · 48小时自主芯片设计 Agent</li>
+    </ul>
+    <div class="oneliner">
+      <b>一句话总结：</b>Kimi K3 是全球首个开源的 <b>3 万亿级 (2.8T MoE) 旗舰模型</b>，凭三大底层创新实现 104B 高效激活与 1M 无损上下文，登顶 Frontend Code Arena 世界第一。
+    </div>
+    <div class="stamp">资料来源：Moonshot AI 官方发布报告 (2026.07)、Frontend Code Arena 榜单、HuggingFace 开源社区</div>
+    <div class="credit">
+      <b>由 DONG XINGBO 创建整理</b> · 非授权禁止转载<br>
+      <span style="font-size: 10.5px;">© 2026 DONG XINGBO · All rights reserved</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
