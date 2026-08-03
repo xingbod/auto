@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>三维随机博弈与自然常数 1/e · 斩杀线、国自然函评与论文审稿一票否决一页通</title>
+<!-- KaTeX Math Support -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '\\[', right: '\\]', display: true},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '$', right: '$', display: false}
+      ],
+      throwOnError: false
+    });"></script>
 <style>
   :root {
     --bg: #f8fafc;
@@ -232,8 +245,8 @@
     background: #f8fafc;
     border-radius: 10px;
     border-left: 4px solid var(--rose);
-    font-family: "STIX Two Text", "Times New Roman", Cambria Math, serif;
-    font-size: 15.5px;
+    font-family: "STIX Two Math", "Cambria Math", "Times New Roman", serif;
+    font-size: 16px;
     color: var(--ink);
     overflow-x: auto;
   }
@@ -385,13 +398,13 @@
   <!-- HEADER -->
   <header>
     <div class="tag">随机博弈与概率极限 · 三合一深度全景</div>
-    <h1>三维随机博弈与自然常数 <span class="accent">1/e</span><br>“斩杀线”、国自然函评与论文审稿一票否决一页通</h1>
+    <h1>三维随机博弈与自然常数 <span class="accent">1/<i>e</i></span><br>“斩杀线”、国自然函评与论文审稿一票否决一页通</h1>
     <div class="subtitle">整合“美联储 37% 零缓冲危机”、“国自然 3人 vs 5人函评无 A 概率”，到“学术论文 3 审稿人一票否决大样本极限”的底层数学统一解释</div>
     <div class="meta">
       <span class="chip">💥 美联储 37% 斩杀线</span>
       <span class="chip">🏛️ 国自然函评 (3人/5人)</span>
       <span class="chip">📄 论文审稿一票否决</span>
-      <span class="chip">e^{-1} ≈ 36.8%</span>
+      <span class="chip"><i>e</i><sup>-1</sup> ≈ 36.8%</span>
       <span class="chip">📊 泊松极限定理</span>
     </div>
   </header>
@@ -424,7 +437,7 @@
 
       <div class="eq-box">
         <div class="eq-line">
-          <span>P(\text{论文被拒稿}) = 1 - (1 - p_{\text{reject}})^3</span>
+          <span>$$P(\text{论文被拒稿}) = 1 - (1 - p_{\text{reject}})^3$$</span>
           <span class="eq-desc">3 审稿人一票否决公式</span>
         </div>
       </div>
@@ -432,7 +445,7 @@
       <div class="grid-2">
         <div class="card rose">
           <h3>⚡ 特性 ①：悲观累积与风险放大效应 (Veto Amplification)</h3>
-          <p>假设单专家给拒稿概率为 $p_{\text{reject}}$，论文**至少收到 1 个 Reject** 的概率变化：</p>
+          <p>假设单专家给拒稿概率为 $p_{\text{reject}}$，论文<strong>至少收到 1 个 Reject</strong> 的概率变化：</p>
           <ul style="margin: 6px 0 0 16px; font-size: 13px; color: var(--ink-2);">
             <li><strong>$p_{\text{reject}} = 20\%$</strong>：拒稿概率升至 <strong>48.8%</strong>；</li>
             <li><strong>$p_{\text{reject}} = 25\%$</strong>：拒稿概率升高到 <strong>57.8%</strong>（过半被拒）；</li>
@@ -499,7 +512,7 @@
     <section>
       <div class="sec-header">
         <span class="sec-num c-purple">3</span>
-        <h2 class="sec-title">三大任务统一数学本质：自然常数 1/e 与系统脆弱性</h2>
+        <h2 class="sec-title">三大任务统一数学本质：自然常数 1/<i>e</i> 与系统脆弱性</h2>
       </div>
       <p>将三大任务横向对比，揭示出随机博弈中由自然常数 $1/e \approx 36.8\%$ 支配的三重法则：</p>
 
@@ -526,7 +539,7 @@
             <td>$P(\text{被拒}) = 1 - (1 - p_{\text{reject}})^n$</td>
           </tr>
           <tr>
-            <td><strong>1/e (36.8%) 含义</strong></td>
+            <td><strong>1/<i>e</i> (36.8%) 含义</strong></td>
             <td>零缓冲暴民暴露界限 ($36.8\%$)</td>
             <td>平均 1A 期望下的无 A 幸存率 ($36.8\%$)</td>
             <td>平均 1 拒稿期望下的无拒幸存率 ($36.8\%$)</td>
@@ -545,7 +558,7 @@
     <section>
       <div class="sec-header">
         <span class="sec-num c-amber">4</span>
-        <h2 class="sec-title">动态实验室：审稿一票否决率与 1/e 极限定理模拟器</h2>
+        <h2 class="sec-title">动态实验室：审稿一票否决率与 1/<i>e</i> 极限定理模拟器</h2>
       </div>
 
       <div class="lab-box">

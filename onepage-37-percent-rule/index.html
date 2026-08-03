@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>美国“37% 斩杀线”与自然常数 1/e ≈ 36.8% · 一页讲清楚</title>
+<!-- KaTeX Math Support -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '\\[', right: '\\]', display: true},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '$', right: '$', display: false}
+      ],
+      throwOnError: false
+    });"></script>
 <style>
   :root {
     --bg: #f8fafc;
@@ -254,8 +267,8 @@
     background: #f8fafc;
     border-radius: 10px;
     border-left: 4px solid var(--purple);
-    font-family: "STIX Two Text", "Times New Roman", Cambria Math, serif;
-    font-size: 15.5px;
+    font-family: "STIX Two Math", "Cambria Math", "Times New Roman", serif;
+    font-size: 16px;
     color: var(--ink);
     overflow-x: auto;
   }
@@ -407,11 +420,11 @@
   <!-- HEADER -->
   <header>
     <div class="tag">概率统计与社会学视角 · 深度拆解</div>
-    <h1>美国“37% 斩杀线”与自然常数 <span class="accent">1/e ≈ 36.8%</span></h1>
+    <h1>美国“37% 斩杀线”与自然常数 <span class="accent">1/<i>e</i> ≈ 36.8%</span></h1>
     <div class="subtitle">从美联储 37% 应急储蓄断层，到数学最优停止理论 (Secretary Problem) — 揭示 37% 临界线背后的概率统计律与跨领域应用范例</div>
     <div class="meta">
       <span class="chip">📊 美联储 SHED 数据</span>
-      <span class="chip">e = 2.71828...</span>
+      <span class="chip"><i>e</i> ≈ 2.71828</span>
       <span class="chip">🎯 最优停止理论</span>
       <span class="chip">⚡ 临界衰减与生存率</span>
       <span class="chip">💡 决策科学</span>
@@ -438,7 +451,7 @@
           <div class="stat-label">底层流动性缓冲时间</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num" style="color: var(--blue);">1/e</div>
+          <div class="stat-num" style="color: var(--blue);">1/<i>e</i></div>
           <div class="stat-label">自然指数临界比率</div>
         </div>
         <div class="stat-card">
@@ -454,12 +467,12 @@
         </div>
         <div class="card purple">
           <h3>⚡ 为何被称为“斩杀线”？（正反馈恶性循环）</h3>
-          <p>在缺乏缓冲机制的体系中，37% 的人群处于信用崩溃的临界边缘：<strong>小额缺口 $\to$ 账单逾期 $\to$ 信用分 (FICO) 暴跌 $\to$ 租房被拒/无法通过雇主背景审查 $\to$ 失业破产</strong>。一旦触碰该阈值，系统便产生连锁必杀效应。</p>
+          <p>在缺乏缓冲机制的体系中，37% 的人群处于信用崩溃的临界边缘：<strong>小额缺口 &rarr; 账单逾期 &rarr; 信用分 (FICO) 暴跌 &rarr; 租房被拒/无法通过雇主背景审查 &rarr; 失业破产</strong>。一旦触碰该阈值，系统便产生连锁必杀效应。</p>
         </div>
       </div>
 
       <div class="callout purple">
-        <strong>📌 统计学本质：</strong>在高度偏态（Fat-tailed / Pareto）的个人财富与现金流分布中，37% 恰好是<strong>“正向资本积累”与“无防御零缓冲”</strong>的结构性分水岭。这一数字不仅是一个经济调查数据，更深刻契合了概率统计中由自然常数 $e$ 决定的临界衰减律。
+        <strong>📌 统计学本质：</strong>在高度偏态（Fat-tailed / Pareto）的个人财富与现金流分布中，37% 恰好是<strong>“正向资本积累”与“无防御零缓冲”</strong>的结构性分水岭。这一数字不仅是一个经济调查数据，更深刻契合了概率统计中由自然常数 <i>e</i> 决定的临界衰减律。
       </div>
     </section>
 
@@ -467,13 +480,13 @@
     <section>
       <div class="sec-header">
         <span class="sec-num c-blue">2</span>
-        <h2 class="sec-title">数学源头：自然常数 1/e ≈ 36.8% 的推导与概率原理</h2>
+        <h2 class="sec-title">数学源头：自然常数 1/<i>e</i> ≈ 36.8% 的推导与概率原理</h2>
       </div>
-      <p>为什么 37%（精细值 $36.78794\%$）会在自然界与随机过程中反复涌现？这源于数学中最基础的自然常数 $e = \lim_{n \to \infty} (1 + 1/n)^n \approx 2.7182818$ 的倒数 <strong>$1/e \approx 0.367879$</strong>。</p>
+      <p>为什么 37%（精细值 $36.78794\%$）会在自然界与随机过程中反复涌现？这源于数学中最基础的自然常数 $e = \lim_{n \to \infty} (1 + 1/n)^n \approx 2.7182818$ 的倒数 <strong>$1/e \approx 0.367879 \approx 36.8\%$</strong>。</p>
 
       <div class="eq-box">
         <div class="eq-line">
-          <span>e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n \approx 2.71828 \implies \frac{1}{e} \approx 0.3678794... \approx 36.8\%</span>
+          <span>$$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n \approx 2.71828 \implies \frac{1}{e} \approx 0.3678794... \approx 36.8\%$$</span>
           <span class="eq-desc">自然常数倒数定义</span>
         </div>
       </div>
@@ -482,19 +495,19 @@
         <div class="card blue">
           <h3>1️⃣ 泊松极限：全过程“零击中”安全率</h3>
           <p>假设某随机事件在整个周期内平均发生 1 次（如 $N$ 次尝试中每次成功率 $p=1/N$）。当 $N \to \infty$ 时，<strong>一次都不发生（完全无缓冲触发）</strong>的极限概率为：</p>
-          <div style="font-family: serif; font-size: 14px; margin-top: 6px; text-align: center; color: var(--blue-deep);">
-            \( P(X=0) = \lim_{N \to \infty} \left(1 - \frac{1}{N}\right)^N = e^{-1} \approx 36.8\% \)
+          <div style="margin-top: 10px; text-align: center; color: var(--blue-deep);">
+            $$P(X=0) = \lim_{N \to \infty} \left(1 - \frac{1}{N}\right)^N = e^{-1} \approx 36.8\%$$
           </div>
-          <p style="margin-top: 6px; font-size: 12.5px;">即：在没有冗余防护的随机系统中，恰有约 <strong>36.8%</strong> 的个体/时段暴露于无保护状态。</p>
+          <p style="margin-top: 8px; font-size: 12.5px;">即：在没有冗余防护的随机系统中，恰有约 <strong>36.8%</strong> 的个体/时段暴露于无保护状态。</p>
         </div>
 
         <div class="card teal">
           <h3>2️⃣ 最优停止理论：37% 探索黄金法则</h3>
           <p>在经典的<strong>秘书问题 (Secretary Problem)</strong> 序列决策中：面对 $N$ 个依次出场的选项（不可回头），最优策略是：<strong>前 $r-1$ 个仅观察不选择，建立基准；从第 $r$ 个起，遇到超越前者的立刻决定。</strong></p>
-          <div style="font-family: serif; font-size: 14px; margin-top: 6px; text-align: center; color: var(--teal-deep);">
-            \( \frac{r^*}{N} \to \frac{1}{e} \approx 36.8\% \implies P(\text{选到全局最佳}) \to \frac{1}{e} \approx 36.8\% \)
+          <div style="margin-top: 10px; text-align: center; color: var(--teal-deep);">
+            $$\frac{r^*}{N} \to \frac{1}{e} \approx 36.8\% \implies P(\text{选到全局最佳}) \to \frac{1}{e} \approx 36.8\%$$
           </div>
-          <p style="margin-top: 6px; font-size: 12.5px;">最佳观察时间恰好是前 <strong>36.8%</strong>！选到全局最优解的最高成功率也正好是 <strong>36.8%</strong>！</p>
+          <p style="margin-top: 8px; font-size: 12.5px;">最佳观察时间恰好是前 <strong>36.8%</strong>！选到全局最优解的最高成功率也正好是 <strong>36.8%</strong>！</p>
         </div>
       </div>
     </section>
@@ -503,7 +516,7 @@
     <section>
       <div class="sec-header">
         <span class="sec-num c-teal">3</span>
-        <h2 class="sec-title">跨领域扩展：37% (1/e) 原理的四大硬核应用范例</h2>
+        <h2 class="sec-title">跨领域扩展：37% (1/<i>e</i>) 原理的四大硬核应用范例</h2>
       </div>
 
       <div class="grid-2">
@@ -580,7 +593,7 @@
       </div>
     </section>
 
-    <!-- SECTION 5: 综合对比矩阵与核心启示 -->
+    <!-- SECTION 5: 综合对比表与核心启示 -->
     <section>
       <div class="sec-header">
         <span class="sec-num c-rose">5</span>
@@ -626,7 +639,7 @@
 
       <div class="callout rose">
         <strong>💡 核心金句总结：</strong><br>
-        “37% 不是冷酷的终点，而是从<strong>‘盲目观察’走向‘果断决策’</strong>、从<strong>‘脆弱抵抗’走向‘安全缓冲’</strong>的数学分界线。尊重自然常数 $1/e \approx 36.8\%$ 的概率律，能帮助我们在复杂社会与不确定性世界中做出更加理性的黄金选择。”
+        “37% 不是冷酷的终点，而是从<strong>‘盲目观察’走向‘果断决策’</strong>、从<strong>‘脆弱抵抗’走向‘安全缓冲’</strong>的数学分界线。”
       </div>
     </section>
 
@@ -650,7 +663,6 @@
     const selectedRatio = parseInt(document.getElementById('observeRatio').value);
     const numSimulations = 1000;
     
-    // We will calculate success rates for ratio from 5% to 90%
     const ratios = [];
     const successRates = [];
     
@@ -659,21 +671,18 @@
       const observeCount = Math.max(1, Math.floor(N * (r / 100)));
       
       for (let sim = 0; sim < numSimulations; sim++) {
-        // Generate array of unique scores from 1 to N, then shuffle
         const scores = Array.from({length: N}, (_, i) => i + 1);
         for (let i = scores.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [scores[i], scores[j]] = [scores[j], scores[i]];
         }
         
-        // Find highest score in observe window
         let bestObserve = 0;
         for (let i = 0; i < observeCount; i++) {
           if (scores[i] > bestObserve) bestObserve = scores[i];
         }
         
-        // Pick first score in remaining that exceeds bestObserve
-        let chosen = scores[N - 1]; // fallback to last
+        let chosen = scores[N - 1];
         for (let i = observeCount; i < N; i++) {
           if (scores[i] > bestObserve) {
             chosen = scores[i];
@@ -681,7 +690,6 @@
           }
         }
         
-        // Success if chosen is N (the absolute best)
         if (chosen === N) successes++;
       }
       
@@ -689,10 +697,8 @@
       successRates.push((successes / numSimulations) * 100);
     }
     
-    // Draw on Canvas
     drawChart(ratios, successRates, selectedRatio);
     
-    // Find current selected ratio success rate
     const curIndex = ratios.indexOf(selectedRatio);
     const curRate = curIndex !== -1 ? successRates[curIndex].toFixed(1) : ((successRates[0]).toFixed(1));
     
@@ -704,7 +710,6 @@
     const canvas = document.getElementById('simCanvas');
     const ctx = canvas.getContext('2d');
     
-    // Adjust size for DPI
     const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width * 2;
     canvas.height = rect.height * 2;
@@ -796,7 +801,6 @@
     ctx.fillText('观察样本比例 (%)', padding.left + chartW / 2, height - 5);
   }
 
-  // Initial Run on Load
   window.onload = function() {
     updateLabLabels();
     runMonteCarlo();
