@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三维随机博弈与自然常数 1/e · 斩杀线、国自然函评与论文审稿一票否决一页通</title>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --ink-3: #64748b;
+    --line: #e2e8f0;
+    --line-2: #f1f5f9;
+
+    --purple: #7c3aed;
+    --purple-soft: #f5f3ff;
+    --purple-deep: #5b21b6;
+
+    --blue: #0284c7;
+    --blue-soft: #f0f9ff;
+    --blue-deep: #075985;
+
+    --teal: #0d9488;
+    --teal-soft: #f0fdfa;
+    --teal-deep: #115e59;
+
+    --amber: #d97706;
+    --amber-soft: #fffbeb;
+    --amber-deep: #78350f;
+
+    --rose: #e11d48;
+    --rose-soft: #fff1f2;
+    --rose-deep: #9f1239;
+
+    --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.6;
+    font-size: 14.5px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 24px auto 48px;
+    background: var(--card);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  /* Header */
+  header {
+    padding: 38px 44px 30px;
+    background:
+      radial-gradient(ellipse 700px 260px at top right, #f5f3ff 0%, transparent 70%),
+      radial-gradient(ellipse 500px 220px at bottom left, #fff1f2 0%, transparent 70%);
+    border-bottom: 1px solid var(--line);
+  }
+
+  header .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--purple-deep);
+    background: var(--purple-soft);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    border: 1px solid #ddd6fe;
+  }
+
+  header h1 {
+    font-size: 26px;
+    line-height: 1.3;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  header h1 .accent {
+    color: var(--rose);
+  }
+
+  header .subtitle {
+    font-size: 14.5px;
+    color: var(--ink-2);
+    line-height: 1.65;
+    margin-bottom: 18px;
+  }
+
+  header .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  header .chip {
+    font-size: 11.5px;
+    background: #ffffff;
+    color: var(--ink-3);
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    font-weight: 500;
+  }
+
+  /* Body Content */
+  .body {
+    padding: 32px 44px 40px;
+  }
+
+  section {
+    margin-bottom: 36px;
+  }
+
+  section:last-child {
+    margin-bottom: 0;
+  }
+
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--line-2);
+  }
+
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+
+  .sec-num.c-purple { background: var(--purple); }
+  .sec-num.c-blue   { background: var(--blue); }
+  .sec-num.c-teal   { background: var(--teal); }
+  .sec-num.c-amber  { background: var(--amber); }
+  .sec-num.c-rose   { background: var(--rose); }
+
+  .sec-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    color: var(--ink-2);
+    margin-bottom: 12px;
+    font-size: 14.5px;
+    text-align: justify;
+  }
+
+  p strong {
+    color: var(--ink);
+  }
+
+  /* Grid & Cards */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 16px 0;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  .card {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  .card.purple { border-top: 4px solid var(--purple); background: var(--purple-soft); }
+  .card.blue   { border-top: 4px solid var(--blue);   background: var(--blue-soft); }
+  .card.teal   { border-top: 4px solid var(--teal);   background: var(--teal-soft); }
+  .card.amber  { border-top: 4px solid var(--amber);  background: var(--amber-soft); }
+  .card.rose   { border-top: 4px solid var(--rose);   background: var(--rose-soft); }
+
+  .card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .card p {
+    font-size: 13.5px;
+    color: var(--ink-2);
+    margin-bottom: 0;
+    line-height: 1.55;
+  }
+
+  /* Equation Box */
+  .eq-box {
+    margin: 16px 0;
+    padding: 16px 20px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border-left: 4px solid var(--rose);
+    font-family: "STIX Two Text", "Times New Roman", Cambria Math, serif;
+    font-size: 15.5px;
+    color: var(--ink);
+    overflow-x: auto;
+  }
+
+  .eq-box .eq-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .eq-box .eq-line:last-child {
+    margin-bottom: 0;
+  }
+
+  .eq-box .eq-desc {
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-left: 12px;
+  }
+
+  /* Callout / Highlight */
+  .callout {
+    margin: 16px 0;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .callout.purple { background: var(--purple-soft); border: 1px solid #ddd6fe; color: var(--purple-deep); }
+  .callout.blue   { background: var(--blue-soft);   border: 1px solid #bae6fd; color: var(--blue-deep); }
+  .callout.amber  { background: var(--amber-soft);  border: 1px solid #fde68a; color: var(--amber-deep); }
+  .callout.rose   { background: var(--rose-soft);   border: 1px solid #fecdd3; color: var(--rose-deep); }
+
+  /* Interactive Lab */
+  .lab-box {
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin: 18px 0;
+  }
+
+  .lab-controls {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--ink-2);
+  }
+
+  input[type="range"] {
+    accent-color: var(--rose);
+    cursor: pointer;
+  }
+
+  button.btn-run {
+    background: var(--rose);
+    color: #ffffff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  button.btn-run:hover {
+    background: var(--rose-deep);
+  }
+
+  .canvas-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Table */
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13.5px;
+  }
+
+  .matrix-table th, .matrix-table td {
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    text-align: left;
+  }
+
+  .matrix-table th {
+    background: #f8fafc;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .matrix-table td strong {
+    color: var(--rose-deep);
+  }
+
+  /* Footer */
+  footer {
+    padding: 20px 44px;
+    border-top: 1px solid var(--line);
+    background: #fafafa;
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--ink-3);
+  }
+
+  footer a {
+    color: var(--purple);
+    text-decoration: none;
+  }
+
+  @media (max-width: 680px) {
+    header, .body { padding: 24px 20px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    header h1 { font-size: 22px; }
+    .sec-title { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <!-- HEADER -->
+  <header>
+    <div class="tag">随机博弈与概率极限 · 三合一深度全景</div>
+    <h1>三维随机博弈与自然常数 <span class="accent">1/e</span><br>“斩杀线”、国自然函评与论文审稿一票否决一页通</h1>
+    <div class="subtitle">整合“美联储 37% 零缓冲危机”、“国自然 3人 vs 5人函评无 A 概率”，到“学术论文 3 审稿人一票否决大样本极限”的底层数学统一解释</div>
+    <div class="meta">
+      <span class="chip">💥 美联储 37% 斩杀线</span>
+      <span class="chip">🏛️ 国自然函评 (3人/5人)</span>
+      <span class="chip">📄 论文审稿一票否决</span>
+      <span class="chip">e^{-1} ≈ 36.8%</span>
+      <span class="chip">📊 泊松极限定理</span>
+    </div>
+  </header>
+
+  <div class="body">
+
+    <!-- OVERVIEW CARDS -->
+    <div class="grid-3">
+      <div class="card purple">
+        <h3>💥 任务一：美国 37% 斩杀线</h3>
+        <p><strong>底层逻辑：零缓冲暴露率</strong><br>37% 人口拿不出 $400 应急资金，极偏态分布下处于无防御临界区，一有失业/小病即触发链式破产。</p>
+      </div>
+      <div class="card blue">
+        <h3>🏛️ 任务二：国自然 3人/5人函评</h3>
+        <p><strong>底层逻辑：二项概率沉淀</strong><br>3 人函评下无 A 率高达 42.2%；增加至 5 人后无 A 率急降至 23.7%，显著提升好标书遇“伯乐”几率。</p>
+      </div>
+      <div class="card rose">
+        <h3>📄 任务三：论文审稿一票否决</h3>
+        <p><strong>底层逻辑：悲观累积放大</strong><br>3 审稿人下即便单人拒稿率仅 25%，在“一票否决”机制下全篇遭拒率升至 <strong>57.8%</strong>！大样本呈现极度敏感性。</p>
+      </div>
+    </div>
+
+    <!-- SECTION 1: 论文审稿 3 审稿人一票否决特性 -->
+    <section>
+      <div class="sec-header">
+        <span class="sec-num c-rose">1</span>
+        <h2 class="sec-title">任务三深度：论文审稿（3 审稿人·4 选项）一票否决的大样本特性</h2>
+      </div>
+      <p>在学术期刊与顶会审稿中，通常由 <strong>3 位审稿人（$n=3$）</strong> 给出评审意见：<strong>录用 (Accept)、小修 (Minor)、大修 (Major)、拒稿 (Reject)</strong>。现代高水平期刊普遍实行“风险厌恶规则”，即<strong>只要有 1 人给拒稿（One Reject Veto），整篇论文就极大概率被直接拒稿</strong>。</p>
+
+      <div class="eq-box">
+        <div class="eq-line">
+          <span>P(\text{论文被拒稿}) = 1 - (1 - p_{\text{reject}})^3</span>
+          <span class="eq-desc">3 审稿人一票否决公式</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card rose">
+          <h3>⚡ 特性 ①：悲观累积与风险放大效应 (Veto Amplification)</h3>
+          <p>假设单专家给拒稿概率为 $p_{\text{reject}}$，论文**至少收到 1 个 Reject** 的概率变化：</p>
+          <ul style="margin: 6px 0 0 16px; font-size: 13px; color: var(--ink-2);">
+            <li><strong>$p_{\text{reject}} = 20\%$</strong>：拒稿概率升至 <strong>48.8%</strong>；</li>
+            <li><strong>$p_{\text{reject}} = 25\%$</strong>：拒稿概率升高到 <strong>57.8%</strong>（过半被拒）；</li>
+            <li><strong>$p_{\text{reject}} = 33.3\%$ ($1/3$)</strong>：拒稿概率暴涨至 <strong>70.4%</strong>！</li>
+          </ul>
+          <p style="margin-top: 6px; font-size: 12px; color: var(--rose-deep);"><strong>结论：</strong>小概率的单人拒稿偏好在多审稿人机制下会被剧烈放大！</p>
+        </div>
+
+        <div class="card amber">
+          <h3>📈 特性 ②：审稿人数 $n$ 的指数杀伤力 (Exponential Shrinkage)</h3>
+          <p>在审稿人数增加至 $n$ 人时（如某些期刊 4 人或 5 人），论文幸存概率为 $(1-p)^n$。<strong>只要 $n$ 稍有增加，幸存率呈指数级陡降</strong>：</p>
+          <ul style="margin: 6px 0 0 16px; font-size: 13px; color: var(--ink-2);">
+            <li>$n = 3$ 时（单人拒稿率 25%）：幸存率 42.2%（被拒率 57.8%）；</li>
+            <li>$n = 4$ 时：幸存率降至 31.6%（被拒率 68.4%）；</li>
+            <li>$n = 5$ 时：幸存率仅剩 23.7%（被拒率 76.3%）。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout rose">
+        <strong>🌐 特性 ③：泊松双重对偶与自然常数 $1/e \approx 36.8\%$</strong><br>
+        大样本定理：当全库论文平均收到的拒稿意见期望为 $\lambda = 1.0$（例如 $n=3$, $p_{\text{reject}} = 33.3\%$）时，由泊松零事件极限 $P(X=0) = e^{-1}$ 可得，<strong>全库中完美避开所有 Reject 顺利幸存的论文比例精准落在 $1/e \approx 36.8\%$！</strong>
+      </div>
+    </section>
+
+    <!-- SECTION 2: 任务二 基金评审对比 -->
+    <section>
+      <div class="sec-header">
+        <span class="sec-num c-blue">2</span>
+        <h2 class="sec-title">任务二深度：国自然函评（3 人 vs 5 人）无 A 率演变</h2>
+      </div>
+      <p>与论文审稿“寻找缺点一票否决”不同，国自然函评是<strong>“寻找亮点争取拿 A”</strong>。没有 A（纯 B/C）将直接导致无法进入会评或资助序列。</p>
+
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>评审人数 $n$</th>
+            <th>单专家 A 率 $p_A = 20\%$</th>
+            <th>单专家 A 率 $p_A = 25\%$</th>
+            <th>单专家 A 率 $p_A = 30\%$</th>
+            <th>机制统计效应解读</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>3 个评审专家</strong></td>
+            <td>无 A 率 <strong>51.2%</strong></td>
+            <td>无 A 率 <strong>42.2%</strong></td>
+            <td>无 A 率 <strong>34.3%</strong></td>
+            <td>高偏向掉落区：近一半腰部标书颗粒无收。</td>
+          </tr>
+          <tr>
+            <td><strong>5 个评审专家</strong></td>
+            <td>无 A 率 <strong>32.8%</strong></td>
+            <td>无 A 率 <strong>23.7%</strong></td>
+            <td>无 A 率 <strong>16.8%</strong></td>
+            <td><strong>无 A 率锐减 18.5%</strong>，大幅增加遇到“赏识伯乐”破零的机会。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 3: 三大场景统一底层数学原理 -->
+    <section>
+      <div class="sec-header">
+        <span class="sec-num c-purple">3</span>
+        <h2 class="sec-title">三大任务统一数学本质：自然常数 1/e 与系统脆弱性</h2>
+      </div>
+      <p>将三大任务横向对比，揭示出随机博弈中由自然常数 $1/e \approx 36.8\%$ 支配的三重法则：</p>
+
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>对比维度</th>
+            <th>场景 1：美国 37% 斩杀线</th>
+            <th>场景 2：国自然 3人/5人函评</th>
+            <th>场景 3：论文审稿一票否决</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>关注焦点</strong></td>
+            <td>个人现金流抗风险能力</td>
+            <td>获得至少 1 个 A 的概率</td>
+            <td>遭遇至少 1 个 Reject 的概率</td>
+          </tr>
+          <tr>
+            <td><strong>核心数学公式</strong></td>
+            <td>偏态分布 $P(\text{流失}) \to 1/e$</td>
+            <td>$P(\text{无 A}) = (1 - p_A)^n$</td>
+            <td>$P(\text{被拒}) = 1 - (1 - p_{\text{reject}})^n$</td>
+          </tr>
+          <tr>
+            <td><strong>1/e (36.8%) 含义</strong></td>
+            <td>零缓冲暴民暴露界限 ($36.8\%$)</td>
+            <td>平均 1A 期望下的无 A 幸存率 ($36.8\%$)</td>
+            <td>平均 1 拒稿期望下的无拒幸存率 ($36.8\%$)</td>
+          </tr>
+          <tr>
+            <td><strong>系统生存启示</strong></td>
+            <td>建立至少 3~6 个月防线，避开 37% 斩杀区</td>
+            <td>尽量打磨细节避开短板，争取在 5 人制中破零</td>
+            <td>消除所有明显硬伤，防止在 3 审稿人下触发否决</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 4: 动态实验室 -->
+    <section>
+      <div class="sec-header">
+        <span class="sec-num c-amber">4</span>
+        <h2 class="sec-title">动态实验室：审稿一票否决率与 1/e 极限定理模拟器</h2>
+      </div>
+
+      <div class="lab-box">
+        <div class="lab-controls">
+          <div class="control-group">
+            <label for="revN">审稿人数 n:</label>
+            <input type="range" id="revN" min="2" max="7" value="3" oninput="updateReviewLab()">
+            <span id="revNVal" style="font-weight: 700; color: var(--purple);">3</span>
+          </div>
+
+          <div class="control-group">
+            <label for="singleP">单人拒稿率 (%):</label>
+            <input type="range" id="singleP" min="5" max="60" value="25" oninput="updateReviewLab()">
+            <span id="singlePVal" style="font-weight: 700; color: var(--rose);">25%</span>
+          </div>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="vetoCanvas"></canvas>
+        </div>
+
+        <div id="vetoResult" style="margin-top: 12px; font-size: 13px; color: var(--ink-2); text-align: center; font-weight: 600;">
+          在 3 审稿人、单人 25% 拒稿率下，整篇论文遭一票否决被拒的概率高达 57.8%！
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: 核心总结 -->
+    <section>
+      <div class="sec-header">
+        <span class="sec-num c-rose">5</span>
+        <h2 class="sec-title">总结：面对随机博弈的生存法则</h2>
+      </div>
+
+      <div class="callout purple">
+        <strong>📌 三条黄金生存法则：</strong><br>
+        1. <strong>财务防斩杀</strong>：永远不要让现金流接近 37% 零缓冲线，建立足够冗余防御。<br>
+        2. <strong>基金求突破</strong>：在 5 人函评体制下，突出不可替代的创新亮点，提高至少拿 1 个 A 的概率。<br>
+        3. <strong>论文控风险</strong>：审稿机制是“寻找缺点一票否决”，大样本下哪怕 10% 的细节漏洞也会被放大。严格消除所有硬伤是通关的唯一解。
+      </div>
+    </section>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>由 DONG XINGBO 创建整理 · <a href="../index.html">返回 Auto 导航首页</a></p>
+    <p style="margin-top: 4px; color: var(--ink-3);">© 2026 DONG XINGBO · 包含三大场景概率对比与交互式模拟</p>
+  </footer>
+</div>
+
+<script>
+  function updateReviewLab() {
+    const n = parseInt(document.getElementById('revN').value);
+    const p = parseInt(document.getElementById('singleP').value) / 100;
+    
+    document.getElementById('revNVal').innerText = n;
+    document.getElementById('singlePVal').innerText = Math.round(p * 100) + '%';
+    
+    const vetoRate = (1 - Math.pow(1 - p, n)) * 100;
+    const surviveRate = Math.pow(1 - p, n) * 100;
+    
+    document.getElementById('vetoResult').innerHTML = 
+      `在 <span style="color:var(--purple); font-weight:800;">${n}</span> 个审稿人、单人拒稿率 <span style="color:var(--rose); font-weight:800;">${Math.round(p*100)}%</span> 下，论文遭一票否决概率为 <span style="color:var(--rose); font-weight:800;">${vetoRate.toFixed(1)}%</span>（幸存通过率仅 <span style="color:var(--teal); font-weight:800;">${surviveRate.toFixed(1)}%</span>）`;
+      
+    drawVetoChart(n, p);
+  }
+
+  function drawVetoChart(curN, curP) {
+    const canvas = document.getElementById('vetoCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * 2;
+    canvas.height = rect.height * 2;
+    ctx.scale(2, 2);
+    
+    const width = rect.width;
+    const height = rect.height;
+    
+    ctx.clearRect(0, 0, width, height);
+    
+    const padding = { top: 25, right: 30, bottom: 35, left: 45 };
+    const chartW = width - padding.left - padding.right;
+    const chartH = height - padding.top - padding.bottom;
+    
+    // Draw Grid Lines
+    ctx.strokeStyle = '#f1f5f9';
+    ctx.lineWidth = 1;
+    for (let y = 0; y <= 100; y += 20) {
+      const canvasY = padding.top + chartH - (y / 100) * chartH;
+      ctx.beginPath();
+      ctx.moveTo(padding.left, canvasY);
+      ctx.lineTo(width - padding.right, canvasY);
+      ctx.stroke();
+      
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(y + '%', padding.left - 6, canvasY + 3);
+    }
+    
+    // Draw Veto Rate Curves for n=3, 4, 5
+    const colors = { 3: '#7c3aed', 4: '#0284c7', 5: '#e11d48' };
+    
+    [3, 4, 5].forEach(n => {
+      ctx.beginPath();
+      ctx.strokeStyle = colors[n];
+      ctx.lineWidth = n === curN ? 3 : 1.5;
+      if (n !== curN) ctx.globalAlpha = 0.4;
+      else ctx.globalAlpha = 1.0;
+      
+      for (let pVal = 5; pVal <= 60; pVal += 1) {
+        const p = pVal / 100;
+        const veto = (1 - Math.pow(1 - p, n)) * 100;
+        const x = padding.left + ((pVal - 5) / (60 - 5)) * chartW;
+        const y = padding.top + chartH - (veto / 100) * chartH;
+        
+        if (pVal === 5) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1.0;
+    });
+    
+    // Highlight Current Point
+    const curX = padding.left + ((curP * 100 - 5) / (60 - 5)) * chartW;
+    const curVeto = (1 - Math.pow(1 - curP, curN)) * 100;
+    const curY = padding.top + chartH - (curVeto / 100) * chartH;
+    
+    ctx.fillStyle = '#e11d48';
+    ctx.beginPath();
+    ctx.arc(curX, curY, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // X Axis Labels
+    ctx.fillStyle = '#64748b';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    for (let p = 10; p <= 60; p += 10) {
+      const x = padding.left + ((p - 5) / (60 - 5)) * chartW;
+      ctx.fillText(p + '%', x, height - padding.bottom + 15);
+    }
+    ctx.fillText('单人拒稿率 (%)', padding.left + chartW / 2, height - 5);
+    
+    // Legend
+    ctx.font = '10px sans-serif';
+    ctx.fillStyle = '#7c3aed'; ctx.fillText('n=3 审稿人', width - 110, padding.top + 10);
+    ctx.fillStyle = '#0284c7'; ctx.fillText('n=4 审稿人', width - 110, padding.top + 22);
+    ctx.fillStyle = '#e11d48'; ctx.fillText('n=5 审稿人', width - 110, padding.top + 34);
+  }
+
+  window.onload = function() {
+    updateReviewLab();
+  };
+</script>
+</body>
+</html>
