@@ -516,6 +516,16 @@
       </div>
       <p>将三大任务横向对比，揭示出随机博弈中由自然常数 $1/e \approx 36.8\%$ 支配的三重法则：</p>
 
+      <div class="callout amber" style="margin: 14px 0 18px;">
+        <strong style="font-size: 15px;">🍰【通俗直觉】“N 个蛋糕分给 N 个人”模型：</strong><br>
+        假设桌上有 $N$ 个蛋糕，现场有 $N$ 个人，每个人完全随机独立地去领 1 个蛋糕（拿不到某个特定蛋糕的概率为 $1 - \frac{1}{N}$）。<br>
+        • <strong>某人“连续 $N$ 次均未领到”（一个蛋糕都没分到）的概率</strong>为：
+        $$P(\text{完全轮空/零蛋糕}) = \left(1 - \frac{1}{N}\right)^N$$
+        • <strong>当人数与蛋糕数 $N$ 极大时（$N \to \infty$）</strong>，该概率精准收敛于：
+        $$\lim_{N \to \infty} \left(1 - \frac{1}{N}\right)^N = e^{-1} = \frac{1}{e} \approx 36.7879\% \approx \mathbf{36.8\%}$$
+        💡 <strong>通俗结论：即使人均刚好 1 个蛋糕（总量充足），在纯随机分配下，天生就会有 36.8%（约 37%）的人一个蛋糕也分不到（完全处于零缓冲轮空区）！</strong>
+      </div>
+
       <table class="matrix-table">
         <thead>
           <tr>
