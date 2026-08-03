@@ -348,9 +348,11 @@
   /* Table */
   .matrix-table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     margin: 16px 0;
-    font-size: 13.5px;
+    font-size: 13px;
+    word-wrap: break-word;
   }
 
   .matrix-table th, .matrix-table td {
@@ -464,16 +466,16 @@
       <table class="matrix-table">
         <thead>
           <tr>
-            <th>评审人数</th>
-            <th>上会斩杀线上方（成功上会组合）</th>
-            <th>落入斩杀线下方（被斩杀/无法上会）</th>
-            <th>理论上会概率预估 ($p_A=25\%, p_B=50\%$)</th>
-            <th>实际契合度</th>
+            <th style="width: 16%;">评审人数</th>
+            <th style="width: 29%;">上会斩杀线上方（成功组合）</th>
+            <th style="width: 27%;">落入斩杀线下方（被斩杀）</th>
+            <th style="width: 14%;">理论上会率</th>
+            <th style="width: 14%;">实际契合度</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>3 个评审专家</strong><br>(青年/部分项目)</td>
+            <td><strong>3 个评审专家</strong><br><span style="font-size: 11px; color: var(--ink-3);">(青年/部分项目)</span></td>
             <td>
               <strong style="color: var(--teal-deep);">【稳妥上会区】</strong> AAA (12分)、AAB (11分)<br>
               <strong style="color: var(--blue-deep);">【压线通关区】</strong> ABB (10分，前30%边缘)
@@ -482,13 +484,14 @@
               <strong style="color: var(--rose);">【斩杀淘汰区】</strong> BBB (9分，极难上会)、含 C/D 任何组合 (如 AAC, ABC, BBC)
             </td>
             <td>
-              $$P(\text{AAA}+\text{AAB}+\text{ABB}) = 1.56\% + 9.38\% + 18.75\% = \mathbf{29.7\%}$$<br>
-              斩杀淘汰率 $= \mathbf{70.3\%}$
+              <strong>上会率：<span style="color: var(--teal-deep);">29.7%</span></strong><br>
+              <span style="font-size: 11px; color: var(--ink-3);">(AAA+AAB+ABB)</span><br>
+              淘汰率：<span style="color: var(--rose);">70.3%</span>
             </td>
             <td>与国家自然基金公布的约 <strong>30% 综合上会率</strong> 完美吻合！</td>
           </tr>
           <tr>
-            <td><strong>5 个评审专家</strong><br>(面上/重点项目)</td>
+            <td><strong>5 个评审专家</strong><br><span style="font-size: 11px; color: var(--ink-3);">(面上/重点项目)</span></td>
             <td>
               <strong style="color: var(--teal-deep);">【稳妥上会区】</strong> AAAAA, AAAAB, AAABB, AABBB<br>
               <strong style="color: var(--blue-deep);">【压线通关区】</strong> ABBBB (1A4B，视学科排名)
@@ -497,9 +500,8 @@
               <strong style="color: var(--rose);">【斩杀淘汰区】</strong> 纯 B (5B / BBBBB)、含有 1C 或 2C 的组合 (如 3A2C, 2A2B1C)
             </td>
             <td>
-              稳妥上会概率 $= \mathbf{20.6\%}$<br>
-              (若含 1A4B 压线则为 $\mathbf{26.5\%}$)<br>
-              斩杀淘汰率 $= \mathbf{73.5\% \sim 79.4\%}$
+              <strong>上会率：<span style="color: var(--teal-deep);">20.6%~26.5%</span></strong><br>
+              淘汰率：<span style="color: var(--rose);">73.5%~79.4%</span>
             </td>
             <td>展现了 5 评审机制下极强的“硬伤筛选”效果。</td>
           </tr>
@@ -518,11 +520,11 @@
       <table class="matrix-table">
         <thead>
           <tr>
-            <th>AI 顶级会议</th>
-            <th>2024 年录取率</th>
-            <th>2025 年录取率</th>
-            <th>近两年平均录取率</th>
-            <th>理论模型精准对齐关系</th>
+            <th style="width: 22%;">AI 顶级会议</th>
+            <th style="width: 14%;">2024 录取率</th>
+            <th style="width: 14%;">2025 录取率</th>
+            <th style="width: 16%;">平均录取率</th>
+            <th style="width: 34%;">理论模型精准对齐关系</th>
           </tr>
         </thead>
         <tbody>
@@ -594,10 +596,10 @@
       <table class="matrix-table">
         <thead>
           <tr>
-            <th>对比维度</th>
-            <th>任务一：美国 37% 斩杀线</th>
-            <th>任务二：国自然 3人/5人上会线</th>
-            <th>任务三：AI 顶会录用率 (CVPR等)</th>
+            <th style="width: 16%;">对比维度</th>
+            <th style="width: 28%;">任务一：美国 37% 斩杀线</th>
+            <th style="width: 28%;">任务二：国自然上会斩杀线</th>
+            <th style="width: 28%;">任务三：AI 顶会录取率</th>
           </tr>
         </thead>
         <tbody>
